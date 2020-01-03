@@ -1,4 +1,4 @@
-package munit.internal
+package funsuite.internal
 
 import java.{util => ju}
 

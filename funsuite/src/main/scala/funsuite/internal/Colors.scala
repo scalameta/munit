@@ -1,4 +1,4 @@
-package munit.internal
+package funsuite.internal
 
 import fansi.Category
 import fansi.Bold

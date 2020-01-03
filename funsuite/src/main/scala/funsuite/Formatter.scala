@@ -1,9 +1,9 @@
-package munit
+package funsuite
 
 import scala.collection.mutable
 import scala.util.{Failure, Success}
-import munit.internal.StackMarker
-import munit.internal.Colors
+import funsuite.internal.StackMarker
+import funsuite.internal.Colors
 import fansi.Bold
 import fansi.Str
 import fansi.Attrs

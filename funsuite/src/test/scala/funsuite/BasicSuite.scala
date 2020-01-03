@@ -1,4 +1,4 @@
-package munit
+package funsuite
 
 import org.junit.runner.RunWith
 

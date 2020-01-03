@@ -13,7 +13,7 @@ inThisBuild(
 
 skip in publish := true
 
-lazy val munit = project
+lazy val funsuite = project
   .settings(
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",

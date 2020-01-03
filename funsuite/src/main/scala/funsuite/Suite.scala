@@ -1,9 +1,9 @@
-package munit
+package funsuite
 
 import scala.collection.mutable
 
 class Suite {
-  private[munit] val tests = mutable.ArrayBuffer.empty[Test]
+  private[funsuite] val tests = mutable.ArrayBuffer.empty[Test]
 
   def beforeAll(context: BeforeAll): Unit = ()
   def afterAll(context: AfterAll): Unit = ()

@@ -1,4 +1,4 @@
-package munit
+package funsuite
 
 import scala.collection.mutable
 import java.nio.file.Path

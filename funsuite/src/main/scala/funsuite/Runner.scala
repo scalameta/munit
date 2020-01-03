@@ -1,4 +1,4 @@
-package munit
+package funsuite
 
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
@@ -7,7 +7,7 @@ import org.junit.runner.notification.Failure
 import scala.util.control.NonFatal
 import java.{util => ju}
 import fansi.ErrorMode.Throw
-import munit.internal.StackMarker
+import funsuite.internal.StackMarker
 
 final class Runner(cls: Class[_ <: Suite]) extends org.junit.runner.Runner {
   require(

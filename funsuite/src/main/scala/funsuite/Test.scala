@@ -1,4 +1,4 @@
-package munit
+package funsuite
 
 import java.nio.file.Path
 import java.nio.file.PathMatcher
