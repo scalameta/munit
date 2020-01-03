@@ -8,8 +8,10 @@ import scala.util.control.NonFatal
 import java.{util => ju}
 import fansi.ErrorMode.Throw
 import funsuite.internal.StackMarker
+import org.junit.AssumptionViolatedException
 
-final class Runner(cls: Class[_ <: Suite]) extends org.junit.runner.Runner {
+final class FunSuiteRunner(cls: Class[_ <: FunSuite])
+    extends org.junit.runner.Runner {
   require(
     hasEligibleConstructor(),
     s"Class '${cls.getCanonicalName()}' is missing a public empty argument constructor"
@@ -17,14 +19,16 @@ final class Runner(cls: Class[_ <: Suite]) extends org.junit.runner.Runner {
   lazy val suite = cls.newInstance()
   private val suiteDescription = Description.createSuiteDescription(cls)
 
+  def createTestDescription(test: Test): Description = {
+    Description.createTestDescription(cls, test.name, test.location)
+  }
+
   override def getDescription(): Description = {
     val description = Description.createSuiteDescription(cls)
     try {
       val suiteTests = StackMarker.dropOutside(suite.tests)
       suiteTests.foreach { test =>
-        description.addChild(
-          Description.createTestDescription(suite.getClass(), test.name)
-        )
+        description.addChild(createTestDescription(test))
       }
     } catch {
       case ex: Throwable =>
@@ -68,9 +72,9 @@ final class Runner(cls: Class[_ <: Suite]) extends org.junit.runner.Runner {
       name: String,
       ex: Throwable
   ): Unit = {
-    StackMarker.trimStackTrace(ex)
     val description = Description.createTestDescription(cls, name)
     notifier.fireTestStarted(description)
+    StackMarker.trimStackTrace(ex)
     notifier.fireTestFailure(new Failure(suiteDescription, ex))
     notifier.fireTestFinished(description)
   }
@@ -102,16 +106,24 @@ final class Runner(cls: Class[_ <: Suite]) extends org.junit.runner.Runner {
       val isContinue = runBeforeAll(notifier)
       if (isContinue) {
         suite.tests.foreach { test =>
-          val description = Description.createTestDescription(cls, test.name)
+          val description = createTestDescription(test)
           var isContinue = runBeforeEach(notifier, test)
           if (isContinue) {
             notifier.fireTestStarted(description)
             try {
               StackMarker.dropOutside(test.body())
             } catch {
-              case ex: Throwable =>
+              case ex: AssumptionViolatedException =>
                 StackMarker.trimStackTrace(ex)
-                notifier.fireTestFailure(new Failure(description, ex))
+              case NonFatal(ex) =>
+                StackMarker.trimStackTrace(ex)
+                val failure = new Failure(description, ex)
+                ex match {
+                  case _: AssumptionViolatedException =>
+                    notifier.fireTestAssumptionFailed(failure)
+                  case _ =>
+                    notifier.fireTestFailure(failure)
+                }
             } finally {
               notifier.fireTestFinished(description)
               runAfterEach(notifier, test)

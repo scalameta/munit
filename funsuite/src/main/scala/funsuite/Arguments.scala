@@ -10,7 +10,7 @@ class Arguments {
   var includeFilter: List[PathMatcher] = Nil
   var excludeFilter: List[PathMatcher] = Nil
 
-  def matchingTests(suite: Suite): List[Test] = {
+  def matchingTests(suite: FunSuite): List[Test] = {
     val parents = suite.getClass.getCanonicalName().split('.')
     if (parents.isEmpty) suite.tests.toList
     else {

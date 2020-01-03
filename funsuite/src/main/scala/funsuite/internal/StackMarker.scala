@@ -34,7 +34,7 @@ object StackMarker {
   def filterCallStack(
       stack: Array[StackTraceElement]
   ): Array[StackTraceElement] = {
-    val droppedInside = stack.indexWhere(x =>
+    val droppedInside = stack.lastIndexWhere(x =>
       x.getClassName == className &&
         x.getMethodName == "dropInside"
     )
@@ -47,7 +47,7 @@ object StackMarker {
     val stack1 = stack.slice(
       droppedInside match {
         case -1 => 0
-        case n  => n + 2
+        case n  => n + 3
       },
       droppedOutside match {
         case -1 => stack.length
