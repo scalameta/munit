@@ -99,19 +99,23 @@ final class Runner(cls: Class[_ <: Suite]) extends org.junit.runner.Runner {
 
   def runAll(notifier: RunNotifier): Unit = {
     try {
-      val canStart = runBeforeAll(notifier)
-      if (canStart) {
+      val isContinue = runBeforeAll(notifier)
+      if (isContinue) {
         suite.tests.foreach { test =>
           val description = Description.createTestDescription(cls, test.name)
-          notifier.fireTestStarted(description)
-          try {
-            StackMarker.dropOutside(test.body())
-          } catch {
-            case ex: Throwable =>
-              StackMarker.trimStackTrace(ex)
-              notifier.fireTestFailure(new Failure(description, ex))
-          } finally {
-            notifier.fireTestFinished(description)
+          var isContinue = runBeforeEach(notifier, test)
+          if (isContinue) {
+            notifier.fireTestStarted(description)
+            try {
+              StackMarker.dropOutside(test.body())
+            } catch {
+              case ex: Throwable =>
+                StackMarker.trimStackTrace(ex)
+                notifier.fireTestFailure(new Failure(description, ex))
+            } finally {
+              notifier.fireTestFinished(description)
+              runAfterEach(notifier, test)
+            }
           }
         }
       }

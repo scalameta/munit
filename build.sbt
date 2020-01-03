@@ -4,7 +4,10 @@ inThisBuild(
   List(
     scalaVersion := scala213,
     crossScalaVersions := List(scala213, scala212),
-    fork := true
+    fork := true,
+    testFrameworks := List(
+      new TestFramework("com.geirsson.junit.JUnitFramework")
+    )
   )
 )
 

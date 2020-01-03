@@ -6,6 +6,7 @@ import java.{util => ju}
   * Wrapper-functions that can be used to mark parts of the callstack that are
   * meant to be filtered out later.
   */
+class StackMarker
 object StackMarker {
   // Ask Scalac/Scala.js nicely to try and avoid inlining these two marker methods,
   // to make sure they don't disappear from the stack traces
@@ -19,24 +20,27 @@ object StackMarker {
       new ju.IdentityHashMap[Throwable, java.lang.Boolean]()
     )
     def loop(e: Throwable): Unit = {
-      if (!isVisited.contains(e)) {
-        isVisited.add(e)
-        e.setStackTrace(filterCallStack(e.getStackTrace()))
+      if (e != null && isVisited.add(e)) {
+        val stack = e.getStackTrace()
+        if (stack != null) {
+          e.setStackTrace(filterCallStack(stack))
+        }
         loop(e.getCause())
       }
     }
     loop(ex)
   }
+  val className = classOf[StackMarker].getCanonicalName() + "$"
   def filterCallStack(
       stack: Array[StackTraceElement]
   ): Array[StackTraceElement] = {
     val droppedInside = stack.indexWhere(x =>
-      x.getClassName == "munit.internal.StackMarker$" &&
+      x.getClassName == className &&
         x.getMethodName == "dropInside"
     )
 
     val droppedOutside = stack.indexWhere(x =>
-      x.getClassName == "munit.internal.StackMarker$" &&
+      x.getClassName == className &&
         x.getMethodName == "dropOutside"
     )
 
