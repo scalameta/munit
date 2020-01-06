@@ -3,7 +3,7 @@ package funsuite
 import org.junit.runner.RunWith
 import scala.util.Properties
 
-class BasicSuite extends FunSuite {
+object BasicSuite extends FunSuite {
   override def isCI = true
   override def isFlakyFailureOk = true
   def assertNoDiff()(implicit loc: Location): Unit = {
@@ -23,23 +23,22 @@ class BasicSuite extends FunSuite {
     ???
   }
 
-  test("not-implemented".fail) {
-    List(0, 1, 2).foreach { i =>
+  test("not-implemented") {
+    List(List(0, 1, 2)).iterator.flatten.foreach { i =>
       assertEqual(i, 0)
     }
     assertNoDiff()
   }
   case class User(name: String, age: Int, zips: List[Int])
-  test("pass".fail) {
+  test("pass") {
     val john = User("John", 42, 1.to(10).toList)
     val john2 = User("John", 43, 2.to(10).toList)
     assertEqual(42, 53)
     assertEqual(john2, john)
   }
-  test("assertSame".fail) {
-    check(
-      """|
-         |val x = 42
+  test("assertSame") {
+    assertNoDiff(
+      """|val x = 42
          |val y = 42
          |""".stripMargin,
       """|

@@ -30,24 +30,28 @@ class MySuite extends funsuite.FunSuite {
 
 ### Source locations for assertion errors
 
-Assertions errors show the source code location where the assertion failed. In
-terminals like iTerm, use cmd+click on the location
-(`/path/to/File.scala:LINE_NUMBER`) to open the exact line number in your
-editor.
+Assertions errors show the source code location where the assertion failed. Use
+cmd+click on the location "`/path/to/BasicSuite.scala:36`" to open the exact
+line number in your editor (may not work in all terminals).
 
-![Source locations for assertion errors](https://i.imgur.com/nItb59c.png)
+![Source locations for assertion errors](https://i.imgur.com/6qhmz5F.png)
 
 ### Highlighted stack traces
 
-Stack frame elements from your project sources are highlighted.
+Stack frame elements from your project sources are highlighted so you can focus
+on the most important parts of the stack trace.
 
-![Highlighted stack traces example](https://i.imgur.com/4dL3yB0.png)
+![Highlighted stack traces example](https://i.imgur.com/C6m6PbT.png)
 
 ### Multiline string diff
 
 Use `assertNoDiff` to compare large multi-line strings.
 
-![Multiline string diff](https://i.imgur.com/PtEq0oY.png)
+![Multiline string diff](https://i.imgur.com/VY79UXX.png)
+
+Test failures include the obtained multiline string in a copy-paste friendly
+format making it easy to update the test as the expected behavior of your
+program changes.
 
 ### Skip test based on dynamic conditions
 
