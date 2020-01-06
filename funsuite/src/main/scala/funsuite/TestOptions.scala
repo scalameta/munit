@@ -8,7 +8,9 @@ package funsuite
   * @param tags a set of [[tests.Tag]], used to attach semantic information to a test
   */
 case class TestOptions(name: String, tags: Set[Tag], loc: Location) {
-  def fail: TestOptions = tag(Tag.ExpectFailure)
+  def fail: TestOptions = tag(ExpectFailure)
+  def flaky: TestOptions = tag(Flaky)
+  def ignore: TestOptions = tag(Ignore)
   def tag(t: Tag): TestOptions = copy(tags = tags + t)
 }
 

@@ -15,7 +15,7 @@ object StackMarker {
   @noinline
   def dropOutside[T](t: => T): T = t
 
-  def trimStackTrace(ex: Throwable): Unit = {
+  def trimStackTrace(ex: Throwable): ex.type = {
     val isVisited = ju.Collections.newSetFromMap(
       new ju.IdentityHashMap[Throwable, java.lang.Boolean]()
     )
@@ -29,6 +29,7 @@ object StackMarker {
       }
     }
     loop(ex)
+    ex
   }
   val className = classOf[StackMarker].getCanonicalName() + "$"
   def filterCallStack(

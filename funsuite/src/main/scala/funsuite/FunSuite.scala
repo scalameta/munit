@@ -11,20 +11,33 @@ import scala.util.control.NonFatal
 import scala.collection.JavaConverters._
 import fansi.Reversed
 import org.junit.Assert
+import scala.util.Try
+import fansi.Color
+import scala.util.Failure
+import scala.util.Success
 
 class FunSuite extends Assertions with TestOptionsConversions {
 
   private[funsuite] val tests = mutable.ArrayBuffer.empty[Test]
 
+  def funsuiteName: String = this.getClass().getCanonicalName()
+
+  def isCI: Boolean = "true" == System.getenv("CI")
+  def isFlakyFailureOk: Boolean = "true" == System.getenv("FUNSUITE_FLAKY_OK")
+
   def funsuiteFlaky(
       options: TestOptions,
       body: => Any
   ): Any = {
-    try body
-    catch {
-      case NonFatal(_) =>
-        println(s"retrying flaky test ${options.name}")
-        body
+    val result = Try(body)
+    result match {
+      case Success(value) => value
+      case Failure(exception) =>
+        if (isFlakyFailureOk) {
+          new FlakyFailure(exception)
+        } else {
+          throw exception
+        }
     }
   }
 
@@ -44,10 +57,12 @@ class FunSuite extends Assertions with TestOptionsConversions {
       options: TestOptions,
       body: => Any
   ): Any = {
-    if (options.tags(Tag.ExpectFailure)) {
+    if (options.tags(ExpectFailure)) {
       funsuiteExpectFailure(options, body)
-    } else if (options.tags(Tag.Flaky)) {
+    } else if (options.tags(Flaky)) {
       funsuiteFlaky(options, body)
+    } else if (options.tags(Ignore)) {
+      Ignore
     } else {
       body
     }

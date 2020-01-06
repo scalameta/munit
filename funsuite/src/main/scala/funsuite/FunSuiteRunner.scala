@@ -9,6 +9,7 @@ import java.{util => ju}
 import fansi.ErrorMode.Throw
 import funsuite.internal.StackMarker
 import org.junit.AssumptionViolatedException
+import fansi.Color
 
 final class FunSuiteRunner(cls: Class[_ <: FunSuite])
     extends org.junit.runner.Runner {
@@ -111,7 +112,13 @@ final class FunSuiteRunner(cls: Class[_ <: FunSuite])
           if (isContinue) {
             notifier.fireTestStarted(description)
             try {
-              StackMarker.dropOutside(test.body())
+              StackMarker.dropOutside(test.body()) match {
+                case f: FlakyFailure =>
+                  notifier.fireTestAssumptionFailed(new Failure(description, f))
+                case Ignore =>
+                  notifier.fireTestIgnored(description)
+                case _ =>
+              }
             } catch {
               case ex: AssumptionViolatedException =>
                 StackMarker.trimStackTrace(ex)
