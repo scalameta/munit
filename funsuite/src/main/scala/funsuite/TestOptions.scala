@@ -11,6 +11,7 @@ case class TestOptions(name: String, tags: Set[Tag], loc: Location) {
   def fail: TestOptions = tag(ExpectFailure)
   def flaky: TestOptions = tag(Flaky)
   def ignore: TestOptions = tag(Ignore)
+  def only: TestOptions = tag(Only)
   def tag(t: Tag): TestOptions = copy(tags = tags + t)
 }
 

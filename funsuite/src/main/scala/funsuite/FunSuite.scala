@@ -20,7 +20,11 @@ class FunSuite extends Assertions with TestOptionsConversions {
 
   private[funsuite] val tests = mutable.ArrayBuffer.empty[Test]
 
-  def funsuiteName: String = this.getClass().getCanonicalName()
+  def funsuiteTests: Seq[Test] = {
+    val onlyTests = tests.filter(_.tags(Only))
+    if (onlyTests.nonEmpty) onlyTests.toSeq
+    else tests.toSeq
+  }
 
   def isCI: Boolean = "true" == System.getenv("CI")
   def isFlakyFailureOk: Boolean = "true" == System.getenv("FUNSUITE_FLAKY_OK")

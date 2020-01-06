@@ -5,7 +5,9 @@ inThisBuild(
   List(
     organization := "com.geirsson",
     homepage := Some(url("https://github.com/olafurpg/funsuite")),
-    licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    licenses := List(
+      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+    ),
     developers := List(
       Developer(
         "olafurpg",
@@ -39,7 +41,7 @@ lazy val funsuite = project
   .settings(
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
-      "com.geirsson" % "junit-interface" % "0.11.3",
+      "com.geirsson" % "junit-interface" % "0.11.4-SNAPSHOT",
       "com.lihaoyi" %% "sourcecode" % "0.1.9",
       "com.lihaoyi" %% "fansi" % fansiVersion.value,
       "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0",

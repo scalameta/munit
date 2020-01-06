@@ -30,7 +30,7 @@ class MySuite extends funsuite.FunSuite {
 
 ### Source locations for assertion errors
 
-Assertions errors show the source code location where the assertion failed. Use
+Assertion errors show the source code location where the assertion failed. Use
 cmd+click on the location "`/path/to/BasicSuite.scala:36`" to open the exact
 line number in your editor (may not work in all terminals).
 
@@ -93,6 +93,47 @@ Use `.fail` to mark a test case that is expected to fail.
 A failed test only succeeds if the test body fails. If the test body succeeds,
 the test fails.
 
+### Running individual tests
+
+Use `.only` to run only a single test.
+
+```scala
+  test("issue-457") {
+    // will not run
+  }
+  test("issue-456".only) {
+    // only test that runs
+  }
+  test("issue-455") {
+    // will not run
+  }
+```
+
+### Ignore tests
+
+Use the `@Ignore` annotation to skip all tests in a test suite.
+
+```scala
+@funsuite.Ignore
+class MySuite extends funsuite.FunSuite {
+  test("hello1") {
+    // will not run
+  }
+  test("hello2") {
+    // will not run
+  }
+  // ...
+}
+```
+
+Use `.ignore` to skip an individual test case in a test suite.
+
+```scala
+  test("issue-456".ignore) {
+    // will not run
+  }
+```
+
 ## JVM-only
 
 FunSuite is currently only published for the JVM. It's unlikely that FunSuite
@@ -115,5 +156,19 @@ FunSuite is inspired by several existing testing libraries:
 
 ## Changelog
 
-- 0.1.1: support for Scala 2.11.
-- 0.1.0: initial release with basic functionality. Expect breaking changes.
+### 0.1.2 (Jan 6th, 2020)
+
+- Add support for `@Ignore` annotation
+
+### 0.1.1 (Jan 6th, 2020)
+
+- Add support for Scala 2.11.
+
+### 0.1.0 (Jan 6th, 2020)
+
+- Initial release with basic functionality.
+- Expect breaking changes.
+
+```
+
+```

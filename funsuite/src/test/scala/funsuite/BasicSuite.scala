@@ -3,7 +3,8 @@ package funsuite
 import org.junit.runner.RunWith
 import scala.util.Properties
 
-object BasicSuite extends FunSuite {
+// @Ignore
+class BasicSuite extends FunSuite {
   override def isCI = true
   override def isFlakyFailureOk = true
   def assertNoDiff()(implicit loc: Location): Unit = {
@@ -36,7 +37,8 @@ object BasicSuite extends FunSuite {
     assertEqual(42, 53)
     assertEqual(john2, john)
   }
-  test("assertSame") {
+
+  test("only") {
     assertNoDiff(
       """|val x = 42
          |val y = 42

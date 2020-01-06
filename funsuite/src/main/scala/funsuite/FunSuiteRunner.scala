@@ -10,15 +10,34 @@ import fansi.ErrorMode.Throw
 import funsuite.internal.StackMarker
 import org.junit.AssumptionViolatedException
 import fansi.Color
+import org.junit.runner.manipulation.Filterable
+import org.junit.runner.manipulation.Filter
+import org.junit.runner.manipulation.NoTestsRemainException
 
 final class FunSuiteRunner(cls: Class[_ <: FunSuite])
-    extends org.junit.runner.Runner {
+    extends org.junit.runner.Runner
+    with Filterable {
   require(
     hasEligibleConstructor(),
     s"Class '${cls.getCanonicalName()}' is missing a public empty argument constructor"
   )
   lazy val suite = cls.newInstance()
+  lazy val testsToRun = suite.funsuiteTests.toBuffer
   private val suiteDescription = Description.createSuiteDescription(cls)
+  @volatile private var filter: Filter = Filter.ALL
+
+  def filter(filter: Filter): Unit = {
+    val oldTests = testsToRun
+    val newTests = oldTests.filter { test =>
+      filter.shouldRun(createTestDescription(test))
+    }
+    if (newTests.isEmpty) {
+      throw new NoTestsRemainException
+    } else if (newTests.length < oldTests.length) {
+      testsToRun.clear()
+      testsToRun.addAll(newTests)
+    }
+  }
 
   def createTestDescription(test: Test): Description = {
     Description.createTestDescription(cls, test.name, test.location)
@@ -39,6 +58,10 @@ final class FunSuiteRunner(cls: Class[_ <: FunSuite])
         Nil
     }
     description
+  }
+
+  def isIgnored(): Boolean = {
+    cls.getAnnotationsByType(classOf[Ignore]).nonEmpty
   }
 
   override def run(notifier: RunNotifier): Unit = {
@@ -102,40 +125,49 @@ final class FunSuiteRunner(cls: Class[_ <: FunSuite])
     )
   }
 
+  def runTest(notifier: RunNotifier, test: Test): Unit = {
+    val description = createTestDescription(test)
+    if (!filter.shouldRun(description)) return
+    var isContinue = runBeforeEach(notifier, test)
+    if (isContinue) {
+      notifier.fireTestStarted(description)
+      try {
+        StackMarker.dropOutside(test.body()) match {
+          case f: FlakyFailure =>
+            notifier.fireTestAssumptionFailed(new Failure(description, f))
+          case Ignore =>
+            notifier.fireTestIgnored(description)
+          case _ =>
+        }
+      } catch {
+        case ex: AssumptionViolatedException =>
+          StackMarker.trimStackTrace(ex)
+        case NonFatal(ex) =>
+          StackMarker.trimStackTrace(ex)
+          val failure = new Failure(description, ex)
+          ex match {
+            case _: AssumptionViolatedException =>
+              notifier.fireTestAssumptionFailed(failure)
+            case _ =>
+              notifier.fireTestFailure(failure)
+          }
+      } finally {
+        notifier.fireTestFinished(description)
+        runAfterEach(notifier, test)
+      }
+    }
+  }
+
   def runAll(notifier: RunNotifier): Unit = {
+    if (isIgnored()) {
+      notifier.fireTestIgnored(suiteDescription)
+      return
+    }
     try {
       val isContinue = runBeforeAll(notifier)
       if (isContinue) {
-        suite.tests.foreach { test =>
-          val description = createTestDescription(test)
-          var isContinue = runBeforeEach(notifier, test)
-          if (isContinue) {
-            notifier.fireTestStarted(description)
-            try {
-              StackMarker.dropOutside(test.body()) match {
-                case f: FlakyFailure =>
-                  notifier.fireTestAssumptionFailed(new Failure(description, f))
-                case Ignore =>
-                  notifier.fireTestIgnored(description)
-                case _ =>
-              }
-            } catch {
-              case ex: AssumptionViolatedException =>
-                StackMarker.trimStackTrace(ex)
-              case NonFatal(ex) =>
-                StackMarker.trimStackTrace(ex)
-                val failure = new Failure(description, ex)
-                ex match {
-                  case _: AssumptionViolatedException =>
-                    notifier.fireTestAssumptionFailed(failure)
-                  case _ =>
-                    notifier.fireTestFailure(failure)
-                }
-            } finally {
-              notifier.fireTestFinished(description)
-              runAfterEach(notifier, test)
-            }
-          }
+        testsToRun.foreach { test =>
+          runTest(notifier, test)
         }
       }
     } finally {

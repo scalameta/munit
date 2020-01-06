@@ -95,10 +95,9 @@ object Diffs {
     if (!obtained.contains("\n")) pprint.tokenize(obtained).mkString
     else {
       val out = new StringBuilder
-      out.append("    \"\"\"|\n")
-      obtained.trim.linesIterator.foreach(line =>
-        out.append("       |").append(line).append("\n")
-      )
+      val lines = obtained.trim.linesIterator
+      out.append("    \"\"\"|" + lines.next() + "\n")
+      lines.foreach(line => out.append("       |").append(line).append("\n"))
       out.append("       |\"\"\".stripMargin")
       out.toString()
     }
