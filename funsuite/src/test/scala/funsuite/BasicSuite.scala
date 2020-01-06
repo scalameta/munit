@@ -3,7 +3,6 @@ package funsuite
 import org.junit.runner.RunWith
 import scala.util.Properties
 
-// @Ignore
 class BasicSuite extends FunSuite {
   override def isCI = true
   override def isFlakyFailureOk = true
@@ -13,8 +12,9 @@ class BasicSuite extends FunSuite {
   def check(a: String, b: String)(implicit loc: Location): Unit = {
     assertNoDiff(a, b, "check failed")
   }
-  test("fail".flaky) {
-    ???
+
+  test("fail") {
+    Thread.sleep(1000)
   }
   test("ignore".ignore) {
     ???

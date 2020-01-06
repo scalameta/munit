@@ -22,21 +22,11 @@ final class FunSuiteRunner(cls: Class[_ <: FunSuite])
     s"Class '${cls.getCanonicalName()}' is missing a public empty argument constructor"
   )
   lazy val suite = cls.newInstance()
-  lazy val testsToRun = suite.funsuiteTests.toBuffer
   private val suiteDescription = Description.createSuiteDescription(cls)
   @volatile private var filter: Filter = Filter.ALL
 
   def filter(filter: Filter): Unit = {
-    val oldTests = testsToRun
-    val newTests = oldTests.filter { test =>
-      filter.shouldRun(createTestDescription(test))
-    }
-    if (newTests.isEmpty) {
-      throw new NoTestsRemainException
-    } else if (newTests.length < oldTests.length) {
-      testsToRun.clear()
-      testsToRun.addAll(newTests)
-    }
+    this.filter = filter
   }
 
   def createTestDescription(test: Test): Description = {
@@ -46,7 +36,7 @@ final class FunSuiteRunner(cls: Class[_ <: FunSuite])
   override def getDescription(): Description = {
     val description = Description.createSuiteDescription(cls)
     try {
-      val suiteTests = StackMarker.dropOutside(suite.tests)
+      val suiteTests = StackMarker.dropOutside(suite.funsuiteTests())
       suiteTests.foreach { test =>
         description.addChild(createTestDescription(test))
       }
@@ -127,7 +117,9 @@ final class FunSuiteRunner(cls: Class[_ <: FunSuite])
 
   def runTest(notifier: RunNotifier, test: Test): Unit = {
     val description = createTestDescription(test)
-    if (!filter.shouldRun(description)) return
+    if (!filter.shouldRun(description)) {
+      return
+    }
     var isContinue = runBeforeEach(notifier, test)
     if (isContinue) {
       notifier.fireTestStarted(description)
@@ -166,7 +158,7 @@ final class FunSuiteRunner(cls: Class[_ <: FunSuite])
     try {
       val isContinue = runBeforeAll(notifier)
       if (isContinue) {
-        testsToRun.foreach { test =>
+        suite.funsuiteTests().foreach { test =>
           runTest(notifier, test)
         }
       }

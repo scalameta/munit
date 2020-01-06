@@ -18,12 +18,12 @@ import scala.util.Success
 
 class FunSuite extends Assertions with TestOptionsConversions {
 
-  private[funsuite] val tests = mutable.ArrayBuffer.empty[Test]
+  val funsuiteTestsBuffer = mutable.ArrayBuffer.empty[Test]
 
-  def funsuiteTests: Seq[Test] = {
-    val onlyTests = tests.filter(_.tags(Only))
+  def funsuiteTests(): Seq[Test] = {
+    val onlyTests = funsuiteTestsBuffer.filter(_.tags(Only))
     if (onlyTests.nonEmpty) onlyTests.toSeq
-    else tests.toSeq
+    else funsuiteTestsBuffer.toSeq
   }
 
   def isCI: Boolean = "true" == System.getenv("CI")
@@ -61,7 +61,7 @@ class FunSuite extends Assertions with TestOptionsConversions {
       options: TestOptions,
       body: => Any
   ): Any = {
-    if (options.tags(ExpectFailure)) {
+    if (options.tags(Fail)) {
       funsuiteExpectFailure(options, body)
     } else if (options.tags(Flaky)) {
       funsuiteFlaky(options, body)
@@ -87,7 +87,7 @@ class FunSuite extends Assertions with TestOptionsConversions {
   def test(options: TestOptions)(
       body: => Any
   )(implicit loc: Location): Unit = {
-    tests += new Test(
+    funsuiteTestsBuffer += new Test(
       options.name,
       () => funsuiteRunTest(options, StackMarker.dropOutside(body)),
       options.tags.toSet,
