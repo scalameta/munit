@@ -9,23 +9,25 @@ class BasicSuite extends FunSuite {
   def check(a: String, b: String)(implicit loc: Location): Unit = {
     assertNoDiff(a, b)
   }
-  test("fail".fail) {}
-  test("assume") {
+  test("fail".fail) {
+    ???
+  }
+  test("assume".fail) {
     assume(false, "just because")
     ???
   }
-  test("not-implemented") {
+  test("not-implemented".fail) {
     assertEqual(1, 2)
     assertNoDiff()
   }
   case class User(name: String, age: Int, zips: List[Int])
-  test("pass") {
+  test("pass".fail) {
     val john = User("John", 42, 1.to(10).toList)
     val john2 = User("John", 43, 2.to(10).toList)
     assertEqual(42, 53)
     assertEqual(john2, john)
   }
-  test("assertSame") {
+  test("assertSame".fail) {
     check(
       """|
          |val x = 42

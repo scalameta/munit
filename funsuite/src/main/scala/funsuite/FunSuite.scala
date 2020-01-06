@@ -40,7 +40,7 @@ class FunSuite extends Assertions with TestOptionsConversions {
     }
   }
 
-  def funsuiteExecuteBody(
+  def funsuiteRunTest(
       options: TestOptions,
       body: => Any
   ): Any = {
@@ -70,7 +70,7 @@ class FunSuite extends Assertions with TestOptionsConversions {
   )(implicit loc: Location): Unit = {
     tests += new Test(
       options.name,
-      () => funsuiteExecuteBody(options, StackMarker.dropOutside(body)),
+      () => funsuiteRunTest(options, StackMarker.dropOutside(body)),
       options.tags.toSet,
       loc
     )

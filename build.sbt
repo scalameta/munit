@@ -2,6 +2,17 @@ def scala212 = "2.12.10"
 def scala213 = "2.13.1"
 inThisBuild(
   List(
+    organization := "com.geirsson",
+    homepage := Some(url("https://github.com/olafurpg/funsuite")),
+    licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    developers := List(
+      Developer(
+        "olafurpg",
+        "Ólafur Páll Geirsson",
+        "olafurpg@gmail.com",
+        url("https://geirsson.com")
+      )
+    ),
     scalaVersion := scala213,
     crossScalaVersions := List(scala213, scala212),
     fork := true,
