@@ -12,7 +12,7 @@ FunSuite is a Scala testing library with the following distinctive features:
 ![Badge with version of the latest release](https://img.shields.io/maven-central/v/com.geirsson/funsuite_2.13?style=for-the-badge)
 
 ```scala
-// Only published for 2.13 at the moment.
+// Published for 2.11, 2.12 and 2.13, JVM-only.
 libraryDependencies += "com.geirsson" %% "funsuite" % "VERSION"
 ```
 
@@ -93,11 +93,10 @@ Use `.fail` to mark a test case that is expected to fail.
 A failed test only succeeds if the test body fails. If the test body succeeds,
 the test fails.
 
-## When FunSuite is not a good fit
+## JVM-only
 
-FunSuite is currently only published for Scala 2.13 on the JVM. It's unlikely
-that FunSuite will get published for Scala.js or Scala Native unless somebody
-reimplements the
+FunSuite is currently only published for the JVM. It's unlikely that FunSuite
+will get published for Scala.js or Scala Native unless somebody reimplements the
 [JUnit testing interface](https://github.com/olafurpg/junit-interface) for sbt,
 which is currently written in Java.
 
@@ -113,3 +112,8 @@ FunSuite is inspired by several existing testing libraries:
   by the beautifully formatted output in utest.
 - ava: the idea for showing the source locations for assertion errors comes from
   [ava](https://github.com/avajs/ava), a JavaScript testing library.
+
+## Changelog
+
+- 0.1.1: support for Scala 2.11.
+- 0.1.0: initial release with basic functionality. Expect breaking changes.
