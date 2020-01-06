@@ -23,24 +23,20 @@ class BasicSuite extends FunSuite {
     ???
   }
 
-  test("paths") {
-    assume(Properties.isLinux, "this test runs only on Linux")
-    // Linux-specific assertions
-  }
-  test("not-implemented") {
+  test("not-implemented".fail) {
     List(0, 1, 2).foreach { i =>
       assertEqual(i, 0)
     }
     assertNoDiff()
   }
   case class User(name: String, age: Int, zips: List[Int])
-  test("pass") {
+  test("pass".fail) {
     val john = User("John", 42, 1.to(10).toList)
     val john2 = User("John", 43, 2.to(10).toList)
     assertEqual(42, 53)
     assertEqual(john2, john)
   }
-  test("assertSame") {
+  test("assertSame".fail) {
     check(
       """|
          |val x = 42
