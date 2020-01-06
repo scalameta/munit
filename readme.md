@@ -28,7 +28,7 @@ class MySuite extends funsuite.FunSuite {
 }
 ```
 
-## Source locations for assertion errors
+### Source locations for assertion errors
 
 Assertions errors show the source code location where the assertion failed. In
 terminals like iTerm, use cmd+click on the location
@@ -37,19 +37,19 @@ editor.
 
 ![Source locations for assertion errors](https://i.imgur.com/nItb59c.png)
 
-## Highlighted stack traces
+### Highlighted stack traces
 
 Stack frame elements from your project sources are highlighted.
 
 ![Highlighted stack traces example](https://i.imgur.com/4dL3yB0.png)
 
-## Multiline string diff
+### Multiline string diff
 
 Use `assertNoDiff` to compare large multi-line strings.
 
 ![Multiline string diff](https://i.imgur.com/PtEq0oY.png)
 
-## Skip test based on dynamic conditions
+### Skip test based on dynamic conditions
 
 Use `assume` to skip tests when some conditions do not hold. For example, use
 this to conditionally run tests based on the operating system or the Scala
@@ -62,7 +62,7 @@ compiler version.
   }
 ```
 
-## Tag flaky tests
+### Tag flaky tests
 
 Use `.flaky` to mark a test case that has a tendendency to fail sometimes.
 
@@ -76,7 +76,7 @@ By default, flaky tests fail unless the `FUNSUITE_FLAKY_OK` environment variable
 is set to `true`. Override the `isFlakyFailureOk` method to customize when it's
 OK for flaky tests to fail.
 
-## Failing tests
+### Failing tests
 
 Use `.fail` to mark a test case that is expected to fail.
 
@@ -88,3 +88,24 @@ Use `.fail` to mark a test case that is expected to fail.
 
 A failed test only succeeds if the test body fails. If the test body succeeds,
 the test fails.
+
+## When FunSuite is not a good fit
+
+FunSuite is currently only published for Scala 2.13 on the JVM. It's unlikely
+that FunSuite will get published for Scala.js or Scala Native unless somebody
+reimplements the
+[JUnit testing interface](https://github.com/olafurpg/junit-interface) for sbt,
+which is currently written in Java.
+
+## Inspirations
+
+FunSuite is inspired by several existing testing libraries:
+
+- ScalaTest: the syntax for defining FunSuite test suites is the same as for
+  `org.scalatest.FunSuite`.
+- JUnit: FunSuite is implemented as a custom JUnit runner and features like
+  `assume` and tags are implemented on top of existing JUnit functionality.
+- utest: the nicely formatted stack traces and test reports is heavily inspired
+  by the beautifully formatted output in utest.
+- ava: the idea for showing the source locations for assertion errors comes from
+  [ava](https://github.com/avajs/ava), a JavaScript testing library.
