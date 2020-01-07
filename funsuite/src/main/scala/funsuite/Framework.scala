@@ -11,7 +11,7 @@ import com.geirsson.junit.CustomRunners
 
 class Framework extends com.geirsson.junit.JUnitFramework {
   val funsuiteFingerprint = CustomFingerprint.of(
-    "funsuite.FunSuite",
+    "funsuite.Suite",
     "funsuite.FunSuiteRunner"
   )
   override val fingerprints: Array[Fingerprint] = Array(

@@ -1,13 +1,15 @@
 # FunSuite
 
-FunSuite is a Scala testing library with the following features:
+FunSuite is a Scala testing library with the following goals:
 
-- **JUnit**: FunSuite is implemented as a JUnit runner and tool that knows how
+- **Reuse JUnit**: FunSuite is implemented as a JUnit runner and tries to build
+  on top of existing JUnit functionality where possible. Any tool that knows how
   to run a JUnit test suite knows how to run FunSuite, including IDEs like
   IntelliJ.
-- **Pretty-printing**: test reports are nicely formatted and try to display
-  diffs where possible, source locations when available and do a best-effort of
-  highlighting relevant stack trace elements.
+- **Helpful console output**: test reports are pretty-printed with colors to
+  help you quickly understand what caused a test failure. FunSuite tries to
+  displays diffs and source locations when possible and it does a best-effort to
+  highlight relevant stack trace elements.
 
 **Table of contents**
 
@@ -27,13 +29,15 @@ FunSuite is a Scala testing library with the following features:
   - [Ignore tests](#ignore-tests)
   - [Using JUnit categories](#using-junit-categories)
   - [Searching for failed tests in large log files](#searching-for-failed-tests-in-large-log-files)
+  - [Running tests in IntelliJ](#running-tests-in-intellij)
 - [Tests as values](#tests-as-values)
+  - [Extend `Suit`](#extend-suit)
   - [Customize evaluation of tests](#customize-evaluation-of-tests)
   - [Filter tests based on dynamic conditions](#filter-tests-based-on-dynamic-conditions)
 - [Limitations](#limitations)
 - [Inspirations](#inspirations)
 - [Do we really need another testing library?](#do-we-really-need-another-testing-library)
-- [Migrating from ScalaTest](#migrating-from-scalatest)
+- [Coming from ScalaTest](#coming-from-scalatest)
 - [Stability](#stability)
 - [Changelog](#changelog)
 
@@ -262,11 +266,47 @@ in a large log file.
 Knowing these prefixes may come in handy for example when browsing test logs in
 a browser. Search for "==> X" to quickly navigate to the failed tests.
 
+### Running tests in IntelliJ
+
+Add a `@RunWith(classOf[FunSuiteRunner])` annotation to run tests from IntelliJ.
+
+```diff
+  import funsuite._
++ import org.junit.runner.RunWith
++ @RunWith(classOf[FunSuiteRunner])
+  class MySuite extends funsuite.FunSuite {
+    // ...
+  }
+```
+
+This annotation is needed for IntelliJ to understand that the class is a test
+suite. When running tests in sbt, the annotation is not needed because the
+configured `funsuite.Framework` understands that subclasses of `funsuite.Suite`
+should run with `funsuite.FunSuiteRunner`.
+
 ## Tests as values
 
 FunSuite test cases are represented with the type `funsuite.Test` and can be
 manipulated as a normal data structure. Feel free to tweak and extend how you
 generate `funsuite.Test` to suit your needs.
+
+### Extend `Suit`
+
+Extend the base class `funsuite.Suite` to customize exactly what `Seq[Test]` you
+want to run.
+
+```scala
+class MyCustomSuite extends funsuite.Suite {
+  override def funsuiteTests() = List(
+    new Test(
+      "name",
+      body = () => println("Hello world!"),
+      tags = Set.empty[Tag],
+      location = Location.generate()
+    )
+  )
+}
+```
 
 ### Customize evaluation of tests
 
@@ -321,10 +361,8 @@ class MyWindowsSuite extends funsuite.FunSuite {
 **JVM-only**: FunSuite is currently only published for the JVM. FunSuite uses a
 [JUnit testing interface](https://github.com/olafurpg/junit-interface) for sbt
 that's written in Java so that would need to be changed in order to add Scala.js
-and Scala Native support.
-
-Feel free to open an issue if you would like to contribute cross-platform
-support.
+and Scala Native support. Feel free to open an issue if you would like to
+contribute cross-platform support.
 
 ## Inspirations
 
@@ -341,13 +379,12 @@ FunSuite is inspired by several existing testing libraries:
 
 ## Do we really need another testing library?
 
-FunSuite is built on the theory that >90% of what a JVM testing library needs is
-already provided by JUnit. If you write Scala, the default JUnit testing syntax
-leaves a lot to be desired, however, due to its heavy usage of annotations.
-FunSuite tries to fill in the gap by aiming to provide only the missing
-functionality in JUnit to make it feel idiomatic when writing tests in Scala.
+FunSuite is built on the idea that >90% of what a JVM testing library needs is
+already provided by JUnit. However, the default JUnit testing syntax is based on
+annotations and does not feel idiomatic when used from Scala. FunSuite tries to
+fill in the gap by providing a small Scala API on top of JUnit.
 
-## Migrating from ScalaTest
+## Coming from ScalaTest
 
 Add the following settings to run ScalaTest and JUnit suites with the same
 testing framework as FunSuite.
@@ -360,10 +397,12 @@ testFrameworks := List(
 )
 ```
 
-These settings will run all JUnit and ScalaTest suites using the same
-pretty-printer as FunSuite.
+These settings configure all JUnit and ScalaTest suites to run with the same
+testing interface as FunSuite. This means that you get the same pretty-printing
+of test reports for JUnit, ScalaTest and FunSuite.
 
-If you only use basic ScalaTest features, you should be able to replace usage of
+Next, you may want to start migrating your test suites one by one. If you only
+use basic ScalaTest features, you should be able to replace usage of
 `org.scalatest.FunSuite` with minimal changes like below.
 
 ```diff
@@ -386,8 +425,8 @@ If you only use basic ScalaTest features, you should be able to replace usage of
 ## Stability
 
 FunSuite is a new library with no stability guarantees. It's expected that new
-releases will have binary and source breaking changes while the FunSuite API
-gets polished.
+releases, including patch releases, will have binary and source breaking
+changes.
 
 ## Changelog
 

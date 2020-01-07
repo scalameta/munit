@@ -16,7 +16,10 @@ import fansi.Color
 import scala.util.Failure
 import scala.util.Success
 
-class FunSuite extends Assertions with TestOptionsConversions {
+abstract class FunSuite
+    extends Suite
+    with Assertions
+    with TestOptionsConversions {
 
   val funsuiteTestsBuffer = mutable.ArrayBuffer.empty[Test]
 
@@ -26,7 +29,25 @@ class FunSuite extends Assertions with TestOptionsConversions {
     else funsuiteTestsBuffer.toSeq
   }
 
+  def test(name: String, tag: Tag*)(
+      body: => Any
+  )(implicit loc: Location): Unit = {
+    test(new TestOptions(name, tag.toSet, loc))(body)
+  }
+
+  def test(options: TestOptions)(
+      body: => Any
+  )(implicit loc: Location): Unit = {
+    funsuiteTestsBuffer += new Test(
+      options.name,
+      () => funsuiteRunTest(options, StackMarker.dropOutside(body)),
+      options.tags.toSet,
+      loc
+    )
+  }
+
   def isCI: Boolean = "true" == System.getenv("CI")
+
   def isFlakyFailureOk: Boolean = "true" == System.getenv("FUNSUITE_FLAKY_OK")
 
   def funsuiteFlaky(
@@ -72,26 +93,4 @@ class FunSuite extends Assertions with TestOptionsConversions {
     }
   }
 
-  def beforeAll(context: BeforeAll): Unit = ()
-  def afterAll(context: AfterAll): Unit = ()
-
-  def beforeEach(context: BeforeEach): Unit = ()
-  def afterEach(context: AfterEach): Unit = ()
-
-  def test(name: String, tag: Tag*)(
-      body: => Any
-  )(implicit loc: Location): Unit = {
-    test(new TestOptions(name, tag.toSet, loc))(body)
-  }
-
-  def test(options: TestOptions)(
-      body: => Any
-  )(implicit loc: Location): Unit = {
-    funsuiteTestsBuffer += new Test(
-      options.name,
-      () => funsuiteRunTest(options, StackMarker.dropOutside(body)),
-      options.tags.toSet,
-      loc
-    )
-  }
 }

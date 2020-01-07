@@ -13,10 +13,9 @@ import fansi.Color
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.manipulation.NoTestsRemainException
+import org.junit.runner.Runner
 
-final class FunSuiteRunner(cls: Class[_ <: FunSuite])
-    extends org.junit.runner.Runner
-    with Filterable {
+class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   require(
     hasEligibleConstructor(),
     s"Class '${cls.getCanonicalName()}' is missing a public empty argument constructor"

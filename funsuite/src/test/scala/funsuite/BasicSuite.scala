@@ -3,6 +3,7 @@ package funsuite
 import org.junit.runner.RunWith
 import scala.util.Properties
 
+@Ignore
 class BasicSuite extends FunSuite {
   override def isCI = true
   override def isFlakyFailureOk = true
