@@ -308,23 +308,26 @@ class MyCustomSuite extends funsuite.Suite {
 }
 ```
 
+The abstract `funsuite.Suite` class only includes the before/after APIs and not
+other methods like `assert` or `test()`.
+
 ### Customize evaluation of tests
 
-Override `funsuiteRunTest()` to extend the default behavior for how tests are
-executed. For example, use this feature to implement a `Retry(N)` modifier to
-evaluate the body multiple times.
+Override `funsuiteRunTest()` to extend the default behavior for how test bodies
+are evaluated. For example, use this feature to implement a `Rerun(N)` modifier
+to evaluate the body multiple times.
 
 ```scala
 import scala.util.Properties
-case class Retry(count: Int) extends Tag("Retry")
+case class Rerun(count: Int) extends Tag("Rerun")
 class MyWindowsSuite extends funsuite.FunSuite {
   override def funsuiteRunTest(options: TestOptions, body: => Any): Any = {
-    val retry = options.tags.collectFirst {
-      case Retry(n) => n
+    val rerunCount = options.tags.collectFirst {
+      case Rerun(n) => n
     }.getOrElse(1)
-    1.to(retry).map(_ => super.funsuiteRunTest(options, body))
+    1.to(rerunCount).map(_ => super.funsuiteRunTest(options, body))
   }
-  test("files", Retry(10)) {
+  test("files", Rerun(10)) {
     println("Hello") // will run 10 times
   }
   test("files") {
@@ -428,6 +431,3 @@ FunSuite is a new library with no stability guarantees. It's expected that new
 releases, including patch releases, will have binary and source breaking
 changes.
 
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md)

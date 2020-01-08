@@ -41,7 +41,7 @@ lazy val funsuite = project
   .settings(
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
-      "com.geirsson" % "junit-interface" % "0.11.4",
+      "com.geirsson" % "junit-interface" % "0.11.6",
       "com.lihaoyi" %% "sourcecode" % "0.1.9",
       "com.lihaoyi" %% "fansi" % fansiVersion.value,
       "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0",
