@@ -93,10 +93,10 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   }
 
   def runBeforeAll(notifier: RunNotifier): Boolean = {
-    runHiddenTest(notifier, "beforeAll", suite.beforeAll(new BeforeAll))
+    runHiddenTest(notifier, "beforeAll", suite.beforeAll())
   }
   def runAfterAll(notifier: RunNotifier): Boolean = {
-    runHiddenTest(notifier, "afterAll", suite.afterAll(new AfterAll))
+    runHiddenTest(notifier, "afterAll", suite.afterAll())
   }
 
   def runBeforeEach(notifier: RunNotifier, test: Test): Boolean = {

@@ -11,10 +11,10 @@ abstract class Suite {
   /** Runs once before all test cases.
     * An error in this method aborts the test suite.
     */
-  def beforeAll(context: BeforeAll): Unit = ()
+  def beforeAll(): Unit = ()
 
   /** Runs once after all test cases. */
-  def afterAll(context: AfterAll): Unit = ()
+  def afterAll(): Unit = ()
 
   /** Runs before each individual test case.
     * An error in this method aborts the test case.
