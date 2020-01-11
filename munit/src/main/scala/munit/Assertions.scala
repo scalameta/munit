@@ -1,0 +1,96 @@
+package munit
+
+import org.junit.AssumptionViolatedException
+
+object Assertions extends Assertions
+trait Assertions {
+
+  val munitLines = new Lines
+
+  def assert(cond: Boolean)(implicit loc: Location): Unit = {
+    StackTraces.dropInside {
+      assert(cond, "assertion failed")
+    }
+  }
+
+  def assert(
+      cond: Boolean,
+      details: => Any
+  )(implicit loc: Location): Unit = {
+    StackTraces.dropInside {
+      if (!cond) {
+        fail(munitLines.formatLine(loc, munitDetails(details)))
+      }
+    }
+  }
+
+  def assume(
+      cond: Boolean,
+      details: => Any
+  )(implicit loc: Location): Unit = {
+    StackTraces.dropInside {
+      if (!cond) {
+        throw new AssumptionViolatedException(munitDetails(details))
+      }
+    }
+  }
+
+  def assertNoDiff(
+      obtained: String,
+      expected: String,
+      details: => Any = "diff assertion failed"
+  )(implicit loc: Location): Unit = {
+    StackTraces.dropInside {
+      Diffs.assertNoDiff(
+        obtained,
+        expected,
+        munitLines.formatLine(loc, munitDetails(details)),
+        printObtainedAsStripMargin = false
+      )
+    }
+  }
+
+  def assertNotEqual[A, B](
+      obtained: A,
+      expected: B,
+      details: => Any = "values are the same"
+  )(implicit loc: Location, ev: A =:= B): Unit = {
+    StackTraces.dropInside {
+      if (obtained == expected) {
+        fail(munitDetails(details))
+      }
+    }
+  }
+
+  def assertEqual[A, B](
+      obtained: A,
+      expected: B,
+      details: => Any = "values are not the same"
+  )(implicit loc: Location, ev: A =:= B): Unit = {
+    StackTraces.dropInside {
+      if (obtained != expected) {
+        assertNoDiff(
+          munitDetails(obtained),
+          munitDetails(expected),
+          details
+        )
+      }
+    }
+  }
+
+  def fail(message: String)(implicit loc: Location): Nothing = {
+    throw new FailException(message, loc)
+  }
+
+  def munitDetails(details: => Any): String = {
+    details match {
+      case null            => "null"
+      case message: String => message
+      case value           => munitPrint(value)
+    }
+  }
+
+  def munitPrint(value: Any): String = {
+    Printers.print(value)
+  }
+}

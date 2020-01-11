@@ -4,7 +4,7 @@ def scala211 = "2.11.12"
 inThisBuild(
   List(
     organization := "org.scalameta",
-    homepage := Some(url("https://github.com/olafurpg/funsuite")),
+    homepage := Some(url("https://github.com/scalameta/munit")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
     ),
@@ -20,7 +20,7 @@ inThisBuild(
     crossScalaVersions := List(scala213, scala212, scala211),
     fork := true,
     testFrameworks := List(
-      new TestFramework("funsuite.Framework")
+      new TestFramework("munit.Framework")
     ),
     resolvers += Resolver.sonatypeRepo("public"),
     useSuperShell := false
@@ -38,7 +38,7 @@ lazy val pprintVersion = Def.setting[String] {
   else "0.5.7"
 }
 
-lazy val funsuite = project
+lazy val munit = project
   .settings(
     unmanagedSourceDirectories.in(Compile) ++= {
       scalaBinaryVersion.value match {
