@@ -18,13 +18,6 @@ inThisBuild(
     ),
     scalaVersion := scala213,
     crossScalaVersions := List(scala213, scala212, scala211),
-    scalacOptions ++= List(
-      "-target:jvm-1.8",
-      "-Yrangepos",
-      // -Xlint is unusable because of
-      // https://github.com/scala/bug/issues/10448
-      "-Ywarn-unused:imports"
-    ),
     fork := true,
     testFrameworks := List(
       new TestFramework("funsuite.Framework")
@@ -46,6 +39,31 @@ lazy val pprintVersion = Def.setting[String] {
 
 lazy val funsuite = project
   .settings(
+    unmanagedSourceDirectories.in(Compile) ++= {
+      scalaBinaryVersion.value match {
+        case "2.12" | "2.11" =>
+          List(sourceDirectory.in(Compile).value / "scala-pre-2.13")
+        case _ =>
+          Nil
+      }
+    },
+    scalacOptions ++= {
+      scalaBinaryVersion.value match {
+        case "2.11" =>
+          List(
+            "-Xexperimental",
+            "-Ywarn-unused-import"
+          )
+        case _ =>
+          List(
+            "-target:jvm-1.8",
+            "-Yrangepos",
+            // -Xlint is unusable because of
+            // https://github.com/scala/bug/issues/10448
+            "-Ywarn-unused:imports"
+          )
+      }
+    },
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
       "com.geirsson" % "junit-interface" % "0.11.6",

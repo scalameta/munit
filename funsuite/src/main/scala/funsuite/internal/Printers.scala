@@ -93,13 +93,16 @@ object Printers {
             if (it.isEmpty) out.append("empty iterator")
             else out.append("non-empty iterator")
           case p: Product =>
+            val elementNames = Compat.productElementNames(p)
+            val infiniteElementNames = Iterator.continually {
+              if (elementNames.hasNext) elementNames.next()
+              else ""
+            }
             printApply(
               p.productPrefix,
-              0.until(p.productArity).iterator.map { i =>
-                new ProductElementFunction(
-                  p.productElementName(i),
-                  p.productElement(i)
-                )
+              p.productIterator.zip(infiniteElementNames).map {
+                case (value, key) =>
+                  new ProductElementFunction(key, value)
               }
             )
           case _ =>

@@ -1,10 +1,18 @@
 package funsuite
 
 import funsuite.internal.Printers
+import scala.util.Properties
 
 class PrintersSuite extends FunSuite {
-  def check(name: String, original: Any, expected: String): Unit = {
+  val isScala213: Boolean = Properties.versionNumberString.startsWith("2.13")
+  def check(
+      name: String,
+      original: Any,
+      expected: String,
+      isEnabled: Boolean = true
+  ): Unit = {
     test(name) {
+      assume(isEnabled, "disabled test")
       val obtained = Printers.print(original)
       assertNoDiff(obtained, expected)
     }
@@ -91,7 +99,8 @@ class PrintersSuite extends FunSuite {
        |  age = 42,
        |  friends = List()
        |)
-       |""".stripMargin
+       |""".stripMargin,
+    isScala213
   )
 
   check(
@@ -108,6 +117,7 @@ class PrintersSuite extends FunSuite {
        |    )
        |  )
        |)
-       |""".stripMargin
+       |""".stripMargin,
+    isScala213
   )
 }
