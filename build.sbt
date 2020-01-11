@@ -69,8 +69,6 @@ lazy val funsuite = project
       "junit" % "junit" % "4.13",
       "com.geirsson" % "junit-interface" % "0.11.6",
       "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0",
-      "com.lihaoyi" %% "sourcecode" % "0.1.9",
-      "com.lihaoyi" %% "fansi" % fansiVersion.value,
-      "com.lihaoyi" %% "pprint" % pprintVersion.value
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
     )
   )

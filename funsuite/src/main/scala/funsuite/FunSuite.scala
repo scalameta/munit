@@ -77,10 +77,11 @@ abstract class FunSuite
   ): Any = {
     val result = scala.util.Try(body)
     if (result.isSuccess) {
-      fail(
-        funsuiteLines
-          .formatLine(options.loc, "expected failure but test passed")
+      val message = funsuiteLines.formatLine(
+        options.loc,
+        "expected failure but test passed"
       )
+      fail(message)(options.loc)
     }
   }
 

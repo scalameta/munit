@@ -73,7 +73,7 @@ object Diffs {
   }
 
   private def asStripMargin(obtained: String): String = {
-    if (!obtained.contains("\n")) pprint.tokenize(obtained).mkString
+    if (!obtained.contains("\n")) Printers.print(obtained)
     else {
       val out = new StringBuilder
       val lines = obtained.trim.linesIterator
