@@ -28,6 +28,10 @@ object Printers {
           case x: Float  => out.append(x.toString())
           case x: Double => out.append(x.toString())
           case x: String => printString(x, out)
+          case None =>
+            out.append("None")
+          case Nil =>
+            out.append("Nil")
           case x: Map[_, _] =>
             printApply(
               Compat.collectionClassName(x),
@@ -61,10 +65,6 @@ object Printers {
             ) { value =>
               loop(value, nextIndent)
             }
-          case None =>
-            out.append("None")
-          case Nil =>
-            out.append("Nil")
           case it: Iterator[_] =>
             if (it.isEmpty) out.append("empty iterator")
             else out.append("non-empty iterator")
