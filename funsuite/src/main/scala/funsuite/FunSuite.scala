@@ -1,18 +1,7 @@
 package funsuite
 
 import scala.collection.mutable
-import funsuite.internal.StackMarker
-import java.nio.file.Path
-import funsuite.internal.Lines
-import fansi.Str
-import java.nio.file.Paths
-import java.nio.file.Files
-import scala.util.control.NonFatal
-import scala.collection.JavaConverters._
-import fansi.Reversed
-import org.junit.Assert
 import scala.util.Try
-import fansi.Color
 import scala.util.Failure
 import scala.util.Success
 
@@ -20,6 +9,8 @@ abstract class FunSuite
     extends Suite
     with Assertions
     with TestOptionsConversions {
+
+  final type TestValue = Any
 
   val funsuiteTestsBuffer = mutable.ArrayBuffer.empty[Test]
 
@@ -40,43 +31,14 @@ abstract class FunSuite
   )(implicit loc: Location): Unit = {
     funsuiteTestsBuffer += new Test(
       options.name,
-      () => funsuiteRunTest(options, StackMarker.dropOutside(body)),
+      () => funsuiteRunTest(options, StackTraces.dropOutside(body)),
       options.tags.toSet,
       loc
     )
   }
 
   def isCI: Boolean = "true" == System.getenv("CI")
-
   def isFlakyFailureOk: Boolean = "true" == System.getenv("FUNSUITE_FLAKY_OK")
-
-  def funsuiteFlaky(
-      options: TestOptions,
-      body: => Any
-  ): Any = {
-    val result = Try(body)
-    result match {
-      case Success(value) => value
-      case Failure(exception) =>
-        if (isFlakyFailureOk) {
-          new FlakyFailure(exception)
-        } else {
-          throw exception
-        }
-    }
-  }
-
-  def funsuiteExpectFailure(
-      options: TestOptions,
-      body: => Any
-  ): Any = {
-    val result = scala.util.Try(body)
-    if (result.isSuccess) {
-      fail(
-        locatedDetails(options.loc, "expected failure but test passed").render
-      )
-    }
-  }
 
   def funsuiteRunTest(
       options: TestOptions,
@@ -90,6 +52,36 @@ abstract class FunSuite
       Ignore
     } else {
       body
+    }
+  }
+
+  def funsuiteFlaky(
+      options: TestOptions,
+      body: => Any
+  ): Any = {
+    val result = Try(body)
+    result match {
+      case Success(value) => value
+      case Failure(exception) =>
+        if (isFlakyFailureOk) {
+          new TestValues.FlakyFailure(exception)
+        } else {
+          throw exception
+        }
+    }
+  }
+
+  def funsuiteExpectFailure(
+      options: TestOptions,
+      body: => Any
+  ): Any = {
+    val result = scala.util.Try(body)
+    if (result.isSuccess) {
+      val message = funsuiteLines.formatLine(
+        options.loc,
+        "expected failure but test passed"
+      )
+      fail(message)(options.loc)
     }
   }
 

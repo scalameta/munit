@@ -2,10 +2,6 @@ package funsuite
 
 import sbt.testing.Fingerprint
 
-import sbt.testing.Runner
-import sbt.testing.SubclassFingerprint
-import java.{util => ju}
-import scala.util.control.NonFatal
 import com.geirsson.junit.CustomFingerprint
 import com.geirsson.junit.CustomRunners
 

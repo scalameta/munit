@@ -5,14 +5,9 @@ import org.junit.runner.notification.RunNotifier
 import java.lang.reflect.Modifier
 import org.junit.runner.notification.Failure
 import scala.util.control.NonFatal
-import java.{util => ju}
-import fansi.ErrorMode.Throw
-import funsuite.internal.StackMarker
 import org.junit.AssumptionViolatedException
-import fansi.Color
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
-import org.junit.runner.manipulation.NoTestsRemainException
 import org.junit.runner.Runner
 
 class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
@@ -28,20 +23,20 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
     this.filter = filter
   }
 
-  def createTestDescription(test: Test): Description = {
+  def createTestDescription(test: suite.Test): Description = {
     Description.createTestDescription(cls, test.name, test.location)
   }
 
   override def getDescription(): Description = {
     val description = Description.createSuiteDescription(cls)
     try {
-      val suiteTests = StackMarker.dropOutside(suite.funsuiteTests())
+      val suiteTests = StackTraces.dropOutside(suite.funsuiteTests())
       suiteTests.foreach { test =>
         description.addChild(createTestDescription(test))
       }
     } catch {
       case ex: Throwable =>
-        StackMarker.trimStackTrace(ex)
+        StackTraces.trimStackTrace(ex)
         // Print to stdout because we don't have access to a RunNotifier
         ex.printStackTrace()
         Nil
@@ -71,7 +66,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
       thunk: => Unit
   ): Boolean = {
     try {
-      StackMarker.dropOutside(thunk)
+      StackTraces.dropOutside(thunk)
       true
     } catch {
       case ex: Throwable =>
@@ -87,7 +82,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   ): Unit = {
     val description = Description.createTestDescription(cls, name)
     notifier.fireTestStarted(description)
-    StackMarker.trimStackTrace(ex)
+    StackTraces.trimStackTrace(ex)
     notifier.fireTestFailure(new Failure(suiteDescription, ex))
     notifier.fireTestFinished(description)
   }
@@ -99,22 +94,31 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
     runHiddenTest(notifier, "afterAll", suite.afterAll())
   }
 
-  def runBeforeEach(notifier: RunNotifier, test: Test): Boolean = {
+  def runBeforeEach(
+      notifier: RunNotifier,
+      test: suite.Test
+  ): Boolean = {
     runHiddenTest(
       notifier,
       s"beforeEach.${test.name}",
-      suite.beforeEach(new BeforeEach(test))
+      suite.beforeEach(new GenericBeforeEach(test))
     )
   }
-  def runAfterEach(notifier: RunNotifier, test: Test): Boolean = {
+  def runAfterEach(
+      notifier: RunNotifier,
+      test: suite.Test
+  ): Boolean = {
     runHiddenTest(
       notifier,
       s"afterEach.${test.name}",
-      suite.afterEach(new AfterEach(test))
+      suite.afterEach(new GenericAfterEach(test))
     )
   }
 
-  def runTest(notifier: RunNotifier, test: Test): Unit = {
+  def runTest(
+      notifier: RunNotifier,
+      test: suite.Test
+  ): Unit = {
     val description = createTestDescription(test)
     if (!filter.shouldRun(description)) {
       return
@@ -123,18 +127,18 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
     if (isContinue) {
       notifier.fireTestStarted(description)
       try {
-        StackMarker.dropOutside(test.body()) match {
-          case f: FlakyFailure =>
+        StackTraces.dropOutside(test.body()) match {
+          case f: TestValues.FlakyFailure =>
             notifier.fireTestAssumptionFailed(new Failure(description, f))
-          case Ignore =>
+          case TestValues.Ignore =>
             notifier.fireTestIgnored(description)
           case _ =>
         }
       } catch {
         case ex: AssumptionViolatedException =>
-          StackMarker.trimStackTrace(ex)
+          StackTraces.trimStackTrace(ex)
         case NonFatal(ex) =>
-          StackMarker.trimStackTrace(ex)
+          StackTraces.trimStackTrace(ex)
           val failure = new Failure(description, ex)
           ex match {
             case _: AssumptionViolatedException =>

@@ -1,18 +1,14 @@
 package funsuite
 
-import funsuite.internal.StackMarker
-import fansi.Str
-import funsuite.internal.Lines
-import funsuite.internal.Diffs
 import org.junit.AssumptionViolatedException
 
 object Assertions extends Assertions
 trait Assertions {
 
-  private[funsuite] val lines = new Lines
+  val funsuiteLines = new Lines
 
   def assert(cond: Boolean)(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       assert(cond, "assertion failed")
     }
   }
@@ -21,9 +17,9 @@ trait Assertions {
       cond: Boolean,
       details: => Any
   )(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       if (!cond) {
-        fail(locatedDetails(loc, details).render)
+        fail(funsuiteLines.formatLine(loc, funsuiteDetails(details)))
       }
     }
   }
@@ -32,9 +28,9 @@ trait Assertions {
       cond: Boolean,
       details: => Any
   )(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       if (!cond) {
-        throw new AssumptionViolatedException(detailsFromAny(details).render)
+        throw new AssumptionViolatedException(funsuiteDetails(details))
       }
     }
   }
@@ -44,12 +40,25 @@ trait Assertions {
       expected: String,
       details: => Any = "diff assertion failed"
   )(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       Diffs.assertNoDiff(
         obtained,
         expected,
-        locatedDetails(loc, details).render
+        funsuiteLines.formatLine(loc, funsuiteDetails(details)),
+        printObtainedAsStripMargin = false
       )
+    }
+  }
+
+  def assertNotEqual[A, B](
+      obtained: A,
+      expected: B,
+      details: => Any = "values are the same"
+  )(implicit loc: Location, ev: A =:= B): Unit = {
+    StackTraces.dropInside {
+      if (obtained == expected) {
+        fail(funsuiteDetails(details))
+      }
     }
   }
 
@@ -58,35 +67,30 @@ trait Assertions {
       expected: B,
       details: => Any = "values are not the same"
   )(implicit loc: Location, ev: A =:= B): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       if (obtained != expected) {
-        fail(
-          locatedDetails(
-            loc,
-            s"Obtained $obtained did not equal expected $expected"
-          ).render
+        assertNoDiff(
+          funsuiteDetails(obtained),
+          funsuiteDetails(expected),
+          details
         )
       }
     }
   }
 
-  def fail(message: String)(implicit loc: Location): Nothing =
+  def fail(message: String)(implicit loc: Location): Nothing = {
     throw new FailException(message, loc)
+  }
 
-  def locatedDetails(loc: Location, details: => Any): Str =
-    lines.formatLine(loc, detailsFromAny(details))
-
-  private def detailsFromAny(details: => Any): Str = {
+  def funsuiteDetails(details: => Any): String = {
     details match {
-      case null            => Str("null")
-      case message: String => Str(message)
-      case value           => prettyPrint(value)
+      case null            => "null"
+      case message: String => message
+      case value           => funsuitePrint(value)
     }
   }
 
-  private def prettyPrint(value: Any, width: Int = 40): Str = {
-    Str.join(
-      pprint.PPrinter.BlackWhite.tokenize(value, width = width).toSeq: _*
-    )
+  def funsuitePrint(value: Any): String = {
+    Printers.print(value)
   }
 }

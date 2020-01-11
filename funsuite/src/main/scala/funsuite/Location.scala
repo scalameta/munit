@@ -1,7 +1,9 @@
 package funsuite
 
+import scala.language.experimental.macros
 import java.lang.annotation.Annotation
 import java.io.File
+import scala.reflect.macros.whitebox.Context
 
 class Location(
     val path: String,
@@ -17,11 +19,11 @@ class Location(
 }
 
 object Location {
-  implicit def generate(
-      implicit
-      filename: sourcecode.File,
-      line: sourcecode.Line
-  ): Location = {
-    new Location(filename.value, line.value)
+  implicit def generate: Location = macro impl
+  def impl(c: Context): c.Tree = {
+    import c.universe._
+    val line = Literal(Constant(c.enclosingPosition.line))
+    val path = Literal(Constant(c.enclosingPosition.source.path))
+    New(typeOf[Location], path, line)
   }
 }
