@@ -34,7 +34,7 @@ trait Assertions {
   )(implicit loc: Location): Unit = {
     StackMarker.dropInside {
       if (!cond) {
-        throw new AssumptionViolatedException(detailsFromAny(details).render)
+        throw new AssumptionViolatedException(detailsFromAny(details))
       }
     }
   }
@@ -48,8 +48,21 @@ trait Assertions {
       Diffs.assertNoDiff(
         obtained,
         expected,
-        locatedDetails(loc, details).render
+        locatedDetails(loc, details).render,
+        printObtainedAsStripMargin = false
       )
+    }
+  }
+
+  def assertNotEqual[A, B](
+      obtained: A,
+      expected: B,
+      details: => Any = "values are the same"
+  )(implicit loc: Location, ev: A =:= B): Unit = {
+    StackMarker.dropInside {
+      if (obtained == expected) {
+        fail(detailsFromAny(details))
+      }
     }
   }
 
@@ -61,14 +74,9 @@ trait Assertions {
     StackMarker.dropInside {
       if (obtained != expected) {
         assertNoDiff(
-          prettyPrint(obtained),
-          prettyPrint(expected)
-        )
-        fail(
-          locatedDetails(
-            loc,
-            s"Obtained $obtained did not equal expected $expected"
-          ).render
+          detailsFromAny(obtained),
+          detailsFromAny(expected),
+          details
         )
       }
     }
@@ -80,10 +88,10 @@ trait Assertions {
   def locatedDetails(loc: Location, details: => Any): Str =
     lines.formatLine(loc, detailsFromAny(details))
 
-  private def detailsFromAny(details: => Any): Str = {
+  private def detailsFromAny(details: => Any): String = {
     details match {
-      case null            => Str("null")
-      case message: String => Str(message)
+      case null            => "null"
+      case message: String => message
       case value           => prettyPrint(value)
     }
   }

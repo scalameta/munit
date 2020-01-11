@@ -22,7 +22,8 @@ inThisBuild(
     testFrameworks := List(
       new TestFramework("funsuite.Framework")
     ),
-    resolvers += Resolver.sonatypeRepo("public")
+    resolvers += Resolver.sonatypeRepo("public"),
+    useSuperShell := false
   )
 )
 

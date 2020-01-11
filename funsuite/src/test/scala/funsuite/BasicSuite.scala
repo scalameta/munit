@@ -1,6 +1,6 @@
 package funsuite
 
-@Ignore
+// @Ignore
 class BasicSuite extends FunSuite {
   override def isCI = true
   override def isFlakyFailureOk = true

@@ -9,39 +9,22 @@ import fansi.Bold
 
 object Diffs {
 
-  def assertNoDiffOrPrintExpected(
-      obtained: String,
-      expected: String,
-      title: String = ""
-  )(implicit loc: Location): Boolean = {
-    try assertNoDiff(obtained, expected, title)
-    catch {
-      case ex: Exception =>
-        obtained.linesIterator.toList match {
-          case head +: tail =>
-            println("    \"\"\"|" + head)
-            tail.foreach(line => println("       |" + line))
-            println("       |\"\"\".stripMargin" + head)
-          case head +: Nil =>
-            println(head)
-          case Nil =>
-            println("obtained is empty")
-        }
-        throw ex
-    }
-  }
-
   def assertNoDiff(
       obtained: String,
       expected: String,
-      title: String = ""
+      title: String = "",
+      printObtainedAsStripMargin: Boolean = true
   )(implicit loc: Location): Boolean = {
     if (obtained.isEmpty && !expected.isEmpty) {
       Assertions.fail("Obtained empty output!")
     }
-    val result = compareContents(obtained, expected)
+    val result = unifiedDiff(obtained, expected)
     if (result.isEmpty) true
-    else Assertions.fail(createDiff(obtained, expected, title))
+    else {
+      Assertions.fail(
+        createDiff(obtained, expected, title, printObtainedAsStripMargin)
+      )
+    }
   }
 
   def createDiffOnly(
@@ -52,6 +35,7 @@ object Diffs {
     createDiffOnly(obtained, expected, out)
     out.toString()
   }
+
   private def createDiffOnly(
       obtained: String,
       expected: String,
@@ -69,9 +53,15 @@ object Diffs {
         .render,
       sb
     )
-    sb.append(stripTrailingWhitespace(compareContents(obtained, expected)))
+    sb.append(stripTrailingWhitespace(unifiedDiff(obtained, expected)))
   }
-  def createDiff(obtained: String, expected: String, title: String): String = {
+
+  def createDiff(
+      obtained: String,
+      expected: String,
+      title: String,
+      printObtainedAsStripMargin: Boolean = true
+  ): String = {
     val sb = new StringBuilder
     if (title.nonEmpty) {
       sb.append(title)
@@ -79,8 +69,12 @@ object Diffs {
     }
     if (obtained.length < 1000) {
       header("Obtained", sb)
-      sb.append(asStripMargin(obtained))
-        .append("\n")
+      if (printObtainedAsStripMargin) {
+        sb.append(asStripMargin(obtained))
+      } else {
+        sb.append(obtained)
+      }
+      sb.append("\n")
     }
     createDiffOnly(obtained, expected, sb)
     sb.toString()
@@ -103,16 +97,16 @@ object Diffs {
     }
   }
 
-  private def stripTrailingWhitespace(str: String): String =
+  def stripTrailingWhitespace(str: String): String =
     str.replaceAll(" \n", "∙\n")
 
-  private def splitIntoLines(string: String): Seq[String] =
+  def splitIntoLines(string: String): Seq[String] =
     string.trim.replace("\r\n", "\n").split("\n")
 
-  private def compareContents(original: String, revised: String): String =
-    compareContents(splitIntoLines(original), splitIntoLines(revised))
+  def unifiedDiff(original: String, revised: String): String =
+    unifiedDiff(splitIntoLines(original), splitIntoLines(revised))
 
-  private def compareContents(
+  def unifiedDiff(
       original: Seq[String],
       revised: Seq[String]
   ): String = {

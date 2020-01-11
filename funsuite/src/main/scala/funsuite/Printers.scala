@@ -124,6 +124,7 @@ object Printers {
       i += 1
     }
   }
+
   private def printString(string: String, out: StringBuilder): Unit = {
     val isMultiline = string.contains('\n')
     if (isMultiline) {
