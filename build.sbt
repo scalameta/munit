@@ -3,7 +3,7 @@ def scala212 = "2.12.10"
 def scala211 = "2.11.12"
 inThisBuild(
   List(
-    organization := "com.geirsson",
+    organization := "org.scalameta",
     homepage := Some(url("https://github.com/olafurpg/funsuite")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
