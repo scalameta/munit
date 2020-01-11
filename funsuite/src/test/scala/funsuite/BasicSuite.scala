@@ -14,7 +14,7 @@ class BasicSuite extends FunSuite {
   test("fail") {
     Thread.sleep(1000)
   }
-  test("ignore".ignore) {
+  test("ignore") {
     ???
   }
   test("assume") {

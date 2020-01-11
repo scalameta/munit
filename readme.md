@@ -10,6 +10,9 @@ FunSuite is a Scala testing library with the following goals:
   help you quickly understand what caused a test failure. FunSuite tries to
   displays diffs and source locations when possible and it does a best-effort to
   highlight relevant stack trace elements.
+- **No Scala dependencies**: FunSuite is implemented in ~1k lines of Scala code
+  with no external Scala dependencies. The transitive Java dependencies weigh in
+  total ~500kb, which is mostly just JUnit.
 
 **Table of contents**
 
@@ -39,7 +42,6 @@ FunSuite is a Scala testing library with the following goals:
 - [Do we really need another testing library?](#do-we-really-need-another-testing-library)
 - [Coming from ScalaTest](#coming-from-scalatest)
 - [Stability](#stability)
-- [Changelog](#changelog)
 
 <!-- /TOC -->
 
@@ -268,21 +270,20 @@ a browser. Search for "==> X" to quickly navigate to the failed tests.
 
 ### Running tests in IntelliJ
 
-Add a `@RunWith(classOf[FunSuiteRunner])` annotation to run tests from IntelliJ.
+FunSuite test suites run in IntelliJ like normal.
+
+![Running FunSuite from IntelliJ](https://i.imgur.com/oAA2ZeQ.png)
+
+It's expected that it's not possible to run individual test cases from IntelliJ
+since it does not understand the structure of the `test("name") {...}` syntax.
+As a workaround, use the `.only` marker to run only a single test from IntelliJ.
 
 ```diff
-  import funsuite._
-+ import org.junit.runner.RunWith
-+ @RunWith(classOf[FunSuiteRunner])
-  class MySuite extends funsuite.FunSuite {
+- test("name") {
++ test("name".only) {
     // ...
   }
 ```
-
-This annotation is needed for IntelliJ to understand that the class is a test
-suite. When running tests in sbt, the annotation is not needed because the
-configured `funsuite.Framework` understands that subclasses of `funsuite.Suite`
-should run with `funsuite.FunSuiteRunner`.
 
 ## Tests as values
 
@@ -297,12 +298,16 @@ want to run.
 
 ```scala
 class MyCustomSuite extends funsuite.Suite {
+  // The type returned by bodies of test cases.
+  // Is defined as `Any` in `funsuite.FunSuite` but it's abstract in `funsuite.Suite`
+  override type TestValue = Future[String]
   override def funsuiteTests() = List(
     new Test(
       "name",
-      body = () => println("Hello world!"),
+      // compile error if it's not a Future[String]
+      body = () => Future.successful("Hello world!"),
       tags = Set.empty[Tag],
-      location = Location.generate()
+      location = Location.generate
     )
   )
 }
@@ -430,4 +435,3 @@ use basic ScalaTest features, you should be able to replace usage of
 FunSuite is a new library with no stability guarantees. It's expected that new
 releases, including patch releases, will have binary and source breaking
 changes.
-
