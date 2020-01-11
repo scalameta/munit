@@ -96,7 +96,7 @@ class PrintersSuite extends FunSuite {
     """|User(
        |  name = "John",
        |  age = 42,
-       |  friends = List()
+       |  friends = Nil
        |)
        |""".stripMargin,
     isScala213
@@ -112,7 +112,7 @@ class PrintersSuite extends FunSuite {
        |    User(
        |      name = "Susan",
        |      age = 43,
-       |      friends = List()
+       |      friends = Nil
        |    )
        |  )
        |)

@@ -1,10 +1,8 @@
 package funsuite.internal
 
 object Compat {
-  def productElementNames(p: Product): Iterator[String] = {
-    val cls = p.getClass()
+  def productElementNames(p: Product): Iterator[String] =
     Iterator.continually("")
-  }
   def collectionClassName(i: Iterable[_]): String =
     i.stringPrefix
 }

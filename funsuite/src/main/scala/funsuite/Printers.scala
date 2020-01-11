@@ -5,6 +5,8 @@ import scala.annotation.switch
 import funsuite.internal.Compat
 
 object Printers {
+
+  /** Pretty-prints the value in a format that's optimized for producing diffs */
   def print(any: Any, printer: Printer = EmptyPrinter): String = {
     val out = new StringBuilder()
     val indentStep = 2
@@ -61,6 +63,8 @@ object Printers {
             }
           case None =>
             out.append("None")
+          case Nil =>
+            out.append("Nil")
           case it: Iterator[_] =>
             if (it.isEmpty) out.append("empty iterator")
             else out.append("non-empty iterator")
@@ -163,4 +167,5 @@ object Printers {
           sb.append("\\u%04x" format c.toInt)
         else sb.append(c)
     }
+
 }

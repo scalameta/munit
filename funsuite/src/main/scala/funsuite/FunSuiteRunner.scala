@@ -23,7 +23,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
     this.filter = filter
   }
 
-  def createTestDescription(test: GenericTest[suite.TestValue]): Description = {
+  def createTestDescription(test: suite.Test): Description = {
     Description.createTestDescription(cls, test.name, test.location)
   }
 
@@ -96,7 +96,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
 
   def runBeforeEach(
       notifier: RunNotifier,
-      test: GenericTest[suite.TestValue]
+      test: suite.Test
   ): Boolean = {
     runHiddenTest(
       notifier,
@@ -106,7 +106,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   }
   def runAfterEach(
       notifier: RunNotifier,
-      test: GenericTest[suite.TestValue]
+      test: suite.Test
   ): Boolean = {
     runHiddenTest(
       notifier,
@@ -117,7 +117,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
 
   def runTest(
       notifier: RunNotifier,
-      test: GenericTest[suite.TestValue]
+      test: suite.Test
   ): Unit = {
     val description = createTestDescription(test)
     if (!filter.shouldRun(description)) {
