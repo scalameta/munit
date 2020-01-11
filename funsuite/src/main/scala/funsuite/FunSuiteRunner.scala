@@ -159,7 +159,6 @@ class FunSuiteRunner[T](cls: Class[_ <: Suite]) extends Runner with Filterable {
       notifier.fireTestIgnored(suiteDescription)
       return
     }
-    pprint.log(suite)
     try {
       val isContinue = runBeforeAll(notifier)
       if (isContinue) {

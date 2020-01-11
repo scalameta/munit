@@ -9,45 +9,6 @@ object Printers {
     val indentStep = 2
     def loop(a: Any, indent: Int): Unit = {
       val nextIndent = indent + indentStep
-      class IterableFunction(value: Any) extends Function0[Unit] {
-        override def apply(): Unit = {
-          loop(value, nextIndent)
-        }
-      }
-      class MapFunction(key: Any, value: Any) extends Function0[Unit] {
-        override def apply(): Unit = {
-          loop(key, nextIndent)
-          out.append(" -> ")
-          loop(value, nextIndent)
-        }
-      }
-      class ProductElementFunction(key: String, value: Any)
-          extends Function0[Unit] {
-        override def apply(): Unit = {
-          if (key.nonEmpty) {
-            out.append(key).append(" = ")
-          }
-          loop(value, nextIndent)
-        }
-      }
-      def printApply(prefix: String, it: Iterator[() => Unit]): Unit = {
-        out.append(prefix)
-        out.append('(')
-        if (it.hasNext) {
-          printNewline(out, nextIndent)
-          while (it.hasNext) {
-            val fn = it.next()
-            fn()
-            if (it.hasNext) {
-              out.append(',')
-              printNewline(out, nextIndent)
-            } else {
-              printNewline(out, indent)
-            }
-          }
-        }
-        out.append(')')
-      }
       val isDone = printer.print(a, out, indent)
       if (!isDone) {
         a match {
@@ -67,17 +28,36 @@ object Printers {
           case x: Map[_, _] =>
             printApply(
               Compat.collectionClassName(x),
-              x.iterator.map {
-                case (key, value) => new MapFunction(key, value)
-              }
-            )
+              x.iterator,
+              out,
+              indent,
+              nextIndent
+            ) {
+              case (key, value) =>
+                loop(key, nextIndent)
+                out.append(" -> ")
+                loop(value, nextIndent)
+            }
           case x: Iterable[_] =>
             printApply(
               Compat.collectionClassName(x),
-              x.iterator.map(new IterableFunction(_))
-            )
+              x.iterator,
+              out,
+              indent,
+              nextIndent
+            ) { value =>
+              loop(value, nextIndent)
+            }
           case x: Array[_] =>
-            printApply("Array", x.iterator.map(new IterableFunction(_)))
+            printApply(
+              "Array",
+              x.iterator,
+              out,
+              indent,
+              nextIndent
+            ) { value =>
+              loop(value, nextIndent)
+            }
           case None =>
             out.append("None")
           case it: Iterator[_] =>
@@ -91,11 +71,17 @@ object Printers {
             }
             printApply(
               p.productPrefix,
-              p.productIterator.zip(infiniteElementNames).map {
-                case (value, key) =>
-                  new ProductElementFunction(key, value)
-              }
-            )
+              p.productIterator.zip(infiniteElementNames),
+              out,
+              indent,
+              nextIndent
+            ) {
+              case (value, key) =>
+                if (key.nonEmpty) {
+                  out.append(key).append(" = ")
+                }
+                loop(value, nextIndent)
+            }
           case _ =>
             out.append(any.toString())
         }
@@ -103,6 +89,31 @@ object Printers {
     }
     loop(any, indent = 0)
     out.toString()
+  }
+
+  private def printApply[T](
+      prefix: String,
+      it: Iterator[T],
+      out: StringBuilder,
+      indent: Int,
+      nextIndent: Int
+  )(fn: T => Unit): Unit = {
+    out.append(prefix)
+    out.append('(')
+    if (it.hasNext) {
+      printNewline(out, nextIndent)
+      while (it.hasNext) {
+        val value = it.next()
+        fn(value)
+        if (it.hasNext) {
+          out.append(',')
+          printNewline(out, nextIndent)
+        } else {
+          printNewline(out, indent)
+        }
+      }
+    }
+    out.append(')')
   }
 
   private def printNewline(out: StringBuilder, indent: Int): Unit = {
@@ -150,5 +161,4 @@ object Printers {
           sb.append("\\u%04x" format c.toInt)
         else sb.append(c)
     }
-
 }
