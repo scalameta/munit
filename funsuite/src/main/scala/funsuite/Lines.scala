@@ -3,11 +3,8 @@ package funsuite
 import scala.collection.mutable
 import java.nio.file.Path
 import java.nio.file.Paths
-import fansi.Str
 import java.nio.file.Files
 import scala.util.control.NonFatal
-import fansi.Bold
-import fansi.Reversed
 import scala.collection.JavaConverters._
 
 class Lines {
@@ -20,25 +17,26 @@ class Lines {
         Files.readAllLines(path).asScala.toArray
       })
       val slice = lines.slice(location.line - 2, location.line + 1)
+      val out = new StringBuilder()
       if (slice.length == 3) {
-        Str
-          .join(
-            location.path,
-            ":",
-            location.line.toString(),
-            if (message.length == 0) "" else " ",
-            message,
-            "\n",
-            Bold.Off(s"${location.line - 1}: ${slice(0)}"),
-            "\n",
-            Reversed.On(s"${location.line}: ${slice(1)}"),
-            "\n",
-            Bold.Off(s"${location.line + 1}: ${slice(2)}")
-          )
-          .render
-      } else {
-        ""
+        out
+          .append(location.path)
+          .append(':')
+          .append(location.line.toString())
+          .append(if (message.length == 0) "" else " ")
+          .append(message)
+          .append('\n')
+          .append(s"${location.line - 1}: ${slice(0)}")
+          .append('\n')
+          .append(AnsiColors.Reversed)
+          .append(location.line.toString())
+          .append(": ")
+          .append(slice(1))
+          .append(AnsiColors.Reset)
+          .append('\n')
+          .append(s"${location.line + 1}: ${slice(2)}")
       }
+      out.toString()
     } catch {
       case NonFatal(_) =>
         ""

@@ -1,9 +1,6 @@
 package funsuite
 
 import collection.JavaConverters._
-import fansi.Str
-import fansi.Color
-import fansi.Bold
 
 object Diffs {
 
@@ -39,18 +36,11 @@ object Diffs {
       expected: String,
       sb: StringBuilder
   ): Unit = {
-    header(
-      Str
-        .join(
-          "Diff (",
-          Color.LightRed("- obtained"),
-          ", ",
-          Color.LightGreen("+ expected"),
-          ")"
-        )
-        .render,
-      sb
-    )
+    header("Diff", sb)
+    sb.append(
+        s" (${AnsiColors.LightRed}- obtained${AnsiColors.Reset}, ${AnsiColors.LightGreen}+ expected${AnsiColors.Reset})"
+      )
+      .append("\n")
     sb.append(stripTrailingWhitespace(unifiedDiff(obtained, expected)))
   }
 
@@ -66,7 +56,7 @@ object Diffs {
         .append("\n")
     }
     if (obtained.length < 1000) {
-      header("Obtained", sb)
+      header("Obtained", sb).append("\n")
       if (printObtainedAsStripMargin) {
         sb.append(asStripMargin(obtained))
       } else {
@@ -78,9 +68,8 @@ object Diffs {
     sb.toString()
   }
 
-  private def header(t: String, sb: StringBuilder): Unit = {
-    sb.append(Bold.On(s"=> $t"))
-      .append("\n")
+  private def header(t: String, sb: StringBuilder): StringBuilder = {
+    sb.append(AnsiColors(s"=> $t", AnsiColors.Bold))
   }
 
   private def asStripMargin(obtained: String): String = {
@@ -124,8 +113,8 @@ object Diffs {
         .drop(2)
         .filterNot(_.startsWith("@@"))
         .map { line =>
-          if (line.startsWith("-")) Color.LightRed(line).render
-          else if (line.startsWith("+")) Color.LightGreen(line).render
+          if (line.startsWith("-")) AnsiColors(line, AnsiColors.LightRed)
+          else if (line.startsWith("+")) AnsiColors(line, AnsiColors.LightGreen)
           else line
         }
         .mkString("\n")
