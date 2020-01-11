@@ -1,16 +1,7 @@
-package funsuite.internal
+package funsuite
 
 import scala.annotation.switch
-
-trait Printable {
-  def print(out: StringBuilder, indent: Int): Unit
-}
-trait Printer {
-  def print(value: Any, out: StringBuilder, indent: Int): Boolean
-}
-object EmptyPrinter extends Printer {
-  def print(value: Any, out: StringBuilder, indent: Int): Boolean = false
-}
+import funsuite.internal.Compat
 
 object Printers {
   def print(any: Any, printer: Printer = EmptyPrinter): String = {

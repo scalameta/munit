@@ -1,9 +1,9 @@
 package funsuite
 
-class BeforeEach(
-    val test: Test
+class GenericBeforeEach[T](
+    val test: GenericTest[T]
 )
 
-class AfterEach(
-    val test: Test
+class GenericAfterEach[T](
+    val test: GenericTest[T]
 )

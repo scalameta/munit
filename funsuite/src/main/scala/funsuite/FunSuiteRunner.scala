@@ -11,7 +11,7 @@ import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.Runner
 
-class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
+class FunSuiteRunner[T](cls: Class[_ <: Suite]) extends Runner with Filterable {
   require(
     hasEligibleConstructor(),
     s"Class '${cls.getCanonicalName()}' is missing a public empty argument constructor"
@@ -24,7 +24,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
     this.filter = filter
   }
 
-  def createTestDescription(test: Test): Description = {
+  def createTestDescription(test: GenericTest[suite.TestValue]): Description = {
     Description.createTestDescription(cls, test.name, test.location)
   }
 
@@ -95,22 +95,31 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
     runHiddenTest(notifier, "afterAll", suite.afterAll())
   }
 
-  def runBeforeEach(notifier: RunNotifier, test: Test): Boolean = {
+  def runBeforeEach(
+      notifier: RunNotifier,
+      test: GenericTest[suite.TestValue]
+  ): Boolean = {
     runHiddenTest(
       notifier,
       s"beforeEach.${test.name}",
-      suite.beforeEach(new BeforeEach(test))
+      suite.beforeEach(new GenericBeforeEach(test))
     )
   }
-  def runAfterEach(notifier: RunNotifier, test: Test): Boolean = {
+  def runAfterEach(
+      notifier: RunNotifier,
+      test: GenericTest[suite.TestValue]
+  ): Boolean = {
     runHiddenTest(
       notifier,
       s"afterEach.${test.name}",
-      suite.afterEach(new AfterEach(test))
+      suite.afterEach(new GenericAfterEach(test))
     )
   }
 
-  def runTest(notifier: RunNotifier, test: Test): Unit = {
+  def runTest(
+      notifier: RunNotifier,
+      test: GenericTest[suite.TestValue]
+  ): Unit = {
     val description = createTestDescription(test)
     if (!filter.shouldRun(description)) {
       return
@@ -150,6 +159,7 @@ class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
       notifier.fireTestIgnored(suiteDescription)
       return
     }
+    pprint.log(suite)
     try {
       val isContinue = runBeforeAll(notifier)
       if (isContinue) {

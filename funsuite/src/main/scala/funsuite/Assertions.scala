@@ -60,6 +60,10 @@ trait Assertions {
   )(implicit loc: Location, ev: A =:= B): Unit = {
     StackMarker.dropInside {
       if (obtained != expected) {
+        assertNoDiff(
+          prettyPrint(obtained),
+          prettyPrint(expected)
+        )
         fail(
           locatedDetails(
             loc,
@@ -84,9 +88,7 @@ trait Assertions {
     }
   }
 
-  private def prettyPrint(value: Any, width: Int = 40): Str = {
-    Str.join(
-      pprint.PPrinter.BlackWhite.tokenize(value, width = width).toSeq: _*
-    )
+  private def prettyPrint(value: Any): String = {
+    Printers.print(value)
   }
 }

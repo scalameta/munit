@@ -1,6 +1,5 @@
 package funsuite
 
-import funsuite.internal.Printers
 import scala.util.Properties
 
 class PrintersSuite extends FunSuite {

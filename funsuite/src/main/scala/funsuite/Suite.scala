@@ -5,6 +5,12 @@ package funsuite
   */
 abstract class Suite {
 
+  /** The value produced by test bodies. */
+  type TestValue
+  final type Test = GenericTest[TestValue]
+  final type BeforeEach = GenericBeforeEach[TestValue]
+  final type AfterEach = GenericAfterEach[TestValue]
+
   /** The base class for all test suites */
   def funsuiteTests(): Seq[Test]
 

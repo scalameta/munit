@@ -11,6 +11,8 @@ abstract class FunSuite
     with Assertions
     with TestOptionsConversions {
 
+  final type TestValue = Any
+
   val funsuiteTestsBuffer = mutable.ArrayBuffer.empty[Test]
 
   def funsuiteTests(): Seq[Test] = {

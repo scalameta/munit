@@ -28,11 +28,10 @@ class BasicSuite extends FunSuite {
     }
     assertNoDiff()
   }
-  case class User(name: String, age: Int, zips: List[Int])
+  case class User(name: String, age: Int, friends: List[Int])
   test("pass") {
-    val john = User("John", 42, 1.to(10).toList)
-    val john2 = User("John", 43, 2.to(10).toList)
-    assertEqual(42, 53)
+    val john = User("John", 42, 1.to(4).toList)
+    val john2 = User("John", 43, 2.to(5).toList)
     assertEqual(john2, john)
   }
 
