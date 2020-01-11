@@ -46,11 +46,11 @@ MUnit is a Scala testing library with the following goals:
 
 ## Getting started
 
-![Badge with version of the latest release](https://img.shields.io/maven-central/v/com.geirsson/munit_2.13?style=for-the-badge)
+![Badge with version of the latest release](https://img.shields.io/maven-central/v/org.scalameta/munit_2.13?style=for-the-badge)
 
 ```scala
 // Published for 2.11, 2.12 and 2.13. JVM-only.
-libraryDependencies += "com.geirsson" %% "munit" % "VERSION"
+libraryDependencies += "org.scalameta" %% "munit" % "VERSION"
 testFrameworks += new TestFramework("munit.Framework")
 ```
 
