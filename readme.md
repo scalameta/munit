@@ -26,11 +26,11 @@ FunSuite is a Scala testing library with the following goals:
 - [Usage](#usage)
   - [Running logic before and after tests](#running-logic-before-and-after-tests)
   - [Skip test based on dynamic conditions](#skip-test-based-on-dynamic-conditions)
-  - [Tag flaky tests](#tag-flaky-tests)
   - [Failing tests](#failing-tests)
   - [Running individual test](#running-individual-test)
   - [Ignore tests](#ignore-tests)
   - [Using JUnit categories](#using-junit-categories)
+  - [Tag flaky tests](#tag-flaky-tests)
   - [Searching for failed tests in large log files](#searching-for-failed-tests-in-large-log-files)
   - [Running tests in IntelliJ](#running-tests-in-intellij)
 - [Tests as values](#tests-as-values)
@@ -62,7 +62,7 @@ class MySuite extends funsuite.FunSuite {
   test("hello") {
     val obtained = 42
     val expected = 43
-    assertEquals(obtained, expected)
+    assertEqual(obtained, expected)
   }
 }
 ```
@@ -106,9 +106,9 @@ resources after the test finish.
 ```scala
 class MySuite extends funsuite.FunSuite {
   // Runs once before all tests start.
-  override def beforeAll(context: BeforeAll): Unit = ???
+  override def beforeAll(): Unit = ???
   // Runs before each individual test.
-  override def beforeEach(context: BeforeEach): Unit = ???
+  override def beforeEach(): Unit = ???
   // Runs after each individual test.
   override def afterEach(context: AfterEach): Unit = ???
   // Runs once after all tests have completed.
@@ -129,20 +129,6 @@ import scala.util.Properties
     assume(Properties.versionNumberString.startsWith("2.13"), "this test runs only on Scala 2.13")
   }
 ```
-
-### Tag flaky tests
-
-Use `.flaky` to mark a test case that has a tendendency to fail sometimes.
-
-```scala
-  test("requests".flaky) {
-    // I/O heavy tests that sometimes fail
-  }
-```
-
-By default, flaky tests fail unless the `FUNSUITE_FLAKY_OK` environment variable
-is set to `true`. Override the `isFlakyFailureOk` method to customize when it's
-OK for flaky tests to fail.
 
 ### Failing tests
 
@@ -252,6 +238,20 @@ determine what test suites to run from the command line.
 # matches: MySlowSuite
 > testOnly -- --include-category=myapp.Slow --exclude-category=myapp.Fast
 ```
+
+### Tag flaky tests
+
+Use `.flaky` to mark a test case that has a tendendency to fail sometimes.
+
+```scala
+  test("requests".flaky) {
+    // I/O heavy tests that sometimes fail
+  }
+```
+
+By default, flaky tests fail unless the `FUNSUITE_FLAKY_OK` environment variable
+is set to `true`. Override the `isFlakyFailureOk` method to customize when it's
+OK for flaky tests to fail.
 
 ### Searching for failed tests in large log files
 
