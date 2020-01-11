@@ -1,15 +1,11 @@
+// Adaptation of https://github.com/lihaoyi/utest/blob/5c0fd1c25381592e1301f4bd97b0bf18a65a0a1a/utest/src/utest/framework/StackMarker.scala
 package funsuite
 
 import java.{util => ju}
 
-/**
-  * Wrapper-functions that can be used to mark parts of the callstack that are
-  * meant to be filtered out later.
-  */
-class StackMarker
-object StackMarker {
-  // Ask Scalac/Scala.js nicely to try and avoid inlining these two marker methods,
-  // to make sure they don't disappear from the stack traces
+/** Utility methods for trimming unrelated elements from stack traces */
+class StackTraces
+object StackTraces {
   @noinline
   def dropInside[T](t: => T): T = t
   @noinline
@@ -31,7 +27,7 @@ object StackMarker {
     loop(ex)
     ex
   }
-  private val className = classOf[StackMarker].getCanonicalName() + "$"
+  private val className = classOf[StackTraces].getCanonicalName() + "$"
   def filterCallStack(
       stack: Array[StackTraceElement]
   ): Array[StackTraceElement] = {

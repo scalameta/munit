@@ -8,7 +8,7 @@ trait Assertions {
   val funsuiteLines = new Lines
 
   def assert(cond: Boolean)(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       assert(cond, "assertion failed")
     }
   }
@@ -17,7 +17,7 @@ trait Assertions {
       cond: Boolean,
       details: => Any
   )(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       if (!cond) {
         fail(funsuiteLines.formatLine(loc, funsuiteDetails(details)))
       }
@@ -28,7 +28,7 @@ trait Assertions {
       cond: Boolean,
       details: => Any
   )(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       if (!cond) {
         throw new AssumptionViolatedException(funsuiteDetails(details))
       }
@@ -40,7 +40,7 @@ trait Assertions {
       expected: String,
       details: => Any = "diff assertion failed"
   )(implicit loc: Location): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       Diffs.assertNoDiff(
         obtained,
         expected,
@@ -55,7 +55,7 @@ trait Assertions {
       expected: B,
       details: => Any = "values are the same"
   )(implicit loc: Location, ev: A =:= B): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       if (obtained == expected) {
         fail(funsuiteDetails(details))
       }
@@ -67,7 +67,7 @@ trait Assertions {
       expected: B,
       details: => Any = "values are not the same"
   )(implicit loc: Location, ev: A =:= B): Unit = {
-    StackMarker.dropInside {
+    StackTraces.dropInside {
       if (obtained != expected) {
         assertNoDiff(
           funsuiteDetails(obtained),

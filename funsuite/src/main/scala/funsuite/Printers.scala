@@ -1,3 +1,4 @@
+// Adaptation of https://github.com/lihaoyi/PPrint/blob/e6a918c259ed7ae1998bbf58c360334a3f0157ca/pprint/src/pprint/Walker.scala
 package funsuite
 
 import scala.annotation.switch

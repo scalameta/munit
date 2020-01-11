@@ -30,13 +30,13 @@ class FunSuiteRunner[T](cls: Class[_ <: Suite]) extends Runner with Filterable {
   override def getDescription(): Description = {
     val description = Description.createSuiteDescription(cls)
     try {
-      val suiteTests = StackMarker.dropOutside(suite.funsuiteTests())
+      val suiteTests = StackTraces.dropOutside(suite.funsuiteTests())
       suiteTests.foreach { test =>
         description.addChild(createTestDescription(test))
       }
     } catch {
       case ex: Throwable =>
-        StackMarker.trimStackTrace(ex)
+        StackTraces.trimStackTrace(ex)
         // Print to stdout because we don't have access to a RunNotifier
         ex.printStackTrace()
         Nil
@@ -66,7 +66,7 @@ class FunSuiteRunner[T](cls: Class[_ <: Suite]) extends Runner with Filterable {
       thunk: => Unit
   ): Boolean = {
     try {
-      StackMarker.dropOutside(thunk)
+      StackTraces.dropOutside(thunk)
       true
     } catch {
       case ex: Throwable =>
@@ -82,7 +82,7 @@ class FunSuiteRunner[T](cls: Class[_ <: Suite]) extends Runner with Filterable {
   ): Unit = {
     val description = Description.createTestDescription(cls, name)
     notifier.fireTestStarted(description)
-    StackMarker.trimStackTrace(ex)
+    StackTraces.trimStackTrace(ex)
     notifier.fireTestFailure(new Failure(suiteDescription, ex))
     notifier.fireTestFinished(description)
   }
@@ -127,18 +127,18 @@ class FunSuiteRunner[T](cls: Class[_ <: Suite]) extends Runner with Filterable {
     if (isContinue) {
       notifier.fireTestStarted(description)
       try {
-        StackMarker.dropOutside(test.body()) match {
-          case f: FlakyFailure =>
+        StackTraces.dropOutside(test.body()) match {
+          case f: TestValues.FlakyFailure =>
             notifier.fireTestAssumptionFailed(new Failure(description, f))
-          case Ignore =>
+          case TestValues.Ignore =>
             notifier.fireTestIgnored(description)
           case _ =>
         }
       } catch {
         case ex: AssumptionViolatedException =>
-          StackMarker.trimStackTrace(ex)
+          StackTraces.trimStackTrace(ex)
         case NonFatal(ex) =>
-          StackMarker.trimStackTrace(ex)
+          StackTraces.trimStackTrace(ex)
           val failure = new Failure(description, ex)
           ex match {
             case _: AssumptionViolatedException =>

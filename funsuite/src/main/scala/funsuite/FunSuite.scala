@@ -31,7 +31,7 @@ abstract class FunSuite
   )(implicit loc: Location): Unit = {
     funsuiteTestsBuffer += new Test(
       options.name,
-      () => funsuiteRunTest(options, StackMarker.dropOutside(body)),
+      () => funsuiteRunTest(options, StackTraces.dropOutside(body)),
       options.tags.toSet,
       loc
     )
@@ -64,7 +64,7 @@ abstract class FunSuite
       case Success(value) => value
       case Failure(exception) =>
         if (isFlakyFailureOk) {
-          new FlakyFailure(exception)
+          new TestValues.FlakyFailure(exception)
         } else {
           throw exception
         }
