@@ -18,6 +18,13 @@ inThisBuild(
     ),
     scalaVersion := scala213,
     crossScalaVersions := List(scala213, scala212, scala211),
+    scalacOptions ++= List(
+      "-target:jvm-1.8",
+      "-Yrangepos",
+      // -Xlint is unusable because of
+      // https://github.com/scala/bug/issues/10448
+      "-Ywarn-unused:imports"
+    ),
     fork := true,
     testFrameworks := List(
       new TestFramework("funsuite.Framework")
@@ -42,9 +49,9 @@ lazy val funsuite = project
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
       "com.geirsson" % "junit-interface" % "0.11.6",
+      "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0",
       "com.lihaoyi" %% "sourcecode" % "0.1.9",
       "com.lihaoyi" %% "fansi" % fansiVersion.value,
-      "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0",
       "com.lihaoyi" %% "pprint" % pprintVersion.value
     )
   )

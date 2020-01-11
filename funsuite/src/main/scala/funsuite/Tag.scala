@@ -1,11 +1,6 @@
 package funsuite
 
-import scala.collection.mutable
-import java.nio.file.Path
-import java.nio.file.PathMatcher
-import scala.util.control.NonFatal
 import java.lang.annotation.Annotation
-import scala.reflect.ClassTag
 import scala.runtime.Statics
 
 class Tag(val value: String) extends Annotation {

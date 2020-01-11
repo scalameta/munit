@@ -5,14 +5,10 @@ import org.junit.runner.notification.RunNotifier
 import java.lang.reflect.Modifier
 import org.junit.runner.notification.Failure
 import scala.util.control.NonFatal
-import java.{util => ju}
-import fansi.ErrorMode.Throw
 import funsuite.internal.StackMarker
 import org.junit.AssumptionViolatedException
-import fansi.Color
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
-import org.junit.runner.manipulation.NoTestsRemainException
 import org.junit.runner.Runner
 
 class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
