@@ -32,6 +32,8 @@ MUnit is a Scala testing library with the following goals:
   - [Tag flaky tests](#tag-flaky-tests)
   - [Searching for failed tests in large log files](#searching-for-failed-tests-in-large-log-files)
   - [Running tests in IntelliJ](#running-tests-in-intellij)
+- [Troubleshooting](#troubleshooting)
+  - [Invalid test class](#invalid-test-class)
 - [Tests as values](#tests-as-values)
   - [Extend `Suit`](#extend-suit)
   - [Customize evaluation of tests](#customize-evaluation-of-tests)
@@ -259,9 +261,9 @@ in a large log file.
 
 | Test    | Prefix  |
 | ------- | ------- |
+| Success | `+`     |
 | Failed  | `==> X` |
 | Ignored | `==> i` |
-| Success | `==> +` |
 | Skipped | `==> s` |
 
 Knowing these prefixes may come in handy for example when browsing test logs in
@@ -282,6 +284,26 @@ As a workaround, use the `.only` marker to run only a single test from IntelliJ.
 + test("name".only) {
     // ...
   }
+```
+
+## Troubleshooting
+
+### Invalid test class
+
+If you define a test suite as an `object` instead of `class` you get the
+following error:
+
+```sh
+==> X munit.BasicSuite.initializationError  0.003s org.junit.runners.model.InvalidTestClassError: Invalid test class 'munit.BasicSuite':
+  1. Test class should have exactly one public constructor
+  2. No runnable methods
+```
+
+To fix the problem, use `class` instead of `object`
+
+```diff
+- object MySuite extends munit.FunSuite { ... }
++ class MySuite extends munit.FunSuite { ... }
 ```
 
 ## Tests as values
