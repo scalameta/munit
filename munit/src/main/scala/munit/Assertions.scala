@@ -45,7 +45,7 @@ trait Assertions {
         obtained,
         expected,
         munitLines.formatLine(loc, munitDetails(details)),
-        printObtainedAsStripMargin = false
+        printObtainedAsStripMargin = true
       )
     }
   }
@@ -69,10 +69,11 @@ trait Assertions {
   )(implicit loc: Location, ev: A =:= B): Unit = {
     StackTraces.dropInside {
       if (obtained != expected) {
-        assertNoDiff(
+        Diffs.assertNoDiff(
           munitDetails(obtained),
           munitDetails(expected),
-          details
+          munitLines.formatLine(loc, munitDetails(details)),
+          printObtainedAsStripMargin = false
         )
       }
     }
