@@ -1,4 +1,4 @@
-package funsuite.internal
+package funsuite
 
 import java.{util => ju}
 
@@ -31,7 +31,7 @@ object StackMarker {
     loop(ex)
     ex
   }
-  val className = classOf[StackMarker].getCanonicalName() + "$"
+  private val className = classOf[StackMarker].getCanonicalName() + "$"
   def filterCallStack(
       stack: Array[StackTraceElement]
   ): Array[StackTraceElement] = {

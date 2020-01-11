@@ -1,8 +1,6 @@
-package funsuite.internal
+package funsuite
 
 import collection.JavaConverters._
-import funsuite.Assertions
-import funsuite.Location
 import fansi.Str
 import fansi.Color
 import fansi.Bold

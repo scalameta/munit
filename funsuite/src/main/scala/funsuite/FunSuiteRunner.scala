@@ -5,7 +5,6 @@ import org.junit.runner.notification.RunNotifier
 import java.lang.reflect.Modifier
 import org.junit.runner.notification.Failure
 import scala.util.control.NonFatal
-import funsuite.internal.StackMarker
 import org.junit.AssumptionViolatedException
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter

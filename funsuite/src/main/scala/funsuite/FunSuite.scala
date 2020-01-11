@@ -1,7 +1,6 @@
 package funsuite
 
 import scala.collection.mutable
-import funsuite.internal.StackMarker
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
@@ -79,7 +78,8 @@ abstract class FunSuite
     val result = scala.util.Try(body)
     if (result.isSuccess) {
       fail(
-        locatedDetails(options.loc, "expected failure but test passed").render
+        funsuiteLines
+          .formatLine(options.loc, "expected failure but test passed")
       )
     }
   }
