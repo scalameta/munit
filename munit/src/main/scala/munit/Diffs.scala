@@ -1,6 +1,7 @@
 package munit
 
 import collection.JavaConverters._
+import com.geirsson.junit.Ansi
 
 object Diffs {
 
@@ -41,7 +42,7 @@ object Diffs {
         s" (${AnsiColors.LightRed}- obtained${AnsiColors.Reset}, ${AnsiColors.LightGreen}+ expected${AnsiColors.Reset})"
       )
       .append("\n")
-    sb.append(stripTrailingWhitespace(unifiedDiff(obtained, expected)))
+    sb.append(unifiedDiff(obtained, expected))
   }
 
   def createDiff(
@@ -87,8 +88,24 @@ object Diffs {
   def stripTrailingWhitespace(str: String): String =
     str.replaceAll(" \n", "∙\n")
 
+  /** Returns a normalized string that we intuitively believe is equal
+    *
+    * Strips away trivia such as
+    * - Windows carriage returns
+    * - ANSI colors
+    * - Whitespace at the start/end
+    */
+  def simplifiedString(string: String): String = {
+    stripTrailingWhitespace(
+      Ansi
+        .filterAnsi(string)
+        .trim()
+        .replace("\r\n", "\n")
+    )
+  }
+
   def splitIntoLines(string: String): Seq[String] =
-    string.trim.replace("\r\n", "\n").split("\n")
+    simplifiedString(string).split("\n")
 
   def unifiedDiff(original: String, revised: String): String =
     unifiedDiff(splitIntoLines(original), splitIntoLines(revised))
