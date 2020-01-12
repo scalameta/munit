@@ -10,7 +10,7 @@ import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.Runner
 
-class FunSuiteRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
+class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   require(
     hasEligibleConstructor(),
     s"Class '${cls.getCanonicalName()}' is missing a public empty argument constructor"

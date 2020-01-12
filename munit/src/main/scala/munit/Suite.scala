@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 /** The base class for all test suites.
   * Extend this class if you don't need the functionality in FunSuite.
   */
-@RunWith(classOf[FunSuiteRunner])
+@RunWith(classOf[MUnitRunner])
 abstract class Suite {
 
   /** The value produced by test bodies. */

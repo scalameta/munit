@@ -22,6 +22,7 @@ class Location(
 }
 
 object Location {
+  def empty: Location = new Location("", 0)
   implicit def generate: Location = macro impl
   def impl(c: Context): c.Tree = {
     import c.universe._

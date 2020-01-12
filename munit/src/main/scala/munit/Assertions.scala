@@ -78,9 +78,8 @@ trait Assertions {
       }
     }
   }
-
   def fail(message: String)(implicit loc: Location): Nothing = {
-    throw new FailException(message, loc)
+    throw new FailException(munitLines.formatLine(loc, message), loc)
   }
 
   def munitDetails(details: => Any): String = {

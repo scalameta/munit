@@ -13,5 +13,21 @@ class GenericTest[T](
     val tags: Set[Tag],
     val location: Location
 ) {
+  def withName(newName: String): GenericTest[T] =
+    copy(name = newName)
+  def withBody[A](newBody: () => A): GenericTest[A] =
+    copy(body = newBody)
+  def withTags(newTags: Set[Tag]): GenericTest[T] =
+    copy(tags = newTags)
+  def withLocation(newLocation: Location): GenericTest[T] =
+    copy(location = newLocation)
+  private[this] def copy[A](
+      name: String = this.name,
+      body: () => A = this.body,
+      tags: Set[Tag] = this.tags,
+      location: Location = this.location
+  ): GenericTest[A] = {
+    new GenericTest(name, body, tags, location)
+  }
   override def toString(): String = s"GenericTest($name)"
 }

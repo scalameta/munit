@@ -72,3 +72,9 @@ lazy val munit = project
       "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
     )
   )
+
+lazy val tests = project
+  .dependsOn(munit)
+  .settings(
+    skip in publish := true
+  )

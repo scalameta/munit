@@ -16,8 +16,23 @@ abstract class FunSuite
 
   def munitTests(): Seq[Test] = {
     val onlyTests = munitTestsBuffer.filter(_.tags(Only))
-    if (onlyTests.nonEmpty) onlyTests.toSeq
-    else munitTestsBuffer.toSeq
+    if (onlyTests.nonEmpty) {
+      if (isCI) {
+        onlyTests.toSeq.map(t =>
+          if (t.tags(Only)) {
+            t.withBody(() =>
+              fail("'Only' tag is not allowed when `isCI=true`")(t.location)
+            )
+          } else {
+            t
+          }
+        )
+      } else {
+        onlyTests.toSeq
+      }
+    } else {
+      munitTestsBuffer.toSeq
+    }
   }
 
   def test(name: String, tag: Tag*)(
