@@ -13,6 +13,7 @@ jobs:
       - name: Publish
         run: sbt ci-release docs/docusaurusPublishGhpages
         env:
+          GIT_USER: munit@scalameta.org
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
