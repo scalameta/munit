@@ -19,7 +19,7 @@ trait Assertions {
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
-        fail(munitLines.formatLine(loc, munitDetails(details)))
+        fail(munitDetails(details))
       }
     }
   }
@@ -44,7 +44,7 @@ trait Assertions {
       Diffs.assertNoDiff(
         obtained,
         expected,
-        munitLines.formatLine(loc, munitDetails(details)),
+        munitDetails(details),
         printObtainedAsStripMargin = true
       )
     }
@@ -72,7 +72,7 @@ trait Assertions {
         Diffs.assertNoDiff(
           munitDetails(obtained),
           munitDetails(expected),
-          munitLines.formatLine(loc, munitDetails(details)),
+          munitDetails(details),
           printObtainedAsStripMargin = false
         )
       }

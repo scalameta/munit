@@ -9,6 +9,8 @@ import org.junit.AssumptionViolatedException
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.Runner
+import java.{util => ju}
+import scala.collection.mutable
 
 class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   require(
@@ -18,13 +20,28 @@ class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   lazy val suite = cls.newInstance()
   private val suiteDescription = Description.createSuiteDescription(cls)
   @volatile private var filter: Filter = Filter.ALL
+  val descriptions = mutable.Map.empty[suite.Test, Description]
+  val testNames = mutable.Set.empty[String]
 
   def filter(filter: Filter): Unit = {
     this.filter = filter
   }
 
   def createTestDescription(test: suite.Test): Description = {
-    Description.createTestDescription(cls, test.name, test.location)
+    descriptions.getOrElseUpdate(
+      test, {
+        val testName = Stream
+          .from(0)
+          .map {
+            case 0 => test.name
+            case n => s"${test.name}-${n}"
+          }
+          .find(candidate => !testNames.contains(candidate))
+          .head
+        testNames += testName
+        Description.createTestDescription(cls, testName, test.location)
+      }
+    )
   }
 
   override def getDescription(): Description = {
@@ -32,7 +49,10 @@ class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
     try {
       val suiteTests = StackTraces.dropOutside(suite.munitTests())
       suiteTests.foreach { test =>
-        description.addChild(createTestDescription(test))
+        val testDescription = createTestDescription(test)
+        if (filter.shouldRun(testDescription)) {
+          description.addChild(testDescription)
+        }
       }
     } catch {
       case ex: Throwable =>

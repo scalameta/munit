@@ -75,6 +75,11 @@ lazy val munit = project
 
 lazy val tests = project
   .dependsOn(munit)
+  .enablePlugins(BuildInfoPlugin)
   .settings(
+    buildInfoPackage := "munit",
+    buildInfoKeys := Seq[BuildInfoKey](
+      "sourceDirectory" -> sourceDirectory.in(Compile).value
+    ),
     skip in publish := true
   )
