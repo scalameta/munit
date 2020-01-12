@@ -5,6 +5,12 @@ import scala.annotation.switch
 import munit.internal.Compat
 
 object Printers {
+  def log(any: Any, printer: Printer = EmptyPrinter)(
+      implicit loc: Location
+  ): Unit = {
+    println(loc.syntax)
+    println(print(any, printer))
+  }
 
   /** Pretty-prints the value in a format that's optimized for producing diffs */
   def print(any: Any, printer: Printer = EmptyPrinter): String = {
@@ -162,7 +168,7 @@ object Printers {
       case '\r' => sb.append("\\r")
       case '\t' => sb.append("\\t")
       case c =>
-        val isUnicode = true
+        val isUnicode = false
         if (c < ' ' || (c > '~' && isUnicode))
           sb.append("\\u%04x" format c.toInt)
         else sb.append(c)
