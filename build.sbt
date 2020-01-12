@@ -86,6 +86,7 @@ lazy val tests = project
 
 lazy val docs = project
   .in(file("munit-docs"))
+  .dependsOn(munit)
   .enablePlugins(MdocPlugin)
   .settings(
     fork := false
