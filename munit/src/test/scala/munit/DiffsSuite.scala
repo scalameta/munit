@@ -15,4 +15,34 @@ class DiffsSuite extends FunSuite {
          |""".stripMargin
     )
   }
+
+  def check(
+      name: String,
+      a: String,
+      b: String,
+      expected: String
+  )(implicit loc: Location): Unit = {
+    test(name) {
+      val obtained = Diffs.unifiedDiff(a, b)
+      assertNoDiff(obtained, expected)
+    }
+  }
+
+  check(
+    "trailing-whitespace",
+    "a\nb",
+    "a \nb",
+    """|-a
+       |+a ∙
+       | b
+       |""".stripMargin
+  )
+
+  check(
+    "windows-crlf",
+    "a\r\nb",
+    "a\nb",
+    ""
+  )
+
 }

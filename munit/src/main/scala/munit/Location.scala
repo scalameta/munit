@@ -15,6 +15,9 @@ class Location(
     if (sep < 0) path
     else path.substring(math.min(sep + 1, path.length() - 1))
   }
+  def syntax: String = {
+    path + ":" + line
+  }
   def annotationType(): Class[Annotation] = classOf[Annotation]
 }
 
