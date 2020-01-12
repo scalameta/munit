@@ -83,3 +83,10 @@ lazy val tests = project
     ),
     skip in publish := true
   )
+
+lazy val docs = project
+  .in(file("munit-docs"))
+  .enablePlugins(MdocPlugin)
+  .settings(
+    fork := false
+  )
