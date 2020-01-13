@@ -3,7 +3,7 @@ package munit
 import java.lang.annotation.Annotation
 import scala.runtime.Statics
 
-class Tag(val value: String) extends Annotation {
+class Tag(val value: String) extends Annotation with Serializable {
   // Not a case class so that it possible to override these.
   override def equals(obj: Any): Boolean = obj match {
     case t: Tag => t.value == value

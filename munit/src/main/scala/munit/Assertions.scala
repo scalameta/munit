@@ -1,21 +1,17 @@
 package munit
 
 import org.junit.AssumptionViolatedException
+import scala.reflect.ClassTag
+import scala.util.control.NonFatal
 
 object Assertions extends Assertions
 trait Assertions {
 
   val munitLines = new Lines
 
-  def assert(cond: Boolean)(implicit loc: Location): Unit = {
-    StackTraces.dropInside {
-      assert(cond, "assertion failed")
-    }
-  }
-
   def assert(
       cond: Boolean,
-      details: => Any
+      details: => Any = "assertion failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
@@ -26,7 +22,7 @@ trait Assertions {
 
   def assume(
       cond: Boolean,
-      details: => Any
+      details: => Any = "assumption failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
@@ -77,6 +73,41 @@ trait Assertions {
         )
       }
     }
+  }
+
+  def intercept[T <: Throwable](
+      body: => Any
+  )(implicit ev: ClassTag[T], loc: Location): Unit = {
+    try {
+      body
+      fail(
+        s"expected exception of type '${ev.runtimeClass.getCanonicalName()}' but body evaluated successfully"
+      )
+    } catch {
+      case e: FailException => throw e
+      case NonFatal(e) =>
+        if (!ev.runtimeClass.isAssignableFrom(e.getClass())) {
+          val obtained = e.getClass().getCanonicalName()
+          val expected = ev.runtimeClass.getCanonicalName()
+          throw new FailException(
+            s"intercept failed, exception '$obtained' is not a subtype of '$expected",
+            cause = e,
+            isStackTracesEnabled = false,
+            location = loc
+          )
+        }
+    }
+  }
+
+  def fail(message: String, cause: Throwable)(
+      implicit loc: Location
+  ): Nothing = {
+    throw new FailException(
+      munitLines.formatLine(loc, message),
+      cause,
+      isStackTracesEnabled = true,
+      location = loc
+    )
   }
   def fail(message: String)(implicit loc: Location): Nothing = {
     throw new FailException(munitLines.formatLine(loc, message), loc)

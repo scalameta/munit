@@ -7,7 +7,7 @@ import java.nio.file.Files
 import scala.util.control.NonFatal
 import scala.collection.JavaConverters._
 
-class Lines {
+class Lines extends Serializable {
   private val filecache = mutable.Map.empty[Path, Array[String]]
 
   def formatLine(location: Location, message: String): String = {
