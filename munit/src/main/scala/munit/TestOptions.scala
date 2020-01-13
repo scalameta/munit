@@ -7,12 +7,23 @@ package munit
   * @param name the test name, used in the UI and to select it with testOnly
   * @param tags a set of [[tests.Tag]], used to attach semantic information to a test
   */
-case class TestOptions(name: String, tags: Set[Tag], loc: Location) {
+final class TestOptions(
+    val name: String,
+    val tags: Set[Tag],
+    val loc: Location
+) extends Serializable {
   def fail: TestOptions = tag(Fail)
   def flaky: TestOptions = tag(Flaky)
   def ignore: TestOptions = tag(Ignore)
   def only: TestOptions = tag(Only)
   def tag(t: Tag): TestOptions = copy(tags = tags + t)
+  private[this] def copy(
+      name: String = this.name,
+      tags: Set[Tag] = this.tags,
+      loc: Location = this.loc
+  ): TestOptions = {
+    new TestOptions(name, tags, loc)
+  }
 }
 
 trait TestOptionsConversions {
@@ -24,5 +35,5 @@ trait TestOptionsConversions {
   implicit def testOptionsFromString(
       name: String
   )(implicit loc: Location): TestOptions =
-    TestOptions(name, Set.empty, loc)
+    new TestOptions(name, Set.empty, loc)
 }

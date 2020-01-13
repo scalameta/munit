@@ -3,7 +3,7 @@ package munit
 import com.geirsson.junit.Ansi
 import collection.JavaConverters._
 
-class Diff(val obtained: String, val expected: String) {
+class Diff(val obtained: String, val expected: String) extends Serializable {
   val obtainedClean = Ansi.filterAnsi(obtained)
   val expectedClean = Ansi.filterAnsi(expected)
   val obtainedLines = splitIntoLines(obtainedClean)

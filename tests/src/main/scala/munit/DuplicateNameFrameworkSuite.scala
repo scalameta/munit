@@ -8,3 +8,11 @@ class DuplicateNameFrameworkSuite extends FunSuite {
     // pass
   }
 }
+
+object DuplicateNameFrameworkSuite
+    extends FrameworkTest(
+      classOf[DuplicateNameFrameworkSuite],
+      """|==> success munit.DuplicateNameFrameworkSuite.basic
+         |==> success munit.DuplicateNameFrameworkSuite.basic-1
+         |""".stripMargin
+    )
