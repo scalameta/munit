@@ -26,7 +26,7 @@ abstract class FunSuite
         if (isCI) {
           onlyTests.toSeq.map(t =>
             if (t.tags(Only)) {
-              t.withBody(() =>
+              t.withBody[TestValue](() =>
                 fail("'Only' tag is not allowed when `isCI=true`")(t.location)
               )
             } else {

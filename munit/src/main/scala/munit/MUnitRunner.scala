@@ -9,7 +9,6 @@ import org.junit.AssumptionViolatedException
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.Runner
-import java.{util => ju}
 import scala.collection.mutable
 
 class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
