@@ -72,3 +72,14 @@ lazy val munit = project
       "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
     )
   )
+
+lazy val tests = project
+  .dependsOn(munit)
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    buildInfoPackage := "munit",
+    buildInfoKeys := Seq[BuildInfoKey](
+      "sourceDirectory" -> sourceDirectory.in(Compile).value
+    ),
+    skip in publish := true
+  )

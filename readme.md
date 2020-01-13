@@ -201,6 +201,18 @@ Use `.ignore` to skip an individual test case in a test suite.
   }
 ```
 
+Override `munitIgnore: Boolean` to skip a test suite based on a dynamic
+condition.
+
+```scala
+class MyWindowsSuite extends munit.FunSuite {
+  override def munitIgnore: Boolean = !scala.util.Properties.isWin
+  test("windows-only") {
+    // only runs on Windows
+  }
+}
+```
+
 ### Using JUnit categories
 
 Use `@Category(...)` to group tests suites together.

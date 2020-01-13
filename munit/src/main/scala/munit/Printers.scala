@@ -3,20 +3,27 @@ package munit
 
 import scala.annotation.switch
 import munit.internal.Compat
+import com.geirsson.junit.Ansi
 
 object Printers {
   def log(any: Any, printer: Printer = EmptyPrinter)(
       implicit loc: Location
   ): Unit = {
-    println(loc.syntax)
+    println(loc.toString)
     println(print(any, printer))
   }
 
   /** Pretty-prints the value in a format that's optimized for producing diffs */
   def print(any: Any, printer: Printer = EmptyPrinter): String = {
+    var height = printer.height
     val out = new StringBuilder()
     val indentStep = 2
     def loop(a: Any, indent: Int): Unit = {
+      height -= 1
+      if (height < 0) {
+        out.append("...")
+        return
+      }
       val nextIndent = indent + indentStep
       val isDone = printer.print(a, out, indent)
       if (!isDone) {
@@ -33,7 +40,7 @@ object Printers {
           case x: Long   => out.append(x.toString())
           case x: Float  => out.append(x.toString())
           case x: Double => out.append(x.toString())
-          case x: String => printString(x, out)
+          case x: String => printString(x, out, printer)
           case None =>
             out.append("None")
           case Nil =>
@@ -99,7 +106,7 @@ object Printers {
       }
     }
     loop(any, indent = 0)
-    out.toString()
+    Ansi.filterAnsi(out.toString())
   }
 
   private def printApply[T](
@@ -136,8 +143,12 @@ object Printers {
     }
   }
 
-  private def printString(string: String, out: StringBuilder): Unit = {
-    val isMultiline = string.contains('\n')
+  private def printString(
+      string: String,
+      out: StringBuilder,
+      printer: Printer
+  ): Unit = {
+    val isMultiline = printer.isMultiline(string)
     if (isMultiline) {
       out.append('"')
       out.append('"')

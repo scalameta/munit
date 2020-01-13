@@ -9,7 +9,7 @@ import sbt.testing.SubclassFingerprint
 class Framework extends com.geirsson.junit.JUnitFramework {
   val munitFingerprint = CustomFingerprint.of(
     "munit.Suite",
-    "munit.FunSuiteRunner"
+    "munit.MUnitRunner"
   )
   override val fingerprints: Array[Fingerprint] = Array(
     munitFingerprint,

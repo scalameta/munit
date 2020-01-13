@@ -12,12 +12,34 @@ abstract class FunSuite
 
   final type TestValue = Any
 
-  val munitTestsBuffer = mutable.ArrayBuffer.empty[Test]
+  def isCI: Boolean = "true" == System.getenv("CI")
+  def munitIgnore: Boolean = false
+  def isFlakyFailureOk: Boolean = "true" == System.getenv("FUNSUITE_FLAKY_OK")
 
+  val munitTestsBuffer = mutable.ArrayBuffer.empty[Test]
   def munitTests(): Seq[Test] = {
-    val onlyTests = munitTestsBuffer.filter(_.tags(Only))
-    if (onlyTests.nonEmpty) onlyTests.toSeq
-    else munitTestsBuffer.toSeq
+    if (munitIgnore) {
+      Nil
+    } else {
+      val onlyTests = munitTestsBuffer.filter(_.tags(Only))
+      if (onlyTests.nonEmpty) {
+        if (isCI) {
+          onlyTests.toSeq.map(t =>
+            if (t.tags(Only)) {
+              t.withBody[TestValue](() =>
+                fail("'Only' tag is not allowed when `isCI=true`")(t.location)
+              )
+            } else {
+              t
+            }
+          )
+        } else {
+          onlyTests.toSeq
+        }
+      } else {
+        munitTestsBuffer.toSeq
+      }
+    }
   }
 
   def test(name: String, tag: Tag*)(
@@ -36,9 +58,6 @@ abstract class FunSuite
       loc
     )
   }
-
-  def isCI: Boolean = "true" == System.getenv("CI")
-  def isFlakyFailureOk: Boolean = "true" == System.getenv("FUNSUITE_FLAKY_OK")
 
   def munitRunTest(
       options: TestOptions,
@@ -77,11 +96,7 @@ abstract class FunSuite
   ): Any = {
     val result = scala.util.Try(body)
     if (result.isSuccess) {
-      val message = munitLines.formatLine(
-        options.loc,
-        "expected failure but test passed"
-      )
-      fail(message)(options.loc)
+      fail("expected failure but test passed")(options.loc)
     }
   }
 
