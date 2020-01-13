@@ -87,7 +87,9 @@ lazy val tests = project
 lazy val docs = project
   .in(file("munit-docs"))
   .dependsOn(munit)
-  .enablePlugins(MdocPlugin)
+  .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .settings(
+    mdocOut :=
+      baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
     fork := false
   )

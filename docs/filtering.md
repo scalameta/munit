@@ -4,7 +4,7 @@ title: Filtering tests
 ---
 
 ```scala mdoc:silent
-import mdoc.docs.Docs._
+// import mdoc.docs.Docs._
 ```
 
 ## Run only a single test case

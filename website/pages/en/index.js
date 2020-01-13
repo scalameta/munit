@@ -87,66 +87,27 @@ const Block = props => (
 const Features = props => {
   const features = [
     {
-      title: "Simple installation",
-      content: "Open a directory, import your build and start coding.",
-      image: "https://i.imgur.com/L5CurFG.png",
+      title: "Source locations",
+      content:
+        "Test failures point to the source code location. " +
+        "Cmd+Click on the filename to open the relevant line number in your editor (does not work in all terminals).",
+      image: "https://i.imgur.com/goYdJhw.png",
       imageAlign: "left"
     },
     {
-      title: "Accurate diagnostics",
+      title: "Diffs",
       content:
-        "Compile on file save and see errors from the build tool inside the editor, no more switching focus to the console.",
-      image: "https://i.imgur.com/JYLQGrc.gif",
+        "Assertion failures show the difference between the expected and obtained behavior. " +
+        "Diffs for case class comparisons include field names in Scala 2.13.",
+      image: "https://i.imgur.com/SaQ0Hva.png",
       imageAlign: "right"
     },
     {
-      title: "Rich build tool support",
+      title: "Stack traces",
       content:
-        `The build tools sbt, Gradle, Maven and Mill are supported thanks to <a href="https://scalacenter.github.io/bloop/">Bloop</a>. ` +
-        `Hot incremental compilation in the Bloop build server ensures compile errors appear as quickly as possible.`,
-      image:
-        "https://user-images.githubusercontent.com/1408093/68486864-dd9f2b00-01f6-11ea-9291-d3a7ce6ef225.png",
-      imageAlign: "left"
-    },
-    {
-      title: "Goto definition",
-      content:
-        "Jump to symbol definitions in your project sources and Scala/Java library dependencies.",
-      image: "https://i.imgur.com/bCIhFof.gif",
-      imageAlign: "right"
-    },
-    {
-      title: "Completions",
-      content:
-        "Explore new library APIs, implement interfaces, generate exhaustive matches and more.",
-      image:
-        "https://user-images.githubusercontent.com/1408093/56036958-725bac00-5d2e-11e9-9cf7-46249125494a.gif",
-      imageAlign: "left"
-    },
-    {
-      title: "Hover (aka. type at point)",
-      content: "See the expression type and symbol signature under the cursor.",
-      image: "https://i.imgur.com/2MfQvsM.gif",
-      imageAlign: "right"
-    },
-    {
-      title: "Signature help (aka. parameter hints)",
-      content:
-        "View a method signature and method overloads as you fill in the arguments.",
-      image: "https://i.imgur.com/DAWIrHu.gif",
-      imageAlign: "left"
-    },
-    {
-      title: "Find symbol references",
-      content: "Find all usages of a symbol in the workspace.",
-      image:
-        "https://user-images.githubusercontent.com/1408093/51089190-75fc8880-1769-11e9-819c-95262205e95c.png",
-      imageAlign: "right"
-    },
-    {
-      title: "Fuzzy symbol search",
-      content: "Search for symbols in the workspace or library dependencies.",
-      image: "https://i.imgur.com/w5yrK1w.gif",
+        "Stack trace elements for classes that are defined in your workspace are automatically highlighted, " +
+        "making it easier to quickly understand an error.",
+      image: "https://i.imgur.com/iosErEv.png",
       imageAlign: "left"
     }
   ];

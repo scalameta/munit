@@ -1,30 +1,30 @@
 // See https://docusaurus.io/docs/site-config.html for all the possible
 // site configuration options.
 
-const repoUrl = "https://github.com/scalameta/metals";
+const repoUrl = "https://github.com/scalameta/munit";
 const baseUrl = "/metals/";
 
 const siteConfig = {
-  title: "Metals",
-  tagline: "Scala language server with rich IDE features",
-  url: "http://scalameta.org",
+  title: "MUnit",
+  tagline:
+    "Scala testing library with inspirations from JUnit, ScalaTest, utest and ava",
+  url: "http://scalameta.org/munit",
   baseUrl: baseUrl,
 
   // Used for publishing and more
   projectName: "metals",
-  organizationName: "scalameta",
+  organizationName: "munit",
 
-  algolia: {
-    apiKey: "c865f6d974a3072a35d4b53d48ac2307",
-    indexName: "metals"
-  },
+  // algolia: {
+  //   apiKey: "c865f6d974a3072a35d4b53d48ac2307",
+  //   indexName: "metals"
+  // },
 
   gaTrackingId: "UA-140140828-1",
 
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    { doc: "editors/overview", label: "Docs" },
-    { blog: true, label: "Blog" },
+    { doc: "getting-started", label: "Docs" },
     { href: repoUrl, label: "GitHub", external: true }
   ],
 
@@ -38,15 +38,15 @@ const siteConfig = {
 
   /* colors for website */
   colors: {
-    primaryColor: "#087E8B",
-    secondaryColor: "#1B555C"
+    primaryColor: "#058772",
+    secondaryColor: "#045C4D"
   },
 
   customDocsPath: "website/target/docs",
 
   stylesheets: [baseUrl + "css/custom.css"],
 
-  blogSidebarCount: "ALL",
+  // blogSidebarCount: "ALL",
 
   // This copyright info is used in /core/Footer.js and blog rss/atom feeds.
   copyright: `Copyright © ${new Date().getFullYear()} Metals`,

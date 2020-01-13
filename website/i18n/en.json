@@ -3,84 +3,27 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "Scala language server with rich IDE features",
+    "tagline": "Scala testing library with inspirations from JUnit, ScalaTest, utest and ava",
     "docs": {
-      "build-tools/bloop": {
-        "title": "Bloop"
+      "filtering": {
+        "title": "Filtering tests"
       },
-      "build-tools/gradle": {
-        "title": "Gradle"
+      "getting-started": {
+        "title": "Getting started"
       },
-      "build-tools/maven": {
-        "title": "Maven"
+      "readme": {
+        "title": "readme"
       },
-      "build-tools/mill": {
-        "title": "Mill"
-      },
-      "build-tools/new-build-tool": {
-        "title": "Integrating a new build tool"
-      },
-      "build-tools/overview": {
-        "title": "Build Tools Overview",
-        "sidebar_label": "Overview"
-      },
-      "build-tools/sbt": {
-        "title": "sbt"
-      },
-      "contributors/getting-started": {
-        "title": "Contributing to Metals"
-      },
-      "contributors/project-goals": {
-        "title": "Project Goals"
-      },
-      "contributors/releasing": {
-        "title": "Making a release"
-      },
-      "contributors/updating-website": {
-        "title": "Contributing to the website"
-      },
-      "editors/atom": {
-        "title": "Atom"
-      },
-      "editors/decoration-protocol": {
-        "title": "Decoration Protocol v0.1.0",
-        "sidebar_label": "Decoration Protocol"
-      },
-      "editors/eclipse": {
-        "title": "Eclipse"
-      },
-      "editors/emacs": {
-        "title": "Emacs"
-      },
-      "editors/new-editor": {
-        "title": "Integrating a new editor"
-      },
-      "editors/overview": {
-        "title": "Text Editors",
-        "sidebar_label": "Overview"
-      },
-      "editors/sublime": {
-        "title": "Sublime Text"
-      },
-      "editors/tree-view-protocol": {
-        "title": "Tree View Protocol"
-      },
-      "editors/vim": {
-        "title": "Vim"
-      },
-      "editors/vscode": {
-        "title": "Visual Studio Code"
+      "scalatest": {
+        "title": "Coming from ScalaTest"
       }
     },
     "links": {
       "Docs": "Docs",
-      "Blog": "Blog",
       "GitHub": "GitHub"
     },
     "categories": {
-      "Text Editors": "Text Editors",
-      "Build Tools": "Build Tools",
-      "Contributing": "Contributing"
+      "Overview": "Overview"
     }
   },
   "pages-strings": {
