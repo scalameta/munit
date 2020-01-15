@@ -38,7 +38,12 @@ lazy val munit = project
     unmanagedSourceDirectories.in(Compile) ++= {
       scalaBinaryVersion.value match {
         case "2.12" | "2.11" =>
-          List(sourceDirectory.in(Compile).value / "scala-pre-2.13")
+          List(
+            sourceDirectory.in(Compile).value / "scala-pre-2.13",
+            sourceDirectory.in(Compile).value / "scala-2"
+          )
+        case "2.13" =>
+          List(sourceDirectory.in(Compile).value / "scala-2")
         case _ =>
           Nil
       }
