@@ -17,26 +17,20 @@ inThisBuild(
       )
     ),
     scalaVersion := scala213,
-    crossScalaVersions := List(scala213, scala212, scala211),
+    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     fork := true,
     testFrameworks := List(
       new TestFramework("munit.Framework")
     ),
     resolvers += Resolver.sonatypeRepo("public"),
-    useSuperShell := false
+    useSuperShell := false,
+    scalacOptions ++= List(
+      "-language:implicitConversions"
+    )
   )
 )
 
 skip in publish := true
-
-lazy val fansiVersion = Def.setting[String] {
-  if (scalaVersion.value.startsWith("2.11")) "0.2.6"
-  else "0.2.7"
-}
-lazy val pprintVersion = Def.setting[String] {
-  if (scalaVersion.value.startsWith("2.11")) "0.5.4"
-  else "0.5.7"
-}
 
 lazy val munit = project
   .settings(
