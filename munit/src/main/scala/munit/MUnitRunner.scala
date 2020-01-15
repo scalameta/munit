@@ -5,18 +5,17 @@ import org.junit.runner.notification.RunNotifier
 import java.lang.reflect.Modifier
 import org.junit.runner.notification.Failure
 import scala.util.control.NonFatal
-import org.junit.AssumptionViolatedException
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.Runner
 import scala.collection.mutable
 
-class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
+class MUnitRunner(val cls: Class[_ <: Suite]) extends Runner with Filterable {
   require(
     hasEligibleConstructor(),
     s"Class '${cls.getCanonicalName()}' is missing a public empty argument constructor"
   )
-  lazy val suite = cls.newInstance()
+  val suite = cls.newInstance()
   private val suiteDescription = Description.createSuiteDescription(cls)
   @volatile private var filter: Filter = Filter.ALL
   val descriptions = mutable.Map.empty[suite.Test, Description]
@@ -64,7 +63,7 @@ class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   }
 
   def isIgnored(): Boolean = {
-    cls.getAnnotationsByType(classOf[Ignore]).nonEmpty
+    cls.getAnnotationsByType(classOf[IgnoreSuite]).nonEmpty
   }
 
   override def run(notifier: RunNotifier): Unit = {
@@ -154,13 +153,13 @@ class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
           case _ =>
         }
       } catch {
-        case ex: AssumptionViolatedException =>
+        case ex: DottyBugAssumptionViolatedException =>
           StackTraces.trimStackTrace(ex)
         case NonFatal(ex) =>
           StackTraces.trimStackTrace(ex)
           val failure = new Failure(description, ex)
           ex match {
-            case _: AssumptionViolatedException =>
+            case _: DottyBugAssumptionViolatedException =>
               notifier.fireTestAssumptionFailed(failure)
             case _ =>
               notifier.fireTestFailure(failure)
@@ -192,7 +191,7 @@ class MUnitRunner(cls: Class[_ <: Suite]) extends Runner with Filterable {
   private def hasEligibleConstructor(): Boolean = {
     try {
       val constructor = cls.getConstructor(
-        new Array[java.lang.Class[T] forSome { type T }](0): _*
+        new Array[java.lang.Class[_]](0): _*
       )
       Modifier.isPublic(constructor.getModifiers)
     } catch {

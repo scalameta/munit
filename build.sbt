@@ -1,6 +1,7 @@
 def scala213 = "2.13.1"
 def scala212 = "2.12.10"
 def scala211 = "2.11.12"
+def dotty = "0.21.0-RC1"
 inThisBuild(
   List(
     organization := "org.scalameta",
@@ -49,6 +50,7 @@ lazy val munit = project
             "-Xexperimental",
             "-Ywarn-unused-import"
           )
+        case "0.21" => List()
         case _ =>
           List(
             "-target:jvm-1.8",
@@ -62,9 +64,14 @@ lazy val munit = project
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
       "com.geirsson" % "junit-interface" % "0.11.6",
-      "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0",
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
-    )
+      "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0"
+    ) ++ {
+      scalaBinaryVersion.value match {
+        case "0.21" => Nil
+        case _ =>
+          List("org.scala-lang" % "scala-reflect" % scalaVersion.value)
+      }
+    }
   )
 
 lazy val tests = project
