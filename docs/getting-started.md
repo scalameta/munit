@@ -12,16 +12,14 @@ MUnit is a Scala testing library with the following goals:
   help you quickly understand what caused a test failure. MUnit tries to
   displays diffs and source locations when possible and it does a best-effort to
   highlight relevant stack trace elements.
-- **No Scala dependencies**: MUnit is implemented in ~1k lines of Scala code
-  with no external Scala dependencies. The transitive Java dependencies weigh in
-  total ~500kb, which is mostly just JUnit.
 
 ## Quick start
 
 ![Badge with version of the latest release](https://img.shields.io/maven-central/v/org.scalameta/munit_2.13?style=for-the-badge)
 
 ```scala
-// Published for 2.11, 2.12 and 2.13. JVM-only.
+// Supported Scala versions: @SUPPORTED_SCALA_VERSIONS@
+// Supported platforms: JVM, JS
 libraryDependencies += "org.scalameta" %% "munit" % "@VERSION@"
 testFrameworks += new TestFramework("munit.Framework")
 ```
@@ -36,11 +34,6 @@ class MySuite extends munit.FunSuite {
     assertEqual(obtained, expected)
   }
 }
-```
-
-```scala mdoc:invisible
-import munit._
-import docs.Docs._
 ```
 
 ## Usage

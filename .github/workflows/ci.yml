@@ -5,15 +5,39 @@ on:
       - master
   pull_request:
 jobs:
-  build:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [11, 8]
+        platform: [JVM, JS]
+        exclude:
+          - platform: JS
+            java: 8
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v2
-      - run: sbt +test
-  scalafmt:
+      - run: sbt +tests${{ matrix.platform }}/test
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v2
+      - run: sbt +testsJVM/test
+  scalajs06:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v2
+      - run: sbt +testsJS/test
+        env:
+          SCALAJS_VERSION: "0.6.31"
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v2
       - run: ./bin/scalafmt --check
+      - run: sbt scalafixAll
+      - run: sbt docs/docusaurusCreateSite
