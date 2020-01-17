@@ -13,7 +13,7 @@ import scala.util.Properties
 import scala.util.control.NonFatal
 
 abstract class BaseFrameworkSuite extends FunSuite {
-  override def munitIgnore = !Properties.versionNumberString.startsWith("2.13")
+  override def munitIgnore = !BuildInfo.scalaVersion.startsWith("2.13")
   def exceptionMessage(ex: Throwable): String = {
     if (ex.getMessage() == null) "null"
     else {

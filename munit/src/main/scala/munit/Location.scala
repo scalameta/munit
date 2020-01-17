@@ -1,20 +1,12 @@
 package munit
 
-import scala.language.experimental.macros
 import java.lang.annotation.Annotation
 import java.io.File
-import scala.reflect.macros.whitebox.Context
 import scala.runtime.Statics
+import munit.internal.MacroCompat
 
-object Location {
+object Location extends MacroCompat.LocationMacro {
   def empty: Location = new Location("", 0)
-  implicit def generate: Location = macro impl
-  def impl(c: Context): c.Tree = {
-    import c.universe._
-    val line = Literal(Constant(c.enclosingPosition.line))
-    val path = Literal(Constant(c.enclosingPosition.source.path))
-    New(typeOf[Location], path, line)
-  }
 }
 
 final class Location(

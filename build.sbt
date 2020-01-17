@@ -1,6 +1,7 @@
 def scala213 = "2.13.1"
 def scala212 = "2.12.10"
 def scala211 = "2.11.12"
+def dotty = "0.21.0-RC1"
 inThisBuild(
   List(
     organization := "org.scalameta",
@@ -17,33 +18,33 @@ inThisBuild(
       )
     ),
     scalaVersion := scala213,
-    crossScalaVersions := List(scala213, scala212, scala211),
     fork := true,
     testFrameworks := List(
       new TestFramework("munit.Framework")
     ),
     resolvers += Resolver.sonatypeRepo("public"),
-    useSuperShell := false
+    useSuperShell := false,
+    scalacOptions ++= List(
+      "-language:implicitConversions"
+    )
   )
 )
 
 skip in publish := true
-
-lazy val fansiVersion = Def.setting[String] {
-  if (scalaVersion.value.startsWith("2.11")) "0.2.6"
-  else "0.2.7"
-}
-lazy val pprintVersion = Def.setting[String] {
-  if (scalaVersion.value.startsWith("2.11")) "0.5.4"
-  else "0.5.7"
-}
+crossScalaVersions := List()
 
 lazy val munit = project
   .settings(
+    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     unmanagedSourceDirectories.in(Compile) ++= {
       scalaBinaryVersion.value match {
         case "2.12" | "2.11" =>
-          List(sourceDirectory.in(Compile).value / "scala-pre-2.13")
+          List(
+            sourceDirectory.in(Compile).value / "scala-pre-2.13",
+            sourceDirectory.in(Compile).value / "scala-2"
+          )
+        case "2.13" =>
+          List(sourceDirectory.in(Compile).value / "scala-2")
         case _ =>
           Nil
       }
@@ -55,6 +56,7 @@ lazy val munit = project
             "-Xexperimental",
             "-Ywarn-unused-import"
           )
+        case "0.21" => List()
         case _ =>
           List(
             "-target:jvm-1.8",
@@ -68,18 +70,25 @@ lazy val munit = project
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
       "com.geirsson" % "junit-interface" % "0.11.6",
-      "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0",
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
-    )
+      "com.googlecode.java-diff-utils" % "diffutils" % "1.3.0"
+    ) ++ {
+      scalaBinaryVersion.value match {
+        case "0.21" => Nil
+        case _ =>
+          List("org.scala-lang" % "scala-reflect" % scalaVersion.value)
+      }
+    }
   )
 
 lazy val tests = project
   .dependsOn(munit)
   .enablePlugins(BuildInfoPlugin)
   .settings(
+    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
-      "sourceDirectory" -> sourceDirectory.in(Compile).value
+      "sourceDirectory" -> sourceDirectory.in(Compile).value,
+      scalaVersion
     ),
     skip in publish := true
   )
@@ -89,6 +98,7 @@ lazy val docs = project
   .dependsOn(munit)
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .settings(
+    crossScalaVersions := List(scala213),
     mdocOut :=
       baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
     mdocVariables := Map(

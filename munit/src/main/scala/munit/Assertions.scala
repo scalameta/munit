@@ -1,8 +1,13 @@
 package munit
 
-import org.junit.AssumptionViolatedException
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
+
+// FIXME(gabro): Constructing a `org.junit.AssumptionViolatedException` causes Dotty to crash
+// so we use our own Exception class to work around it.
+// See https://github.com/lampepfl/dotty/issues/7990
+class DottyBugAssumptionViolatedException(message: String)
+    extends RuntimeException
 
 object Assertions extends Assertions
 trait Assertions {
@@ -26,7 +31,7 @@ trait Assertions {
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
-        throw new AssumptionViolatedException(munitDetails(details))
+        throw new DottyBugAssumptionViolatedException(munitDetails(details))
       }
     }
   }
