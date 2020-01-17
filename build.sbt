@@ -18,7 +18,6 @@ inThisBuild(
       )
     ),
     scalaVersion := scala213,
-    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     fork := true,
     testFrameworks := List(
       new TestFramework("munit.Framework")
@@ -32,9 +31,11 @@ inThisBuild(
 )
 
 skip in publish := true
+crossScalaVersions := List()
 
 lazy val munit = project
   .settings(
+    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     unmanagedSourceDirectories.in(Compile) ++= {
       scalaBinaryVersion.value match {
         case "2.12" | "2.11" =>
@@ -83,6 +84,7 @@ lazy val tests = project
   .dependsOn(munit)
   .enablePlugins(BuildInfoPlugin)
   .settings(
+    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
       "sourceDirectory" -> sourceDirectory.in(Compile).value,
@@ -96,6 +98,7 @@ lazy val docs = project
   .dependsOn(munit)
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .settings(
+    crossScalaVersions := List(scala213),
     mdocOut :=
       baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
     mdocVariables := Map(
