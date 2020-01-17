@@ -28,7 +28,7 @@ class MUnitRunner(val cls: Class[_ <: Suite]) extends Runner with Filterable {
   def createTestDescription(test: suite.Test): Description = {
     descriptions.getOrElseUpdate(
       test, {
-        val testName = Stream
+        val testName = munit.internal.Compat.LazyList
           .from(0)
           .map {
             case 0 => test.name

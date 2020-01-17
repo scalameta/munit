@@ -85,7 +85,8 @@ lazy val tests = project
   .settings(
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
-      "sourceDirectory" -> sourceDirectory.in(Compile).value
+      "sourceDirectory" -> sourceDirectory.in(Compile).value,
+      scalaVersion
     ),
     skip in publish := true
   )
