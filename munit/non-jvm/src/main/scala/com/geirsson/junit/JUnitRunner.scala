@@ -10,11 +10,12 @@ final class JUnitRunner(
     val args: Array[String],
     val remoteArgs: Array[String],
     runSettings: RunSettings,
+    classLoader: ClassLoader,
     customRunners: CustomRunners
 ) extends Runner {
 
   def tasks(taskDefs: Array[TaskDef]): Array[Task] =
-    taskDefs.map(new JUnitTask(_, runSettings))
+    taskDefs.map(new JUnitTask(_, runSettings, classLoader))
 
   def done(): String = ""
 
@@ -22,7 +23,7 @@ final class JUnitRunner(
     serializer(task.taskDef)
 
   def deserializeTask(task: String, deserializer: String => TaskDef): Task =
-    new JUnitTask(deserializer(task), runSettings)
+    new JUnitTask(deserializer(task), runSettings, classLoader)
 
   def receiveMessage(msg: String): Option[String] = None
 }

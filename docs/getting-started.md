@@ -14,20 +14,25 @@ MUnit is a Scala testing library with the following goals:
   highlight relevant stack trace elements.
 - **No Scala dependencies**: in order to cross-build MUnit against a wide range
   of Scala compiler versions, MUnit has no external Scala dependencies.
-- **Cross-platform**: MUnit compiles to JVM bytecode and JavaScript via
-  Scala.js. It should be possible to add Scala Native support as well if there
-  is enough interest.
+- **Cross-platform**: MUnit compiles to JVM bytecode, JavaScript via Scala.js
+  and ahead-of-time optimized binaries via Scala Native/LLVM.
 
 ## Quick start
 
 ![Badge with version of the latest release](https://img.shields.io/maven-central/v/org.scalameta/munit_2.13?style=for-the-badge)
 
 ```scala
-// Supported Scala versions: @SUPPORTED_SCALA_VERSIONS@
-// Supported platforms: JVM, JS (0.6.x, and 1.x)
 libraryDependencies += "org.scalameta" %% "munit" % "@VERSION@"
+// Use %%% for non-JVM projects.
 testFrameworks += new TestFramework("munit.Framework")
 ```
+
+| Scala Version | JVM | Scala.js (0.6.x, 1.x) | Native (0.4.x) |
+| ------------- | :-: | :-------------------: | :------------: |
+| 2.11          | ✅  |          ✅           |       ✅       |
+| 2.12          | ✅  |          ✅           |      n/a       |
+| 2.13          | ✅  |          ✅           |      n/a       |
+| 0.21          | ✅  |          n/a          |      n/a       |
 
 Next, write a test suite.
 

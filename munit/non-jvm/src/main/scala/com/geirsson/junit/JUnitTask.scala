@@ -4,12 +4,9 @@
 
 package com.geirsson.junit
 
-import munit.{MUnitRunner, Suite}
+import munit.internal.PlatformCompat
 import org.junit.runner.notification.RunNotifier
 import sbt.testing._
-
-import scala.concurrent.Future
-import scala.scalajs.reflect.Reflect
 
 /* Implementation note: In JUnitTask we use Future[Try[Unit]] instead of simply
  * Future[Unit]. This is to prevent Scala's Future implementation to box/wrap
@@ -19,7 +16,8 @@ import scala.scalajs.reflect.Reflect
  */
 final class JUnitTask(
     val taskDef: TaskDef,
-    runSettings: RunSettings
+    runSettings: RunSettings,
+    classLoader: ClassLoader
 ) extends Task {
 
   def tags: Array[String] = Array.empty
@@ -37,13 +35,9 @@ final class JUnitTask(
       loggers: Array[Logger],
       continuation: Array[Task] => Unit
   ): Unit = {
-    Reflect.lookupInstantiatableClass(taskDef.fullyQualifiedName()) match {
-      case None => Future.successful(())
-      case Some(cls) =>
-        val runner = new MUnitRunner(
-          cls.runtimeClass.asInstanceOf[Class[_ <: Suite]],
-          () => cls.newInstance().asInstanceOf[Suite]
-        )
+    PlatformCompat.newRunner(taskDef, classLoader) match {
+      case None =>
+      case Some(runner) =>
         val reporter =
           new JUnitReporter(eventHandler, loggers, runSettings, taskDef)
         val notifier: RunNotifier = new MUnitRunNotifier(reporter)

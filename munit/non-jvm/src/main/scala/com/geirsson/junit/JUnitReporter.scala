@@ -6,6 +6,7 @@ package com.geirsson.junit
 
 import munit.internal.console.AnsiColors
 import sbt.testing._
+import munit.internal.PlatformCompat
 
 final class JUnitReporter(
     eventHandler: EventHandler,
@@ -217,9 +218,14 @@ final class JUnitReporter(
       e.getFileName() != null &&
       e.getFileName().contains("file:/")
     }
+    val canHighlight = !PlatformCompat.isNative
     new StringBuilder()
       .append(AnsiColors.Reset)
-      .append(if (highlight) AnsiColors.Bold else AnsiColors.DarkGrey)
+      .append(
+        if (!canHighlight) ""
+        else if (highlight) AnsiColors.Bold
+        else AnsiColors.DarkGrey
+      )
       .append("    at ")
       .append(settings.decodeName(e.getClassName + '.' + e.getMethodName))
       .append('(')
