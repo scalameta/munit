@@ -2,6 +2,8 @@ package munit.internal
 
 import sbt.testing.TaskDef
 import munit.MUnitRunner
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
 import scala.scalanative.testinterface.PreloadedClassLoader
 
 object PlatformCompat {
@@ -11,6 +13,17 @@ object PlatformCompat {
   def isJVM: Boolean = false
   def isJS: Boolean = false
   def isNative: Boolean = true
+
+  def await[T](f: Future[T], timeout: Duration): T = {
+    f.value match {
+      case Some(value) =>
+        value.get
+      case None =>
+        throw new NoSuchElementException(
+          s"Future $f is not completed and `scala.concurrent.Await` is not supported in Scala Native."
+        )
+    }
+  }
 
   def newRunner(
       taskDef: TaskDef,

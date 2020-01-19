@@ -11,7 +11,7 @@ abstract class DemoSuite extends FunSuite {
     case class User(name: String, age: Int)
     val john = User("John", age = 41)
     val susan = User("Susan", age = 42)
-    assertEqual(john, susan)
+    assertEquals(john, susan)
   }
 
   test("stack-traces") {

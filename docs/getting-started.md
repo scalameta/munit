@@ -29,10 +29,10 @@ testFrameworks += new TestFramework("munit.Framework")
 
 | Scala Version | JVM | Scala.js (0.6.x, 1.x) | Native (0.4.x) |
 | ------------- | :-: | :-------------------: | :------------: |
-| 2.11          | ✅  |          ✅           |       ✅       |
-| 2.12          | ✅  |          ✅           |      n/a       |
-| 2.13          | ✅  |          ✅           |      n/a       |
-| 0.21          | ✅  |          n/a          |      n/a       |
+| 2.11.x        | ✅  |          ✅           |       ✅       |
+| 2.12.x        | ✅  |          ✅           |      n/a       |
+| 2.13.x        | ✅  |          ✅           |      n/a       |
+| 0.21.x        | ✅  |          n/a          |      n/a       |
 
 Next, write a test suite.
 
@@ -41,25 +41,80 @@ class MySuite extends munit.FunSuite {
   test("hello") {
     val obtained = 42
     val expected = 43
-    assertEqual(obtained, expected)
+    assertEquals(obtained, expected)
   }
 }
 ```
 
-## Usage
+### Run tests in sbt
 
-See the [usage guide](usage.md).
+Execute `sbt test` to run MUnit tests in the terminal. It's recommended to stay
+in the sbt shell for the best compiler performance.
+
+```sh
+$ sbt
+> test
+```
+
+Use `testOnly` to run only a single test suite in the sbt shell.
+
+```sh
+# sbt shell
+> testOnly com.MySuite
+```
+
+### Run tests in IntelliJ
+
+MUnit test suites can be executed from in IntelliJ like normal test suites.
+
+![Running MUnit from IntelliJ](https://i.imgur.com/oAA2ZeQ.png)
+
+It's expected that it's not possible to run individual test cases from IntelliJ
+since it does not understand the structure of the `test("name") {...}` syntax.
+As a workaround, use the `.only` marker to run only a single test from IntelliJ.
+
+```diff
+- test("name") {
++ test("name".only) {
+    // ...
+  }
+```
+
+### Run tests in VS Code
+
+MUnit test suites can be executed from VS Code like normal test suites.
+
+![Running MUnit from VS Code](https://i.imgur.com/hmL0hAp.png)
+
+### Search for failed tests in large log files
+
+Test results are formatted in a specific way to make it easy to search for them
+in a large log file.
+
+| Test    | Prefix  |
+| ------- | ------- |
+| Success | `+`     |
+| Failed  | `==> X` |
+| Ignored | `==> i` |
+| Skipped | `==> s` |
+
+Knowing these prefixes may come in handy for example when browsing test logs in
+a browser. Search for `==> X` to quickly navigate to the failed tests.
+
+## Usage guide
+
+See [declaring tests](tests.html) to learn how to declare MUnit tests.
 
 ## Why JUnit?
 
 MUnit builds on top of JUnit in order to benefit from existing JUnit tooling
 integrations. For example, IntelliJ can already automatically detect JUnit test
-suites and provides a great interface to explore JUnit test results. Some build
-tools like Pants support running JUnit tests out-of-the-box.
+suites and provides a nice interface to explore JUnit test results. Some build
+tools like Pants have built-in support to JUnit test suites.
 
-However, the default JUnit testing syntax is based on annotations and does not
-feel idiomatic when used from Scala. MUnit tries to fill in the gap by providing
-a small Scala API on top of JUnit.
+The default JUnit testing syntax is based on annotations and does not feel
+idiomatic when used from Scala. MUnit tries to fill in the gap by providing a
+small Scala API on top of JUnit.
 
 ## Stability
 

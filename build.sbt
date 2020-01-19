@@ -181,6 +181,7 @@ lazy val docs = project
     crossScalaVersions := List(scala213, scala212),
     mdocOut :=
       baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
+    mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
       "SUPPORTED_SCALA_VERSIONS" -> scalaVersions.mkString(", ")

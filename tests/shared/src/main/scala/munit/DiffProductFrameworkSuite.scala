@@ -6,7 +6,7 @@ class DiffProductFrameworkSuite extends FunSuite {
   test("pass") {
     val john = User("John", 42, 1.to(2).toList)
     val john2 = User("John", 43, 2.to(2).toList)
-    assertEqual(john2, john)
+    assertEquals(john2, john)
   }
 
 }
@@ -16,7 +16,7 @@ object DiffProductFrameworkSuite
       classOf[DiffProductFrameworkSuite],
       """|==> failure munit.DiffProductFrameworkSuite.pass - /scala/munit/DiffProductFrameworkSuite.scala:9
          |8:     val john2 = User("John", 43, 2.to(2).toList)
-         |9:     assertEqual(john2, john)
+         |9:     assertEquals(john2, john)
          |10:  }
          |values are not the same
          |=> Obtained

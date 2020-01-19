@@ -10,8 +10,16 @@ package munit
 final class TestOptions(
     val name: String,
     val tags: Set[Tag],
-    val loc: Location
+    val location: Location
 ) extends Serializable {
+
+  def withName(newName: String): TestOptions =
+    copy(name = newName)
+  def withTags(newTags: Set[Tag]): TestOptions =
+    copy(tags = newTags)
+  def withLocation(newLocation: Location): TestOptions =
+    copy(location = newLocation)
+
   def fail: TestOptions = tag(Fail)
   def flaky: TestOptions = tag(Flaky)
   def ignore: TestOptions = tag(Ignore)
@@ -20,9 +28,9 @@ final class TestOptions(
   private[this] def copy(
       name: String = this.name,
       tags: Set[Tag] = this.tags,
-      loc: Location = this.loc
+      location: Location = this.location
   ): TestOptions = {
-    new TestOptions(name, tags, loc)
+    new TestOptions(name, tags, location)
   }
 }
 

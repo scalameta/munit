@@ -3,6 +3,8 @@ package munit.internal
 import scala.scalajs.reflect.Reflect
 import sbt.testing.TaskDef
 import munit.MUnitRunner
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
 
 object PlatformCompat {
   // Scala.js does not support looking up annotations at runtime.
@@ -11,6 +13,17 @@ object PlatformCompat {
   def isJVM: Boolean = false
   def isJS: Boolean = true
   def isNative: Boolean = false
+
+  def await[T](f: Future[T], timeout: Duration): T = {
+    f.value match {
+      case Some(value) =>
+        value.get
+      case None =>
+        throw new NoSuchElementException(
+          s"Future $f is not completed and `scala.concurrent.Await` is not supported in JavaScript."
+        )
+    }
+  }
 
   def newRunner(
       taskDef: TaskDef,

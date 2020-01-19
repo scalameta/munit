@@ -64,10 +64,10 @@ import scala.util.Properties
 
 ## Ignore entire test suite
 
-Use the `@Ignore` annotation to skip all tests in a test suite.
+Use the `@IgnoreSuite` annotation to skip all tests in a test suite.
 
-```scala
-@munit.Ignore
+```scala mdoc
+@munit.IgnoreSuite
 class MySuite extends munit.FunSuite {
   test("hello1") {
     // will not run
@@ -77,6 +77,18 @@ class MySuite extends munit.FunSuite {
   }
   // ...
 }
+```
+
+The `IgnoreSuite` annotation is only supported on the JVM. A workaround for
+Scala.js and Scala Native is to mark the test suite as abstract so that it
+doesn't run.
+
+```diff
+- @munit.IgnoreSuite
+- class MySuite extends munit.FunSuite {
++ abstract class MySuite extends munit.FunSuite {
+    test("hello1") {
+      // will not run
 ```
 
 ## Ignore entire test suite based on a dynamic condition
@@ -95,8 +107,9 @@ class MyWindowsSuite extends munit.FunSuite {
 
 ## Group test suites with categories
 
-Use the experimental `@Category(...)` annotation from JUnit to group tests
-suites together.
+> This feature is only supported on the JVM.
+
+Use the `@Category(...)` annotation from JUnit to group tests suites together.
 
 ```scala
 package myapp
