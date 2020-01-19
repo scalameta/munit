@@ -144,6 +144,7 @@ lazy val docs = project
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .settings(
     sharedSettings,
+    skip in publish := true,
     crossScalaVersions := List(scala213, scala212),
     mdocOut :=
       baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
