@@ -1,8 +1,8 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
-val scalaJSVersion =
-  Option(System.getenv("SCALAJS_VERSION")).getOrElse("1.0.0-RC1")
+val customScalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
+val scalaJSVersion = customScalaJSVersion.getOrElse("1.0.0-RC1")
 def scala213 = "2.13.1"
 def scala212 = "2.12.10"
 def scala211 = "2.11.12"
@@ -111,6 +111,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
     )
   )
   .jvmSettings(
+    skip in publish := customScalaJSVersion.isDefined,
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
       "com.geirsson" % "junit-interface" % "0.11.6"
