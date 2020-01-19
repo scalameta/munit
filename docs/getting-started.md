@@ -12,6 +12,11 @@ MUnit is a Scala testing library with the following goals:
   help you quickly understand what caused a test failure. MUnit tries to
   displays diffs and source locations when possible and it does a best-effort to
   highlight relevant stack trace elements.
+- **No Scala dependencies**: in order to cross-build MUnit against a wide range
+  of Scala compiler versions, MUnit has no external Scala dependencies.
+- **Cross-platform**: MUnit compiles to JVM bytecode and JavaScript via
+  Scala.js. It should be possible to add Scala Native support as well if there
+  is enough interest.
 
 ## Quick start
 
@@ -19,7 +24,7 @@ MUnit is a Scala testing library with the following goals:
 
 ```scala
 // Supported Scala versions: @SUPPORTED_SCALA_VERSIONS@
-// Supported platforms: JVM, JS
+// Supported platforms: JVM, JS (0.6.x, and 1.x)
 libraryDependencies += "org.scalameta" %% "munit" % "@VERSION@"
 testFrameworks += new TestFramework("munit.Framework")
 ```
@@ -40,26 +45,22 @@ class MySuite extends munit.FunSuite {
 
 See the [usage guide](usage.md).
 
-## Limitations
-
-**JVM-only**: MUnit is currently only published for the JVM. MUnit uses a
-[JUnit testing interface](https://github.com/olafurpg/junit-interface) for sbt
-that's written in Java so that would need to be changed in order to add Scala.js
-and Scala Native support. Feel free to open an issue if you would like to
-contribute cross-platform support.
-
 ## Why JUnit?
 
-MUnit is built on the idea that JUnit already great tooling integrations with
-build tools like sbt and IDEs like IntelliJ. However, the JUnit testing syntax
-is based on annotations and does not feel idiomatic when used from Scala. MUnit
-tries to fill in the gap by providing a small Scala API on top of JUnit.
+MUnit builds on top of JUnit in order to benefit from existing JUnit tooling
+integrations. For example, IntelliJ can already automatically detect JUnit test
+suites and provides a great interface to explore JUnit test results. Some build
+tools like Pants support running JUnit tests out-of-the-box.
+
+However, the default JUnit testing syntax is based on annotations and does not
+feel idiomatic when used from Scala. MUnit tries to fill in the gap by providing
+a small Scala API on top of JUnit.
 
 ## Stability
 
-MUnit is a new library with no stability guarantees. It's expected that new
-releases, including patch releases, will have binary and source breaking
-changes.
+MUnit is a new library with no stability guarantees. While this project is in
+the v0.x series, it's expected that new releases, including patch releases, will
+have binary and source breaking changes.
 
 ## Inspirations
 
