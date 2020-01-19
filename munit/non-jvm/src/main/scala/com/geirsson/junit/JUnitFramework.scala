@@ -21,7 +21,13 @@ abstract class JUnitFramework extends Framework {
       remoteArgs: Array[String],
       testClassLoader: ClassLoader
   ): Runner = {
-    new JUnitRunner(args, remoteArgs, parseRunSettings(args), customRunners)
+    new JUnitRunner(
+      args,
+      remoteArgs,
+      parseRunSettings(args),
+      testClassLoader,
+      customRunners
+    )
   }
 
   def slaveRunner(
@@ -30,7 +36,13 @@ abstract class JUnitFramework extends Framework {
       testClassLoader: ClassLoader,
       send: String => Unit
   ): Runner = {
-    new JUnitRunner(args, remoteArgs, parseRunSettings(args), customRunners)
+    new JUnitRunner(
+      args,
+      remoteArgs,
+      parseRunSettings(args),
+      testClassLoader,
+      customRunners
+    )
   }
 
   private def parseRunSettings(args: Array[String]): RunSettings = {

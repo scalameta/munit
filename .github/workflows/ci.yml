@@ -5,34 +5,40 @@ on:
       - master
   pull_request:
 jobs:
-  tests:
+  jvm:
     strategy:
       fail-fast: false
       matrix:
         java: [11, 8]
-        platform: [JVM, JS]
-        exclude:
-          - platform: JS
-            java: 8
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v2
-      - run: sbt +tests${{ matrix.platform }}/test
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v2
       - run: sbt +testsJVM/test
-  scalajs06:
+  js:
+    strategy:
+      fail-fast: false
+      matrix:
+        scalajs: ["1.0.0-RC2", "0.6.31"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v2
       - run: sbt +testsJS/test
         env:
-          SCALAJS_VERSION: "0.6.31"
+          SCALAJS_VERSION: ${{ matrix.scalajs }}
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v2
+      - run: sbt +testsNative/test
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v2
+      - run: sbt +testsJVM/test
   checks:
     runs-on: ubuntu-latest
     steps:
