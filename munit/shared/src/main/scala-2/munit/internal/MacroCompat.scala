@@ -7,7 +7,7 @@ import scala.reflect.macros.blackbox.Context
 object MacroCompat {
 
   trait LocationMacro {
-    implicit def generateLocation: Location = macro locationImpl
+    implicit def generate: Location = macro locationImpl
   }
 
   def locationImpl(c: Context): c.Tree = {

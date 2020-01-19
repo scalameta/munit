@@ -26,12 +26,15 @@ class Lines extends Serializable {
           val padding = " " * (width - number.length() + 1)
           number + padding
         }
+        val isMultilineMessage = message.contains('\n')
         out
           .append(location.path)
           .append(':')
           .append(location.line.toString())
-          .append(if (message.length == 0) "" else " ")
-          .append(message)
+        if (message.length() > 0 && !isMultilineMessage) {
+          out.append(" ").append(message)
+        }
+        out
           .append('\n')
           .append(format(location.line - 1))
           .append(slice(0))
@@ -43,6 +46,9 @@ class Lines extends Serializable {
           .append('\n')
           .append(format(location.line + 1))
           .append(slice(2))
+        if (isMultilineMessage) {
+          out.append('\n').append(message)
+        }
       }
       out.toString()
     } catch {
