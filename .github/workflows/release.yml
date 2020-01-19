@@ -13,7 +13,7 @@ jobs:
       - name: Publish
         run: |
           sbt ci-release
-          SCALAJS_VERSION=0.6.31 sbt sonatypeBundleClean ci-release
+          SCALAJS_VERSION=0.6.31 CI_RELEASE="+munitJS/publishSigned" sbt sonatypeBundleClean ci-release
           sbt docs/docusaurusPublishGhpages
         env:
           GIT_USER: munit@scalameta.org
