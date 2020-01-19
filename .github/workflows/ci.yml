@@ -24,7 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v2
-      - run: ./bin/native_setup.sh
       - run: sbt +testsNative/test
   windows:
     runs-on: windows-latest
