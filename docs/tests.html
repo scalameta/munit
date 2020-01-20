@@ -201,15 +201,15 @@ bug report but don't have a solution to fix the issue yet.</p>
 <p>Override <code>munitRunTest()</code> to extend the default behavior for how test bodies are
 evaluated. For example, use this feature to implement a <code>Rerun(N)</code> modifier to
 evaluate the body multiple times.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Rerun</span>(<span class="hljs-params">count: <span class="hljs-type">Int</span></span>) <span class="hljs-keyword">extends</span> <span class="hljs-title">Tag</span>(<span class="hljs-params">"<span class="hljs-type">Rerun</span>"</span>)</span>
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Rerun</span>(<span class="hljs-params">count: <span class="hljs-type">Int</span></span>) <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">Tag</span>(<span class="hljs-params">"<span class="hljs-type">Rerun</span>"</span>)</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyWindowsSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitRunTest</span></span>(options: <span class="hljs-type">TestOptions</span>, body: =&gt; <span class="hljs-type">Any</span>): <span class="hljs-type">Any</span> = {
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitRunTest</span></span>(options: munit.<span class="hljs-type">TestOptions</span>, body: =&gt; <span class="hljs-type">Any</span>): <span class="hljs-type">Any</span> = {
     <span class="hljs-keyword">val</span> rerunCount = options.tags.collectFirst {
       <span class="hljs-keyword">case</span> <span class="hljs-type">Rerun</span>(n) =&gt; n
     }.getOrElse(<span class="hljs-number">1</span>)
     <span class="hljs-number">1.</span>to(rerunCount).map(_ =&gt; <span class="hljs-keyword">super</span>.munitRunTest(options, body))
   }
-  test(<span class="hljs-string">"files"</span>, <span class="hljs-type">Rerun</span>(<span class="hljs-number">10</span>)) {
+  test(<span class="hljs-string">"files"</span>.tag(<span class="hljs-type">Rerun</span>(<span class="hljs-number">10</span>))) {
     println(<span class="hljs-string">"Hello"</span>) <span class="hljs-comment">// will run 10 times</span>
   }
   test(<span class="hljs-string">"files"</span>) {
