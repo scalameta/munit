@@ -100,39 +100,76 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       name: String,
       ex: Throwable
   ): Unit = {
-    val description = Description.createTestDescription(cls, name)
+    val test = new suite.Test(name, () => ???, Set.empty, Location.empty)
+    val description = createTestDescription(test)
     notifier.fireTestStarted(description)
     StackTraces.trimStackTrace(ex)
-    notifier.fireTestFailure(new Failure(suiteDescription, ex))
+    notifier.fireTestFailure(new Failure(description, ex))
     notifier.fireTestFinished(description)
   }
 
   def runBeforeAll(notifier: RunNotifier): Boolean = {
-    runHiddenTest(notifier, "beforeAll", suite.beforeAll())
+    var isContinue = runHiddenTest(notifier, "beforeAll", suite.beforeAll())
+    suite.munitFixtures.foreach { fixture =>
+      isContinue &= runHiddenTest(
+        notifier,
+        s"beforeAllFixture(${fixture.fixtureName})",
+        fixture.beforeAll()
+      )
+    }
+    isContinue
   }
   def runAfterAll(notifier: RunNotifier): Boolean = {
-    runHiddenTest(notifier, "afterAll", suite.afterAll())
+    var isContinue = true
+    suite.munitFixtures.foreach { fixture =>
+      isContinue &= runHiddenTest(
+        notifier,
+        s"afterAllFixture(${fixture.fixtureName})",
+        fixture.afterAll()
+      )
+    }
+    isContinue &= runHiddenTest(notifier, "afterAll", suite.afterAll())
+    isContinue
   }
 
   def runBeforeEach(
       notifier: RunNotifier,
       test: suite.Test
   ): Boolean = {
-    runHiddenTest(
+    val beforeEach = new GenericBeforeEach(test)
+    var isContinue = runHiddenTest(
       notifier,
-      s"beforeEach.${test.name}",
-      suite.beforeEach(new GenericBeforeEach(test))
+      s"beforeEach(${test.name})",
+      suite.beforeEach(beforeEach)
     )
+    suite.munitFixtures.foreach { fixture =>
+      isContinue &= runHiddenTest(
+        notifier,
+        s"beforeEachFixture(${test.name}, ${fixture.fixtureName})",
+        fixture.beforeEach(beforeEach)
+      )
+    }
+    isContinue
   }
   def runAfterEach(
       notifier: RunNotifier,
       test: suite.Test
   ): Boolean = {
-    runHiddenTest(
+    var isContinue = true
+    val afterEach = new GenericAfterEach(test)
+    suite.munitFixtures.foreach { fixture =>
+      isContinue &= runHiddenTest(
+        notifier,
+        s"afterEachFixture(${test.name}, ${fixture.fixtureName})",
+        fixture.afterEach(afterEach)
+      )
+    }
+    isContinue &= runHiddenTest(
       notifier,
-      s"afterEach.${test.name}",
-      suite.afterEach(new GenericAfterEach(test))
+      s"afterEach(${test.name})",
+      suite.afterEach(afterEach)
     )
+    isContinue
   }
 
   def runTest(

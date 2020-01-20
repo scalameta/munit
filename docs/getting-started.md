@@ -103,7 +103,7 @@ a browser. Search for `==> X` to quickly navigate to the failed tests.
 
 ## Usage guide
 
-See [declaring tests](tests.html) to learn how to declare MUnit tests.
+See the guide on [writing tests](tests.html) to learn more about using MUnit.
 
 ## Why JUnit?
 
