@@ -13,22 +13,22 @@ trait Assertions {
 
   def assert(
       cond: Boolean,
-      details: => Any = "assertion failed"
+      clue: => Any = "assertion failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
-        fail(munitPrint(details))
+        fail(munitPrint(clue))
       }
     }
   }
 
   def assume(
       cond: Boolean,
-      details: => Any = "assumption failed"
+      clue: => Any = "assumption failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
-        throw new DottyBugAssumptionViolatedException(munitPrint(details))
+        throw new DottyBugAssumptionViolatedException(munitPrint(clue))
       }
     }
   }
@@ -36,13 +36,13 @@ trait Assertions {
   def assertNoDiff(
       obtained: String,
       expected: String,
-      details: => Any = "diff assertion failed"
+      clue: => Any = "diff assertion failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       Diffs.assertNoDiff(
         obtained,
         expected,
-        munitPrint(details),
+        munitPrint(clue),
         printObtainedAsStripMargin = true
       )
     }
@@ -51,11 +51,11 @@ trait Assertions {
   def assertNotEquals[A, B](
       obtained: A,
       expected: B,
-      details: => Any = "values are the same"
+      clue: => Any = "values are the same"
   )(implicit loc: Location, ev: A =:= B): Unit = {
     StackTraces.dropInside {
       if (obtained == expected) {
-        fail(munitPrint(details))
+        fail(munitPrint(clue))
       }
     }
   }
@@ -63,14 +63,14 @@ trait Assertions {
   def assertEquals[A, B](
       obtained: A,
       expected: B,
-      details: => Any = "values are not the same"
+      clue: => Any = "values are not the same"
   )(implicit loc: Location, ev: A =:= B): Unit = {
     StackTraces.dropInside {
       if (obtained != expected) {
         Diffs.assertNoDiff(
           munitPrint(obtained),
           munitPrint(expected),
-          munitPrint(details),
+          munitPrint(clue),
           printObtainedAsStripMargin = false
         )
       }
@@ -117,8 +117,8 @@ trait Assertions {
     throw new FailException(munitLines.formatLine(loc, message), loc)
   }
 
-  def munitPrint(details: => Any): String = {
-    details match {
+  def munitPrint(clue: => Any): String = {
+    clue match {
       case message: String => message
       case value           => Printers.print(value)
     }
