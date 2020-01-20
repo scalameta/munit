@@ -1,6 +1,6 @@
 ---
 id: tests
-title: Writing tests
+title: Declaring tests
 ---
 
 MUnit provides several ways to declare different kinds of tests.

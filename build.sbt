@@ -75,6 +75,7 @@ val sharedSettings = List(
     scalaBinaryVersion.value match {
       case "2.11" =>
         List(
+          "-Yrangepos",
           "-Xexperimental",
           "-Ywarn-unused-import"
         )

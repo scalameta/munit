@@ -21,7 +21,6 @@ trait Assertions {
       }
     }
   }
-
   def assume(
       cond: Boolean,
       clue: => Any = "assumption failed"
@@ -116,6 +115,8 @@ trait Assertions {
   def fail(message: String)(implicit loc: Location): Nothing = {
     throw new FailException(munitLines.formatLine(loc, message), loc)
   }
+
+  def clue(clue: Clue[_]*): Clues = new Clues(clue.toList)
 
   def munitPrint(clue: => Any): String = {
     clue match {

@@ -5,6 +5,9 @@
     "previous": "Previous",
     "tagline": "Scala testing library with actionable errors and extensible APIs",
     "docs": {
+      "assertions": {
+        "title": "assertions"
+      },
       "filtering": {
         "title": "Filtering tests"
       },
@@ -18,7 +21,7 @@
         "title": "Coming from ScalaTest"
       },
       "tests": {
-        "title": "Writing tests"
+        "title": "Declaring tests"
       },
       "troubleshooting": {
         "title": "Troubleshooting"
