@@ -63,7 +63,7 @@ class ClueSuite extends BaseSuite {
   case class User(name: String, age: Int)
   val user = User("Tanya", 34)
   checkPrint(
-    "product",
+    "product".tag(Only213),
     clue(user),
     """|Clues {
        |  user: User(
@@ -75,11 +75,11 @@ class ClueSuite extends BaseSuite {
   )
 
   def checkPrint(
-      name: String,
+      options: TestOptions,
       clues: Clues,
       expected: String
   )(implicit loc: Location): Unit = {
-    test(name) {
+    test(options) {
       val obtained = munitPrint(clues)
       assertNoDiff(obtained, expected)
     }
