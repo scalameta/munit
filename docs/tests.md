@@ -194,16 +194,16 @@ Override `munitRunTest()` to extend the default behavior for how test bodies are
 evaluated. For example, use this feature to implement a `Rerun(N)` modifier to
 evaluate the body multiple times.
 
-```scala
-case class Rerun(count: Int) extends Tag("Rerun")
+```scala mdoc
+case class Rerun(count: Int) extends munit.Tag("Rerun")
 class MyWindowsSuite extends munit.FunSuite {
-  override def munitRunTest(options: TestOptions, body: => Any): Any = {
+  override def munitRunTest(options: munit.TestOptions, body: => Any): Any = {
     val rerunCount = options.tags.collectFirst {
       case Rerun(n) => n
     }.getOrElse(1)
     1.to(rerunCount).map(_ => super.munitRunTest(options, body))
   }
-  test("files", Rerun(10)) {
+  test("files".tag(Rerun(10))) {
     println("Hello") // will run 10 times
   }
   test("files") {

@@ -1,6 +1,9 @@
 package munit
 
+import scala.util.Properties
+
 abstract class DemoSuite extends FunSuite {
+  override def munitIgnore: Boolean = Properties.isWin
   def someCondition(n: Int): Boolean = n != 2
   test("source-locations") {
     assert(someCondition(1))

@@ -3,7 +3,7 @@ id: fixtures
 title: Using fixtures
 ---
 
-## Local fixtures without mutable state
+## Test local fixtures without mutable state
 
 Implement the `Fixture[T]` trait to configure an environment for each test case.
 
@@ -49,7 +49,7 @@ files2.test("not same") { (file1, file2) =>
 }
 ```
 
-## Local fixtures with mutable state
+## Test local fixtures with mutable state
 
 Override `beforeEach()` and `afterEach()` to add custom logic that should run
 before and after each tests case. For example, use this feature to create
@@ -82,7 +82,7 @@ class MySuite extends munit.FunSuite {
 }
 ```
 
-## Global fixtures with mutable state
+## Suite local fixtures with mutable state
 
 Override `beforeAll()` and `afterAll()` to add custom logic that should run
 before all test cases start runniing and after all tests cases have finished

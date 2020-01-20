@@ -19,6 +19,11 @@ line.
 Use `testOnly -- --only=$TEST_FILTER` to filter an individual test name from the
 command line.
 
+```scala mdoc:invisible
+object Tests extends munit.FunSuite
+import Tests._
+```
+
 ```sh
 # sbt shell
 > testOnly -- --only=issue-456
@@ -26,26 +31,26 @@ command line.
 
 Use `.only` to run only a single test without custom command-line arguments.
 
-```scala
-  test("issue-457") {
-    // will not run
-  }
-  test("issue-456".only) {
-    // only test that runs
-  }
-  test("issue-455") {
-    // will not run
-  }
+```scala mdoc
+test("issue-457") {
+  // will not run
+}
+test("issue-456".only) {
+  // only test that runs
+}
+test("issue-455") {
+  // will not run
+}
 ```
 
 ## Ignore single test case
 
 Use `.ignore` to skip an individual test case in a test suite.
 
-```scala
-  test("issue-456".ignore) {
-    // will not run
-  }
+```scala mdoc
+test("issue-456".ignore) {
+  // will not run
+}
 ```
 
 ## Ignore single test case based on a dynamic conditions
@@ -54,12 +59,12 @@ Use `assume(condition, explanation)` to skip tests when some conditions do not
 hold. For example, use `assume` to conditionally run tests based on the
 operating system or the Scala compiler version.
 
-```scala
+```scala mdoc
 import scala.util.Properties
-  test("paths") {
-    assume(Properties.isLinux, "this test runs only on Linux")
-    assume(Properties.versionNumberString.startsWith("2.13"), "this test runs only on Scala 2.13")
-  }
+test("paths") {
+  assume(Properties.isLinux, "this test runs only on Linux")
+  assume(Properties.versionNumberString.startsWith("2.13"), "this test runs only on Scala 2.13")
+}
 ```
 
 ## Ignore entire test suite
@@ -96,8 +101,8 @@ doesn't run.
 Override `munitIgnore: Boolean` to skip an entire test suite based on a dynamic
 condition.
 
-```scala
-class MyWindowsSuite extends munit.FunSuite {
+```scala mdoc
+class MyWindowsOnlySuite extends munit.FunSuite {
   override def munitIgnore: Boolean = !scala.util.Properties.isWin
   test("windows-only") {
     // only runs on Windows
@@ -111,8 +116,8 @@ class MyWindowsSuite extends munit.FunSuite {
 
 Use the `@Category(...)` annotation from JUnit to group tests suites together.
 
-```scala
-package myapp
+```scala mdoc
+// package myapp
 import org.junit.experimental.categories.Category
 
 class Slow extends munit.Tag("Slow")
@@ -151,16 +156,16 @@ determine what test suites to run from the command line.
 Override `munitTests()` to customize what tests get executed. For example, use
 this feature to skip tests based on a dynamic condition.
 
-```scala
+```scala mdoc
 import scala.util.Properties
 case object Windows extends munit.Tag("Windows")
-class MyWindowsSuite extends munit.FunSuite {
-  override def munitTests(): Any = {
+class MyWindowsTagSuite extends munit.FunSuite {
+  override def munitTests(): Seq[Test] = {
     val default = super.munitTests()
     if (!Properties.isWin) default
     else default.filter(_.tags.contains(Windows))
   }
-  test("files", Windows) {
+  test("files".tag(Windows)) {
     // will always run, including on Windows
   }
   test("files") {
