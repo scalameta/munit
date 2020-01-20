@@ -23,7 +23,7 @@ trait Assertions {
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
-        fail(munitDetails(details))
+        fail(munitPrint(details))
       }
     }
   }
@@ -34,7 +34,7 @@ trait Assertions {
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
-        throw new DottyBugAssumptionViolatedException(munitDetails(details))
+        throw new DottyBugAssumptionViolatedException(munitPrint(details))
       }
     }
   }
@@ -48,7 +48,7 @@ trait Assertions {
       Diffs.assertNoDiff(
         obtained,
         expected,
-        munitDetails(details),
+        munitPrint(details),
         printObtainedAsStripMargin = true
       )
     }
@@ -61,7 +61,7 @@ trait Assertions {
   )(implicit loc: Location, ev: A =:= B): Unit = {
     StackTraces.dropInside {
       if (obtained == expected) {
-        fail(munitDetails(details))
+        fail(munitPrint(details))
       }
     }
   }
@@ -74,9 +74,9 @@ trait Assertions {
     StackTraces.dropInside {
       if (obtained != expected) {
         Diffs.assertNoDiff(
-          munitDetails(obtained),
-          munitDetails(expected),
-          munitDetails(details),
+          munitPrint(obtained),
+          munitPrint(expected),
+          munitPrint(details),
           printObtainedAsStripMargin = false
         )
       }
@@ -123,15 +123,11 @@ trait Assertions {
     throw new FailException(munitLines.formatLine(loc, message), loc)
   }
 
-  def munitDetails(details: => Any): String = {
+  def munitPrint(details: => Any): String = {
     details match {
-      case null            => "null"
       case message: String => message
-      case value           => munitPrint(value)
+      case value           => Printers.print(value)
     }
   }
 
-  def munitPrint(value: Any): String = {
-    Printers.print(value)
-  }
 }
