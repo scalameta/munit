@@ -9,8 +9,10 @@ import com.geirsson.junit.Ansi
 import java.nio.charset.StandardCharsets
 import sbt.testing.Logger
 import scala.util.control.NonFatal
+import java.util.regex.Pattern
 
 abstract class BaseFrameworkSuite extends FunSuite {
+  val systemOut = System.out
   override def munitIgnore: Boolean = !BuildInfo.scalaVersion.startsWith("2.13")
   def exceptionMessage(ex: Throwable): String = {
     if (ex.getMessage() == null) "null"
@@ -23,16 +25,21 @@ abstract class BaseFrameworkSuite extends FunSuite {
         .replace('\\', '/')
     }
   }
-  def check(cls: Class[_], expected: String)(implicit loc: Location): Unit = {
-    test(cls.getSimpleName()) {
+  override def afterEach(context: AfterEach): Unit = {
+    System.setOut(systemOut)
+  }
+
+  def check(t: FrameworkTest): Unit = {
+    test(t.cls.getSimpleName()) {
       val baos = new ByteArrayOutputStream()
       val out = new PrintStream(baos)
+      System.setOut(out)
       val logger = new Logger {
         def ansiCodesSupported(): Boolean = false
         def error(x: String): Unit = out.println(x)
         def warn(x: String): Unit = out.println(x)
         def info(x: String): Unit = out.println(x)
-        def debug(x: String): Unit = out.println(x)
+        def debug(x: String): Unit = () // ignore debugging output
         def trace(x: Throwable): Unit = out.println(x)
       }
       val framework = new Framework
@@ -44,7 +51,7 @@ abstract class BaseFrameworkSuite extends FunSuite {
       val tasks = runner.tasks(
         Array(
           new TaskDef(
-            cls.getName(),
+            t.cls.getName(),
             framework.munitFingerprint,
             false,
             Array()
@@ -75,17 +82,24 @@ abstract class BaseFrameworkSuite extends FunSuite {
           }
         }
       }
+      val elapsedTimePattern =
+        Pattern.compile(" \\d+\\.\\d+s$", Pattern.MULTILINE)
       tasks.foreach(_.execute(eventHandler, Array(logger)))
       val stdout = Ansi
         .filterAnsi(baos.toString(StandardCharsets.UTF_8.name()))
       val obtained = Ansi.filterAnsi(
-        events.toString().replaceAllLiterally("\"\"\"", "'''")
+        t.format match {
+          case SbtFormat =>
+            events.toString().replaceAllLiterally("\"\"\"", "'''")
+          case StdoutFormat =>
+            elapsedTimePattern.matcher(stdout).replaceAll(" <elapsed time>")
+        }
       )
       assertNoDiff(
         obtained,
-        expected,
+        t.expected,
         stdout
       )
-    }
+    }(t.location)
   }
 }
