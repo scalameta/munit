@@ -85,18 +85,20 @@ trait Assertions {
 
   def intercept[T <: Throwable](
       body: => Any
-  )(implicit ev: ClassTag[T], loc: Location): Unit = {
+  )(implicit T: ClassTag[T], loc: Location): T = {
     try {
       body
       fail(
-        s"expected exception of type '${ev.runtimeClass.getName()}' but body evaluated successfully"
+        s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully"
       )
     } catch {
       case e: FailException => throw e
       case NonFatal(e) =>
-        if (!ev.runtimeClass.isAssignableFrom(e.getClass())) {
+        if (T.runtimeClass.isAssignableFrom(e.getClass())) {
+          e.asInstanceOf[T]
+        } else {
           val obtained = e.getClass().getName()
-          val expected = ev.runtimeClass.getName()
+          val expected = T.runtimeClass.getName()
           throw new FailException(
             s"intercept failed, exception '$obtained' is not a subtype of '$expected",
             cause = e,
