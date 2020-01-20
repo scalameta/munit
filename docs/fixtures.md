@@ -3,53 +3,121 @@ id: fixtures
 title: Using fixtures
 ---
 
-## Test local fixtures without mutable state
+## Functional test-local fixtures
 
-Implement the `Fixture[T]` trait to configure an environment for each test case.
+Functional test-local fixtures allow you to write test cases with simple
+setup/teardown methods to initialize resources before a test case and clean up
+resources after a test case.
+
+```scala mdoc:reset
+import java.nio.file._
+class FunFixtureSuite extends munit.FunSuite {
+  val files = new FunFixture[Path](
+    setup = { test =>
+      Files.createTempFile("tmp", test.name)
+    },
+    teardown = { file =>
+      // Always gets called, even if test failed.
+      Files.deleteIfExists(file)
+    }
+  )
+
+  files.test("basic") { file =>
+    assert(Files.isRegularFile(file), s"Files.isRegularFile($file)")
+  }
+}
+```
+
+```scala mdoc:invisible
+val tests = new FunFixtureSuite()
+import tests._
+```
+
+Use `FunFixture.map2` to you need to compose multiple fixtures into a single
+fixture.
+
+```scala mdoc
+// Fixture with access to two temporary files.
+val files2 = FunFixture.map2(files, files)
+files2.test("two") {
+  case (file1, file2) =>
+    assertNotEquals(file1, file2)
+    assert(Files.isRegularFile(file1), s"Files.isRegularFile($file1)")
+    assert(Files.isRegularFile(file2), s"Files.isRegularFile($file2)")
+}
+```
+
+Functional test-local fixtures are desirable since they are easy to reason
+about. Try to use functional test-local fixtures when possible, and only resort
+to reusable or ad-hoc fixtures when necessary.
+
+## Reusable test-local fixtures
+
+Reusable test-local fixtures are more powerful than functional test-local
+fixtures because they can declare custom logic that gets evaluted before each
+local test case and get torn down after each test case. These increased
+capabilities come at the price of ergonomics of the API.
+
+Override the `beforeEach()` and `afterEach()` methods in the `Fixture[T]` trait
+to configure a reusable test-local fixture.
 
 ```scala mdoc:reset
 import java.nio.file._
 import munit._
 class FilesSuite extends FunSuite {
-  val files = new Fixture[Path] {
-    def beforeEach(context: BeforeEachFixture): Path = {
-      // A failure here fails the test.
-      Files.createTempFile("files", context.options.name)
+  val file = new Fixture[Path]("files") {
+    var file: Path = null
+    def apply() = file
+    override def beforeEach(context: BeforeEach): Unit = {
+      file = Files.createTempFile("files", context.test.name)
     }
-    def afterEach(context: AfterEachFixture): Unit = {
-      // Always runs even if test fails.
-      Files.deleteIfExists(context.argument)
+    override def afterEach(context: AfterEach): Unit = {
+      // Always gets called, even if test failed.
+      Files.deleteIfExists(file)
     }
   }
+  override def munitFixtures = List(file)
 
-  files.test("exists") { file =>
+  test("exists") {
     // `file` is the temporary file that was created for this test case.
-    assert(Files.exists(file))
+    assert(Files.exists(file()))
   }
 }
 ```
 
-Use the `Fixture.map2` combinator to merge two fixtures.
+## Reusable suite-local fixtures
 
-```scala mdoc
-class Files2Suite extends FilesSuite {
-  val files2 = Fixture.map2(files, files)
-  files2.test("not same") { case (file1, file2) =>
-    assertNotEquals(file1, file2)
+Reusable suite-local fixtures work the same as reusable test-local fixtures but
+they override the `beforeAll()` and `afterAll()` methods instead of
+`beforeEach()` and `afterEach()`.
+
+```scala mdoc:reset
+import java.sql.Connection
+import java.sql.DriverManager
+class MySuite extends munit.FunSuite {
+  val db = new Fixture[Connection]("database") {
+    private var connection: Connection = null
+    def apply() = connection
+    override def beforeAll(): Unit = {
+      connection = DriverManager.getConnection("jdbc:h2:mem:", "sa", null)
+    }
+    override def afterAll(): Unit = {
+      connection.close()
+    }
+  }
+  override def munitFixtures = List(db)
+
+  test("test1") {
+    db() // database connection has been initialized
+  }
+  test("test2") {
+    // ...
+    db() // the same `db` instance as in "test1"
   }
 }
 ```
 
-In Dotty, it's possible to drop `case` from `case (file1, file2) =>` so the
-following syntax is valid.
-
-```scala
-files2.test("not same") { (file1, file2) =>
-  assertNotEquals(file1, file2)
-}
-```
-
-## Test local fixtures with mutable state
+## Ad-hoc test-local fixtures
 
 Override `beforeEach()` and `afterEach()` to add custom logic that should run
 before and after each tests case. For example, use this feature to create
@@ -82,7 +150,7 @@ class MySuite extends munit.FunSuite {
 }
 ```
 
-## Suite local fixtures with mutable state
+## Ad-hoc suite-local fixtures
 
 Override `beforeAll()` and `afterAll()` to add custom logic that should run
 before all test cases start runniing and after all tests cases have finished

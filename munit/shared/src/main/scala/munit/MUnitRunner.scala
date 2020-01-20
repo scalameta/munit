@@ -14,6 +14,7 @@ import org.junit.runner.manipulation.Filter
 import org.junit.runner.Runner
 
 import scala.collection.mutable
+import scala.util.Try
 
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     extends Runner
@@ -80,6 +81,147 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
   }
 
+  private def runBeforeAll(notifier: RunNotifier): Boolean = {
+    var isContinue = runHiddenTest(notifier, "beforeAll", suite.beforeAll())
+    suite.munitFixtures.foreach { fixture =>
+      isContinue &= runHiddenTest(
+        notifier,
+        s"beforeAllFixture(${fixture.fixtureName})",
+        fixture.beforeAll()
+      )
+    }
+    isContinue
+  }
+  private def runAfterAll(notifier: RunNotifier): Unit = {
+    suite.munitFixtures.foreach { fixture =>
+      runHiddenTest(
+        notifier,
+        s"afterAllFixture(${fixture.fixtureName})",
+        fixture.afterAll()
+      )
+    }
+    runHiddenTest(notifier, "afterAll", suite.afterAll())
+  }
+
+  class BeforeEachResult(
+      val error: Option[Throwable],
+      val loadedFixtures: List[suite.Fixture[_]]
+  )
+  private def runBeforeEach(
+      test: suite.Test
+  ): BeforeEachResult = {
+    val beforeEach = new GenericBeforeEach(test)
+    val fixtures = mutable.ListBuffer.empty[suite.Fixture[_]]
+    val error = foreachUnsafe(
+      List(() => suite.beforeEach(beforeEach)) ++
+        suite.munitFixtures.map(fixture =>
+          () => {
+            fixture.beforeEach(beforeEach)
+            fixtures += fixture
+            ()
+          }
+        )
+    )
+    new BeforeEachResult(error.failed.toOption, fixtures.toList)
+  }
+
+  private def runAfterEach(
+      test: suite.Test,
+      fixtures: List[suite.Fixture[_]]
+  ): Unit = {
+    val afterEach = new GenericAfterEach(test)
+    val error = foreachUnsafe(
+      fixtures.map(fixture => () => fixture.afterEach(afterEach)) ++
+        List(() => suite.afterEach(afterEach))
+    )
+    error.get // throw exception if it exists.
+  }
+
+  private def runAll(notifier: RunNotifier): Unit = {
+    if (PlatformCompat.isIgnoreSuite(cls)) {
+      notifier.fireTestIgnored(suiteDescription)
+      return
+    }
+    try {
+      val isContinue = runBeforeAll(notifier)
+      if (isContinue) {
+        suite.munitTests().foreach { test =>
+          runTest(notifier, test)
+        }
+      }
+    } finally {
+      runAfterAll(notifier)
+    }
+  }
+
+  private def runTest(
+      notifier: RunNotifier,
+      test: suite.Test
+  ): Unit = {
+    val description = createTestDescription(test)
+    if (!filter.shouldRun(description)) {
+      return
+    }
+    notifier.fireTestStarted(description)
+    try {
+      val result = StackTraces.dropOutside {
+        val beforeEachResult = runBeforeEach(test)
+        beforeEachResult.error match {
+          case None =>
+            try test.body()
+            finally runAfterEach(test, beforeEachResult.loadedFixtures)
+          case Some(error) =>
+            try runAfterEach(test, beforeEachResult.loadedFixtures)
+            finally throw error
+        }
+      }
+      result match {
+        case f: TestValues.FlakyFailure =>
+          notifier.fireTestAssumptionFailed(new Failure(description, f))
+        case TestValues.Ignore =>
+          notifier.fireTestIgnored(description)
+        case _ =>
+      }
+    } catch {
+      case ex: DottyBugAssumptionViolatedException =>
+        StackTraces.trimStackTrace(ex)
+      case NonFatal(ex) =>
+        StackTraces.trimStackTrace(ex)
+        val failure = new Failure(description, ex)
+        ex match {
+          case _: DottyBugAssumptionViolatedException =>
+            notifier.fireTestAssumptionFailed(failure)
+          case _ =>
+            notifier.fireTestFailure(failure)
+        }
+    } finally {
+      notifier.fireTestFinished(description)
+    }
+  }
+
+  private def foreachUnsafe(thunks: Iterable[() => Unit]): Try[Unit] = {
+    var errors = mutable.ListBuffer.empty[Throwable]
+    thunks.foreach { thunk =>
+      try {
+        thunk()
+      } catch {
+        case ex if NonFatal(ex) =>
+          errors += ex
+      }
+    }
+    errors.toList match {
+      case head :: tail =>
+        tail.foreach { e =>
+          if (e ne head) {
+            head.addSuppressed(e)
+          }
+        }
+        scala.util.Failure(head)
+      case _ =>
+        scala.util.Success(())
+    }
+  }
+
   private def runHiddenTest(
       notifier: RunNotifier,
       name: String,
@@ -100,94 +242,12 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       name: String,
       ex: Throwable
   ): Unit = {
-    val description = Description.createTestDescription(cls, name)
+    val test = new suite.Test(name, () => ???, Set.empty, Location.empty)
+    val description = createTestDescription(test)
     notifier.fireTestStarted(description)
     StackTraces.trimStackTrace(ex)
-    notifier.fireTestFailure(new Failure(suiteDescription, ex))
+    notifier.fireTestFailure(new Failure(description, ex))
     notifier.fireTestFinished(description)
-  }
-
-  def runBeforeAll(notifier: RunNotifier): Boolean = {
-    runHiddenTest(notifier, "beforeAll", suite.beforeAll())
-  }
-  def runAfterAll(notifier: RunNotifier): Boolean = {
-    runHiddenTest(notifier, "afterAll", suite.afterAll())
-  }
-
-  def runBeforeEach(
-      notifier: RunNotifier,
-      test: suite.Test
-  ): Boolean = {
-    runHiddenTest(
-      notifier,
-      s"beforeEach.${test.name}",
-      suite.beforeEach(new GenericBeforeEach(test))
-    )
-  }
-  def runAfterEach(
-      notifier: RunNotifier,
-      test: suite.Test
-  ): Boolean = {
-    runHiddenTest(
-      notifier,
-      s"afterEach.${test.name}",
-      suite.afterEach(new GenericAfterEach(test))
-    )
-  }
-
-  def runTest(
-      notifier: RunNotifier,
-      test: suite.Test
-  ): Unit = {
-    val description = createTestDescription(test)
-    if (!filter.shouldRun(description)) {
-      return
-    }
-    var isContinue = runBeforeEach(notifier, test)
-    if (isContinue) {
-      notifier.fireTestStarted(description)
-      try {
-        StackTraces.dropOutside(test.body()) match {
-          case f: TestValues.FlakyFailure =>
-            notifier.fireTestAssumptionFailed(new Failure(description, f))
-          case TestValues.Ignore =>
-            notifier.fireTestIgnored(description)
-          case _ =>
-        }
-      } catch {
-        case ex: DottyBugAssumptionViolatedException =>
-          StackTraces.trimStackTrace(ex)
-        case NonFatal(ex) =>
-          StackTraces.trimStackTrace(ex)
-          val failure = new Failure(description, ex)
-          ex match {
-            case _: DottyBugAssumptionViolatedException =>
-              notifier.fireTestAssumptionFailed(failure)
-            case _ =>
-              notifier.fireTestFailure(failure)
-          }
-      } finally {
-        notifier.fireTestFinished(description)
-        runAfterEach(notifier, test)
-      }
-    }
-  }
-
-  def runAll(notifier: RunNotifier): Unit = {
-    if (PlatformCompat.isIgnoreSuite(cls)) {
-      notifier.fireTestIgnored(suiteDescription)
-      return
-    }
-    try {
-      val isContinue = runBeforeAll(notifier)
-      if (isContinue) {
-        suite.munitTests().foreach { test =>
-          runTest(notifier, test)
-        }
-      }
-    } finally {
-      runAfterAll(notifier)
-    }
   }
 
 }
