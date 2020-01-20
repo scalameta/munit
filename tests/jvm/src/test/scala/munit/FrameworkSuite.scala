@@ -6,7 +6,8 @@ class FrameworkSuite extends BaseFrameworkSuite {
     CiOnlyFrameworkSuite,
     DiffProductFrameworkSuite,
     FailFrameworkSuite,
-    DuplicateNameFrameworkSuite
+    DuplicateNameFrameworkSuite,
+    ScalaVersionFrameworkSuite
   )
   tests.foreach { t =>
     check(t.cls, t.expected)(t.location)

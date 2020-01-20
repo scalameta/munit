@@ -8,14 +8,17 @@
       "filtering": {
         "title": "Filtering tests"
       },
+      "fixtures": {
+        "title": "Using fixtures"
+      },
       "getting-started": {
         "title": "Getting started"
       },
-      "readme": {
-        "title": "readme"
-      },
       "scalatest": {
         "title": "Coming from ScalaTest"
+      },
+      "tests": {
+        "title": "Declaring tests"
       },
       "troubleshooting": {
         "title": "Troubleshooting"

@@ -6,17 +6,21 @@ import scala.collection.mutable
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import scala.concurrent.duration.Duration
+import scala.concurrent.Future
+import munit.internal.PlatformCompat
 
 abstract class FunSuite
     extends Suite
     with Assertions
-    with TestOptionsConversions {
+    with Fixtures
+    with TestOptionsConversions { self =>
 
   final type TestValue = Any
 
   def isCI: Boolean = "true" == System.getenv("CI")
   def munitIgnore: Boolean = false
-  def isFlakyFailureOk: Boolean = "true" == System.getenv("FUNSUITE_FLAKY_OK")
+  def munitFlakyOK: Boolean = "true" == System.getenv("MUNIT_FLAKY_OK")
 
   val munitTestsBuffer: mutable.ArrayBuffer[Test] =
     mutable.ArrayBuffer.empty[Test]
@@ -45,20 +49,28 @@ abstract class FunSuite
     }
   }
 
-  def test(name: String, tag: Tag*)(
-      body: => Any
-  )(implicit loc: Location): Unit = {
-    test(new TestOptions(name, tag.toSet, loc))(body)
-  }
+  private val defaultTimeout = Duration(30, "s")
+  def munitTimeout: Duration = defaultTimeout
+  def munitTestValue(testValue: Any): Any =
+    testValue match {
+      case f: Future[_] => PlatformCompat.await(f, munitTimeout)
+      case _            => testValue
+    }
+
+  def munitNewTest(test: Test): Test =
+    test
 
   def test(options: TestOptions)(
       body: => Any
   )(implicit loc: Location): Unit = {
-    munitTestsBuffer += new Test(
-      options.name,
-      () => munitRunTest(options, StackTraces.dropOutside(body)),
-      options.tags.toSet,
-      loc
+    munitTestsBuffer += munitNewTest(
+      new Test(
+        options.name, { () =>
+          munitTestValue(munitRunTest(options, StackTraces.dropOutside(body)))
+        },
+        options.tags.toSet,
+        loc
+      )
     )
   }
 
@@ -81,11 +93,11 @@ abstract class FunSuite
       options: TestOptions,
       body: => Any
   ): Any = {
-    val result = Try(body)
+    val result = Try(munitTestValue(body))
     result match {
       case Success(value) => value
       case Failure(exception) =>
-        if (isFlakyFailureOk) {
+        if (munitFlakyOK) {
           new TestValues.FlakyFailure(exception)
         } else {
           throw exception
@@ -97,9 +109,9 @@ abstract class FunSuite
       options: TestOptions,
       body: => Any
   ): Any = {
-    val result = scala.util.Try(body)
+    val result = scala.util.Try(munitTestValue(body))
     if (result.isSuccess) {
-      fail("expected failure but test passed")(options.loc)
+      fail("expected failure but test passed")(options.location)
     }
   }
 

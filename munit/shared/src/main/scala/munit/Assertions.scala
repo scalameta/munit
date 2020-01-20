@@ -54,7 +54,7 @@ trait Assertions {
     }
   }
 
-  def assertNotEqual[A, B](
+  def assertNotEquals[A, B](
       obtained: A,
       expected: B,
       details: => Any = "values are the same"
@@ -66,7 +66,7 @@ trait Assertions {
     }
   }
 
-  def assertEqual[A, B](
+  def assertEquals[A, B](
       obtained: A,
       expected: B,
       details: => Any = "values are not the same"
