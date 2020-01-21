@@ -1,6 +1,6 @@
 ---
 id: tests
-title: Writing tests
+title: Declaring tests
 ---
 
 MUnit provides several ways to declare different kinds of tests.
@@ -283,19 +283,40 @@ understanding of when and why they are failing.
 See the [fixtures guide](fixtures.html) for instructions for running custom
 logic before and after tests.
 
+## Share configuration between test suites
+
+Declare an abstract `BaseSuite` to share configuration between all test suites
+in your project.
+
+```scala mdoc
+abstract class BaseSuite extends munit.FunSuite {
+  override val munitTimeout = Duration(1, "min")
+  override def munitTestValue(value: Any): Any =
+    ???
+  // ...
+}
+class MyFirstSuite extends BaseSuite { /* ... */ }
+class MySecondSuite extends BaseSuite { /* ... */ }
+```
+
 ## Roll our own testing library with `munit.Suite`
 
 The `munit.FunSuite` class comes with a lot of built-in functionality such as
 assertions, fixtures, `munitTimeout()` helpers and more. These features may not
-be necessary when you want full control over how to declare tests.
+be necessary or even desirable when writing tests. You may sometimes prefer a
+smaller API.
 
-Extend the base class `munit.Suite` to customize exactly what `Seq[Test]` you
-want to run without bringing in functionality from `munit.FunSuite`.
+Extend the base class `munit.Suite` to implement a minimal test suite that
+includes no optional MUnit features. At its core, MUnit operates on a data
+structure `GenericTest[TestValue]` where the type parameter `TestValue`
+represents the return value of test bodies. This type parameter can be
+customized per-suite. In `munit.FunSuite`, the type parameter `TestValue` is
+defined as `Any` and `type Test = GenericTest[Any]`.
+
+Below is an example custom test suite with `type TestValue = Future[String]`.
 
 ```scala
 class MyCustomSuite extends munit.Suite {
-  // The type returned by bodies of test cases.
-  // Is defined as `Any` in `munit.FunSuite` but it's abstract in `munit.Suite`
   override type TestValue = Future[String]
   override def munitTests() = List(
     new Test(
@@ -303,11 +324,21 @@ class MyCustomSuite extends munit.Suite {
       // compile error if it's not a Future[String]
       body = () => Future.successful("Hello world!"),
       tags = Set.empty[Tag],
-      location = Location.generate
+      location = implicitly[Location]
     )
   )
 }
 ```
 
-By extending `munit.Suite`, you have the freedom to design the complete
-user-facing library API for writing tests without having to implement the back
+Some use-cases where you may want to define a custom `munit.Suite`:
+
+- implement APIs that mimic testinig libraries to simplify the migration to
+  MUnit
+- design stricter APIs that don't use `Any`
+- design purely functional APIs with no publicly facing side-effects
+
+In application code, it's desirable to use strong types avoid mutable state.
+However, it's not clear that those best practices yield the same cost/benefit
+ratio when writing test code. MUnit intentionally exposes types such `Any` and
+side-effecting methods like `test("name") { ... }` because they subjectively
+make the testing API nice-to-use.

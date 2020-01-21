@@ -3,6 +3,10 @@ id: fixtures
 title: Using fixtures
 ---
 
+Test fixtures are the environments in which tests run. Fixtures allow you to
+acquire resources during setup and clean up resources after the tests finish
+running.
+
 ## Functional test-local fixtures
 
 Functional test-local fixtures allow you to write test cases with simple
@@ -33,8 +37,7 @@ val tests = new FunFixtureSuite()
 import tests._
 ```
 
-Use `FunFixture.map2` to you need to compose multiple fixtures into a single
-fixture.
+Use `FunFixture.map2` to compose multiple fixtures into a single fixture.
 
 ```scala mdoc
 // Fixture with access to two temporary files.

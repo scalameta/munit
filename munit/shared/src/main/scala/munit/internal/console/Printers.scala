@@ -5,6 +5,7 @@ import munit.internal.Compat
 import munit.{EmptyPrinter, Location, Printable, Printer}
 
 import scala.annotation.switch
+import munit.Clues
 
 object Printers {
   def log(any: Any, printer: Printer = EmptyPrinter)(
@@ -42,6 +43,22 @@ object Printers {
           case x: Float  => out.append(x.toString())
           case x: Double => out.append(x.toString())
           case x: String => printString(x, out, printer)
+          case x: Clues =>
+            printApply(
+              "Clues",
+              x.values.iterator,
+              out,
+              indent,
+              nextIndent,
+              open = " {",
+              close = "}",
+              comma = ""
+            ) { clue =>
+              if (clue.source.nonEmpty) {
+                out.append(clue.source).append(": ")
+              }
+              loop(clue.value, nextIndent)
+            }
           case None =>
             out.append("None")
           case Nil =>
@@ -115,24 +132,27 @@ object Printers {
       it: Iterator[T],
       out: StringBuilder,
       indent: Int,
-      nextIndent: Int
+      nextIndent: Int,
+      open: String = "(",
+      close: String = ")",
+      comma: String = ","
   )(fn: T => Unit): Unit = {
     out.append(prefix)
-    out.append('(')
+    out.append(open)
     if (it.hasNext) {
       printNewline(out, nextIndent)
       while (it.hasNext) {
         val value = it.next()
         fn(value)
         if (it.hasNext) {
-          out.append(',')
+          out.append(comma)
           printNewline(out, nextIndent)
         } else {
           printNewline(out, indent)
         }
       }
     }
-    out.append(')')
+    out.append(close)
   }
 
   private def printNewline(out: StringBuilder, indent: Int): Unit = {
