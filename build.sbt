@@ -141,7 +141,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     skip in publish := customScalaJSVersion.isDefined,
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13",
-      "com.geirsson" % "junit-interface" % "0.11.8"
+      "com.geirsson" % "junit-interface" % "0.11.9"
     )
   )
 lazy val munitJVM = munit.jvm

@@ -44,7 +44,7 @@ abstract class BaseFrameworkSuite extends FunSuite {
       }
       val framework = new Framework
       val runner = framework.runner(
-        Array("+l"), // use sbt loggers
+        t.arguments ++ Array("+l"), // use sbt loggers
         Array(),
         this.getClass().getClassLoader()
       )

@@ -52,6 +52,8 @@ abstract class JUnitFramework extends Framework {
     var logAssert = false
     var notLogExceptionClass = false
     var useSbtLoggers = false
+    var includeTags = Set.empty[String]
+    var excludeTags = Set.empty[String]
     for (str <- args) {
       str match {
         case "-v" => verbose = true
@@ -71,6 +73,12 @@ abstract class JUnitFramework extends Framework {
 
         case s if s.startsWith("--run-listener=") =>
           throw new UnsupportedOperationException("--run-listener")
+
+        case s if s.startsWith("--exclude-tags=") =>
+          excludeTags += s.stripPrefix("--exclude-tags=")
+
+        case s if s.startsWith("--include-tags=") =>
+          includeTags += s.stripPrefix("--include-tags=")
 
         case s if s.startsWith("--include-categories=") =>
           throw new UnsupportedOperationException("--include-categories")
@@ -105,7 +113,8 @@ abstract class JUnitFramework extends Framework {
       verbose = verbose,
       logAssert = logAssert,
       notLogExceptionClass = notLogExceptionClass,
-      useSbtLoggers = useSbtLoggers
+      useSbtLoggers = useSbtLoggers,
+      tags = new TagsFilter(includeTags, excludeTags)
     )
   }
 }

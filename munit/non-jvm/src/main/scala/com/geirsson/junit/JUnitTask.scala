@@ -38,6 +38,7 @@ final class JUnitTask(
     PlatformCompat.newRunner(taskDef, classLoader) match {
       case None =>
       case Some(runner) =>
+        runner.filter(runSettings.tags)
         val reporter =
           new JUnitReporter(eventHandler, loggers, runSettings, taskDef)
         val notifier: RunNotifier = new MUnitRunNotifier(reporter)
