@@ -11,7 +11,7 @@ lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
-**/.bloop
+.bloop
 
 # Scala-IDE specific
 .scala_dependencies

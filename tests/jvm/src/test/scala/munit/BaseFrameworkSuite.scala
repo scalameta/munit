@@ -99,7 +99,7 @@ abstract class BaseFrameworkSuite extends FunSuite {
         obtained,
         t.expected,
         stdout
-      )
+      )(t.location)
     }(t.location)
   }
 }
