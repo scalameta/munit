@@ -37,4 +37,7 @@ object PlatformCompat {
       new MUnitRunner(suite.getClass, () => suite)
     }.toOption
   }
+  private var myClassLoader: ClassLoader = _
+  def setThisClassLoader(loader: ClassLoader): Unit = myClassLoader = loader
+  def getThisClassLoader: ClassLoader = myClassLoader
 }

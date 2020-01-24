@@ -5,11 +5,12 @@ import sbt.testing.TaskDef
 import sbt.testing.EventHandler
 import sbt.testing.Event
 import java.io.PrintStream
-import com.geirsson.junit.Ansi
 import java.nio.charset.StandardCharsets
 import sbt.testing.Logger
 import scala.util.control.NonFatal
 import java.util.regex.Pattern
+import munit.internal.console.AnsiColors
+import munit.internal.PlatformCompat
 
 abstract class BaseFrameworkSuite extends FunSuite {
   val systemOut = System.out
@@ -25,15 +26,11 @@ abstract class BaseFrameworkSuite extends FunSuite {
         .replace('\\', '/')
     }
   }
-  override def afterEach(context: AfterEach): Unit = {
-    System.setOut(systemOut)
-  }
 
   def check(t: FrameworkTest): Unit = {
     test(t.cls.getSimpleName()) {
       val baos = new ByteArrayOutputStream()
       val out = new PrintStream(baos)
-      System.setOut(out)
       val logger = new Logger {
         def ansiCodesSupported(): Boolean = false
         def error(x: String): Unit = out.println(x)
@@ -46,7 +43,7 @@ abstract class BaseFrameworkSuite extends FunSuite {
       val runner = framework.runner(
         t.arguments ++ Array("+l"), // use sbt loggers
         Array(),
-        this.getClass().getClassLoader()
+        PlatformCompat.getThisClassLoader
       )
       val tasks = runner.tasks(
         Array(
@@ -84,10 +81,14 @@ abstract class BaseFrameworkSuite extends FunSuite {
       }
       val elapsedTimePattern =
         Pattern.compile(" \\d+\\.\\d+s$", Pattern.MULTILINE)
-      tasks.foreach(_.execute(eventHandler, Array(logger)))
-      val stdout = Ansi
-        .filterAnsi(baos.toString(StandardCharsets.UTF_8.name()))
-      val obtained = Ansi.filterAnsi(
+      Console.withOut(out) {
+        Console.withErr(out) {
+          tasks.foreach(_.execute(eventHandler, Array(logger)))
+        }
+      }
+      val stdout =
+        AnsiColors.filterAnsi(baos.toString(StandardCharsets.UTF_8.name()))
+      val obtained = AnsiColors.filterAnsi(
         t.format match {
           case SbtFormat =>
             events.toString().replaceAllLiterally("\"\"\"", "'''")
