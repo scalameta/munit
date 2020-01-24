@@ -2,13 +2,16 @@ package munit
 
 class FrameworkSuite extends BaseFrameworkSuite {
   val tests: List[FrameworkTest] = List[FrameworkTest](
-    InterceptFrameworkSuite,
+    // InterceptFrameworkSuite,
     CiOnlyFrameworkSuite,
     DiffProductFrameworkSuite,
     FailFrameworkSuite,
     TestNameFrameworkSuite,
     ScalaVersionFrameworkSuite,
-    FixtureFrameworkSuite
+    FixtureFrameworkSuite,
+    TagsIncludeFramweworkSuite,
+    TagsIncludeExcludeFramweworkSuite,
+    TagsExcludeFramweworkSuite
   )
   tests.foreach { t =>
     check(t)

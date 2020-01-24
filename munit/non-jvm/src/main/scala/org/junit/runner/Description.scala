@@ -12,6 +12,7 @@ class Description(
     new Description(cls, methodName, annotations, description :: children)
   def getMethodName: String = methodName.getOrElse("<unknown>")
   def getTestClass: Option[Class[_]] = cls
+  def getAnnotations: List[Annotation] = annotations
 }
 
 object Description {

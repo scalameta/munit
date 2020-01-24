@@ -110,6 +110,30 @@ class MyWindowsOnlySuite extends munit.FunSuite {
 }
 ```
 
+## Include and exclude tests based on tags
+
+Use `--include-tags=$TAG1,$TAG2` and `--exclude-tags=$TAG1,$TAG2` to include and
+exclude which tests to run based on tags. For example, imagine you have the
+following test suite:
+
+```scala mdoc
+class TagsSuite extends munit.FunSuite {
+  val include = new munit.Tag("include")
+  val exclude = new munit.Tag("exclude")
+  test("a".tag(include)) {}
+  test("b".tag(exclude)) {}
+  test("c".tag(include).tag(exclude)) {}
+  test("d") {}
+}
+```
+
+| Arguments                                       | Matching tests |
+| :---------------------------------------------- | :------------: |
+| `<no arguments>`                                | `<all tests>`  |
+| `--include-tags=include`                        |     `a, c`     |
+| `--include-tags=include --exclude-tags=exclude` |      `a`       |
+| `--exclude-tags=exclude`                        |     `a, d`     |
+
 ## Group test suites with categories
 
 > This feature is only supported on the JVM.

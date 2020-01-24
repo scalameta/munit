@@ -1,6 +1,8 @@
 package munit
 
 import scala.runtime.Statics
+import java.lang.annotation.Annotation
+import scala.collection.mutable
 
 /**
   * Metadata about a single test case.
@@ -52,5 +54,11 @@ class GenericTest[T](
     acc = Statics.mix(acc, Statics.anyHash(tags))
     acc = Statics.mix(acc, Statics.anyHash(location))
     acc
+  }
+  def annotations: Array[Annotation] = {
+    val buf = new mutable.ArrayBuffer[Annotation](tags.size + 1)
+    buf ++= tags
+    buf += location
+    buf.toArray
   }
 }

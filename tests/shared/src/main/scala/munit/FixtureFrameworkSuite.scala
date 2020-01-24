@@ -76,5 +76,5 @@ object FixtureFrameworkSuite
          |afterAll(b)
          |afterAll(ad-hoc)
          |""".stripMargin,
-      StdoutFormat
+      format = StdoutFormat
     )

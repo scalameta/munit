@@ -76,7 +76,7 @@ final class JUnitReporter(
         .toString()
     )
     trace(ex)
-    emitEvent(method, Status.Failure)
+    emitEvent(method, Status.Failure, new OptionalThrowable(ex))
   }
 
   private def trace(t: Throwable): Unit = {
@@ -85,12 +85,18 @@ final class JUnitReporter(
     }
   }
 
-  private def emitEvent(method: String, status: Status): Unit = {
+  private def emitEvent(
+      method: String,
+      status: Status,
+      throwable: OptionalThrowable = new OptionalThrowable
+  ): Unit = {
     val testName =
       taskDef.fullyQualifiedName + "." +
         settings.decodeName(method)
     val selector = new TestSelector(testName)
-    eventHandler.handle(new JUnitEvent(taskDef, status, selector))
+    eventHandler.handle(
+      new JUnitEvent(taskDef, testName, status, selector, throwable)
+    )
   }
 
   private def log(level: Level, s: String): Unit = {

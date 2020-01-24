@@ -5,6 +5,7 @@
 package com.geirsson.junit
 
 import sbt.testing._
+import munit.internal.PlatformCompat
 
 final class JUnitRunner(
     val args: Array[String],
@@ -13,6 +14,7 @@ final class JUnitRunner(
     classLoader: ClassLoader,
     customRunners: CustomRunners
 ) extends Runner {
+  PlatformCompat.setThisClassLoader(classLoader)
 
   def tasks(taskDefs: Array[TaskDef]): Array[Task] =
     taskDefs.map(new JUnitTask(_, runSettings, classLoader))

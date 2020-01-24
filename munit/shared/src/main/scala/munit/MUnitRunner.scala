@@ -45,7 +45,11 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
           .find(candidate => !testNames.contains(candidate))
           .head
         testNames += testName
-        Description.createTestDescription(cls, testName, test.location)
+        Description.createTestDescription(
+          cls,
+          testName,
+          test.annotations: _*
+        )
       }
     )
   }
@@ -143,25 +147,29 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier.fireTestIgnored(suiteDescription)
       return
     }
+    var isSingleTestRun = false
     try {
       val isContinue = runBeforeAll(notifier)
       if (isContinue) {
         suite.munitTests().foreach { test =>
-          runTest(notifier, test)
+          val isTestRun = runTest(notifier, test)
+          isSingleTestRun ||= isTestRun
         }
       }
     } finally {
-      runAfterAll(notifier)
+      if (isSingleTestRun) {
+        runAfterAll(notifier)
+      }
     }
   }
 
   private def runTest(
       notifier: RunNotifier,
       test: suite.Test
-  ): Unit = {
+  ): Boolean = {
     val description = createTestDescription(test)
     if (!filter.shouldRun(description)) {
-      return
+      return false
     }
     notifier.fireTestStarted(description)
     try {
@@ -198,6 +206,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     } finally {
       notifier.fireTestFinished(description)
     }
+    true
   }
 
   private def foreachUnsafe(thunks: Iterable[() => Unit]): Try[Unit] = {

@@ -5,12 +5,12 @@ import munit.internal.console.Printers
 class PrintersSuite extends FunSuite { self =>
   val isScala213: Boolean = BuildInfo.scalaVersion.startsWith("2.13")
   def check(
-      name: String,
+      options: TestOptions,
       original: Any,
       expected: String,
       isEnabled: Boolean = true
   ): Unit = {
-    test(name) {
+    test(options) {
       assume(isEnabled, "disabled test")
       val obtained = Printers.print(original)
       assertNoDiff(obtained, expected)

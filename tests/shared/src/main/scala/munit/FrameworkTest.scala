@@ -4,7 +4,9 @@ package munit
 class FrameworkTest(
     val cls: Class[_ <: FunSuite],
     val expected: String,
-    val format: FrameworkTestFormat = SbtFormat
+    val tags: Set[Tag] = Set.empty,
+    val format: FrameworkTestFormat = SbtFormat,
+    val arguments: Array[String] = Array()
 )(implicit val location: Location)
 
 sealed abstract class FrameworkTestFormat

@@ -13,4 +13,5 @@ object PlatformCompat {
   def isJVM: Boolean = true
   def isJS: Boolean = false
   def isNative: Boolean = false
+  def getThisClassLoader: ClassLoader = this.getClass().getClassLoader()
 }

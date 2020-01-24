@@ -31,12 +31,12 @@ class LinesSuite extends FunSuite {
   // This method is written at the bottom of the file to keep stable line
   // numbers in the test cases above.
   def check(
-      name: String,
+      options: TestOptions,
       message: String,
       location: Location,
       expected: String
   )(implicit loc: Location): Unit = {
-    test(name) {
+    test(options) {
       val obtained = munitLines
         .formatLine(location, message)
         .replaceAllLiterally(location.path, location.filename)
