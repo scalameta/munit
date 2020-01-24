@@ -7,7 +7,7 @@ class ClueSuite extends BaseSuite {
     }
   }
 
-  val a = List(1)
+  val a: List[Int] = List(1)
 
   check("identifier", a, "a")
   check("select", a.head, "a.head")
@@ -48,7 +48,7 @@ class ClueSuite extends BaseSuite {
        |""".stripMargin
   )
 
-  val z = List(1)
+  val z: List[Int] = List(1)
   checkPrint(
     "list",
     clue(z),
@@ -61,7 +61,7 @@ class ClueSuite extends BaseSuite {
   )
 
   case class User(name: String, age: Int)
-  val user = User("Tanya", 34)
+  val user: User = User("Tanya", 34)
   checkPrint(
     "product".tag(Only213),
     clue(user),
