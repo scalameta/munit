@@ -13,7 +13,7 @@ class Tag(val value: String)
     case _      => false
   }
   override def hashCode(): Int = {
-    var acc: Int = -881232
+    var acc = -889275714
     acc = Statics.mix(acc, Statics.anyHash("munit.Tag"))
     acc = Statics.mix(acc, Statics.anyHash(value))
     acc

@@ -32,6 +32,9 @@ final class TestOptions(
   ): TestOptions = {
     new TestOptions(name, tags, location)
   }
+
+  override def toString: String =
+    s"TestOptions($name, $tags, $location)"
 }
 
 trait TestOptionsConversions {

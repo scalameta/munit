@@ -35,7 +35,7 @@ class GenericTest[T](
   ): GenericTest[A] = {
     new GenericTest(name, body, tags, location)
   }
-  override def toString(): String = s"GenericTest($name)"
+  override def toString(): String = s"GenericTest($name, $tags, $location)"
   override def equals(obj: Any): Boolean = {
     obj.asInstanceOf[AnyRef].eq(this) || (obj match {
       case t: GenericTest[_] =>
@@ -48,7 +48,7 @@ class GenericTest[T](
     })
   }
   override def hashCode(): Int = {
-    var acc = 23482342
+    var acc = -889275714
     acc = Statics.mix(acc, Statics.anyHash(name))
     // skip body
     acc = Statics.mix(acc, Statics.anyHash(tags))
