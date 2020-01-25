@@ -40,8 +40,16 @@ object MacroCompat {
       } else {
         ""
       }
+    def simplifyType(tpe: Type): Type = tpe match {
+      case TypeRef(ThisType(pre), sym, args) if pre == sym.owner =>
+        simplifyType(TypeRef(NoPrefix, sym, args))
+      case t =>
+        // uncomment to debug:
+        // Printers.log(t)(Location.empty)
+        t.widen
+    }
     val source = Literal(Constant(text))
-    val valueType = Literal(Constant(value.tpe.toString()))
+    val valueType = Literal(Constant(simplifyType(value.tpe).toString()))
     New(
       TypeRef(NoPrefix, typeOf[Clue[_]].typeSymbol, List(value.tpe.widen)),
       source,

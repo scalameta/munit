@@ -5,6 +5,7 @@ import munit.internal.difflib.Diffs
 
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
+import scala.collection.mutable
 
 object Assertions extends Assertions
 trait Assertions {
@@ -12,15 +13,18 @@ trait Assertions {
   val munitLines = new Lines
 
   def assert(
-      cond: Boolean,
+      cond: => Boolean,
       clue: => Any = "assertion failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
-      if (!cond) {
-        fail(munitPrint(clue))
+      val (isTrue, clues) = munitCaptureClues(cond)
+      if (!isTrue) {
+        println(s"CLUES: ${Printers.print(clues)}")
+        fail(munitPrint(clue), clues)
       }
     }
   }
+
   def assume(
       cond: Boolean,
       clue: => Any = "assumption failed"
@@ -85,7 +89,8 @@ trait Assertions {
         s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully"
       )
     } catch {
-      case e: FailException => throw e
+      case e: FailException if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
+        throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
           e.asInstanceOf[T]
@@ -112,10 +117,26 @@ trait Assertions {
       location = loc
     )
   }
-  def fail(message: String)(implicit loc: Location): Nothing = {
-    throw new FailException(munitLines.formatLine(loc, message), loc)
+  def fail(
+      message: String,
+      clues: Clues = new Clues(Nil)
+  )(implicit loc: Location): Nothing = {
+    throw new FailException(munitLines.formatLine(loc, message, clues), loc)
   }
 
+  private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
+    mutable.ListBuffer.empty
+  def munitCaptureClues[T](thunk: => T): (T, Clues) =
+    synchronized {
+      munitCapturedClues.clear()
+      val result = thunk
+      (result, new Clues(munitCapturedClues.toList))
+    }
+
+  def clue[T](c: Clue[T]): T = synchronized {
+    munitCapturedClues += c
+    c.value
+  }
   def clues(clue: Clue[_]*): Clues = new Clues(clue.toList)
 
   def munitPrint(clue: => Any): String = {

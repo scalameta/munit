@@ -4,7 +4,6 @@ class ClueSuite extends BaseSuite {
   def check[T](options: TestOptions, clue: Clue[T], expected: String): Unit = {
     test(options) {
       assertEquals(clue.source, expected)
-      println(clue.valueType)
     }
   }
 
@@ -23,7 +22,7 @@ class ClueSuite extends BaseSuite {
     "string-message",
     clues("message"),
     """|Clues {
-       |  "message": "message"
+       |  "message": String = "message"
        |}
        |""".stripMargin
   )
@@ -33,7 +32,7 @@ class ClueSuite extends BaseSuite {
     "clue",
     clues(x),
     """|Clues {
-       |  x: 42
+       |  x: Int = 42
        |}
        |""".stripMargin
   )
@@ -43,8 +42,8 @@ class ClueSuite extends BaseSuite {
     "clues",
     clues(x, y),
     """|Clues {
-       |  x: 42
-       |  y: 32
+       |  x: Int = 42
+       |  y: Int = 32
        |}
        |""".stripMargin
   )
@@ -54,7 +53,7 @@ class ClueSuite extends BaseSuite {
     "list",
     clues(z),
     """|Clues {
-       |  z: List(
+       |  z: List[Int] = List(
        |    1
        |  )
        |}
@@ -67,7 +66,7 @@ class ClueSuite extends BaseSuite {
     "product".tag(Only213),
     clues(user),
     """|Clues {
-       |  user: User(
+       |  user: User = User(
        |    name = "Tanya",
        |    age = 34
        |  )
@@ -80,7 +79,7 @@ class ClueSuite extends BaseSuite {
       clues: Clues,
       expected: String
   )(implicit loc: Location): Unit = {
-    test(options) {
+    test(options.tag(NoDotty)) {
       val obtained = munitPrint(clues)
       assertNoDiff(obtained, expected)
     }
