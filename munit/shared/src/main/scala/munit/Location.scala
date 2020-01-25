@@ -35,7 +35,7 @@ final class Location(
     })
   }
   override def hashCode(): Int = {
-    var acc = 423142142
+    var acc = -889275714
     acc = Statics.mix(acc, Statics.anyHash(path))
     acc = Statics.mix(acc, line)
     acc

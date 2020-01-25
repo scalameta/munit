@@ -13,6 +13,6 @@ coursier fetch \
   org.scalameta:munit_sjs0.6_2.11:$version \
   org.scalameta:munit_sjs0.6_2.12:$version \
   org.scalameta:munit_sjs0.6_2.13:$version \
-  org.scalameta:munit_sjs1.0-RC1_2.11:$version \
-  org.scalameta:munit_sjs1.0-RC1_2.12:$version \
-  org.scalameta:munit_sjs1.0-RC1_2.13:$version $suffix
+  org.scalameta:munit_sjs1.0-RC2_2.11:$version \
+  org.scalameta:munit_sjs1.0-RC2_2.12:$version \
+  org.scalameta:munit_sjs1.0-RC2_2.13:$version $suffix

@@ -55,13 +55,12 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
 
   override def getDescription(): Description = {
-    val description = Description.createSuiteDescription(cls)
     try {
       val suiteTests = StackTraces.dropOutside(suite.munitTests())
       suiteTests.foreach { test =>
         val testDescription = createTestDescription(test)
         if (filter.shouldRun(testDescription)) {
-          description.addChild(testDescription)
+          suiteDescription.addChild(testDescription)
         }
       }
     } catch {
@@ -71,7 +70,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         ex.printStackTrace()
         Nil
     }
-    description
+    suiteDescription
   }
 
   override def run(notifier: RunNotifier): Unit = {
