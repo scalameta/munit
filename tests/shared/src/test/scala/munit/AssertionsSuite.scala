@@ -15,7 +15,7 @@ class AssertionsSuite extends BaseSuite {
 
   val a = 42
   val b = 43L
-  val c = List(41)
+  val c: List[Int] = List(41)
   check(
     "basic",
     clue(a) > clue(b),

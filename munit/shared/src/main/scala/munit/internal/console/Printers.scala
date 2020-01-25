@@ -123,7 +123,7 @@ object Printers {
                 loop(value, nextIndent)
             }
           case _ =>
-            out.append(any.toString())
+            out.append(a.toString())
         }
       }
     }

@@ -6,11 +6,18 @@ import munit.internal.difflib.Diffs
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 import scala.collection.mutable
+import munit.internal.console.AnsiColors
 
 object Assertions extends Assertions
 trait Assertions {
 
   val munitLines = new Lines
+
+  def munitAnsiColors: Boolean = true
+
+  private def munitFilterAnsi(message: String): String =
+    if (munitAnsiColors) message
+    else AnsiColors.filterAnsi(message)
 
   def assert(
       cond: => Boolean,
@@ -19,7 +26,6 @@ trait Assertions {
     StackTraces.dropInside {
       val (isTrue, clues) = munitCaptureClues(cond)
       if (!isTrue) {
-        println(s"CLUES: ${Printers.print(clues)}")
         fail(munitPrint(clue), clues)
       }
     }
@@ -45,6 +51,7 @@ trait Assertions {
       Diffs.assertNoDiff(
         obtained,
         expected,
+        message => fail(message),
         munitPrint(clue),
         printObtainedAsStripMargin = true
       )
@@ -73,6 +80,7 @@ trait Assertions {
         Diffs.assertNoDiff(
           munitPrint(obtained),
           munitPrint(expected),
+          message => fail(message),
           munitPrint(clue),
           printObtainedAsStripMargin = false
         )
@@ -111,7 +119,7 @@ trait Assertions {
       implicit loc: Location
   ): Nothing = {
     throw new FailException(
-      munitLines.formatLine(loc, message),
+      munitFilterAnsi(munitLines.formatLine(loc, message)),
       cause,
       isStackTracesEnabled = true,
       location = loc
@@ -121,7 +129,10 @@ trait Assertions {
       message: String,
       clues: Clues = new Clues(Nil)
   )(implicit loc: Location): Nothing = {
-    throw new FailException(munitLines.formatLine(loc, message, clues), loc)
+    throw new FailException(
+      munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+      loc
+    )
   }
 
   private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
