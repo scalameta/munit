@@ -4,6 +4,7 @@ class ClueSuite extends BaseSuite {
   def check[T](options: TestOptions, clue: Clue[T], expected: String): Unit = {
     test(options) {
       assertEquals(clue.source, expected)
+      println(clue.valueType)
     }
   }
 
@@ -20,7 +21,7 @@ class ClueSuite extends BaseSuite {
 
   checkPrint(
     "string-message",
-    clue("message"),
+    clues("message"),
     """|Clues {
        |  "message": "message"
        |}
@@ -30,7 +31,7 @@ class ClueSuite extends BaseSuite {
   val x = 42
   checkPrint(
     "clue",
-    clue(x),
+    clues(x),
     """|Clues {
        |  x: 42
        |}
@@ -40,7 +41,7 @@ class ClueSuite extends BaseSuite {
   val y = 32
   checkPrint(
     "clues",
-    clue(x, y),
+    clues(x, y),
     """|Clues {
        |  x: 42
        |  y: 32
@@ -51,7 +52,7 @@ class ClueSuite extends BaseSuite {
   val z: List[Int] = List(1)
   checkPrint(
     "list",
-    clue(z),
+    clues(z),
     """|Clues {
        |  z: List(
        |    1
@@ -64,7 +65,7 @@ class ClueSuite extends BaseSuite {
   val user: User = User("Tanya", 34)
   checkPrint(
     "product".tag(Only213),
-    clue(user),
+    clues(user),
     """|Clues {
        |  user: User(
        |    name = "Tanya",

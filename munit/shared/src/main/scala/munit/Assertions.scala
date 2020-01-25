@@ -116,7 +116,7 @@ trait Assertions {
     throw new FailException(munitLines.formatLine(loc, message), loc)
   }
 
-  def clue(clue: Clue[_]*): Clues = new Clues(clue.toList)
+  def clues(clue: Clue[_]*): Clues = new Clues(clue.toList)
 
   def munitPrint(clue: => Any): String = {
     clue match {

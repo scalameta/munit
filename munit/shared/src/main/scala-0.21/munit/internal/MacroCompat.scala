@@ -24,7 +24,8 @@ object MacroCompat {
   def clueImpl[T:Type](value: Expr[T])(given qctx: QuoteContext): Expr[Clue[T]] = {
     import qctx.tasty.{_, given}
     val source = value.unseal.pos.sourceCode
-    '{ new Clue(${Expr(source)}, $value) }
+    val valueType = implicitly[scala.quoted.Type[T]].show
+    '{ new Clue(${Expr(source)}, $value, ${Expr(valueType)}) }
   }
 
 }

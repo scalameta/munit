@@ -41,10 +41,12 @@ object MacroCompat {
         ""
       }
     val source = Literal(Constant(text))
+    val valueType = Literal(Constant(value.tpe.toString()))
     New(
       TypeRef(NoPrefix, typeOf[Clue[_]].typeSymbol, List(value.tpe.widen)),
       source,
-      value
+      value,
+      valueType
     )
   }
 }
