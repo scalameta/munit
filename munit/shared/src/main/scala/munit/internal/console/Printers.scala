@@ -55,8 +55,12 @@ object Printers {
               comma = ""
             ) { clue =>
               if (clue.source.nonEmpty) {
-                out.append(clue.source).append(": ")
+                out.append(clue.source)
               }
+              if (clue.valueType.nonEmpty) {
+                out.append(": ").append(clue.valueType)
+              }
+              out.append(" = ")
               loop(clue.value, nextIndent)
             }
           case None =>
@@ -119,7 +123,7 @@ object Printers {
                 loop(value, nextIndent)
             }
           case _ =>
-            out.append(any.toString())
+            out.append(a.toString())
         }
       }
     }

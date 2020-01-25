@@ -3,6 +3,7 @@
     "Overview": [
       "getting-started",
       "tests",
+      "assertions",
       "fixtures",
       "filtering",
       "scalatest",

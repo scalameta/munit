@@ -7,11 +7,15 @@ import munit.Location
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.control.NonFatal
+import munit.Clues
 
 class Lines extends Serializable {
   private val filecache = mutable.Map.empty[Path, Array[String]]
 
   def formatLine(location: Location, message: String): String = {
+    formatLine(location, message, new Clues(Nil))
+  }
+  def formatLine(location: Location, message: String, clues: Clues): String = {
     try {
       val path = Paths.get(location.path)
       val lines = filecache.getOrElseUpdate(path, {
@@ -49,11 +53,18 @@ class Lines extends Serializable {
         if (isMultilineMessage) {
           out.append('\n').append(message)
         }
+        if (clues.values.nonEmpty) {
+          out.append('\n').append(Printers.print(clues))
+        }
       }
       out.toString()
     } catch {
       case NonFatal(_) =>
-        ""
+        if (clues.values.isEmpty) {
+          message
+        } else {
+          message + "\n" + Printers.print(clues)
+        }
     }
   }
 }

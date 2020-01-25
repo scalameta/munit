@@ -1,6 +1,6 @@
 package munit.internal.difflib
 
-import munit.{Assertions, Location}
+import munit.Location
 
 object Diffs {
 
@@ -10,16 +10,17 @@ object Diffs {
   def assertNoDiff(
       obtained: String,
       expected: String,
+      fail: String => Nothing,
       title: String = "",
       printObtainedAsStripMargin: Boolean = true
   )(implicit loc: Location): Boolean = {
     if (obtained.isEmpty && !expected.isEmpty) {
-      Assertions.fail("Obtained empty output!")
+      fail("Obtained empty output!")
     }
     val diff = new Diff(obtained, expected)
     if (diff.isEmpty) true
     else {
-      Assertions.fail(diff.createReport(title, printObtainedAsStripMargin))
+      fail(diff.createReport(title, printObtainedAsStripMargin))
     }
   }
 

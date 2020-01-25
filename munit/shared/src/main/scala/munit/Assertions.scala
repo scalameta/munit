@@ -5,22 +5,32 @@ import munit.internal.difflib.Diffs
 
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
+import scala.collection.mutable
+import munit.internal.console.AnsiColors
 
 object Assertions extends Assertions
 trait Assertions {
 
   val munitLines = new Lines
 
+  def munitAnsiColors: Boolean = true
+
+  private def munitFilterAnsi(message: String): String =
+    if (munitAnsiColors) message
+    else AnsiColors.filterAnsi(message)
+
   def assert(
-      cond: Boolean,
+      cond: => Boolean,
       clue: => Any = "assertion failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
-      if (!cond) {
-        fail(munitPrint(clue))
+      val (isTrue, clues) = munitCaptureClues(cond)
+      if (!isTrue) {
+        fail(munitPrint(clue), clues)
       }
     }
   }
+
   def assume(
       cond: Boolean,
       clue: => Any = "assumption failed"
@@ -41,6 +51,7 @@ trait Assertions {
       Diffs.assertNoDiff(
         obtained,
         expected,
+        message => fail(message),
         munitPrint(clue),
         printObtainedAsStripMargin = true
       )
@@ -69,6 +80,7 @@ trait Assertions {
         Diffs.assertNoDiff(
           munitPrint(obtained),
           munitPrint(expected),
+          message => fail(message),
           munitPrint(clue),
           printObtainedAsStripMargin = false
         )
@@ -85,7 +97,8 @@ trait Assertions {
         s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully"
       )
     } catch {
-      case e: FailException => throw e
+      case e: FailException if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
+        throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
           e.asInstanceOf[T]
@@ -106,17 +119,36 @@ trait Assertions {
       implicit loc: Location
   ): Nothing = {
     throw new FailException(
-      munitLines.formatLine(loc, message),
+      munitFilterAnsi(munitLines.formatLine(loc, message)),
       cause,
       isStackTracesEnabled = true,
       location = loc
     )
   }
-  def fail(message: String)(implicit loc: Location): Nothing = {
-    throw new FailException(munitLines.formatLine(loc, message), loc)
+  def fail(
+      message: String,
+      clues: Clues = new Clues(Nil)
+  )(implicit loc: Location): Nothing = {
+    throw new FailException(
+      munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+      loc
+    )
   }
 
-  def clue(clue: Clue[_]*): Clues = new Clues(clue.toList)
+  private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
+    mutable.ListBuffer.empty
+  def munitCaptureClues[T](thunk: => T): (T, Clues) =
+    synchronized {
+      munitCapturedClues.clear()
+      val result = thunk
+      (result, new Clues(munitCapturedClues.toList))
+    }
+
+  def clue[T](c: Clue[T]): T = synchronized {
+    munitCapturedClues += c
+    c.value
+  }
+  def clues(clue: Clue[_]*): Clues = new Clues(clue.toList)
 
   def munitPrint(clue: => Any): String = {
     clue match {

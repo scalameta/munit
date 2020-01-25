@@ -89,13 +89,19 @@ class PrintersSuite extends FunSuite { self =>
        |""".stripMargin
   )
 
-  case class User(name: String, age: Int, friends: List[User] = Nil)
+  case class User(
+      name: String,
+      age: Int,
+      awesome: Boolean,
+      friends: List[User] = Nil
+  )
   check(
     "user1",
-    User("John", 42, Nil),
+    User("John", 42, true, Nil),
     """|User(
        |  name = "John",
        |  age = 42,
+       |  awesome = true,
        |  friends = Nil
        |)
        |""".stripMargin,
@@ -104,14 +110,16 @@ class PrintersSuite extends FunSuite { self =>
 
   check(
     "user2",
-    User("John", 42, List(User("Susan", 43))),
+    User("John", 42, true, List(User("Susan", 43, true))),
     """|User(
        |  name = "John",
        |  age = 42,
+       |  awesome = true,
        |  friends = List(
        |    User(
        |      name = "Susan",
        |      age = 43,
+       |      awesome = true,
        |      friends = Nil
        |    )
        |  )
