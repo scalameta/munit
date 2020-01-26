@@ -148,6 +148,19 @@ lazy val munitJVM = munit.jvm
 lazy val munitJS = munit.js
 lazy val munitNative = munit.native
 
+lazy val plugin = project
+  .in(file("munit-sbt"))
+  .settings(
+    sharedSettings,
+    moduleName := "sbt-munit",
+    sbtPlugin := true,
+    scalaVersion := scala212,
+    crossScalaVersions := List(scala212),
+    libraryDependencies ++= List(
+      "com.google.cloud" % "google-cloud-storage" % "1.103.0"
+    )
+  )
+
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .dependsOn(munit)
   .enablePlugins(BuildInfoPlugin)

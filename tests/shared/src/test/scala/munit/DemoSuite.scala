@@ -1,9 +1,6 @@
 package munit
 
-import scala.util.Properties
-
 abstract class DemoSuite extends FunSuite {
-  override def munitIgnore: Boolean = Properties.isWin
   def someCondition(n: Int): Boolean = n != 2
   test("source-locations") {
     assert(someCondition(1))
@@ -17,7 +14,8 @@ abstract class DemoSuite extends FunSuite {
     assertEquals(john, susan)
   }
 
-  test("stack-traces") {
+  override def munitFlakyOK: Boolean = true
+  test("stack-traces".flaky) {
     List(List(1, 2, 3).iterator).iterator.flatten.foreach { i =>
       require(i < 2, i)
     }
