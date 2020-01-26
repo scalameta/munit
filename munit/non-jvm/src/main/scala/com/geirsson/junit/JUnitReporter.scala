@@ -42,7 +42,7 @@ final class JUnitReporter(
     if (settings.verbose) {
       log(Info, AnsiColors.c(s"==> s $method skipped", AnsiColors.YELLOW))
     }
-    emitEvent(method, Status.Skipped)
+    emitEvent(method, Status.Skipped, new OptionalThrowable(e))
   }
   def reportTestPassed(method: String, elapsedSeconds: Double): Unit = {
     log(

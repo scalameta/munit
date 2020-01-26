@@ -17,9 +17,9 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
     startedTimestamp = System.nanoTime()
     reporter.reportTestStarted(description.getMethodName)
   }
-  def elapsedSeconds(): Double = {
+  def elapsedMillis(): Double = {
     val elapsedNanos = System.nanoTime() - startedTimestamp
-    elapsedNanos / 1000000000.0
+    elapsedNanos / 1000000.0
   }
   override def fireTestIgnored(description: Description): Unit = {
     ignored += 1
@@ -30,7 +30,7 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   ): Unit = {
     reporter.reportAssumptionViolation(
       failure.description.getMethodName,
-      elapsedSeconds(),
+      elapsedMillis(),
       failure.ex
     )
   }
@@ -40,7 +40,7 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
     reporter.reportTestFailed(
       methodName,
       failure.ex,
-      elapsedSeconds()
+      elapsedMillis()
     )
   }
   override def fireTestFinished(description: Description): Unit = {
@@ -49,7 +49,7 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
     if (!isFailed(methodName)) {
       reporter.reportTestPassed(
         methodName,
-        elapsedSeconds()
+        elapsedMillis()
       )
     }
   }

@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v2
-      - run: sbt +testsJVM/test
+      - run: sbt +testsJVM/test plugin/test
   js:
     strategy:
       fail-fast: false

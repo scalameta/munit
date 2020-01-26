@@ -185,6 +185,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       }
       result match {
         case f: TestValues.FlakyFailure =>
+          StackTraces.trimStackTrace(f)
           notifier.fireTestAssumptionFailed(new Failure(description, f))
         case TestValues.Ignore =>
           notifier.fireTestIgnored(description)

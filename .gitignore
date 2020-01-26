@@ -48,3 +48,4 @@ website/i18n/*
 project/metals.sbt
 out/
 *.hnir
+test-report.json
