@@ -2,7 +2,7 @@ package munit
 
 import java.nio.file.Path
 import java.nio.file.Paths
-import munit.MUnitTestReport.TestReport
+import munit.MUnitTestReport.Summary
 import sbt.util.Logger
 import com.google.gson.Gson
 import java.nio.charset.StandardCharsets
@@ -15,7 +15,7 @@ class MUnitLocalListener(
     maxRetries: Int = 100,
     logger: Logger = sbt.ConsoleLogger()
 ) extends MUnitReportListener {
-  def onReport(report: TestReport): Unit = {
+  def onReport(report: Summary): Unit = {
     val bytes = new Gson().toJson(report).getBytes(StandardCharsets.UTF_8)
     Files.write(
       path,

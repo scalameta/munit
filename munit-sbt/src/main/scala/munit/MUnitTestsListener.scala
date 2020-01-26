@@ -6,14 +6,15 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import sbt.testing.Status
 import sbt.testing.Event
-import munit.MUnitTestReport._
 import java.{util => ju}
 import java.text.SimpleDateFormat
 
 class MUnitTestsListener(
     listener: MUnitReportListener,
     repository: String,
-    runId: String,
+    reportName: String,
+    ref: String,
+    sha: String,
     scalaVersion: String,
     projectName: String
 ) extends TestsListener {
@@ -43,21 +44,22 @@ class MUnitTestsListener(
 
   val ISO_8601 =
     new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", ju.Locale.US);
-  private def newReport(testResult: TestResult): TestReport = {
-    TestReport(
-      repository,
-      runId,
-      ISO_8601.format(new ju.Date()),
-      scalaVersion,
-      projectName,
-      System.getProperty("java.version"),
-      System.getProperty("os.name"),
-      groups.asScala.iterator.map {
+  private def newReport(testResult: TestResult): MUnitTestReport.Summary = {
+    MUnitTestReport.Summary(
+      repository = repository,
+      ref = ref,
+      sha = sha,
+      timestamp = ISO_8601.format(new ju.Date()),
+      scalaVersion = scalaVersion,
+      projectName = projectName,
+      javaVersion = System.getProperty("java.version"),
+      os = System.getProperty("os.name"),
+      groups = groups.asScala.iterator.map {
         case (group, events) =>
-          TestGroup(
-            group,
-            overallResult(events.asScala).toString,
-            events.asScala.iterator
+          MUnitTestReport.Group(
+            name = group,
+            result = overallResult(events.asScala).toString,
+            events = events.asScala.iterator
               .flatMap(_.detail)
               .map(newTestEvent)
               .toArray
@@ -66,17 +68,18 @@ class MUnitTestsListener(
     )
   }
 
-  private def newTestEvent(event: Event): TestGroupEvent = {
-    TestGroupEvent(
-      event.status().toString(),
-      event.fullyQualifiedName(),
-      event.duration(),
-      if (event.throwable().isEmpty()) null
-      else newTestException(event.throwable().get())
+  private def newTestEvent(event: Event): MUnitTestReport.TestEvent = {
+    MUnitTestReport.TestEvent(
+      status = event.status().toString(),
+      name = event.fullyQualifiedName(),
+      duration = event.duration(),
+      exception =
+        if (event.throwable().isEmpty()) null
+        else newTestException(event.throwable().get())
     )
   }
 
-  private def newTestException(ex: Throwable): TestException = {
+  private def newTestException(ex: Throwable): MUnitTestReport.TestException = {
     if (ex == null) null
     else {
       val plainMessage = Option(ex.getMessage()).map(filterAnsi).getOrElse("")
@@ -99,11 +102,11 @@ class MUnitTestsListener(
         } else {
           (plainClassName, plainMessage)
         }
-      TestException(
-        className,
-        message,
-        Option(ex.getStackTrace()).getOrElse(Array()).map(_.toString),
-        newTestException(ex.getCause())
+      MUnitTestReport.TestException(
+        className = className,
+        message = message,
+        stack = Option(ex.getStackTrace()).getOrElse(Array()).map(_.toString),
+        cause = newTestException(ex.getCause())
       )
     }
   }

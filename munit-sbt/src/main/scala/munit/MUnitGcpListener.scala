@@ -8,9 +8,10 @@ import com.google.cloud.storage.Bucket.BlobTargetOption
 import com.google.cloud.storage.Storage.PredefinedAcl
 import com.google.cloud.storage.StorageException
 import sbt.util.Logger
-import munit.MUnitTestReport.TestReport
+import munit.MUnitTestReport.Summary
 
 class MUnitGcpListener(
+    val reportName: String,
     val bucketName: String = "munit-test-reports",
     val maxRetries: Int = 100,
     logger: Logger = sbt.ConsoleLogger()
@@ -19,7 +20,7 @@ class MUnitGcpListener(
   private lazy val bucket = Option(storage.get(bucketName)).getOrElse {
     storage.create(BucketInfo.of(bucketName))
   }
-  def onReport(report: TestReport): Unit = synchronized {
+  def onReport(report: Summary): Unit = synchronized {
     val suffixes = Stream
       .from(0)
       .map {
@@ -29,7 +30,7 @@ class MUnitGcpListener(
       .take(maxRetries)
     val bytes = new Gson().toJson(report).getBytes(StandardCharsets.UTF_8)
     val success = suffixes.find { suffix =>
-      val name = s"${report.repository}/${report.runId}$suffix"
+      val name = s"${report.repository}/${reportName}$suffix"
       try {
         val blob = bucket.create(
           name,

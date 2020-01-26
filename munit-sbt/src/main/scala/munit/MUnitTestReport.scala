@@ -1,22 +1,23 @@
 package munit
 
 object MUnitTestReport {
-  case class TestReport(
+  case class Summary(
       repository: String,
-      runId: String,
+      ref: String,
+      sha: String,
       timestamp: String,
       scalaVersion: String,
       projectName: String,
       javaVersion: String,
-      osName: String,
-      groups: Array[TestGroup]
+      os: String,
+      groups: Array[Group]
   )
-  case class TestGroup(
+  case class Group(
       name: String,
       result: String,
-      events: Array[TestGroupEvent]
+      events: Array[TestEvent]
   )
-  case class TestGroupEvent(
+  case class TestEvent(
       status: String,
       name: String,
       // NOTE(olafur): this field should be typed as Double to match JSON types
