@@ -55,7 +55,8 @@ object MUnitPlugin extends AutoPlugin {
         date = DateTimeFormatter.ISO_DATE.format(LocalDate.now())
         project = thisProject.value.id
         scala = scalaVersion.value
-      } yield s"${date}/$ref/$sha/$project/$scala"
+        jvm = System.getProperty("java.version", "unknown")
+      } yield s"${date}/$ref/$sha/$project/$scala/$jvm"
     },
     testListeners ++= {
       for {
