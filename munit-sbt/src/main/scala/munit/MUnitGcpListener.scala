@@ -8,6 +8,7 @@ import com.google.cloud.storage.Bucket.BlobTargetOption
 import com.google.cloud.storage.Storage.PredefinedAcl
 import com.google.cloud.storage.StorageException
 import sbt.util.Logger
+import munit.MUnitTestReport.TestReport
 
 class MUnitGcpListener(
     val bucketName: String = "munit-test-reports",
@@ -18,7 +19,7 @@ class MUnitGcpListener(
   private lazy val bucket = Option(storage.get(bucketName)).getOrElse {
     storage.create(BucketInfo.of(bucketName))
   }
-  def onReport(report: MUnitTestReport.TestReport): Unit = synchronized {
+  def onReport(report: TestReport): Unit = synchronized {
     val suffixes = Stream
       .from(0)
       .map {

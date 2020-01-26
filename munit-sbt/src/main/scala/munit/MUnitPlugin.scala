@@ -15,7 +15,7 @@ object MUnitPlugin extends AutoPlugin {
       settingKey[Option[String]](
         "The repository of this project, for example GitHub URL."
       )
-    val munitRunId: SettingKey[Option[String]] =
+    val munitId: SettingKey[Option[String]] =
       settingKey[Option[String]]("Unique identifier for this test run.")
     val munitReportListener: SettingKey[Option[MUnitReportListener]] =
       settingKey[Option[MUnitReportListener]](
@@ -43,13 +43,18 @@ object MUnitPlugin extends AutoPlugin {
       } yield new MUnitGcpListener()
     },
     munitRepository := Option(System.getenv("GITHUB_REPOSITORY")),
-    munitRunId := Option(System.getenv("GITHUB_ACTION"))
+    munitId := {
+      for {
+        ref <- Option(System.getenv("GITHUB_REF"))
+        sha <- Option(System.getenv("GITHUB_SHA"))
+      } yield s"$ref/$sha"
+    }
   )
 
   override val projectSettings: Seq[Def.Setting[_]] = List(
     testListeners ++= {
       for {
-        runId <- munitRunId.value.toList
+        runId <- munitId.value.toList
         repository <- munitRepository.value.toList
         listener <- munitReportListener.value.toList
       } yield new MUnitTestsListener(
