@@ -35,6 +35,7 @@ class MUnitGcpListener(
         val blob = bucket.create(
           name,
           bytes,
+          "application/json",
           BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ),
           BlobTargetOption.doesNotExist()
         )
