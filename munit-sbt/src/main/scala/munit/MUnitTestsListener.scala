@@ -91,7 +91,8 @@ class MUnitTestsListener(
           // formatted in the message.
           val colon = plainMessage.indexOf(": ")
           val space = plainMessage.indexOf(' ')
-          if (colon < 0 && (space < 0 || space > colon)) {
+          val customClassNameHasSpace = space >= 0 && space < colon
+          if (colon < 0 || customClassNameHasSpace) {
             (plainClassName, plainMessage)
           } else {
             (

@@ -35,6 +35,12 @@ object MUnitPlugin extends AutoPlugin {
   import autoImport._
 
   override val globalSettings: List[Setting[_ <: Option[Object]]] = List(
+    munitRepository := Option(System.getenv("GITHUB_REPOSITORY")),
+    munitRef := Option(System.getenv("GITHUB_REF")),
+    munitSha := Option(System.getenv("GITHUB_SHA"))
+  )
+
+  override val projectSettings: Seq[Def.Setting[_]] = List(
     munitReportListener := {
       for {
         credentials <- Option(System.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
@@ -53,12 +59,6 @@ object MUnitPlugin extends AutoPlugin {
         reportName <- munitReportName.value
       } yield new MUnitGcpListener(reportName)
     },
-    munitRepository := Option(System.getenv("GITHUB_REPOSITORY"))
-  )
-
-  override val projectSettings: Seq[Def.Setting[_]] = List(
-    munitRef := Option(System.getenv("GITHUB_REF")),
-    munitSha := Option(System.getenv("GITHUB_SHA")),
     munitReportName := {
       for {
         ref <- munitRef.value
