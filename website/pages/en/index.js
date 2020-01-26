@@ -99,7 +99,7 @@ const Features = props => {
       content:
         "Assertion failures show the difference between the expected and obtained behavior. " +
         "Diffs for case classes include field names in Scala 2.13.",
-      image: "https://i.imgur.com/SaQ0Hva.png",
+      image: "https://i.imgur.com/NaAU2He.png",
       imageAlign: "right"
     },
     {

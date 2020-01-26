@@ -5,6 +5,7 @@ import mdoc.PreModifier
 import mdoc.PreModifierContext
 import scala.util.control.NonFatal
 import java.{util => ju}
+import com.google.cloud.storage.StorageException
 import com.google.cloud.storage.StorageOptions
 import scala.collection.mutable
 import scala.collection.JavaConverters._
@@ -58,7 +59,12 @@ class MUnitModifier extends PreModifier {
       }
     } catch {
       case NonFatal(e) =>
-        e.printStackTrace()
+        e match {
+          case s: StorageException
+              if e.getMessage() != "Anonymous caller does not have storage.objects.list access to munit-test-reports" =>
+          case _ =>
+            e.printStackTrace()
+        }
         None
     }
 
@@ -121,9 +127,9 @@ class MUnitModifier extends PreModifier {
         skippedCount -
         ignoredCount
       val flakyRatio: Double =
-        if (passedCount == 0) 0
+        if (events.length == 0) 0
         else {
-          val r = flakyCount.toDouble / passedCount.toDouble
+          val r = (errorCount + flakyCount).toDouble / events.length
           if (r == 0) 0
           else r
         }

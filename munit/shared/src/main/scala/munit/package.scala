@@ -3,4 +3,5 @@ package object munit {
   val Only = new Tag("Only")
   val Flaky = new Tag("Flaky")
   val Fail = new Tag("Fail")
+  val Slow = new Tag("Slow")
 }
