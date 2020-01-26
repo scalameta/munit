@@ -66,3 +66,8 @@ jobs:
       - run: ./bin/scalafmt --check
       - run: sbt scalafixAll
       - run: sbt docs/docusaurusCreateSite
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS:
+            ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS_JSON:
+            ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
