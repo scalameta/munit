@@ -17,6 +17,9 @@
       "getting-started": {
         "title": "Getting started"
       },
+      "reports": {
+        "title": "Generating test reports"
+      },
       "scalatest": {
         "title": "Coming from ScalaTest"
       },
