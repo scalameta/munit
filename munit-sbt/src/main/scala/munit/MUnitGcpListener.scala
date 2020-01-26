@@ -44,7 +44,8 @@ class MUnitGcpListener(
         )
         true
       } catch {
-        case _: StorageException =>
+        case e: StorageException
+            if Option(e.getMessage()).contains("Precondition Failed") =>
           false
       }
     }
