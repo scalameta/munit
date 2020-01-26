@@ -1,4 +1,4 @@
-package munit
+package munit.sbtmunit
 
 import sbt._
 import scala.collection.JavaConverters._

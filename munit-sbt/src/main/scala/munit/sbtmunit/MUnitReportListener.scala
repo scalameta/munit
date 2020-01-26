@@ -1,6 +1,6 @@
-package munit
+package munit.sbtmunit
 
-import munit.MUnitTestReport.Summary
+import munit.sbtmunit.MUnitTestReport.Summary
 
 trait MUnitReportListener {
   def onReport(report: Summary): Unit

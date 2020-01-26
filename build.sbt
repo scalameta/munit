@@ -9,6 +9,7 @@ def scala212 = "2.12.10"
 def scala211 = "2.11.12"
 def dotty = "0.21.0-RC1"
 def scalameta = "4.3.0"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "1.103.0"
 inThisBuild(
   List(
     organization := "org.scalameta",
@@ -150,14 +151,19 @@ lazy val munitNative = munit.native
 
 lazy val plugin = project
   .in(file("munit-sbt"))
+  .enablePlugins(BuildInfoPlugin)
   .settings(
     sharedSettings,
     moduleName := "sbt-munit",
     sbtPlugin := true,
     scalaVersion := scala212,
+    buildInfoPackage := "munit.sbtmunit",
+    buildInfoKeys := Seq[BuildInfoKey](
+      "munitVersion" -> version.value
+    ),
     crossScalaVersions := List(scala212),
     libraryDependencies ++= List(
-      "com.google.cloud" % "google-cloud-storage" % "1.103.0"
+      gcp
     )
   )
 
@@ -188,11 +194,19 @@ lazy val testsNative = tests.native
 lazy val docs = project
   .in(file("munit-docs"))
   .dependsOn(munitJVM)
-  .enablePlugins(MdocPlugin, DocusaurusPlugin)
+  .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
   .settings(
     sharedSettings,
     skip in publish := true,
     crossScalaVersions := List(scala213, scala212),
+    unmanagedSources.in(Compile) += sourceDirectory
+      .in(plugin, Compile)
+      .value / "scala" / "munit" / "sbtmunit" / "MUnitTestReport.scala",
+    libraryDependencies ++= List(
+      "org.scala-lang.modules" %% "scala-xml" % "2.0.0-M1",
+      gcp
+    ),
+    munitRepository := Some("scalameta/munit"),
     mdocOut :=
       baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
     mdocExtraArguments := List("--no-link-hygiene"),

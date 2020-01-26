@@ -1,4 +1,4 @@
-package munit
+package munit.sbtmunit
 
 import sbt._
 import sbt.Keys._
@@ -13,6 +13,10 @@ object MUnitPlugin extends AutoPlugin {
   override def trigger = allRequirements
   override def requires = JvmPlugin
   object autoImport {
+    val munitBucketName: SettingKey[Option[String]] =
+      settingKey[Option[String]](
+        "The Google Cloud Storage bucket name, defaults to 'munit-test-reports'."
+      )
     val munitRepository: SettingKey[Option[String]] =
       settingKey[Option[String]](
         "The repository of this project, for example GitHub URL."
@@ -35,6 +39,7 @@ object MUnitPlugin extends AutoPlugin {
   import autoImport._
 
   override val globalSettings: List[Setting[_ <: Option[Object]]] = List(
+    munitBucketName := Some("munit-test-reports"),
     munitRepository := Option(System.getenv("GITHUB_REPOSITORY")),
     munitRef := Option(System.getenv("GITHUB_REF")),
     munitSha := Option(System.getenv("GITHUB_SHA"))
@@ -44,20 +49,22 @@ object MUnitPlugin extends AutoPlugin {
     munitReportListener := {
       for {
         credentials <- Option(System.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+        if credentials.nonEmpty
         path = Paths.get(credentials).toAbsolutePath()
         if Files.exists(path) || {
           Option(System.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")) match {
-            case Some(base64) =>
+            case Some(base64) if base64.nonEmpty =>
               val json = ju.Base64.getDecoder().decode(base64)
               Files.createDirectories(path.getParent())
               Files.write(path, json)
               true
-            case None =>
+            case _ =>
               false
           }
         }
+        bucketName <- munitBucketName.value
         reportName <- munitReportName.value
-      } yield new MUnitGcpListener(reportName)
+      } yield new MUnitGcpListener(reportName, bucketName)
     },
     munitReportName := {
       for {

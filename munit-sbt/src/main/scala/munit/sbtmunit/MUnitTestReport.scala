@@ -1,4 +1,4 @@
-package munit
+package munit.sbtmunit
 
 object MUnitTestReport {
   case class Summary(

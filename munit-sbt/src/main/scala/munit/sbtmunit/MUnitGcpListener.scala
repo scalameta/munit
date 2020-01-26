@@ -1,4 +1,4 @@
-package munit
+package munit.sbtmunit
 
 import com.google.cloud.storage.StorageOptions
 import com.google.cloud.storage.BucketInfo
@@ -8,11 +8,11 @@ import com.google.cloud.storage.Bucket.BlobTargetOption
 import com.google.cloud.storage.Storage.PredefinedAcl
 import com.google.cloud.storage.StorageException
 import sbt.util.Logger
-import munit.MUnitTestReport.Summary
+import munit.sbtmunit.MUnitTestReport.Summary
 
 class MUnitGcpListener(
     val reportName: String,
-    val bucketName: String = "munit-test-reports",
+    val bucketName: String,
     val maxRetries: Int = 100,
     logger: Logger = sbt.ConsoleLogger()
 ) extends MUnitReportListener {
