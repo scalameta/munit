@@ -6,6 +6,8 @@ import sbt.plugins._
 import java.nio.file.Paths
 import java.nio.file.Files
 import java.{util => ju}
+import java.time.format.DateTimeFormatter
+import java.time.LocalDate
 
 object MUnitPlugin extends AutoPlugin {
   override def trigger = allRequirements
@@ -42,16 +44,19 @@ object MUnitPlugin extends AutoPlugin {
         }
       } yield new MUnitGcpListener()
     },
-    munitRepository := Option(System.getenv("GITHUB_REPOSITORY")),
+    munitRepository := Option(System.getenv("GITHUB_REPOSITORY"))
+  )
+
+  override val projectSettings: Seq[Def.Setting[_]] = List(
     munitId := {
       for {
         ref <- Option(System.getenv("GITHUB_REF"))
         sha <- Option(System.getenv("GITHUB_SHA"))
-      } yield s"$ref/$sha"
-    }
-  )
-
-  override val projectSettings: Seq[Def.Setting[_]] = List(
+        date = DateTimeFormatter.ISO_DATE.format(LocalDate.now())
+        project = thisProject.value.id
+        scala = scalaVersion.value
+      } yield s"${date}/$ref/$sha/$project/$scala"
+    },
     testListeners ++= {
       for {
         runId <- munitId.value.toList
