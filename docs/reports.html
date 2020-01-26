@@ -68,6 +68,493 @@ data is stored in Google Cloud Storage and the HTML report is rendered with an
 <a href="https://scalameta.org/mdoc/docs/modifiers.html">MDoc markdown modifier</a>.</p>
 <h2><a class="anchor" aria-hidden="true" id="example"></a><a href="#example" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example</h2>
 <p>Below is the generated report from the tests in the MUnit codebase.</p>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+<p><strong>D</strong>: Average duration in milliseconds,
+<strong>P</strong>: Passed,
+<strong>E</strong>: Failed,
+<strong>F</strong>: Flaky,
+<strong>R</strong>: Flaky/Passed ratio,
+<strong>S</strong>: Skipped,
+<strong>I</strong>: Ignored,
+<strong>O</strong>: Other</p>
+<table id="munit" class="display">
+      <col width="300"/>
+      <thead>
+      <tr>
+      <th>Name</th>
+      <th>D</th>
+      <th>P</th>
+      <th>E</th>
+      <th>F</th>
+      <th>R</th>
+      <th>S</th>
+      <th>I</th>
+      <th>O</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr>
+        <td title="munit.AssertionsSuite.basic">munit.AssertionsSuite.basic</td>
+        <td>18</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AssertionsSuite.expr">munit.AssertionsSuite.expr</td>
+        <td>0</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AssertionsSuite.subexpr">munit.AssertionsSuite.subexpr</td>
+        <td>3</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.clue">munit.ClueSuite.clue</td>
+        <td>0</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.clues">munit.ClueSuite.clues</td>
+        <td>0</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.comment">munit.ClueSuite.comment</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.identifier">munit.ClueSuite.identifier</td>
+        <td>1</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.lambda">munit.ClueSuite.lambda</td>
+        <td>0</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.list">munit.ClueSuite.list</td>
+        <td>0</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.product">munit.ClueSuite.product</td>
+        <td>0</td>
+        <td>40</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>36</td>
+        <td>20</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.select">munit.ClueSuite.select</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.string-message">munit.ClueSuite.string-message</td>
+        <td>1</td>
+        <td>64</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>12</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DiffsSuite.ansi">munit.DiffsSuite.ansi</td>
+        <td>9</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DiffsSuite.trailing-whitespace">munit.DiffsSuite.trailing-whitespace</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DiffsSuite.windows-crlf">munit.DiffsSuite.windows-crlf</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.CiOnlyFrameworkSuite">munit.FrameworkSuite.CiOnlyFrameworkSuite</td>
+        <td>15</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.DiffProductFrameworkSuite">munit.FrameworkSuite.DiffProductFrameworkSuite</td>
+        <td>8</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.FailFrameworkSuite">munit.FrameworkSuite.FailFrameworkSuite</td>
+        <td>3</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.FixtureFrameworkSuite">munit.FrameworkSuite.FixtureFrameworkSuite</td>
+        <td>5</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.ScalaVersionFrameworkSuite">munit.FrameworkSuite.ScalaVersionFrameworkSuite</td>
+        <td>1</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TagsFrameworkSuite">munit.FrameworkSuite.TagsFrameworkSuite</td>
+        <td>3</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TagsFrameworkSuite-1">munit.FrameworkSuite.TagsFrameworkSuite-1</td>
+        <td>0</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TagsFrameworkSuite-2">munit.FrameworkSuite.TagsFrameworkSuite-2</td>
+        <td>0</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TestNameFrameworkSuite">munit.FrameworkSuite.TestNameFrameworkSuite</td>
+        <td>3</td>
+        <td>20</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FunFixtureSuite.basic">munit.FunFixtureSuite.basic</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.LinesSuite.basic">munit.LinesSuite.basic</td>
+        <td>5</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.LinesSuite.multiline">munit.LinesSuite.multiline</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.array">munit.PrintersSuite.array</td>
+        <td>1</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.basic">munit.PrintersSuite.basic</td>
+        <td>2</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.list">munit.PrintersSuite.list</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.map">munit.PrintersSuite.map</td>
+        <td>1</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.multiline">munit.PrintersSuite.multiline</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.newline">munit.PrintersSuite.newline</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.single-quote">munit.PrintersSuite.single-quote</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.user1">munit.PrintersSuite.user1</td>
+        <td>1</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.user2">munit.PrintersSuite.user2</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.1">munit.SuiteLocalFixtureSuite.1</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.2">munit.SuiteLocalFixtureSuite.2</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.3">munit.SuiteLocalFixtureSuite.3</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.4">munit.SuiteLocalFixtureSuite.4</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.5">munit.SuiteLocalFixtureSuite.5</td>
+        <td>0</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TestLocalFixtureSuite.basic">munit.TestLocalFixtureSuite.basic</td>
+        <td>2</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TestLocalFixtureSuite.two">munit.TestLocalFixtureSuite.two</td>
+        <td>1</td>
+        <td>76</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TimeoutSuite.fast">munit.TimeoutSuite.fast</td>
+        <td>5</td>
+        <td>48</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TimeoutSuite.slow">munit.TimeoutSuite.slow</td>
+        <td>45</td>
+        <td>48</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      </tbody>
+    </table>
+<script>
+  $(document).ready( function () {
+    $('#munit').DataTable({
+      paging: false,
+    });
+  });
+</script>
 <h2><a class="anchor" aria-hidden="true" id="installation"></a><a href="#installation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Installation</h2>
 <blockquote>
 <p>These installation instructions are experimental and subject to change.</p>
