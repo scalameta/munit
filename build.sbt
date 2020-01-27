@@ -12,6 +12,13 @@ def scalameta = "4.3.0"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.103.0"
 inThisBuild(
   List(
+    version ~= { old =>
+      if ("true" == System.getProperty("CI") && old.contains("+0-")) {
+        old.replaceAll("\\+0-.*", "")
+      } else {
+        old
+      }
+    },
     organization := "org.scalameta",
     homepage := Some(url("https://github.com/scalameta/munit")),
     licenses := List(
