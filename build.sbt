@@ -205,6 +205,7 @@ lazy val docs = project
   .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
   .settings(
     sharedSettings,
+    moduleName := "munit-docs",
     skip in publish := customScalaJSVersion.isDefined,
     crossScalaVersions := List(scala213, scala212),
     unmanagedSources.in(Compile) += sourceDirectory
