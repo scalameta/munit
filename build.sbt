@@ -156,6 +156,7 @@ lazy val plugin = project
     sharedSettings,
     moduleName := "sbt-munit",
     sbtPlugin := true,
+    skip in publish := customScalaJSVersion.isDefined,
     scalaVersion := scala212,
     buildInfoPackage := "munit.sbtmunit",
     buildInfoKeys := Seq[BuildInfoKey](
@@ -197,7 +198,7 @@ lazy val docs = project
   .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
   .settings(
     sharedSettings,
-    skip in publish := true,
+    skip in publish := customScalaJSVersion.isDefined,
     crossScalaVersions := List(scala213, scala212),
     unmanagedSources.in(Compile) += sourceDirectory
       .in(plugin, Compile)
