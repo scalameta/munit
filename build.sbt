@@ -54,12 +54,11 @@ addCommandAlias(
   "scalafixCheckAll",
   "; ++2.12.10 ;  scalafixEnable ; scalafix --check ; test:scalafix --check"
 )
-val isPreScala213 = Set("2.11", "2.12")
+val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala211, scala212, scala213)
 val scalaVersions = scala2Versions ++ List(dotty)
-val isScala212 = Set(scala212)
-def isScala2(binaryVersion: String): Boolean = binaryVersion.startsWith("2")
-def isScala3(binaryVersion: String): Boolean = binaryVersion.startsWith("0")
+def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
+def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 0)
 val isScalaJS = Def.setting[Boolean](
   SettingKey[Boolean]("scalaJSUseMainModuleInitializer").?.value.isDefined
 )
@@ -80,14 +79,14 @@ val sharedNativeConfigure: Project => Project =
 
 val sharedSettings = List(
   scalacOptions ++= {
-    scalaBinaryVersion.value match {
-      case "2.11" =>
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, 11)) =>
         List(
           "-Yrangepos",
           "-Xexperimental",
           "-Ywarn-unused-import"
         )
-      case "0.21" => List()
+      case Some((0, _)) => List()
       case _ =>
         List(
           "-target:jvm-1.8",
@@ -108,21 +107,21 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       val root = baseDirectory.in(ThisBuild).value / "munit"
       val base = root / "shared" / "src" / "main"
       val result = mutable.ListBuffer.empty[File]
-      val binaryVersion = scalaBinaryVersion.value
+      val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
       if (isScalaJS.value || isScalaNative.value) {
         result += root / "non-jvm" / "src" / "main"
       }
-      if (isPreScala213(binaryVersion)) {
+      if (isPreScala213(partialVersion)) {
         result += base / "scala-pre-2.13"
       }
-      if (isScala2(binaryVersion)) {
+      if (isScala2(partialVersion)) {
         result += base / "scala-2"
       }
       result.toList
     },
     libraryDependencies ++= {
-      scalaBinaryVersion.value match {
-        case "0.21" => Nil
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((0, _)) => Nil
         case _ =>
           List(
             "org.scala-lang" % "scala-reflect" % scalaVersion.value
