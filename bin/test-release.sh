@@ -10,9 +10,15 @@ coursier fetch \
   org.scalameta:munit_2.12:$version \
   org.scalameta:munit_2.13:$version \
   org.scalameta:munit_0.21:$version \
+  org.scalameta:docs_2.12:$version \
+  org.scalameta:docs_2.13:$version \
   org.scalameta:munit_sjs0.6_2.11:$version \
   org.scalameta:munit_sjs0.6_2.12:$version \
   org.scalameta:munit_sjs0.6_2.13:$version \
   org.scalameta:munit_sjs1.0-RC2_2.11:$version \
   org.scalameta:munit_sjs1.0-RC2_2.12:$version \
   org.scalameta:munit_sjs1.0-RC2_2.13:$version $suffix
+
+coursier fetch \
+    "org.scalameta:sbt-munit;sbtVersion=1.0;scalaVersion=2.12:$version" \
+    --sbt-plugin-hack $suffix
