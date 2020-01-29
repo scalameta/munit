@@ -14,10 +14,10 @@ const siteConfig = {
   projectName: "munit",
   organizationName: "scalameta",
 
-  // algolia: {
-  //   apiKey: "c865f6d974a3072a35d4b53d48ac2307",
-  //   indexName: "metals"
-  // },
+  algolia: {
+    apiKey: "586dbbac9432319747bfea750fab16cb",
+    indexName: "scalameta_munit"
+  },
 
   gaTrackingId: "UA-140140828-1",
 
