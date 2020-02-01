@@ -25,6 +25,8 @@ class GenericTest[T](
     copy(body = newBody)
   def withTags(newTags: Set[Tag]): GenericTest[T] =
     copy(tags = newTags)
+  def tag(newTag: Tag): GenericTest[T] =
+    withTags(tags + newTag)
   def withLocation(newLocation: Location): GenericTest[T] =
     copy(location = newLocation)
   private[this] def copy[A](

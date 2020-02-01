@@ -8,10 +8,10 @@ MUnit is a Scala testing library with the following goals:
 - **Reuse JUnit**: MUnit is implemented as a JUnit runner and tries to build on
   top of existing JUnit functionality where possible. Any tool that knows how to
   run a JUnit test suite knows how to run MUnit, including IDEs like IntelliJ.
-- **Helpful console output**: test reports are pretty-printed with colors to
-  help you quickly understand what caused a test failure. MUnit tries to
-  displays diffs and source locations when possible and it does a best-effort to
-  highlight relevant stack trace elements.
+- **Actionable errors**: test reports are pretty-printed with colors to help you
+  quickly understand what caused a test failure. MUnit tries to displays diffs
+  and source locations when possible and it does a best-effort to highlight
+  relevant stack trace elements.
 - **No Scala dependencies**: MUnit has no external Scala dependencies so that it
   can easily cross-build against a wide range of Scala compiler versions.
 - **Cross-platform**: MUnit compiles to JVM bytecode, JavaScript via Scala.js

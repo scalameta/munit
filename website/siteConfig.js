@@ -24,6 +24,7 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: "getting-started", label: "Docs" },
+    { blog: true, label: "Blog" },
     { href: repoUrl, label: "GitHub", external: true }
   ],
 
@@ -45,7 +46,7 @@ const siteConfig = {
 
   stylesheets: [baseUrl + "css/custom.css"],
 
-  // blogSidebarCount: "ALL",
+  blogSidebarCount: "ALL",
 
   // This copyright info is used in /core/Footer.js and blog rss/atom feeds.
   copyright: `Copyright © ${new Date().getFullYear()} Scalameta`,

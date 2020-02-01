@@ -113,6 +113,26 @@ The assertion does not fail when both values are different.
 assertNotEquals(a, b)
 ```
 
+## `assertNoDiff()`
+
+Use `assertNoDiff()` to compare two multiline strings.
+
+```scala mdoc
+val obtainedString = "val x = 41\nval y = 43\nval z = 43"
+val expectedString = "val x = 41\nval y = 42\nval z = 43"
+```
+
+```scala mdoc:crash
+assertNoDiff(obtainedString, expectedString)
+```
+
+The difference between `assertNoDiff()` and `assertEquals()` is that
+`assertEquals()` fails according to the `==` method while `assertNoDiff()`
+ignores non-visible differences such as trailing/leading whitespace,
+Windows/Unix newlines and ANSI color codes. The "=> Obtained" section of
+`assertNoDiff()` error messages also include copy-paste friendly syntax using
+`.stripMargin`.
+
 ## `fail()`
 
 Use `fail()` to make the test case fail immediately.
