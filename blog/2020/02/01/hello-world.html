@@ -162,10 +162,11 @@ code:</p>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-comment">// reminder: type Test = GenericTest[Any]</span>
   <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitNewTest</span></span>(test: <span class="hljs-type">Test</span>): <span class="hljs-type">Test</span> = {
-    <span class="hljs-keyword">val</span> isIgnored = !options.tags(<span class="hljs-type">Windows213</span>) || {
-      <span class="hljs-type">Properties</span>.isWin &amp;&amp;
-      <span class="hljs-type">Properties</span>.versionNumberString.startsWith(<span class="hljs-string">"2.13"</span>)
-    }
+    <span class="hljs-keyword">val</span> isIgnored =
+      options.tags(<span class="hljs-type">Windows213</span>) &amp;&amp; !(
+        <span class="hljs-type">Properties</span>.isWin &amp;&amp;
+        <span class="hljs-type">Properties</span>.versionNumberString.startsWith(<span class="hljs-string">"2.13"</span>)
+      )
     <span class="hljs-keyword">if</span> (isIgnored) test.withBody(() =&gt; <span class="hljs-type">Ignore</span>)
     <span class="hljs-keyword">else</span> test
   }
@@ -174,7 +175,7 @@ code:</p>
     <span class="hljs-comment">// Only runs when operating system is Windows and Scala version is 2.13</span>
   }
   test(<span class="hljs-string">"normal test"</span>) {
-    <span class="hljs-comment">// Always runs.</span>
+    <span class="hljs-comment">// Always runs like a normal test.</span>
   }
 }
 </code></pre>
@@ -202,29 +203,29 @@ behavior of your program has changed.</p>
 <p>In the image above, the failing <code>assertNoDiff()</code> includes a <code>stripMargin</code>
 formatted multiline string of the obtained string. The <code>assertNoDiff()</code>
 assertions is helpful for comparing multiline strings ignoring non-visible
-differences such as Windows/Unix newlines, ANSI colors and leading/trailing
+differences such as Windows/Unix newlines, ANSI color codes and leading/trailing
 whitespace.</p>
 <p><img src="https://i.imgur.com/Iy82OWe.png" alt="Demo showing how to include clues in error messages"></p>
 <p>In the image above, the <code>clue(a)</code> helpers are used to enrich the error message
 with additional information that is displayed when the assertion fails.</p>
 <p><img src="https://i.imgur.com/iosErEv.png" alt="Demo showing highlighted stack traces"></p>
 <p>In the image above, stack trace elements that are defined from library
-dependencies like the standard library are grayed making it easier to find stack
-trace elements from your own code. This can be helpful when debugging exceptions
-with cryptic error messages. This feature is inspired by
-<a href="https://github.com/lihaoyi/utest">utest</a>.</p>
+dependencies like the standard library are grayed out making it easier to find
+stack trace elements that are relevant for your code. This can be helpful when
+debugging large exception stack traces. This feature is inspired by the
+pretty-printing of stack traces in <a href="https://github.com/lihaoyi/utest">utest</a>.</p>
 <p>Check out the
 <a href="https://scalameta.org/munit/docs/assertions.html">writing assertions guide</a> to
 learn more how to write assertions with helpful error messages.</p>
 <h2><a class="anchor" aria-hidden="true" id="tooling-integrations"></a><a href="#tooling-integrations" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Tooling integrations</h2>
-<p>The tooling side of a testing library is just as important as the library APIs.
-MUnit is implemented as a JUnit runner, which means that any tool that knows how
-to run a JUnit test knows how to run MUnit tests.</p>
+<p>The tooling side of a testing library is equally important as the library APIs.
+MUnit is implemented as a JUnit runner, which means that any existing tool that
+knows how to run a JUnit test suite knows how to run MUnit test suites.</p>
 <p>For example, IntelliJ already detects MUnit test suites even if IntelliJ has no
 custom logic to support MUnit.</p>
 <p><img src="https://camo.githubusercontent.com/2965bd83df7b98dbc2734815c5bcbe3e784f6242/68747470733a2f2f692e696d6775722e636f6d2f6f4141325a65512e706e67" alt="Demo showing IntelliJ running MUnit tests"></p>
 <p>Likewise, build tools such as Gradle and Pants can integrate with MUnit using
-existing JUnit integrations.</p>
+their existing JUnit integrations.</p>
 <h2><a class="anchor" aria-hidden="true" id="insightful-test-reports"></a><a href="#insightful-test-reports" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Insightful test reports</h2>
 <p>MUnit has an sbt plugin to store structured JSON data about test results in
 Google Cloud. The data can then be used to generate HTML reports based on
@@ -243,15 +244,15 @@ flaky, it consistently fails on every run. On the other hand,
 to be legitimately flaky.</p>
 <p>The Metals codebase has ~1.5k test cases, some which run against up to seven
 different Scala compiler versions. It's not ideal that some test cases fail
-non-deterministically but it's normal that it happens as the project evolves.
-While there is no silver bullet for avoiding flaky test failures, having data
-about how frequently a test fails is at least a starting point to begin
-addressing the problem.</p>
+non-deterministically but it's normal that it happens as the project grows and
+we support more build tools, Scala versions and features. While there is no
+silver bullet for avoiding flaky test failures, having data about how frequently
+a test fails is at least a starting point to begin addressing the problem.</p>
 <p>Check out the
 <a href="https://scalameta.org/munit/docs/reports.html">generating test reports guide</a>
 to learn how to configure your build to upload test reports to Google Cloud
-using the MUnit sbt plugin. The plugin is implemented as an sbt <code>testsListener</code>
-so it works in theory with any testing library (including ScalaTest, utest, ...)
+using the MUnit sbt plugin. The plugin is implemented as an sbt <code>TestsListener</code>
+so should work with any testing library (including ScalaTest, utest, ...)
 although it has so far only been tested against MUnit.</p>
 <h2><a class="anchor" aria-hidden="true" id="credits"></a><a href="#credits" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Credits</h2>
 <p>I want to thank <a href="https://twitter.com/gabro27/">@gabro</a> for implementing Dotty
