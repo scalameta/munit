@@ -129,10 +129,11 @@ object Windows213 extends Tag("Windows213")
 class MySuite extends FunSuite {
   // reminder: type Test = GenericTest[Any]
   override def munitNewTest(test: Test): Test = {
-    val isIgnored = !options.tags(Windows213) || {
-      Properties.isWin &&
-      Properties.versionNumberString.startsWith("2.13")
-    }
+    val isIgnored =
+      options.tags(Windows213) && !(
+        Properties.isWin &&
+        Properties.versionNumberString.startsWith("2.13")
+      )
     if (isIgnored) test.withBody(() => Ignore)
     else test
   }
@@ -141,7 +142,7 @@ class MySuite extends FunSuite {
     // Only runs when operating system is Windows and Scala version is 2.13
   }
   test("normal test") {
-    // Always runs.
+    // Always runs like a normal test.
   }
 }
 ```
@@ -179,7 +180,7 @@ behavior of your program has changed.
 In the image above, the failing `assertNoDiff()` includes a `stripMargin`
 formatted multiline string of the obtained string. The `assertNoDiff()`
 assertions is helpful for comparing multiline strings ignoring non-visible
-differences such as Windows/Unix newlines, ANSI colors and leading/trailing
+differences such as Windows/Unix newlines, ANSI color codes and leading/trailing
 whitespace.
 
 ![Demo showing how to include clues in error messages](https://i.imgur.com/Iy82OWe.png)
@@ -190,10 +191,10 @@ with additional information that is displayed when the assertion fails.
 ![Demo showing highlighted stack traces](https://i.imgur.com/iosErEv.png)
 
 In the image above, stack trace elements that are defined from library
-dependencies like the standard library are grayed making it easier to find stack
-trace elements from your own code. This can be helpful when debugging exceptions
-with cryptic error messages. This feature is inspired by
-[utest](https://github.com/lihaoyi/utest).
+dependencies like the standard library are grayed out making it easier to find
+stack trace elements that are relevant for your code. This can be helpful when
+debugging large exception stack traces. This feature is inspired by the
+pretty-printing of stack traces in [utest](https://github.com/lihaoyi/utest).
 
 Check out the
 [writing assertions guide](https://scalameta.org/munit/docs/assertions.html) to
@@ -201,9 +202,9 @@ learn more how to write assertions with helpful error messages.
 
 ## Tooling integrations
 
-The tooling side of a testing library is just as important as the library APIs.
-MUnit is implemented as a JUnit runner, which means that any tool that knows how
-to run a JUnit test knows how to run MUnit tests.
+The tooling side of a testing library is equally important as the library APIs.
+MUnit is implemented as a JUnit runner, which means that any existing tool that
+knows how to run a JUnit test suite knows how to run MUnit test suites.
 
 For example, IntelliJ already detects MUnit test suites even if IntelliJ has no
 custom logic to support MUnit.
@@ -211,7 +212,7 @@ custom logic to support MUnit.
 ![Demo showing IntelliJ running MUnit tests](https://camo.githubusercontent.com/2965bd83df7b98dbc2734815c5bcbe3e784f6242/68747470733a2f2f692e696d6775722e636f6d2f6f4141325a65512e706e67)
 
 Likewise, build tools such as Gradle and Pants can integrate with MUnit using
-existing JUnit integrations.
+their existing JUnit integrations.
 
 ## Insightful test reports
 
@@ -234,16 +235,16 @@ to be legitimately flaky.
 
 The Metals codebase has ~1.5k test cases, some which run against up to seven
 different Scala compiler versions. It's not ideal that some test cases fail
-non-deterministically but it's normal that it happens as the project evolves.
-While there is no silver bullet for avoiding flaky test failures, having data
-about how frequently a test fails is at least a starting point to begin
-addressing the problem.
+non-deterministically but it's normal that it happens as the project grows and
+we support more build tools, Scala versions and features. While there is no
+silver bullet for avoiding flaky test failures, having data about how frequently
+a test fails is at least a starting point to begin addressing the problem.
 
 Check out the
 [generating test reports guide](https://scalameta.org/munit/docs/reports.html)
 to learn how to configure your build to upload test reports to Google Cloud
-using the MUnit sbt plugin. The plugin is implemented as an sbt `testsListener`
-so it works in theory with any testing library (including ScalaTest, utest, ...)
+using the MUnit sbt plugin. The plugin is implemented as an sbt `TestsListener`
+so should work with any testing library (including ScalaTest, utest, ...)
 although it has so far only been tested against MUnit.
 
 ## Credits
