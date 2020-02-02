@@ -1,13 +1,15 @@
 package munit
 
 import munit.internal.console.StackTraces
+import munit.internal.FutureCompat._
 
 import scala.collection.mutable
-import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
-import scala.concurrent.duration.Duration
 import scala.concurrent.Future
+import scala.util.control.NonFatal
+import scala.util.Try
+import scala.concurrent.duration.Duration
 import munit.internal.PlatformCompat
 
 abstract class FunSuite
@@ -15,12 +17,14 @@ abstract class FunSuite
     with Assertions
     with TestOptionsConversions { self =>
 
-  final type TestValue = Any
+  final type TestValue = Future[Any]
 
   def isCI: Boolean = "true" == System.getenv("CI")
   def munitIgnore: Boolean = false
   def munitFlakyOK: Boolean = "true" == System.getenv("MUNIT_FLAKY_OK")
 
+  private val defaultTimeout = Duration(30, "s")
+  def munitTimeout: Duration = defaultTimeout
   val munitTestsBuffer: mutable.ArrayBuffer[Test] =
     mutable.ArrayBuffer.empty[Test]
   def munitTests(): Seq[Test] = {
@@ -48,13 +52,21 @@ abstract class FunSuite
     }
   }
 
-  private val defaultTimeout = Duration(30, "s")
-  def munitTimeout: Duration = defaultTimeout
-  def munitTestValue(testValue: Any): Any =
-    testValue match {
-      case f: Future[_] => PlatformCompat.await(f, munitTimeout)
-      case _            => testValue
+  def munitTestValue(testValue: => Any): Future[Any] = {
+    // Takes an arbitrarily nested future `Future[Future[Future[...]]]` and
+    // returns a `Future[T]` where `T` is not a `Future`.
+    def flattenFuture(future: Future[_]): Future[_] = {
+      val nested = future.map {
+        case f: Future[_] => flattenFuture(f)
+        case x            => Future.successful(x)
+      }(munitExecutionContext)
+      nested.flattenCompat(munitExecutionContext)
     }
+    val wrappedFuture = Future.fromTry(Try(StackTraces.dropOutside(testValue)))
+    val flatFuture = flattenFuture(wrappedFuture)
+    val awaitedFuture = PlatformCompat.waitAtMost(flatFuture, munitTimeout)
+    awaitedFuture
+  }
 
   def munitNewTest(test: Test): Test =
     test
@@ -65,7 +77,14 @@ abstract class FunSuite
     munitTestsBuffer += munitNewTest(
       new Test(
         options.name, { () =>
-          munitTestValue(munitRunTest(options, StackTraces.dropOutside(body)))
+          munitRunTest(options, () => {
+            try {
+              munitTestValue(body)
+            } catch {
+              case NonFatal(e) =>
+                Future.failed(e)
+            }
+          })
         },
         options.tags.toSet,
         loc
@@ -75,43 +94,52 @@ abstract class FunSuite
 
   def munitRunTest(
       options: TestOptions,
-      body: => Any
-  ): Any = {
+      body: () => Future[Any]
+  ): Future[Any] = {
     if (options.tags(Fail)) {
       munitExpectFailure(options, body)
     } else if (options.tags(Flaky)) {
       munitFlaky(options, body)
     } else if (options.tags(Ignore)) {
-      Ignore
+      Future.successful(Ignore)
     } else {
-      body
+      body()
     }
   }
 
   def munitFlaky(
       options: TestOptions,
-      body: => Any
-  ): Any = {
-    val result = Try(munitTestValue(body))
-    result match {
-      case Success(value) => value
+      body: () => Future[Any]
+  ): Future[Any] = {
+    body().transformCompat {
+      case Success(value) => Success(value)
       case Failure(exception) =>
         if (munitFlakyOK) {
-          new TestValues.FlakyFailure(exception)
+          Success(new TestValues.FlakyFailure(exception))
         } else {
           throw exception
         }
-    }
+    }(munitExecutionContext)
   }
 
   def munitExpectFailure(
       options: TestOptions,
-      body: => Any
-  ): Any = {
-    val result = scala.util.Try(munitTestValue(body))
-    if (result.isSuccess) {
-      fail("expected failure but test passed")(options.location)
-    }
+      body: () => Future[Any]
+  ): Future[Any] = {
+    body().transformCompat {
+      case Success(value) =>
+        Failure(
+          throw new FailException(
+            munitLines.formatLine(
+              options.location,
+              "expected failure but test passed"
+            ),
+            options.location
+          )
+        )
+      case Failure(exception) =>
+        Success(())
+    }(munitExecutionContext)
   }
 
   class FunFixture[T](

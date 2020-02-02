@@ -1,6 +1,7 @@
 package munit
 
 import org.junit.runner.RunWith
+import scala.concurrent.ExecutionContext
 
 /** The base class for all test suites.
   * Extend this class if you don't need the functionality in FunSuite.
@@ -19,6 +20,12 @@ abstract class Suite extends PlatformSuite {
 
   /** Functinonal fixtures that can be reused for individual test cases or entire suites. */
   def munitFixtures: Seq[Fixture[_]] = Nil
+
+  private val parasiticExecutionContext = new ExecutionContext {
+    def execute(runnable: Runnable): Unit = runnable.run()
+    def reportFailure(cause: Throwable): Unit = cause.printStackTrace()
+  }
+  def munitExecutionContext: ExecutionContext = parasiticExecutionContext
 
   /**
     *

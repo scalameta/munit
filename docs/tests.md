@@ -37,7 +37,7 @@ test("async") {
 ```
 
 ```scala mdoc:passthrough
-println(s"The default timout for async tests is $munitTimeout.")
+println(s"The default timeout for async tests is $munitTimeout.")
 ```
 
 Override `munitTimeout` to customize the timeout for how long tests should
@@ -65,42 +65,43 @@ MUnit has special handling for `scala.concurrent.Future[T]` since it is
 available in the standard library. Override `munitTestValue` to add custom
 handling for other asynchronous types.
 
-For example, imagine that you have a `Task[T]` data type that is a lazy future.
+For example, imagine that you have a `LazyFuture[T]` data type that is a lazy
+future.
 
 ```scala mdoc
 import scala.concurrent.ExecutionContext
-case class Task[+T](run: () => Future[T])
-object Task {
-  def apply[T](thunk: => T)(implicit ec: ExecutionContext): Task[T] =
-    Task(() => Future(thunk))
+case class LazyFuture[+T](run: () => Future[T])
+object LazyFuture {
+  def apply[T](thunk: => T)(implicit ec: ExecutionContext): LazyFuture[T] =
+    LazyFuture(() => Future(thunk))
 }
 
 test("buggy-task") {
-  Task {
+  LazyFuture {
     Thread.sleep(10)
-    // WARNING: test will pass because `Task.run()` was never called
+    // WARNING: test will pass because `LazyFuture.run()` was never called
     throw new RuntimeException("BOOM!")
   }
 }
 ```
 
-Since tasks are lazy, a test that returns `Task[T]` will always pass since you
-need to call `run()` to start the task execution. Override `munitTestValue` to
-add make sure that `Task.run()` gets called.
+Since tasks are lazy, a test that returns `LazyFuture[T]` will always pass since
+you need to call `run()` to start the task execution. Override `munitTestValue`
+to add make sure that `LazyFuture.run()` gets called.
 
 ```scala mdoc
-import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
 class TaskSuite extends munit.FunSuite {
-  override def munitTestValue(testValue: Any): Any =
-    testValue match {
-      case Task(run) => Await.result(run(), munitTimeout)
-      case _ => super.munitTestValue(testValue)
+  override def munitTestValue(testValue: => Any): Future[Any] =
+    super.munitTestValue(testValue).flatMap {
+      case LazyFuture(run) => run()
+      case value => Future.successful(value)
     }
   implicit val ec = ExecutionContext.global
   test("ok-task") {
-    Task {
+    LazyFuture {
       Thread.sleep(5000)
-      // Test will fail because `Task.run()` is automatically called
+      // Test will fail because `LazyFuture.run()` is automatically called
       throw new RuntimeException("BOOM!")
     }
   }
@@ -146,7 +147,7 @@ When declaring tests in a helper function, it's useful to pass around an
 `implicit loc: munit.Location` parameter in order to show relevant source
 locations when a test fails.
 
-![Screen shot of console ouput with implicit Location parameter](https://i.imgur.com/v7Vv5Rk.png)
+![Screen shot of console output with implicit Location parameter](https://i.imgur.com/v7Vv5Rk.png)
 
 **Screenshot above**: test failure with implicit `Location` parameter, observe
 that the highlighted line points to the failing test case.
@@ -197,11 +198,14 @@ evaluate the body multiple times.
 ```scala mdoc
 case class Rerun(count: Int) extends munit.Tag("Rerun")
 class MyWindowsSuite extends munit.FunSuite {
-  override def munitRunTest(options: munit.TestOptions, body: => Any): Any = {
+  override def munitRunTest(options: munit.TestOptions, body: () => Future[Any]): Future[Any] = {
     val rerunCount = options.tags.collectFirst {
       case Rerun(n) => n
     }.getOrElse(1)
-    1.to(rerunCount).map(_ => super.munitRunTest(options, body))
+    val futures: Seq[Future[Any]] = 1.to(rerunCount).map(_ =>
+      super.munitRunTest(options, body))
+    val result: Future[Seq[Any]] = Future.sequence(futures)
+    result
   }
   test("files".tag(Rerun(10))) {
     println("Hello") // will run 10 times
@@ -250,7 +254,7 @@ what Scala version caused the tests to fail.
 
 ## Tag flaky tests
 
-Use `.flaky` to mark a test case that has a tendendency to non-deterministically
+Use `.flaky` to mark a test case that has a tendency to non-deterministically
 fail for known or unknown reasons.
 
 ```scala
@@ -291,7 +295,7 @@ in your project.
 ```scala mdoc
 abstract class BaseSuite extends munit.FunSuite {
   override val munitTimeout = Duration(1, "min")
-  override def munitTestValue(value: Any): Any =
+  override def munitTestValue(value: => Any): Future[Any] =
     ???
   // ...
 }
@@ -332,8 +336,7 @@ class MyCustomSuite extends munit.Suite {
 
 Some use-cases where you may want to define a custom `munit.Suite`:
 
-- implement APIs that mimic testinig libraries to simplify the migration to
-  MUnit
+- implement APIs that mimic testing libraries to simplify the migration to MUnit
 - design stricter APIs that don't use `Any`
 - design purely functional APIs with no publicly facing side-effects
 
