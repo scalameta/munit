@@ -12,6 +12,7 @@ import scala.util.control.NonFatal
 import org.junit.runner.manipulation.Filterable
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.Runner
+import org.junit.AssumptionViolatedException
 
 import scala.collection.mutable
 import scala.util.Try
@@ -192,13 +193,13 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         case _ =>
       }
     } catch {
-      case ex: DottyBugAssumptionViolatedException =>
+      case ex: AssumptionViolatedException =>
         StackTraces.trimStackTrace(ex)
       case NonFatal(ex) =>
         StackTraces.trimStackTrace(ex)
         val failure = new Failure(description, ex)
         ex match {
-          case _: DottyBugAssumptionViolatedException =>
+          case _: AssumptionViolatedException =>
             notifier.fireTestAssumptionFailed(failure)
           case _ =>
             notifier.fireTestFailure(failure)
