@@ -7,6 +7,7 @@ import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 import scala.collection.mutable
 import munit.internal.console.AnsiColors
+import org.junit.AssumptionViolatedException
 
 object Assertions extends Assertions
 trait Assertions {
@@ -37,7 +38,7 @@ trait Assertions {
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
-        throw new DottyBugAssumptionViolatedException(munitPrint(clue))
+        throw new AssumptionViolatedException(munitPrint(clue))
       }
     }
   }
