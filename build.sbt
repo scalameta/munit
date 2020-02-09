@@ -117,6 +117,9 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       if (isScala2(partialVersion)) {
         result += base / "scala-2"
       }
+      if (isScala3(partialVersion)) {
+        result += base / "scala-3"
+      }
       result.toList
     },
     libraryDependencies ++= {
