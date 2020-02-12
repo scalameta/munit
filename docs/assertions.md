@@ -1,3 +1,4 @@
+
 ---
 id: assertions
 title: Writing assertions
@@ -132,6 +133,22 @@ ignores non-visible differences such as trailing/leading whitespace,
 Windows/Unix newlines and ANSI color codes. The "=> Obtained" section of
 `assertNoDiff()` error messages also include copy-paste friendly syntax using
 `.stripMargin`.
+
+## `intercept()`
+Use `intercept()` when you expect a particular exception to be thrown by the test code (i.e. the test succeeds if the given Exception is thrown)
+```scala mdoc:crash
+intercept[java.lang.IllegalArgumentException]{
+   // code expected to throw exception here
+}
+```
+Optionally you can expect a specific message for the given Exception if you need more than to test only the presence of a given Exception:
+```scala mdoc:crash
+intercept[java.lang.IllegalArgumentException]({
+   // code expected to throw exception here
+},"argument type mismatch")
+```
+
+
 
 ## `fail()`
 

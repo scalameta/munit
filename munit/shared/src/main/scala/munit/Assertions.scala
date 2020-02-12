@@ -90,7 +90,8 @@ trait Assertions {
   }
 
   def intercept[T <: Throwable](
-      body: => Any
+      body: => Any,
+      msg: String = ""
   )(implicit T: ClassTag[T], loc: Location): T = {
     try {
       body
@@ -102,7 +103,17 @@ trait Assertions {
         throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
-          e.asInstanceOf[T]
+          if (msg == "" || e.getMessage == msg)
+            e.asInstanceOf[T]
+          else {
+            val obtained = e.getClass().getName()
+            throw new FailException(
+              s"intercept failed, exception '$obtained' had message '${e.getMessage}', which was different from expected message '$msg'",
+              cause = e,
+              isStackTracesEnabled = false,
+              location = loc
+            )
+          }
         } else {
           val obtained = e.getClass().getName()
           val expected = T.runtimeClass.getName()
