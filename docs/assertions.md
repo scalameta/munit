@@ -141,14 +141,14 @@ intercept[java.lang.IllegalArgumentException]{
    // code expected to throw exception here
 }
 ```
-Optionally you can expect a specific message for the given Exception if you need more than to test only the presence of a given Exception:
+
+## `interceptMessage()`
+Like intercept() except you can also specify a specific message the given Exception must match.
 ```scala mdoc:crash
-intercept[java.lang.IllegalArgumentException]({
+interceptMessage[java.lang.IllegalArgumentException]("argument type mismatch"){
    // code expected to throw exception here
-},"argument type mismatch")
+}
 ```
-
-
 
 ## `fail()`
 

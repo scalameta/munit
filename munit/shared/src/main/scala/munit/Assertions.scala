@@ -90,8 +90,20 @@ trait Assertions {
   }
 
   def intercept[T <: Throwable](
-      body: => Any,
-      msg: String = ""
+      body: => Any
+  )(implicit T: ClassTag[T], loc: Location): T = {
+    _intercept(None,body)
+  }
+
+  def interceptMessage[T <: Throwable](msg: String)(
+      body: => Any
+  )(implicit T: ClassTag[T], loc: Location): T = {
+    _intercept(Some(msg),body)
+  }
+
+  private def _intercept[T <: Throwable](
+      msg: Option[String],
+      body: => Any
   )(implicit T: ClassTag[T], loc: Location): T = {
     try {
       body
@@ -103,7 +115,7 @@ trait Assertions {
         throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
-          if (msg == "" || e.getMessage == msg)
+          if (msg.isEmpty || e.getMessage == msg.get)
             e.asInstanceOf[T]
           else {
             val obtained = e.getClass().getName()
