@@ -92,13 +92,13 @@ trait Assertions {
   def intercept[T <: Throwable](
       body: => Any
   )(implicit T: ClassTag[T], loc: Location): T = {
-    _intercept(None,body)
+    _intercept(None, body)
   }
 
   def interceptMessage[T <: Throwable](msg: String)(
       body: => Any
   )(implicit T: ClassTag[T], loc: Location): T = {
-    _intercept(Some(msg),body)
+    _intercept(Some(msg), body)
   }
 
   private def _intercept[T <: Throwable](

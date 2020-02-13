@@ -9,7 +9,7 @@ class InterceptFrameworkSuite extends FunSuite {
     intercept[InterceptException](???)
   }
   test("intercept-message-match") {
-    interceptMessage[NotImplementedError]("boom") {???}
+    interceptMessage[NotImplementedError]("boom") { ??? }
   }
 }
 
