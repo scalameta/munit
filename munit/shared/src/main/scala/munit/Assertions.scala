@@ -120,7 +120,7 @@ trait Assertions {
           else {
             val obtained = e.getClass().getName()
             throw new FailException(
-              s"intercept failed, exception '$obtained' had message '${e.getMessage}', which was different from expected message '$msg'",
+              s"intercept failed, exception '$obtained' had message '${e.getMessage}', which was different from expected message '${msg.get}'",
               cause = e,
               isStackTracesEnabled = false,
               location = loc
