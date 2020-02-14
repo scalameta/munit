@@ -2,7 +2,7 @@ package munit
 
 class FrameworkSuite extends BaseFrameworkSuite {
   val tests: List[FrameworkTest] = List[FrameworkTest](
-    // InterceptFrameworkSuite,
+    InterceptFrameworkSuite,
     CiOnlyFrameworkSuite,
     DiffProductFrameworkSuite,
     FailFrameworkSuite,
