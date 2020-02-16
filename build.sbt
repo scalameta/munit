@@ -9,6 +9,7 @@ def scala212 = "2.12.10"
 def scala211 = "2.11.12"
 def dotty = "0.22.0-RC1"
 def scalameta = "4.3.0"
+def junitVersion = "4.13"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.103.0"
 inThisBuild(
   List(
@@ -100,6 +101,22 @@ val sharedSettings = List(
   }
 )
 
+lazy val junit = project
+  .in(file("junit-interface"))
+  .settings(
+    moduleName := "junit-interface",
+    description := "A Java implementation of sbt's test interface for JUnit 4",
+    autoScalaLibrary := false,
+    crossPaths := false,
+    sbtPlugin := false,
+    libraryDependencies ++= Seq(
+      "junit" % "junit" % junitVersion,
+      "org.scala-sbt" % "test-interface" % "1.0"
+    ),
+    javacOptions in Compile ++= List("-target", "1.8", "-source", "1.8"),
+    javacOptions in (Compile, doc) --= List("-target", "1.8")
+  )
+
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
@@ -154,10 +171,10 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .jvmSettings(
     skip in publish := customScalaJSVersion.isDefined,
     libraryDependencies ++= List(
-      "junit" % "junit" % "4.13",
-      "com.geirsson" % "junit-interface" % "0.11.11"
+      "junit" % "junit" % "4.13"
     )
   )
+  .jvmConfigure(_.dependsOn(junit))
 lazy val munitJVM = munit.jvm
 lazy val munitJS = munit.js
 lazy val munitNative = munit.native

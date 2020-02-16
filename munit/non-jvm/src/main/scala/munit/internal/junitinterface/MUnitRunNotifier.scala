@@ -1,4 +1,4 @@
-package com.geirsson.junit
+package munit.internal.junitinterface
 
 import org.junit.runner.{Description, notification}
 import org.junit.runner.notification.RunNotifier

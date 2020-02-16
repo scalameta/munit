@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation
 import scala.runtime.Statics
 
 class Tag(val value: String)
-    extends com.geirsson.junit.Tag
+    extends munit.internal.junitinterface.Tag
     with Annotation
     with Serializable {
   // Not a case class so that it possible to override these.
