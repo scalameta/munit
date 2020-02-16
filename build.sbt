@@ -106,6 +106,7 @@ lazy val junit = project
   .settings(
     moduleName := "junit-interface",
     description := "A Java implementation of sbt's test interface for JUnit 4",
+    skip in publish := customScalaJSVersion.isDefined,
     autoScalaLibrary := false,
     crossPaths := false,
     sbtPlugin := false,
