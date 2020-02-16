@@ -56,7 +56,7 @@ object FixtureFrameworkSuite
          |afterEach(a, 1)
          |afterEach(b, 1)
          |afterEach(ad-hoc, 1)
-         |+ 1 <elapsed time>
+         |  + 1 <elapsed time>
          |beforeEach(ad-hoc, 2)
          |beforeEach(a, 2)
          |beforeEach(b, 2)
@@ -64,7 +64,7 @@ object FixtureFrameworkSuite
          |afterEach(a, 2)
          |afterEach(b, 2)
          |afterEach(ad-hoc, 2)
-         |+ 2 <elapsed time>
+         |  + 2 <elapsed time>
          |beforeEach(ad-hoc, 3)
          |beforeEach(a, 3)
          |beforeEach(b, 3)
@@ -72,7 +72,7 @@ object FixtureFrameworkSuite
          |afterEach(a, 3)
          |afterEach(b, 3)
          |afterEach(ad-hoc, 3)
-         |+ 3 <elapsed time>
+         |  + 3 <elapsed time>
          |afterAll(a)
          |afterAll(b)
          |afterAll(ad-hoc)

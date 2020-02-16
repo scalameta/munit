@@ -47,7 +47,7 @@ final class JUnitReporter(
   def reportTestPassed(method: String, elapsedMillis: Double): Unit = {
     log(
       Info,
-      AnsiColors.c(s"+ $method", AnsiColors.GREEN) + " " +
+      AnsiColors.c(s"  + $method", AnsiColors.GREEN) + " " +
         formatTime(elapsedMillis)
     )
     emitEvent(method, Status.Success)

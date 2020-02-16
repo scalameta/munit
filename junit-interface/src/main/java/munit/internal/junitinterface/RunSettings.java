@@ -133,7 +133,7 @@ class RunSettings {
   String buildTestResult(Status status) {
     switch (status) {
         case Success:
-          return c("+ ", SUCCESS1);
+          return c("  + ", SUCCESS1);
         case Ignored:
           return c("==> i ", SKIPPED);
         case Skipped:
