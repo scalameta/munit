@@ -3,23 +3,7 @@ id: scalatest
 title: Coming from ScalaTest
 ---
 
-Add the following settings to run ScalaTest and JUnit suites with the same
-testing framework as MUnit.
-
-```scala
-// build.sbt
-testFrameworks := List(
-  new TestFramework("munit.Framework"),
-  new TestFramework("com.geirsson.junit.PantsFramework")
-)
-```
-
-These settings configure all JUnit and ScalaTest suites to run with the same
-testing interface as MUnit. This means that you get the same pretty-printing of
-test reports for JUnit, ScalaTest and MUnit.
-
-Next, you may want to start migrating your test suites one by one. If you only
-use basic ScalaTest features, you should be able to replace usage of
+If you only use basic ScalaTest features, you should be able to replace usage of
 `org.scalatest.FunSuite` with minimal changes like below.
 
 ```diff
@@ -37,4 +21,12 @@ use basic ScalaTest features, you should be able to replace usage of
 + test("ignored".ignore) {
     // unchanged
   }
+```
+
+Optionally, replace usage of `assert(a == b)` with `assertEquals(a, b)` to
+improve the error message in failed assertions:
+
+```diff
+- assert(a == b)
++ assertEquals(a, b)
 ```
