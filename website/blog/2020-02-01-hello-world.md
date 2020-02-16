@@ -95,11 +95,11 @@ JUnit and MUnit test cases are not generated via macros like in utest.
 
 MUnit provides a high-level API to write tests in a ScalaTest-inspired
 `FunSuite` syntax where the type parameter for `GenericTest[T]` is defined as
-`Any`.
+`Future[Any]`.
 
 ```scala
 abstract class FunSuite extends Suite {
-  type TestValue = Any
+  type TestValue = Future[Any]
 }
 ```
 
