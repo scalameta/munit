@@ -2,11 +2,11 @@ package munit
 
 import sbt.testing.Fingerprint
 
-import com.geirsson.junit.CustomFingerprint
-import com.geirsson.junit.CustomRunners
+import munit.internal.junitinterface.CustomFingerprint
+import munit.internal.junitinterface.CustomRunners
 import sbt.testing.SubclassFingerprint
 
-class Framework extends com.geirsson.junit.JUnitFramework {
+class Framework extends munit.internal.junitinterface.JUnitFramework {
   val munitFingerprint: CustomFingerprint = CustomFingerprint.of(
     "munit.Suite",
     "munit.MUnitRunner"

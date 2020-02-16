@@ -1,6 +1,8 @@
 package munit
 
-import com.geirsson.junit.{CustomFingerprint, CustomRunners, JUnitFramework}
+import munit.internal.junitinterface.CustomFingerprint
+import munit.internal.junitinterface.CustomRunners
+import munit.internal.junitinterface.JUnitFramework
 
 class Framework extends JUnitFramework {
   override val name = "munit"

@@ -2,7 +2,7 @@
  * Adapted from https://github.com/scala-js/scala-js, see NOTICE.md.
  */
 
-package com.geirsson.junit
+package munit.internal.junitinterface
 
 import sbt.testing._
 import munit.internal.PlatformCompat

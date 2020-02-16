@@ -1,0 +1,23 @@
+{
+ "organization":"com.novocode",
+ "name":"junit-interface",
+ "version":"0.8",
+ "description":"An implementation of sbt's test interface for JUnit 4. This allows you to run JUnit tests from sbt.",
+ "site":"https://github.com/szeiger/junit-interface",
+ "tags":["junit", "sbt"],
+ "licenses": [{
+   "name": "BSD",
+   "url": "https://github.com/szeiger/junit-interface/blob/635f723f1f6a8bc4f77ff95afa12ede2070e8e66/LICENSE.txt"
+ }],
+ "resolvers": ["http://scala-tools.org/repo-releases"],
+ "dependencies": [{
+   "organization":"junit",
+   "name": "junit",
+   "version": "4.8.2"
+ },{
+   "organization":"org.scala-tools.testing",
+   "name": "test-interface",
+   "version": "0.5"
+ }],
+ "sbt": true
+}

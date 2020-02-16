@@ -1,6 +1,6 @@
 package munit.internal
 
-import com.geirsson.junit.CustomFingerprint
+import munit.internal.junitinterface.CustomFingerprint
 
 class MUnitFingerprint(isModule: Boolean)
     extends CustomFingerprint("munit.Suite", isModule)

@@ -1,4 +1,4 @@
-package com.geirsson.junit
+package munit.internal.junitinterface
 
 import sbt.testing.SubclassFingerprint
 

@@ -1,4 +1,4 @@
-package com.geirsson.junit
+package munit.internal.junitinterface
 
 import org.junit.runner.Description
 import org.junit.runner.manipulation.Filter
