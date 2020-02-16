@@ -71,6 +71,12 @@ abstract class FunSuite
   def munitNewTest(test: Test): Test =
     test
 
+  def test(name: String)(
+      body: => Any
+  )(implicit loc: Location): Unit = {
+    test(new TestOptions(name, Set.empty, loc))(body)
+  }
+
   def test(options: TestOptions)(
       body: => Any
   )(implicit loc: Location): Unit = {
