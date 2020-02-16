@@ -109,7 +109,8 @@ lazy val junit = project
     autoScalaLibrary := false,
     crossPaths := false,
     sbtPlugin := false,
-    libraryDependencies ++= Seq(
+    crossScalaVersions := List(scala213),
+    libraryDependencies ++= List(
       "junit" % "junit" % junitVersion,
       "org.scala-sbt" % "test-interface" % "1.0"
     ),
@@ -188,6 +189,7 @@ lazy val plugin = project
     sbtPlugin := true,
     skip in publish := customScalaJSVersion.isDefined,
     scalaVersion := scala212,
+    crossScalaVersions := List(scala212),
     buildInfoPackage := "munit.sbtmunit",
     buildInfoKeys := Seq[BuildInfoKey](
       "munitVersion" -> version.value
@@ -238,6 +240,7 @@ lazy val docs = project
       "org.scala-lang.modules" %% "scala-xml" % "2.0.0-M1",
       gcp
     ),
+    test := {},
     munitRepository := Some("scalameta/munit"),
     mdocOut :=
       baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
