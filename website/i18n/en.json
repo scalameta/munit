@@ -6,7 +6,7 @@
     "tagline": "Scala testing library with actionable errors and extensible APIs",
     "docs": {
       "assertions": {
-        "title": "assertions"
+        "title": "Writing assertions"
       },
       "filtering": {
         "title": "Filtering tests"

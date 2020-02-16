@@ -1,4 +1,3 @@
-
 ---
 id: assertions
 title: Writing assertions
@@ -135,7 +134,10 @@ Windows/Unix newlines and ANSI color codes. The "=> Obtained" section of
 `.stripMargin`.
 
 ## `intercept()`
-Use `intercept()` when you expect a particular exception to be thrown by the test code (i.e. the test succeeds if the given Exception is thrown)
+
+Use `intercept()` when you expect a particular exception to be thrown by the
+test code (i.e. the test succeeds if the given exception is thrown).
+
 ```scala mdoc:crash
 intercept[java.lang.IllegalArgumentException]{
    // code expected to throw exception here
@@ -143,7 +145,10 @@ intercept[java.lang.IllegalArgumentException]{
 ```
 
 ## `interceptMessage()`
-Like intercept() except you can also specify a specific message the given Exception must match.
+
+Like `intercept()` except additionally asserts that the thrown exception has a
+specific error message.
+
 ```scala mdoc:crash
 interceptMessage[java.lang.IllegalArgumentException]("argument type mismatch"){
    // code expected to throw exception here
@@ -162,4 +167,34 @@ Use `clues()` to include optional context why the test failed.
 
 ```scala mdoc:crash
 fail("test failed", clues(a + b))
+```
+
+## `compileErrors()`
+
+Use `compileErrors()` to assert that an example code snippet fails with a
+specific compile-time error message.
+
+```scala mdoc
+assertNoDiff(
+  compileErrors("Set(2, 1).sorted"),
+     """|error: value sorted is not a member of scala.collection.immutable.Set[Int]
+        |Set(2, 1).sorted
+        |          ^
+        |""".stripMargin
+)
+```
+
+The argument to `compileErrors` must be a string literal. It's not possible to
+pass in more complicated expressions such as variables or string interpolators.
+
+```scala mdoc:fail
+val code = """val x: String = 2"""
+compileErrors(code)
+compileErrors(s"/* code */ $code")
+```
+
+Inline the `code` variable to fix the compile error.
+
+```scala mdoc
+compileErrors("val x: String = 2")
 ```
