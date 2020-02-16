@@ -8,9 +8,10 @@ import scala.util.control.NonFatal
 import scala.collection.mutable
 import munit.internal.console.AnsiColors
 import org.junit.AssumptionViolatedException
+import munit.internal.MacroCompat
 
 object Assertions extends Assertions
-trait Assertions {
+trait Assertions extends MacroCompat.CompileErrorMacro {
 
   val munitLines = new Lines
 
