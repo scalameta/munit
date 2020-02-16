@@ -62,7 +62,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     )
   }
 
-  override def getDescription(): Description = {
+  // NOTE(olafur): this method is a lazy val to avoid repeated computations.
+  // This method may get multiple times by clients such as IntelliJ, see
+  // https://github.com/scalameta/munit/issues/47
+  override lazy val getDescription: Description = {
     try {
       val suiteTests = StackTraces.dropOutside(munitTests)
       suiteTests.foreach { test =>
