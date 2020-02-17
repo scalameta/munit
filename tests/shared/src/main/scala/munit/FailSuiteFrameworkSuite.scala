@@ -20,6 +20,6 @@ object FailSuiteFrameworkSuite
          |7:  test("fail") {
          |8:    failSuite("Oops, can not do anything.")
          |9:  }
-         |==> skipped munit.FailSuiteFrameworkSuite.not gonna run - Suite has been aborted.
+         |==> skipped munit.FailSuiteFrameworkSuite.not gonna run - Suite has been aborted
          |""".stripMargin
     )

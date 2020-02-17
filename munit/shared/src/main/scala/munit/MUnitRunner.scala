@@ -205,7 +205,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier.fireTestAssumptionFailed(
         new Failure(
           description,
-          new IllegalStateException("Suite has been aborted.")
+          new FailSuiteException("Suite has been aborted", test.location)
         )
       )
       return Future.successful(false)
