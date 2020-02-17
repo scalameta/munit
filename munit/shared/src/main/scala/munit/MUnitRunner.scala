@@ -31,6 +31,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private val suiteDescription = Description.createSuiteDescription(cls)
   private implicit val ec: ExecutionContext = suite.munitExecutionContext
   @volatile private var filter: Filter = Filter.ALL
+  @volatile private var suiteAborted: Boolean = false
   val descriptions: mutable.Map[suite.Test, Description] =
     mutable.Map.empty[suite.Test, Description]
   val testNames: mutable.Set[String] = mutable.Set.empty[String]
@@ -200,6 +201,16 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     if (!filter.shouldRun(description)) {
       return Future.successful(false)
     }
+    if (suiteAborted) {
+      notifier.fireTestAssumptionFailed(
+        new Failure(
+          description,
+          new IllegalStateException("Suite has been aborted.")
+        )
+      )
+      return Future.successful(false)
+    }
+
     notifier.fireTestStarted(description)
     val onError: PartialFunction[Throwable, Future[Unit]] = {
       case ex: AssumptionViolatedException =>
@@ -211,6 +222,9 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         ex match {
           case _: AssumptionViolatedException =>
             notifier.fireTestAssumptionFailed(failure)
+          case _: FailSuiteException =>
+            suiteAborted = true
+            notifier.fireTestFailure(failure)
           case _ =>
             notifier.fireTestFailure(failure)
         }

@@ -160,6 +160,16 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     )
   }
 
+  def failSuite(
+      message: String,
+      clues: Clues = new Clues(Nil)
+  )(implicit loc: Location): Nothing = {
+    throw new FailSuiteException(
+      munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+      loc
+    )
+  }
+
   private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
     mutable.ListBuffer.empty
   def munitCaptureClues[T](thunk: => T): (T, Clues) =
