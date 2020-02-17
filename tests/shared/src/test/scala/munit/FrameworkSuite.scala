@@ -7,6 +7,7 @@ class FrameworkSuite extends BaseFrameworkSuite {
     CiOnlyFrameworkSuite,
     DiffProductFrameworkSuite,
     FailFrameworkSuite,
+    FailSuiteFrameworkSuite,
     TestNameFrameworkSuite,
     ScalaVersionFrameworkSuite,
     FixtureFrameworkSuite,
