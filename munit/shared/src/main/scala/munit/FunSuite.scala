@@ -52,7 +52,7 @@ abstract class FunSuite
     }
   }
 
-  def munitTestValue(options: TestOptions)(testValue: => Any): Future[Any] = {
+  private def transformTestValue(testValue: => Any): Future[Any] = {
     // Takes an arbitrarily nested future `Future[Future[Future[...]]]` and
     // returns a `Future[T]` where `T` is not a `Future`.
     def flattenFuture(future: Future[_]): Future[_] = {
@@ -83,14 +83,12 @@ abstract class FunSuite
     munitTestsBuffer += munitNewTest(
       new Test(
         options.name, { () =>
-          munitRunTest(options, () => {
-            try {
-              munitTestValue(options)(body)
-            } catch {
-              case NonFatal(e) =>
-                Future.failed(e)
-            }
-          })
+          try {
+            munitRunTest(options, () => transformTestValue(body))
+          } catch {
+            case NonFatal(e) =>
+              Future.failed(e)
+          }
         },
         options.tags.toSet,
         loc

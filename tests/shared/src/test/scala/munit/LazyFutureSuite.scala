@@ -11,10 +11,11 @@ class LazyFutureSuite extends FunSuite {
       LazyFuture(() => Future(thunk))
   }
 
-  override def munitTestValue(
-      options: TestOptions
-  )(testValue: => Any): Future[Any] =
-    super.munitTestValue(options)(testValue).flatMap {
+  override def munitRunTest(
+      options: TestOptions,
+      body: () => Future[Any]
+  ): Future[Any] =
+    super.munitRunTest(options, body).flatMap {
       case LazyFuture(run) => run()
       case value           => Future.successful(value)
     }

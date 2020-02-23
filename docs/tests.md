@@ -62,7 +62,7 @@ Note that `Await.result()` only works on the JVM. Scala.js and Scala Native
 tests that return uncompleted `Future[T]` values will fail.
 
 MUnit has special handling for `scala.concurrent.Future[T]` since it is
-available in the standard library. Override `munitTestValue` to add custom
+available in the standard library. Override `munitRunTest` to add custom
 handling for other asynchronous types.
 
 For example, imagine that you have a `LazyFuture[T]` data type that is a lazy
@@ -86,18 +86,20 @@ test("buggy-task") {
 ```
 
 Since tasks are lazy, a test that returns `LazyFuture[T]` will always pass since
-you need to call `run()` to start the task execution. Override `munitTestValue`
+you need to call `run()` to start the task execution. Override `munitRunTest`
 to add make sure that `LazyFuture.run()` gets called.
 
 ```scala mdoc
 import scala.concurrent.ExecutionContext.Implicits.global
+import munit.TestOptions
+
 class TaskSuite extends munit.FunSuite {
-  override def munitTestValue(testValue: => Any): Future[Any] =
-    super.munitTestValue(testValue).flatMap {
+  override def munitRunTest(options: TestOptions, body: () => Future[Any]): Future[Any] =
+    super.munitRunTest(options, body).flatMap {
       case LazyFuture(run) => run()
       case value => Future.successful(value)
     }
-  implicit val ec = ExecutionContext.global
+
   test("ok-task") {
     LazyFuture {
       Thread.sleep(5000)
@@ -216,10 +218,6 @@ class MyWindowsSuite extends munit.FunSuite {
 }
 ```
 
-The `munitRunTest()` method is similar to `munitTestValue()` but is different in
-that you also have access information about the test in `TestOptions` such as
-tags.
-
 ## Customize test name based on a dynamic condition
 
 Override `munitNewTest` to customize how `Test` values are constructed. For
@@ -295,7 +293,7 @@ in your project.
 ```scala mdoc
 abstract class BaseSuite extends munit.FunSuite {
   override val munitTimeout = Duration(1, "min")
-  override def munitTestValue(value: => Any): Future[Any] =
+  override def munitRunTest(options: TestOptions, body: () => Future[Any]): Future[Any] =
     ???
   // ...
 }
