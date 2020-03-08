@@ -212,6 +212,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
 
     notifier.fireTestStarted(description)
+    if (test.tags(Ignore)) {
+      notifier.fireTestIgnored(description)
+      return Future.successful(false)
+    }
     val onError: PartialFunction[Throwable, Future[Unit]] = {
       case ex: AssumptionViolatedException =>
         StackTraces.trimStackTrace(ex)
@@ -239,14 +243,19 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
   }
 
+  private def futureFromAny(any: Any): Future[Any] = any match {
+    case f: Future[_] => f
+    case _            => Future.successful(any)
+  }
+
   private def runTestBody(
       notifier: RunNotifier,
       description: Description,
       test: suite.Test
   ): Future[Unit] = {
-    val result = StackTraces.dropOutside {
+    val result: Future[Any] = StackTraces.dropOutside {
       val beforeEachResult = runBeforeEach(test)
-      beforeEachResult.error match {
+      val any = beforeEachResult.error match {
         case None =>
           try test.body()
           finally runAfterEach(test, beforeEachResult.loadedFixtures)
@@ -254,19 +263,16 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
           try runAfterEach(test, beforeEachResult.loadedFixtures)
           finally throw error
       }
+      futureFromAny(any)
     }
-    result match {
+    result.map {
       case f: TestValues.FlakyFailure =>
         StackTraces.trimStackTrace(f)
         notifier.fireTestAssumptionFailed(new Failure(description, f))
-        Future.successful(())
       case TestValues.Ignore =>
         notifier.fireTestIgnored(description)
-        Future.successful(())
-      case f: Future[_] =>
-        f.map(_ => ())
       case _ =>
-        Future.successful(())
+        ()
     }
   }
 
