@@ -92,11 +92,11 @@ to add make sure that `LazyFuture.run()` gets called.
 ```scala mdoc
 import scala.concurrent.ExecutionContext.Implicits.global
 class TaskSuite extends munit.FunSuite {
-  override def munitTestValue(testValue: => Any): Future[Any] =
-    super.munitTestValue(testValue).flatMap {
+  override def munitValueTransforms = super.munitValueTransforms ++ List(
+    new ValueTransform("LazyFuture", {
       case LazyFuture(run) => run()
-      case value => Future.successful(value)
-    }
+    })
+  )
   implicit val ec = ExecutionContext.global
   test("ok-task") {
     LazyFuture {
@@ -197,18 +197,22 @@ evaluate the body multiple times.
 
 ```scala mdoc
 case class Rerun(count: Int) extends munit.Tag("Rerun")
-class MyWindowsSuite extends munit.FunSuite {
-  override def munitRunTest(options: munit.TestOptions, body: () => Future[Any]): Future[Any] = {
-    val rerunCount = options.tags.collectFirst {
-      case Rerun(n) => n
-    }.getOrElse(1)
-    val futures: Seq[Future[Any]] = 1.to(rerunCount).map(_ =>
-      super.munitRunTest(options, body))
-    val result: Future[Seq[Any]] = Future.sequence(futures)
-    result
-  }
-  test("files".tag(Rerun(10))) {
-    println("Hello") // will run 10 times
+class MyRerunSuite extends munit.FunSuite {
+  override def munitTestTransforms = super.munitTestTransforms ++ List(
+    new TestTransform("Rerun", { test =>
+      val rerunCount = test.tags
+        .collectFirst { case Rerun(n) => n }
+        .getOrElse(1)
+      if (rerunCount == 1) test
+      else {
+        test.withBody(() => {
+          Future.sequence(1.to(rerunCount).map(_ => test.body()))
+        })
+      }
+    })
+  )
+  test("files".tag(Rerun(3))) {
+    println("Hello") // will run 3 times
   }
   test("files") {
     // will run once, like normal
@@ -229,8 +233,11 @@ condition.
 ```scala mdoc
 class ScalaVersionSuite extends munit.FunSuite {
   val scalaVersion = scala.util.Properties.versionNumberString
-  override def munitNewTest(test: Test): Test =
-    test.withName(test.name + "-" + scalaVersion)
+  override def munitTestTransforms = super.munitTestTransforms ++ List(
+    new TestTransform("append Scala version", { test =>
+      test.withName(test.name + "-" + scalaVersion)
+    })
+  )
   test("foo") {
     assert(!scalaVersion.startsWith("2.11"))
   }
@@ -295,8 +302,7 @@ in your project.
 ```scala mdoc
 abstract class BaseSuite extends munit.FunSuite {
   override val munitTimeout = Duration(1, "min")
-  override def munitTestValue(value: => Any): Future[Any] =
-    ???
+  override def munitTestTransforms = super.munitTestTransforms ++ List(???)
   // ...
 }
 class MyFirstSuite extends BaseSuite { /* ... */ }
