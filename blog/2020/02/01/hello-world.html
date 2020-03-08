@@ -160,14 +160,14 @@ code:</p>
 <span class="hljs-keyword">import</span> munit._
 <span class="hljs-class"><span class="hljs-keyword">object</span> <span class="hljs-title">Windows213</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Tag</span>(<span class="hljs-params">"<span class="hljs-type">Windows213</span>"</span>)</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-comment">// reminder: type Test = GenericTest[Any]</span>
+  <span class="hljs-comment">// reminder: type Test = GenericTest[Future[Any]]</span>
   <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitNewTest</span></span>(test: <span class="hljs-type">Test</span>): <span class="hljs-type">Test</span> = {
     <span class="hljs-keyword">val</span> isIgnored =
-      options.tags(<span class="hljs-type">Windows213</span>) &amp;&amp; !(
+      test.tags(<span class="hljs-type">Windows213</span>) &amp;&amp; !(
         <span class="hljs-type">Properties</span>.isWin &amp;&amp;
         <span class="hljs-type">Properties</span>.versionNumberString.startsWith(<span class="hljs-string">"2.13"</span>)
       )
-    <span class="hljs-keyword">if</span> (isIgnored) test.withBody(() =&gt; <span class="hljs-type">Ignore</span>)
+    <span class="hljs-keyword">if</span> (isIgnored) test.tag(<span class="hljs-type">Ignore</span>)
     <span class="hljs-keyword">else</span> test
   }
 
