@@ -106,8 +106,6 @@ abstract class FunSuite
       munitExpectFailure(options, body)
     } else if (options.tags(Flaky)) {
       munitFlaky(options, body)
-    } else if (options.tags(Ignore)) {
-      Future.successful(Ignore)
     } else {
       body()
     }
