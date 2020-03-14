@@ -124,11 +124,11 @@ you need to call <code>run()</code> to start the task execution. Override <code>
 to add make sure that <code>LazyFuture.run()</code> gets called.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.concurrent.<span class="hljs-type">ExecutionContext</span>.<span class="hljs-type">Implicits</span>.global
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaskSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestValue</span></span>(testValue: =&gt; <span class="hljs-type">Any</span>): <span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>] =
-    <span class="hljs-keyword">super</span>.munitTestValue(testValue).flatMap {
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitValueTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitValueTransforms ++ <span class="hljs-type">List</span>(
+    <span class="hljs-keyword">new</span> <span class="hljs-type">ValueTransform</span>(<span class="hljs-string">"LazyFuture"</span>, {
       <span class="hljs-keyword">case</span> <span class="hljs-type">LazyFuture</span>(run) =&gt; run()
-      <span class="hljs-keyword">case</span> value =&gt; <span class="hljs-type">Future</span>.successful(value)
-    }
+    })
+  )
   <span class="hljs-keyword">implicit</span> <span class="hljs-keyword">val</span> ec = <span class="hljs-type">ExecutionContext</span>.global
   test(<span class="hljs-string">"ok-task"</span>) {
     <span class="hljs-type">LazyFuture</span> {
@@ -203,18 +203,22 @@ bug report but don't have a solution to fix the issue yet.</p>
 evaluated. For example, use this feature to implement a <code>Rerun(N)</code> modifier to
 evaluate the body multiple times.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Rerun</span>(<span class="hljs-params">count: <span class="hljs-type">Int</span></span>) <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">Tag</span>(<span class="hljs-params">"<span class="hljs-type">Rerun</span>"</span>)</span>
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyWindowsSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitRunTest</span></span>(options: munit.<span class="hljs-type">TestOptions</span>, body: () =&gt; <span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>]): <span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>] = {
-    <span class="hljs-keyword">val</span> rerunCount = options.tags.collectFirst {
-      <span class="hljs-keyword">case</span> <span class="hljs-type">Rerun</span>(n) =&gt; n
-    }.getOrElse(<span class="hljs-number">1</span>)
-    <span class="hljs-keyword">val</span> futures: <span class="hljs-type">Seq</span>[<span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>]] = <span class="hljs-number">1.</span>to(rerunCount).map(_ =&gt;
-      <span class="hljs-keyword">super</span>.munitRunTest(options, body))
-    <span class="hljs-keyword">val</span> result: <span class="hljs-type">Future</span>[<span class="hljs-type">Seq</span>[<span class="hljs-type">Any</span>]] = <span class="hljs-type">Future</span>.sequence(futures)
-    result
-  }
-  test(<span class="hljs-string">"files"</span>.tag(<span class="hljs-type">Rerun</span>(<span class="hljs-number">10</span>))) {
-    println(<span class="hljs-string">"Hello"</span>) <span class="hljs-comment">// will run 10 times</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyRerunSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitTestTransforms ++ <span class="hljs-type">List</span>(
+    <span class="hljs-keyword">new</span> <span class="hljs-type">TestTransform</span>(<span class="hljs-string">"Rerun"</span>, { test =&gt;
+      <span class="hljs-keyword">val</span> rerunCount = test.tags
+        .collectFirst { <span class="hljs-keyword">case</span> <span class="hljs-type">Rerun</span>(n) =&gt; n }
+        .getOrElse(<span class="hljs-number">1</span>)
+      <span class="hljs-keyword">if</span> (rerunCount == <span class="hljs-number">1</span>) test
+      <span class="hljs-keyword">else</span> {
+        test.withBody(() =&gt; {
+          <span class="hljs-type">Future</span>.sequence(<span class="hljs-number">1.</span>to(rerunCount).map(_ =&gt; test.body()))
+        })
+      }
+    })
+  )
+  test(<span class="hljs-string">"files"</span>.tag(<span class="hljs-type">Rerun</span>(<span class="hljs-number">3</span>))) {
+    println(<span class="hljs-string">"Hello"</span>) <span class="hljs-comment">// will run 3 times</span>
   }
   test(<span class="hljs-string">"files"</span>) {
     <span class="hljs-comment">// will run once, like normal</span>
@@ -230,8 +234,11 @@ example, use this feature to add a custom suffix to test names based on dynamic
 condition.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ScalaVersionSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-keyword">val</span> scalaVersion = scala.util.<span class="hljs-type">Properties</span>.versionNumberString
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitNewTest</span></span>(test: <span class="hljs-type">Test</span>): <span class="hljs-type">Test</span> =
-    test.withName(test.name + <span class="hljs-string">"-"</span> + scalaVersion)
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitTestTransforms ++ <span class="hljs-type">List</span>(
+    <span class="hljs-keyword">new</span> <span class="hljs-type">TestTransform</span>(<span class="hljs-string">"append Scala version"</span>, { test =&gt;
+      test.withName(test.name + <span class="hljs-string">"-"</span> + scalaVersion)
+    })
+  )
   test(<span class="hljs-string">"foo"</span>) {
     assert(!scalaVersion.startsWith(<span class="hljs-string">"2.11"</span>))
   }
@@ -280,8 +287,7 @@ logic before and after tests.</p>
 in your project.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BaseSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-keyword">override</span> <span class="hljs-keyword">val</span> munitTimeout = <span class="hljs-type">Duration</span>(<span class="hljs-number">1</span>, <span class="hljs-string">"min"</span>)
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestValue</span></span>(value: =&gt; <span class="hljs-type">Any</span>): <span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>] =
-    ???
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitTestTransforms ++ <span class="hljs-type">List</span>(???)
   <span class="hljs-comment">// ...</span>
 }
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyFirstSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseSuite</span> </span>{ <span class="hljs-comment">/* ... */</span> }
