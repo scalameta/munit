@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v7
       - run: sbt +testsJVM/test plugin/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v7
       - run: sbt +testsJS/test
         env:
           SCALAJS_VERSION: ${{ matrix.scalajs }}
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v7
       - run: sbt +testsNative/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -51,7 +51,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v7
       - run: sbt +testsJVM/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v2
+      - uses: olafurpg/setup-scala@v7
       - run: ./bin/scalafmt --check
       - run: sbt scalafixAll
       - run: sbt docs/docusaurusCreateSite
