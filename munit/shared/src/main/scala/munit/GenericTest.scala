@@ -29,6 +29,10 @@ class GenericTest[T](
     withTags(tags + newTag)
   def withLocation(newLocation: Location): GenericTest[T] =
     copy(location = newLocation)
+
+  def withBodyMap[A](newBody: T => A): GenericTest[A] =
+    withBody[A](() => newBody(body()))
+
   private[this] def copy[A](
       name: String = this.name,
       body: () => A = this.body,

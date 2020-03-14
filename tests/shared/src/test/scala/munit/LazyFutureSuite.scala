@@ -10,16 +10,27 @@ class LazyFutureSuite extends FunSuite {
     def apply[T](thunk: => T)(implicit ec: ExecutionContext): LazyFuture[T] =
       LazyFuture(() => Future(thunk))
   }
-  override def munitTestValue(testValue: => Any): Future[Any] =
-    super.munitTestValue(testValue).flatMap {
-      case LazyFuture(run) => run()
-      case value           => Future.successful(value)
-    }
+
+  override def munitValueTransforms: List[ValueTransform] =
+    super.munitValueTransforms ++ List(
+      new ValueTransform("LazyFuture", {
+        case LazyFuture(run) => run()
+      })
+    )
 
   test("ok-task".fail) {
     LazyFuture {
       // Test will fail because  LazyFuture.run()` is automatically called
       throw new RuntimeException("BOOM!")
+    }
+  }
+
+  test("nested".fail) {
+    LazyFuture {
+      LazyFuture {
+        // Test will fail because  LazyFuture.run()` is automatically called
+        throw new RuntimeException("BOOM!")
+      }
     }
   }
 }

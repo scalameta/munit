@@ -127,16 +127,17 @@ import scala.util.Properties
 import munit._
 object Windows213 extends Tag("Windows213")
 class MySuite extends FunSuite {
-  // reminder: type Test = GenericTest[Future[Any]]
-  override def munitNewTest(test: Test): Test = {
-    val isIgnored =
-      test.tags(Windows213) && !(
-        Properties.isWin &&
-        Properties.versionNumberString.startsWith("2.13")
-      )
-    if (isIgnored) test.tag(Ignore)
-    else test
-  }
+  override def munitTestTransforms = super.munitTestTransforms ++ List(
+    new TestTransform("Windows213", { test =>
+      val isIgnored =
+        test.tags(Windows213) && !(
+          Properties.isWin &&
+            Properties.versionNumberString.startsWith("2.13")
+        )
+      if (isIgnored) test.tag(Ignore)
+      else test
+    })
+  )
 
   test("windows-213".tag(Windows213)) {
     // Only runs when operating system is Windows and Scala version is 2.13
@@ -145,6 +146,7 @@ class MySuite extends FunSuite {
     // Always runs like a normal test.
   }
 }
+
 ```
 
 By encoding the environment requirements in the test implementation, we prevent

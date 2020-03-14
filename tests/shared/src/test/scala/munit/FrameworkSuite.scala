@@ -13,7 +13,13 @@ class FrameworkSuite extends BaseFrameworkSuite {
     FixtureFrameworkSuite,
     TagsIncludeFramweworkSuite,
     TagsIncludeExcludeFramweworkSuite,
-    TagsExcludeFramweworkSuite
+    TagsExcludeFramweworkSuite,
+    SuiteTransformCrashFrameworkSuite,
+    SuiteTransformFrameworkSuite,
+    TestTransformCrashFrameworkSuite,
+    TestTransformFrameworkSuite,
+    ValueTransformCrashFrameworkSuite,
+    ValueTransformFrameworkSuite
   )
   tests.foreach { t =>
     check(t)

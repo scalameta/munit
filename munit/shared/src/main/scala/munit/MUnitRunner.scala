@@ -21,6 +21,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
+import java.util.concurrent.ExecutionException
 
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     extends Runner
@@ -222,7 +223,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         Future.successful(())
       case NonFatal(ex) =>
         StackTraces.trimStackTrace(ex)
-        val failure = new Failure(description, ex)
+        val cause = ex match {
+          case e: ExecutionException
+              if "Boxed Exception" == e.getMessage() &&
+                e.getCause() != null =>
+            e.getCause()
+          case e => e
+        }
+        val failure = new Failure(description, cause)
         ex match {
           case _: AssumptionViolatedException =>
             notifier.fireTestAssumptionFailed(failure)
