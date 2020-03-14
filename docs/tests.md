@@ -206,7 +206,7 @@ class MyRerunSuite extends munit.FunSuite {
       if (rerunCount == 1) test
       else {
         test.withBody(() => {
-          Future.sequence(1.to(rerunCount).map(_ => test.body()))
+          Future.sequence(1.to(rerunCount).map(_ => test.body()).toList)
         })
       }
     })
