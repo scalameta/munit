@@ -212,7 +212,7 @@ evaluate the body multiple times.</p>
       <span class="hljs-keyword">if</span> (rerunCount == <span class="hljs-number">1</span>) test
       <span class="hljs-keyword">else</span> {
         test.withBody(() =&gt; {
-          <span class="hljs-type">Future</span>.sequence(<span class="hljs-number">1.</span>to(rerunCount).map(_ =&gt; test.body()))
+          <span class="hljs-type">Future</span>.sequence(<span class="hljs-number">1.</span>to(rerunCount).map(_ =&gt; test.body()).toList)
         })
       }
     })
