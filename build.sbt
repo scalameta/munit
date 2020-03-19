@@ -7,7 +7,7 @@ val scalaNativeVersion = "0.4.0-M2"
 def scala213 = "2.13.1"
 def scala212 = "2.12.10"
 def scala211 = "2.11.12"
-def dotty = "0.22.0-RC1"
+def dotty = "0.23.0-RC1"
 def scalameta = "4.3.0"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.103.0"
 inThisBuild(
