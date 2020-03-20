@@ -1,12 +1,12 @@
 package munit
 
 /**
-  * Options used when running a test. It can be built implicitly from a [[String]]
-  * (@see [[munit.TestOptionsConversions]])
-  *
-  * @param name the test name, used in the UI and to select it with testOnly
-  * @param tags a set of [[munit.Tag]], used to attach semantic information to a test
-  */
+ * Options used when running a test. It can be built implicitly from a [[String]]
+ * (@see [[munit.TestOptionsConversions]])
+ *
+ * @param name the test name, used in the UI and to select it with testOnly
+ * @param tags a set of [[munit.Tag]], used to attach semantic information to a test
+ */
 final class TestOptions(
     val name: String,
     val tags: Set[Tag],
@@ -40,9 +40,9 @@ final class TestOptions(
 trait TestOptionsConversions {
 
   /**
-    * Implicitly create a TestOptions given a test name.
-    * This allows writing `test("name") { ... }` even if `test` accepts a `TestOptions`
-    */
+   * Implicitly create a TestOptions given a test name.
+   * This allows writing `test("name") { ... }` even if `test` accepts a `TestOptions`
+   */
   implicit def testOptionsFromString(
       name: String
   )(implicit loc: Location): TestOptions =

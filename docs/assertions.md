@@ -83,19 +83,28 @@ Comparing two values of different types is a compile error.
 assertEquals(1, "")
 ```
 
-The two types must match exactly, it's a type error to compare two values even
-if one value is a subtype of the other.
+The "expected" value (second argument) must be a subtype of the "obtained" value
+(first argument).
+
+```scala mdoc
+assertEquals(Option(1), Some(1))
+```
+
+It's a compile error if you swap the order of the arguments.
 
 ```scala mdoc:fail
 assertEquals(Some(1), Option(1))
 ```
 
-Upcast the subtype using a type ascription `subtype: Supertype` when you want to
-compare a subtype with a supertype.
+Use `assertEquals[Any, Any]` if you really want to compare two different types.
 
 ```scala mdoc
-// OK
-assertEquals(Some(1): Option[Int], Option(1))
+val right1: Either[String      , Int] = Right(42)
+val right2: Either[List[String], Int] = Right(42)
+```
+
+```scala mdoc
+assertEquals[Any, Any](right1, right2)
 ```
 
 ## `assertNotEquals()`

@@ -47,4 +47,15 @@ class AssertionsSuite extends BaseSuite {
        |}
        |""".stripMargin
   )
+
+  test("subtype".tag(NoDotty)) {
+    assertEquals(Option(1), Some(1))
+    assertNoDiff(
+      compileErrors("assertEquals(Some(1), Option(1))"),
+      """|error: Cannot prove that Option[Int] <:< Some[Int].
+         |assertEquals(Some(1), Option(1))
+         |            ^
+         |""".stripMargin
+    )
+  }
 }
