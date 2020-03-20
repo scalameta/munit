@@ -84,8 +84,7 @@ assertEquals(1, "")
 ```
 
 The "expected" value (second argument) must be a subtype of the "obtained" value
-(first argument). It's a type error to compare two values even if one value is a
-subtype of the other.
+(first argument).
 
 ```scala mdoc
 assertEquals(Option(1), Some(1))
