@@ -5,10 +5,9 @@ val customScalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
 val scalaJSVersion = customScalaJSVersion.getOrElse("1.0.0")
 val scalaNativeVersion = "0.4.0-M2"
 def scala213 = "2.13.1"
-def scala212 = "2.12.10"
+def scala212 = "2.12.11"
 def scala211 = "2.11.12"
 def dotty = "0.23.0-RC1"
-def scalameta = "4.3.0"
 def junitVersion = "4.13"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.103.0"
 inThisBuild(
@@ -201,8 +200,23 @@ lazy val plugin = project
     )
   )
 
-lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .in(file("munit-scalacheck"))
+  .settings(
+    sharedSettings,
+    crossScalaVersions := List(scala213, scala212, scala211),
+    libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.14.3"
+  )
+  .nativeConfigure(sharedNativeConfigure)
+  .nativeSettings(
+    sharedNativeSettings,
+    skip in publish := customScalaJSVersion.isDefined
+  )
+  .jsSettings(sharedJSSettings)
   .dependsOn(munit)
+
+lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .dependsOn(munit, munitScalacheck)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     sharedSettings,
