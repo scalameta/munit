@@ -76,7 +76,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: A,
       expected: B,
       clue: => Any = "values are not the same"
-  )(implicit loc: Location, ev: A =:= B): Unit = {
+  )(implicit loc: Location, ev: B <:< A): Unit = {
     StackTraces.dropInside {
       if (obtained != expected) {
         Diffs.assertNoDiff(
