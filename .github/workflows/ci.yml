@@ -52,7 +52,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v7
-      - run: sbt +testsJVM/test
+      - run: csbt +testsJVM/test
+        shell: bash
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
             ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
