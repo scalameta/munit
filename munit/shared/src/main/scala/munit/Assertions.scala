@@ -72,6 +72,25 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     }
   }
 
+  /**
+   * Asserts that two elements are equal using `==` equality.
+   *
+   * The "expected" value (second argument) must have the same type or be a
+   * subtype of the "obtained" value (first argument). For example:
+   * {{{
+   *   assertEquals(Option(1), Some(1)) // OK
+   *   assertEquals(Some(1), Option(1)) // Error: Option[Int] is not a subtype of Some[Int]
+   * }}}
+   *
+   * Use `assertEquals[Any, Any](a, b)` as an escape hatch to compare two
+   * values of different types. For example:
+   * {{{
+   *   val a: Either[List[String], Int] = Right(42)
+   *   val b: Either[String, Int]       = Right(42)
+   *   assertEquals[Any, Any](a, b) // OK
+   *   assertEquals(a, b) // Error: Either[String, Int] is not a subtype of Either[List[String], Int]
+   * }}}
+   */
   def assertEquals[A, B](
       obtained: A,
       expected: B,
