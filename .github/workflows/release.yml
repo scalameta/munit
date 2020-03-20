@@ -14,7 +14,7 @@ jobs:
       - name: Publish
         run: |
           sbt ci-release
-          SCALAJS_VERSION=0.6.31 sbt clean sonatypeBundleClean ci-release
+          SCALAJS_VERSION=0.6.32 sbt clean sonatypeBundleClean ci-release
           sbt docs/docusaurusPublishGhpages
         env:
           GIT_USER: munit@scalameta.org
