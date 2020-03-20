@@ -19,7 +19,8 @@ class FrameworkSuite extends BaseFrameworkSuite {
     TestTransformCrashFrameworkSuite,
     TestTransformFrameworkSuite,
     ValueTransformCrashFrameworkSuite,
-    ValueTransformFrameworkSuite
+    ValueTransformFrameworkSuite,
+    scalacheck.ScalaCheckFrameworkSuite
   )
   tests.foreach { t =>
     check(t)
