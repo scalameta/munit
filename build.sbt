@@ -202,10 +202,12 @@ lazy val plugin = project
 
 lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("munit-scalacheck"))
+  .dependsOn(munit)
   .settings(
     sharedSettings,
-    crossScalaVersions := List(scala213, scala212, scala211),
-    libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.14.3"
+    crossScalaVersions := List(scala213, scala212, scala211, dotty),
+    libraryDependencies += ("org.scalacheck" %%% "scalacheck" % "1.14.3")
+      .withDottyCompat(scalaVersion.value)
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(
@@ -213,7 +215,6 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     skip in publish := customScalaJSVersion.isDefined
   )
   .jsSettings(sharedJSSettings)
-  .dependsOn(munit)
 
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .dependsOn(munit, munitScalacheck)
