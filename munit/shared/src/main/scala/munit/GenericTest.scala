@@ -5,12 +5,12 @@ import java.lang.annotation.Annotation
 import scala.collection.mutable
 
 /**
-  * Metadata about a single test case.
-  *
-  * @param body the function to be evaluated for this test case.
-  * @param tags the annotated tags for this test case.
-  * @param location the file and line number where this test was defined.
-  */
+ * Metadata about a single test case.
+ *
+ * @param body the function to be evaluated for this test case.
+ * @param tags the annotated tags for this test case.
+ * @param location the file and line number where this test was defined.
+ */
 class GenericTest[T](
     val name: String,
     val body: () => T,

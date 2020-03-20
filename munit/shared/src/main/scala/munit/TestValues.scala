@@ -3,8 +3,8 @@ package munit
 import scala.util.control.NoStackTrace
 
 /**
-  * Values that have special treatment when evaluating values produced by tests.
-  */
+ * Values that have special treatment when evaluating values produced by tests.
+ */
 object TestValues {
 
   /** The test failed with the given exception but was ignored but its marked as flaky */

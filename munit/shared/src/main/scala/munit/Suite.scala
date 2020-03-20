@@ -4,8 +4,8 @@ import org.junit.runner.RunWith
 import scala.concurrent.ExecutionContext
 
 /** The base class for all test suites.
-  * Extend this class if you don't need the functionality in FunSuite.
-  */
+ * Extend this class if you don't need the functionality in FunSuite.
+ */
 @RunWith(classOf[MUnitRunner])
 abstract class Suite extends PlatformSuite {
 
@@ -28,10 +28,10 @@ abstract class Suite extends PlatformSuite {
   def munitExecutionContext: ExecutionContext = parasiticExecutionContext
 
   /**
-    *
-    * @param name The name of this fixture, used for displaying an error message if
-    * `beforeAll()` or `afterAll()` fail.
-    */
+   *
+   * @param name The name of this fixture, used for displaying an error message if
+   * `beforeAll()` or `afterAll()` fail.
+   */
   abstract class Fixture[T](val fixtureName: String) {
 
     /** The value produced by this suite-local fixture that can be reused for all test cases. */
@@ -41,8 +41,8 @@ abstract class Suite extends PlatformSuite {
     def beforeAll(): Unit = ()
 
     /** Runs before each individual test case.
-      * An error in this method aborts the test case.
-      */
+     * An error in this method aborts the test case.
+     */
     def beforeEach(context: BeforeEach): Unit = ()
 
     /** Runs after each individual test case. */
@@ -54,16 +54,16 @@ abstract class Suite extends PlatformSuite {
   }
 
   /** Runs once before all test cases and before all suite-local fixtures are setup.
-    * An error in this method aborts the test suite.
-    */
+   * An error in this method aborts the test suite.
+   */
   def beforeAll(): Unit = ()
 
   /** Runs once after all test cases and after all suite-local fixtures have been tear down. */
   def afterAll(): Unit = ()
 
   /** Runs before each individual test case.
-    * An error in this method aborts the test case.
-    */
+   * An error in this method aborts the test case.
+   */
   def beforeEach(context: BeforeEach): Unit = ()
 
   /** Runs after each individual test case. */
