@@ -9,6 +9,7 @@
       "reports",
       "scalatest",
       "troubleshooting"
-    ]
+    ],
+    "Integrations": ["integrations/scalacheck"]
   }
 }
