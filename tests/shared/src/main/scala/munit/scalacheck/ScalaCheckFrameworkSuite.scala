@@ -22,6 +22,12 @@ class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
       scala.math.sqrt(n * n) == n
     }
   }
+
+  property("tagged".tag(new Tag("a"))) {
+    forAll { (n: Int) =>
+      n + 0 == n
+    }
+  }
 }
 
 object ScalaCheckFrameworkSuite
@@ -32,5 +38,6 @@ object ScalaCheckFrameworkSuite
           |Falsified after 0 passed tests.
           |> ARG_0: -1
           |> ARG_0_ORIGINAL: 2147483647
+          |==> success munit.scalacheck.ScalaCheckFrameworkSuite.tagged
           |""".stripMargin
     )
