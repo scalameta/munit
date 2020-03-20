@@ -6,6 +6,8 @@ import org.scalacheck.rng.Seed
 
 class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
 
+  // NOTE(gabro): this is needed for making the test output stable for the failed test below.
+  // It also serves as a test for overriding these parameters.
   override def scalaCheckTestParameters =
     super.scalaCheckTestParameters.withInitialSeed(Seed(123L))
 
