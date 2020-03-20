@@ -13,6 +13,8 @@ project/boot/
 project/plugins/project/
 .bloop
 
+_site/
+
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
