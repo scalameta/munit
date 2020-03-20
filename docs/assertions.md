@@ -97,6 +97,17 @@ It's a compile error if you swap the order of the arguments.
 assertEquals(Some(1), Option(1))
 ```
 
+Use `assertEquals[Any, Any]` if you really want to compare two different types.
+
+```scala mdoc
+val right1: Either[String      , Int] = Right(42)
+val right2: Either[List[String], Int] = Right(42)
+```
+
+```scala mdoc
+assertEquals[Any, Any](right1, right2)
+```
+
 ## `assertNotEquals()`
 
 Use `assertNotEqual()` to assert that two values are not the same.
