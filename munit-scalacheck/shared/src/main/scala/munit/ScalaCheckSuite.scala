@@ -1,5 +1,4 @@
 package munit
-package scalacheck
 
 import org.scalacheck.Prop
 import org.scalacheck.{Test => ScalaCheckTest}

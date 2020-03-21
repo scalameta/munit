@@ -18,7 +18,7 @@ libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "@VERSION@" % Tes
 You can then extend `ScalaCheckSuite` and write ScalaCheck property tests:
 
 ```scala mdoc
-import munit.scalacheck.ScalaCheckSuite
+import munit.ScalaCheckSuite
 import org.scalacheck.Prop._
 
 class IntegerSuite extends ScalaCheckSuite {
@@ -62,7 +62,7 @@ You can override the `scalaCheckTestParameters` property of `ScalaCheckSuite` to
 customize how ScalaCheck checks the properties:
 
 ```scala mdoc:reset
-import munit.scalacheck.ScalaCheckSuite
+import munit.ScalaCheckSuite
 import org.scalacheck.Prop._
 
 class IntegerSuite extends ScalaCheckSuite {
@@ -92,7 +92,7 @@ switching to MUnit requires very minor and mechanical changes:
 ```diff
 -import org.scalatest.prop.Checkers
 -import org.scalatest.FunSuite
-+import munit.scalacheck.ScalaCheckSuite
++import munit.ScalaCheckSuite
  import org.scalacheck.Prop._
 
 -class IntegerSuite extends FunSuite with Checkers {
@@ -121,7 +121,7 @@ to boolean checks:
 -import org.scalatest.Matchers
 -import org.scalatest.prop.GeneratorDrivenPropertyChecks
 -import org.scalatest.FunSuite
-+import munit.scalacheck.ScalaCheckSuite
++import munit.ScalaCheckSuite
 +import org.scalacheck.Prop._
 
 -class IntegerSuite extends FunSuite with GeneratorDrivenPropertyChecks with Matchers {
