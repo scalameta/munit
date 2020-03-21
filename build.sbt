@@ -216,6 +216,9 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     skip in publish := customScalaJSVersion.isDefined
   )
   .jsSettings(sharedJSSettings)
+lazy val munitScalacheckJVM = munitScalacheck.jvm
+lazy val munitScalacheckJS = munitScalacheck.js
+lazy val munitScalacheckNative = munitScalacheck.native
 
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .dependsOn(munit, munitScalacheck)
@@ -243,7 +246,7 @@ lazy val testsNative = tests.native
 
 lazy val docs = project
   .in(file("munit-docs"))
-  .dependsOn(munitJVM)
+  .dependsOn(munitJVM, munitScalacheckJVM)
   .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
   .settings(
     sharedSettings,

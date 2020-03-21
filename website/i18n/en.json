@@ -17,6 +17,9 @@
       "getting-started": {
         "title": "Getting started"
       },
+      "integrations/scalacheck": {
+        "title": "ScalaCheck"
+      },
       "reports": {
         "title": "Generating test reports"
       },
@@ -36,7 +39,8 @@
       "GitHub": "GitHub"
     },
     "categories": {
-      "Overview": "Overview"
+      "Overview": "Overview",
+      "Integrations": "Integrations"
     }
   },
   "pages-strings": {

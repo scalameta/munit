@@ -1,5 +1,4 @@
 package munit
-package scalacheck
 
 import org.scalacheck.Prop.forAll
 import org.scalacheck.rng.Seed
@@ -33,11 +32,11 @@ class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
 object ScalaCheckFrameworkSuite
     extends FrameworkTest(
       classOf[ScalaCheckFrameworkSuite],
-      s"""|==> success munit.scalacheck.ScalaCheckFrameworkSuite.list concatenation
-          |==> failure munit.scalacheck.ScalaCheckFrameworkSuite.squared -${' '}
+      s"""|==> success munit.ScalaCheckFrameworkSuite.list concatenation
+          |==> failure munit.ScalaCheckFrameworkSuite.squared -${' '}
           |Falsified after 0 passed tests.
           |> ARG_0: -1
           |> ARG_0_ORIGINAL: 2147483647
-          |==> success munit.scalacheck.ScalaCheckFrameworkSuite.tagged
+          |==> success munit.ScalaCheckFrameworkSuite.tagged
           |""".stripMargin
     )

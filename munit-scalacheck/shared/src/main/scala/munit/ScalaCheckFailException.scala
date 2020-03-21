@@ -1,4 +1,4 @@
-package munit.scalacheck
+package munit
 
 import scala.util.control.NoStackTrace
 
