@@ -211,7 +211,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       .withDottyCompat(scalaVersion.value)
   )
   .jvmSettings(
-    skip in publish := customScalaJSVersion.isDefined,
+    skip in publish := customScalaJSVersion.isDefined
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(
