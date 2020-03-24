@@ -11,7 +11,7 @@ jobs:
       - uses: olafurpg/setup-scala@v7
       - uses: olafurpg/setup-gpg@v2
       - run: git fetch --unshallow
-      - name: Publish
+      - name: Publish ${{ github.ref }}
         run: |
           sbt ci-release
           SCALAJS_VERSION=0.6.32 sbt clean sonatypeBundleClean ci-release
