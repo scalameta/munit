@@ -64,7 +64,7 @@
             });
         </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/scalameta/munit/edit/master/docs/integrations/scalacheck.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 id="__docusaurus" class="postHeaderTitle">ScalaCheck</h1></header><article><div><span><p>MUnit supports writing property-based tests using
 <a href="http://www.scalacheck.org/">ScalaCheck</a>.</p>
-<h2><a class="anchor" aria-hidden="true" id="getting-started"></a><a href="#getting-started" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Getting Started</h2>
+<h2><a class="anchor" aria-hidden="true" id="getting-started"></a><a href="#getting-started" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Getting started</h2>
 <p>ScalaCheck support is provided as a separate module. You can add it to your
 build via:</p>
 <pre><code class="hljs css language-scala">libraryDependencies += <span class="hljs-string">"org.scalameta"</span> %% <span class="hljs-string">"munit-scalacheck"</span> % <span class="hljs-string">"0.6.0"</span> % <span class="hljs-type">Test</span>
@@ -103,6 +103,33 @@ as expected to fail:</p>
 }
 </code></pre>
 </blockquote>
+<h2><a class="anchor" aria-hidden="true" id="using-assertions"></a><a href="#using-assertions" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using assertions</h2>
+<p>ScalaCheck supports writing property checks as boolean expressions (as in the
+examples above).</p>
+<p>In MUnit you can also use <a href="/munit/docs/assertions.html">assertions</a> to verify properties:</p>
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.<span class="hljs-type">ScalaCheckSuite</span>
+<span class="hljs-keyword">import</span> org.scalacheck.<span class="hljs-type">Prop</span>._
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
+
+  property(<span class="hljs-string">"integer identities"</span>) {
+    forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+      assertEquals(n + <span class="hljs-number">0</span>, n)
+      assertEquals(n * <span class="hljs-number">1</span>, n)
+    }
+  }
+
+}
+</code></pre>
+<p>The property above is equivalent to</p>
+<pre><code class="hljs css language-scala">property(<span class="hljs-string">"integer identities"</span>) {
+  forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+    (n + <span class="hljs-number">0</span> == n) &amp;&amp; (n * <span class="hljs-number">1</span> == n)
+  }
+}
+</code></pre>
+<p>but it provides better error reporting by including the source location of the
+failed assertion, which is not possible when using boolean expressions.</p>
 <h2><a class="anchor" aria-hidden="true" id="configuring-scalacheck"></a><a href="#configuring-scalacheck" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuring ScalaCheck</h2>
 <p>You can override the <code>scalaCheckTestParameters</code> property of <code>ScalaCheckSuite</code> to
 customize how ScalaCheck checks the properties:</p>
@@ -128,7 +155,7 @@ customize how ScalaCheck checks the properties:</p>
 <p>ScalaTest provides two styles for writing property-based tests, which are both
 front-ends to ScalaCheck.</p>
 <p>If you are using the &quot;ScalaCheck style&quot; API, i.e. the <code>Checkers</code> trait,
-switching to MUnit requires very minor and mechanical changes:</p>
+switching to MUnit requires minor mechanical changes:</p>
 <pre><code class="hljs css language-diff"><span class="hljs-deletion">-import org.scalatest.prop.Checkers</span>
 <span class="hljs-deletion">-import org.scalatest.FunSuite</span>
 <span class="hljs-addition">+import munit.ScalaCheckSuite</span>
@@ -148,11 +175,10 @@ switching to MUnit requires very minor and mechanical changes:</p>
 }
 </code></pre>
 <p>If you're using the &quot;ScalaTest style&quot; API, i.e. the
-<code>GeneratorDrivenPropertyChecks</code> trait, switching to MUnit requires a little more
-work: MUnit does not provide an API over ScalaCheck like ScalaTest does, so you
-will need to use the ScalaCheck API directly.</p>
-<p>For example, if you are using ScalaTest matchers, you will need to convert them
-to boolean checks:</p>
+<code>GeneratorDrivenPropertyChecks</code> trait, switching to MUnit requires again a few
+changes, typically including the property body.</p>
+<p>For example, if you are using ScalaTest matchers you will need to convert them
+to MUnit assertions:</p>
 <pre><code class="hljs css language-diff"><span class="hljs-deletion">-import org.scalatest.Matchers</span>
 <span class="hljs-deletion">-import org.scalatest.prop.GeneratorDrivenPropertyChecks</span>
 <span class="hljs-deletion">-import org.scalatest.FunSuite</span>
@@ -168,14 +194,14 @@ to boolean checks:</p>
      forAll { (n1: Int, n2: Int) =&gt;
 <span class="hljs-deletion">-      (n1 + n2) should be (n2 + n1)</span>
 <span class="hljs-deletion">-      (n1 * n2) should be (n2 * n1)</span>
-<span class="hljs-addition">+      n1 + n2 == n2 + n1 &amp;&amp;</span>
-<span class="hljs-addition">+      n1 * n2 == n2 * n1</span>
+<span class="hljs-addition">+      assertEquals(n1 + n2, n2 + n1)</span>
+<span class="hljs-addition">+      assertEquals(n1 * n2, n2 * n1)</span>
      }
    }
 
 }
 </code></pre>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/troubleshooting.html"><span class="arrow-prev">← </span><span>Troubleshooting</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#getting-started">Getting Started</a></li><li><a href="#configuring-scalacheck">Configuring ScalaCheck</a></li><li><a href="#migrating-from-scalatest">Migrating from ScalaTest</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2020 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/troubleshooting.html"><span class="arrow-prev">← </span><span>Troubleshooting</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#getting-started">Getting started</a></li><li><a href="#using-assertions">Using assertions</a></li><li><a href="#configuring-scalacheck">Configuring ScalaCheck</a></li><li><a href="#migrating-from-scalatest">Migrating from ScalaTest</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2020 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
