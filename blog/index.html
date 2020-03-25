@@ -6,7 +6,7 @@
 
               ga('create', 'UA-140140828-1', 'auto');
               ga('send', 'pageview');
-            </script><link rel="stylesheet" href="/munit/css/custom.css"/><script src="/munit/js/scrollSpy.js"></script><link rel="stylesheet" href="/munit/css/main.css"/><script src="/munit/js/codetabs.js"></script></head><body class="blog"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/munit/"><img class="logo" src="/munit/img/scalameta-logo.png" alt="MUnit"/><h2 class="headerTitleWithLogo">MUnit</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/munit/docs/getting-started.html" target="_self">Docs</a></li><li class="siteNavGroupActive siteNavItemActive"><a href="/munit/blog/" target="_self">Blog</a></li><li class=""><a href="https://github.com/scalameta/munit" target="_blank">GitHub</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>All Blog Posts</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">All Blog Posts</h3><ul class=""><li class="navListItem"><a class="navItem" href="/munit/blog/2020/02/16/async.html">Cross-platform async testing support</a></li><li class="navListItem"><a class="navItem" href="/munit/blog/2020/02/01/hello-world.html">MUnit is a new Scala testing library</a></li></ul></div></div></section></div><script>
+            </script><link rel="stylesheet" href="/munit/css/custom.css"/><script src="/munit/js/scrollSpy.js"></script><link rel="stylesheet" href="/munit/css/main.css"/><script src="/munit/js/codetabs.js"></script></head><body class="blog"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/munit/"><img class="logo" src="/munit/img/scalameta-logo.png" alt="MUnit"/><h2 class="headerTitleWithLogo">MUnit</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/munit/docs/getting-started.html" target="_self">Docs</a></li><li class="siteNavGroupActive siteNavItemActive"><a href="/munit/blog/" target="_self">Blog</a></li><li class=""><a href="https://github.com/scalameta/munit" target="_blank">GitHub</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>All Blog Posts</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">All Blog Posts</h3><ul class=""><li class="navListItem"><a class="navItem" href="/munit/blog/2020/03/24/scalacheck.html">Using ScalaCheck with MUnit</a></li><li class="navListItem"><a class="navItem" href="/munit/blog/2020/02/16/async.html">Cross-platform async testing support</a></li><li class="navListItem"><a class="navItem" href="/munit/blog/2020/02/01/hello-world.html">MUnit is a new Scala testing library</a></li></ul></div></div></section></div><script>
             var coll = document.getElementsByClassName('collapsible');
             var checkActiveCategory = true;
             for (var i = 0; i < coll.length; i++) {
@@ -62,7 +62,12 @@
                 };
               }
             });
-        </script></nav></div><div class="container mainContainer postContainer blogContainer"><div class="wrapper"><div class="posts"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/munit/blog/2020/02/16/async.html">Cross-platform async testing support</a></h1><p class="post-meta">February 16, 2020</p><div class="authorBlock"><p class="post-authorName"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener">Ólafur Páll Geirsson</a></p><div class="authorPhoto"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener"><img src="https://github.com/olafurpg.png" alt="Ólafur Páll Geirsson"/></a></div></div></header><article class="post-content"><div><span><p>MUnit v0.4.x did not support truly async tests on platforms like JavaScript. For
+        </script></nav></div><div class="container mainContainer postContainer blogContainer"><div class="wrapper"><div class="posts"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/munit/blog/2020/03/24/scalacheck.html">Using ScalaCheck with MUnit</a></h1><p class="post-meta">March 24, 2020</p><div class="authorBlock"><p class="post-authorName"><a href="https://twitter.com/gabro27" target="_blank" rel="noreferrer noopener">Gabriele Petronella</a></p><div class="authorPhoto"><a href="https://twitter.com/gabro27" target="_blank" rel="noreferrer noopener"><img src="https://github.com/gabro.png" alt="Gabriele Petronella"/></a></div></div></header><article class="post-content"><div><span><p>Property-based testing is a popular testing style and its most widely used
+implementation for Scala is the <a href="https://www.scalacheck.org">ScalaCheck</a>
+library.</p>
+<p>Starting with version 0.7.0, MUnit introduces a dedicated integration for
+ScalaCheck, which we'll explore in this blog post.</p>
+</span></div><div class="read-more"><a class="button" href="/munit/blog/2020/03/24/scalacheck.html">Read More</a></div></article></div><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/munit/blog/2020/02/16/async.html">Cross-platform async testing support</a></h1><p class="post-meta">February 16, 2020</p><div class="authorBlock"><p class="post-authorName"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener">Ólafur Páll Geirsson</a></p><div class="authorPhoto"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener"><img src="https://github.com/olafurpg.png" alt="Ólafur Páll Geirsson"/></a></div></div></header><article class="post-content"><div><span><p>MUnit v0.4.x did not support truly async tests on platforms like JavaScript. For
 example, the following test case would succeed even if it returns a failing
 future:</p>
 <pre><code class="hljs css language-scala">test(<span class="hljs-string">"should fail after 100 milliseconds"</span>) {
@@ -76,44 +81,7 @@ future:</p>
 <p>The latest MUnit v0.5.0 release fixes this issue by adding support for async
 tests on all platforms meaning that the example test case above fails as
 expected after 100 milliseconds.</p>
-<h2><a class="anchor" aria-hidden="true" id="breaking-changes"></a><a href="#breaking-changes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Breaking changes</h2>
-<p>If you did not override any <code>munit*</code> methods then you should be able to upgrade
-to v0.5.0 easily. Most commonly used methods like <code>test(&quot;name&quot;) { ... }</code> are
-unchanged in this release.</p>
-<p>The breaking changes in this release mostly involve replacing <code>Any</code> with
-<code>Future[Any]</code>.</p>
-<pre><code class="hljs css language-diff"><span class="hljs-deletion">-- MUnit v0.4.x</span>
-<span class="hljs-addition">++ MUnit v0.5.x</span>
-
-<span class="hljs-deletion">-  def munitTestValue(body: Any): Any</span>
-<span class="hljs-addition">+  def munitTestValue(body: =&gt; Any): Future[Any]</span>
-
-<span class="hljs-deletion">-  def munitRunTest(options: TestOptions, body: Any): Any</span>
-<span class="hljs-addition">+  def munitRunTest(options: TestOptions, body: () =&gt; Future[Any]): Future[Any]</span>
-
-<span class="hljs-deletion">-  def munitExpectFailure(options: TestOptions, body: Any): Any</span>
-<span class="hljs-addition">+  def munitExpectFailure(options: TestOptions, body: () =&gt; Future[Any]): Future[Any]</span>
-
-<span class="hljs-deletion">-  def munitFlaky(options: TestOptions, body: Any): Any</span>
-<span class="hljs-addition">+  def munitFlaky(options: TestOptions, body: () =&gt; Future[Any]): Future[Any]</span>
-</code></pre>
-<p>To give an example how to migrate from the old API to the new API. The docs
-demonstrated how to automatically start evaluating a lazy future called <code>Task</code>
-by overriding <code>munitTestValue</code>. The old override looked like this:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestValue</span></span>(testValue: <span class="hljs-type">Any</span>): <span class="hljs-type">Any</span> =
-  testValue <span class="hljs-keyword">match</span> {
-    <span class="hljs-keyword">case</span> <span class="hljs-type">Task</span>(run) =&gt; <span class="hljs-type">Await</span>.result(run(), munitTimeout)
-    <span class="hljs-keyword">case</span> _ =&gt; <span class="hljs-keyword">super</span>.munitTestValue(testValue)
-  }
-</code></pre>
-<p>The override with the new signature now looks like this instead:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestValue</span></span>(testValue: =&gt; <span class="hljs-type">Any</span>): <span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>] =
-  <span class="hljs-keyword">super</span>.munitTestValue(testValue).flatMap {
-    <span class="hljs-keyword">case</span> <span class="hljs-type">LazyFuture</span>(run) =&gt; run()
-    <span class="hljs-keyword">case</span> value =&gt; <span class="hljs-type">Future</span>.successful(value)
-  }
-</code></pre>
-</span></div></article></div><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/munit/blog/2020/02/01/hello-world.html">MUnit is a new Scala testing library</a></h1><p class="post-meta">February 1, 2020</p><div class="authorBlock"><p class="post-authorName"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener">Ólafur Páll Geirsson</a></p><div class="authorPhoto"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener"><img src="https://github.com/olafurpg.png" alt="Ólafur Páll Geirsson"/></a></div></div></header><article class="post-content"><div><span><p>Hello world! I'm excited to announce the first release of MUnit, a new Scala
+</span></div><div class="read-more"><a class="button" href="/munit/blog/2020/02/16/async.html">Read More</a></div></article></div><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/munit/blog/2020/02/01/hello-world.html">MUnit is a new Scala testing library</a></h1><p class="post-meta">February 1, 2020</p><div class="authorBlock"><p class="post-authorName"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener">Ólafur Páll Geirsson</a></p><div class="authorPhoto"><a href="https://twitter.com/olafurpg" target="_blank" rel="noreferrer noopener"><img src="https://github.com/olafurpg.png" alt="Ólafur Páll Geirsson"/></a></div></div></header><article class="post-content"><div><span><p>Hello world! I'm excited to announce the first release of MUnit, a new Scala
 testing library with a focus on actionable errors and extensible APIs. You may
 be thinking &quot;Why create Yet Another Scala testing library?&quot;. It's a good
 question and this post is my attempt to explain the motivations for creating
