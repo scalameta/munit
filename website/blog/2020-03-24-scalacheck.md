@@ -15,7 +15,7 @@ ScalaCheck, which we'll explore in this blog post.
 <!-- truncate -->
 
 Once you've
-[setup the `munit-scalacheck` module](http://localhost:3001/munit/docs/integrations/scalacheck.html)
+[setup the `munit-scalacheck` module](/munit/docs/integrations/scalacheck.html)
 you can extend the `ScalaCheckSuite` trait and start writing your properties,
 for example:
 
@@ -61,29 +61,35 @@ property("integer identities") {
 This is a boolean expression, which uses labels to better identify which part of
 the expression fails.
 
+For example, here's what happens if we change the second check to make it fail:
+
+![scalacheck api fail](https://user-images.githubusercontent.com/691940/77507758-52eb5f80-6e69-11ea-9d01-a15bd7c79ba8.png)
+
 For longer expressions, however, this may become inconvenient and may choose to
-use MUnit assertions instead:
+use a MUnit assertions instead:
 
 ```scala
 property("integer identities") {
   forAll { (n: Int) =>
-    assertEquals(n + 0, n)
-    assertEquals(n * 1, n)
+    assertEquals(n + 0, n, "0 is the addition identity")
+    assertEquals(n * 1, n, "1 is the multiplication identity")
   }
 }
 ```
 
-In the example above, we are now using an assertion for each condition. This has
-a few advantages:
+Here's what happens when we introduce the same error as before:
+
+![assertion api fail](https://user-images.githubusercontent.com/691940/77507636-1b7cb300-6e69-11ea-8325-63469d830d7d.png)
+
+Using assertions for property checks has a few advantages:
 
 - the expression is easier to read and write, since it doesn't need to be a long
   boolean expression concatenated with `&&`
 
 - when one of the condition fails, MUnit will report an error highlighting the
-  exact line that failed. This makes the use of labels not necessary, since it's
-  already clear which is the offending check. (You can still pass in a label
-  using the third parameter of
-  [`assertEquals`](/munit/docs/assertions.html#assertequals) if you like)
+  exact line that failed. Note that this makes the use of labels less necessary,
+  since it's already clear which is the offending check, so you could
+  potentially avoid them if you prefer.
 
 ## Conclusions
 
