@@ -5,12 +5,12 @@ authorURL: https://twitter.com/gabro27
 authorImageURL: https://github.com/gabro.png
 ---
 
-Property-based testing is a very popular testing style and its most popular
+Property-based testing is a popular testing style and its most widely used
 implementation for Scala is the [ScalaCheck](https://www.scalacheck.org)
 library.
 
 Starting with version 0.7.0, MUnit introduces a dedicated integration for
-ScalaCheck which we'll explore in this blog post.
+ScalaCheck, which we'll explore in this blog post.
 
 <!-- truncate -->
 
