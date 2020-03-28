@@ -19,16 +19,16 @@ object HedgehogFailException {
       case Failed(shrinks, log) =>
         val coverage = Test.renderCoverage(report.coverage, report.tests)
         val message = render(
-            s"Falsified after ${report.tests.value} passed tests and ${shrinks.value} shrinks using seed ${seed}",
-            log.map(Test.renderLog) ++ coverage
-          )
+          s"Falsified after ${report.tests.value} passed tests and ${shrinks.value} shrinks using seed ${seed}",
+          log.map(Test.renderLog) ++ coverage
+        )
         Some(new HedgehogFailException(message, report, seed))
       case GaveUp =>
         val coverage = Test.renderCoverage(report.coverage, report.tests)
         val message = render(
-            s"Gave up after ${report.tests.value} passed tests using seed value $seed. ${report.discards.value} were discarded",
-            coverage
-          )
+          s"Gave up after ${report.tests.value} passed tests using seed value $seed. ${report.discards.value} were discarded",
+          coverage
+        )
         Some(new HedgehogFailException(message, report, seed))
     }
   }

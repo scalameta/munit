@@ -7,21 +7,21 @@ import hedgehog.predef.Monad
 import munit.internal.Compat._
 
 /**
-  * Provides the ability to write property based tests using the Hedgehog library.
-  * 
-  * Properties are defined by calling one of the various `property` or `propertyF`
-  * methods and passing a `PropertyT[Result]` or `PropertyT[F[Result]]` respectively.
-  * For example:
-  * {{{
-  * property("additive identity") {
-  *   Gen.int(Range.linearFrom(0, Int.MinValue, Int.MaxValue)).forAll.map { n =>
-  *     assertEquals(n + 0, n)
-  *   }
-  * }
-  * }}}
-  * 
-  * Note both Hedgehog `Result` and munit assertions are supported.
-  */
+ * Provides the ability to write property based tests using the Hedgehog library.
+ *
+ * Properties are defined by calling one of the various `property` or `propertyF`
+ * methods and passing a `PropertyT[Result]` or `PropertyT[F[Result]]` respectively.
+ * For example:
+ * {{{
+ * property("additive identity") {
+ *   Gen.int(Range.linearFrom(0, Int.MinValue, Int.MaxValue)).forAll.map { n =>
+ *     assertEquals(n + 0, n)
+ *   }
+ * }
+ * }}}
+ *
+ * Note both Hedgehog `Result` and munit assertions are supported.
+ */
 trait HedgehogSuite extends FunSuite {
 
   /**
@@ -77,9 +77,9 @@ trait HedgehogSuite extends FunSuite {
     test(options)(checkF(prop, config, propertySeed))
 
   /**
-    * Checks the supplied `Property[Result]`, throwing a `HedgehogFailException`
-    * if the property was falsified.
-    */
+   * Checks the supplied `Property[Result]`, throwing a `HedgehogFailException`
+   * if the property was falsified.
+   */
   def check(
       prop: PropertyT[Result],
       config: PropertyConfig = propertyConfig,
@@ -87,19 +87,19 @@ trait HedgehogSuite extends FunSuite {
   )(implicit loc: Location): Unit = {
     val report = Property.check(config, prop, Seed.fromLong(seed))
     HedgehogFailException.fromReport(report, seed) match {
-      case None => ()
+      case None    => ()
       case Some(t) => throw t
     }
   }
 
   /**
-    * Checks the supplied `PropertyT[F[Result]]`, throwing a `HedgehogFailException`
-    * if the property was falsified.
-    * 
-    * Note: the exception is thrown within a call to `map` on the effect type. Hence,
-    * this should only be used with effect types that handle exceptions thrown from
-    * `map`.
-    */
+   * Checks the supplied `PropertyT[F[Result]]`, throwing a `HedgehogFailException`
+   * if the property was falsified.
+   *
+   * Note: the exception is thrown within a call to `map` on the effect type. Hence,
+   * this should only be used with effect types that handle exceptions thrown from
+   * `map`.
+   */
   def checkF[F[_]: Monad](
       prop: PropertyT[F[Result]],
       config: PropertyConfig = propertyConfig,
@@ -109,7 +109,7 @@ trait HedgehogSuite extends FunSuite {
   }
 
   /**
-    * Supports writing properties with munit assertions instead of Hedgehog `Result`s.
-    */
-  implicit val unitToResult: Conversion[Unit, Result] = _=> Result.Success
+   * Supports writing properties with munit assertions instead of Hedgehog `Result`s.
+   */
+  implicit val unitToResult: Conversion[Unit, Result] = _ => Result.Success
 }
