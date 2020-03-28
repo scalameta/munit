@@ -69,8 +69,6 @@ object HedgehogFrameworkSuite
           |=> Diff (- obtained, + expected)
           |-1
           |+-1
-          |\tat munit.Assertions.fail(Assertions.scala:178)
-          |
           |==> success munit.HedgehogFrameworkSuite.custom config
           |""".stripMargin
     )
