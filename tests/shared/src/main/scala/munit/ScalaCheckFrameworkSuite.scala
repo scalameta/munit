@@ -7,7 +7,7 @@ class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
 
   // NOTE(gabro): this is needed for making the test output stable for the failed test below.
   // It also serves as a test for overriding these parameters.
-  override def scalaCheckTestParameters =
+  override def scalaCheckTestParameters: org.scalacheck.Test.Parameters =
     super.scalaCheckTestParameters.withInitialSeed(Seed(123L))
 
   property("boolean check (true)") {
