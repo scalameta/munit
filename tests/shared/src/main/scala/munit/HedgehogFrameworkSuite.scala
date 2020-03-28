@@ -59,10 +59,10 @@ object HedgehogFrameworkSuite
           |==> success munit.HedgehogFrameworkSuite.assertions (true)
           |==> failure munit.HedgehogFrameworkSuite.assertions (false) - Falsified after 0 passed tests and 24 shrinks using seed 123
           |> -1
-          |> munit.FailException: /scala/munit/HedgehogFrameworkSuite.scala:38
-          |37:      assertEquals(n * 1, n)
-          |38:      assertEquals(n * n, n)
-          |39:      assertEquals(n + 0, n)
+          |> munit.FailException: /scala/munit/HedgehogFrameworkSuite.scala:39
+          |38:      assertEquals(n * 1, n)
+          |39:      assertEquals(n * n, n)
+          |40:      assertEquals(n + 0, n)
           |values are not the same
           |=> Obtained
           |1

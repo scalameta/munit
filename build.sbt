@@ -233,7 +233,7 @@ lazy val munitHedgehog = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     resolvers += "bintray-scala-hedgehog".at(
       "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
     ),
-    libraryDependencies += ("qa.hedgehog" %% "hedgehog-runner" % "97854199ef795a5dfba15478fd9abe66035ddea2")
+    libraryDependencies += ("qa.hedgehog" %%% "hedgehog-runner" % "97854199ef795a5dfba15478fd9abe66035ddea2")
       .withDottyCompat(scalaVersion.value)
   )
   .jvmSettings(
