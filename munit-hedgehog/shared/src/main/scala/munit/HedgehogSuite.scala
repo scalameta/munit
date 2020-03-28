@@ -4,6 +4,8 @@ import hedgehog._
 import hedgehog.core.{PropertyConfig, PropertyT, Seed}
 import hedgehog.predef.Monad
 
+import munit.internal.Compat._
+
 /**
   * Provides the ability to write property based tests using the Hedgehog library.
   * 
@@ -31,12 +33,12 @@ trait HedgehogSuite extends FunSuite {
   lazy val propertySeed: Long = System.currentTimeMillis()
 
   def property(
-      name: String,
+      name: String
   )(prop: PropertyT[Result])(implicit loc: Location): Unit =
     property(name, propertyConfig)(prop)
 
   def property(
-      options: TestOptions,
+      options: TestOptions
   )(prop: PropertyT[Result])(implicit loc: Location): Unit =
     property(options, propertyConfig)(prop)
 
@@ -53,12 +55,12 @@ trait HedgehogSuite extends FunSuite {
     test(options)(check(prop, config, propertySeed))
 
   def propertyF[F[_]: Monad](
-      name: String,
+      name: String
   )(prop: PropertyT[F[Result]])(implicit loc: Location): Unit =
     propertyF(name, propertyConfig)(prop)
 
   def propertyF[F[_]: Monad](
-      options: TestOptions,
+      options: TestOptions
   )(prop: PropertyT[F[Result]])(implicit loc: Location): Unit =
     propertyF(options, propertyConfig)(prop)
 
@@ -109,5 +111,5 @@ trait HedgehogSuite extends FunSuite {
   /**
     * Supports writing properties with munit assertions instead of Hedgehog `Result`s.
     */
-  implicit def unitToResult: Unit => Result = _ => Result.success
+  implicit val unitToResult: Conversion[Unit, Result] = _=> Result.Success
 }
