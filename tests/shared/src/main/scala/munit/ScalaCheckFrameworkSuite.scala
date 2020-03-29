@@ -44,30 +44,30 @@ class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
 object ScalaCheckFrameworkSuite
     extends FrameworkTest(
       classOf[ScalaCheckFrameworkSuite],
-      s"""|==> success munit.ScalaCheckFrameworkSuite.boolean check (true)
-          |==> failure munit.ScalaCheckFrameworkSuite.boolean check (false) - /scala/munit/ScalaCheckFrameworkSuite.scala:19
-          |18:
-          |19:  property("boolean check (false)") {
-          |20:    forAll { (n: Int) =>
-          |
-          |Falsified after 0 passed tests.
-          |> ARG_0: -1
-          |> ARG_0_ORIGINAL: 2147483647
-          |==> success munit.ScalaCheckFrameworkSuite.tagged
-          |==> success munit.ScalaCheckFrameworkSuite.assertions (true)
-          |==> failure munit.ScalaCheckFrameworkSuite.assertions (false) - /scala/munit/ScalaCheckFrameworkSuite.scala:41
-          |40:      assertEquals(n * 1, n)
-          |41:      assertEquals(n * n, n)
-          |42:      assertEquals(n + 0, n)
-          |values are not the same
-          |=> Obtained
-          |1
-          |=> Diff (- obtained, + expected)
-          |-1
-          |+-1
-          |
-          |Falsified after 0 passed tests.
-          |> ARG_0: -1
-          |> ARG_0_ORIGINAL: 2147483647
-          |""".stripMargin
+      """|==> success munit.ScalaCheckFrameworkSuite.boolean check (true)
+         |==> failure munit.ScalaCheckFrameworkSuite.boolean check (false) - /scala/munit/ScalaCheckFrameworkSuite.scala:19
+         |18:
+         |19:  property("boolean check (false)") {
+         |20:    forAll { (n: Int) => scala.math.sqrt(n * n) == n }
+         |
+         |Falsified after 0 passed tests.
+         |> ARG_0: -1
+         |> ARG_0_ORIGINAL: 2147483647
+         |==> success munit.ScalaCheckFrameworkSuite.tagged
+         |==> success munit.ScalaCheckFrameworkSuite.assertions (true)
+         |==> failure munit.ScalaCheckFrameworkSuite.assertions (false) - /scala/munit/ScalaCheckFrameworkSuite.scala:37
+         |36:      assertEquals(n * 1, n)
+         |37:      assertEquals(n * n, n)
+         |38:      assertEquals(n + 0, n)
+         |values are not the same
+         |=> Obtained
+         |1
+         |=> Diff (- obtained, + expected)
+         |-1
+         |+-1
+         |
+         |Falsified after 0 passed tests.
+         |> ARG_0: -1
+         |> ARG_0_ORIGINAL: 2147483647
+         |""".stripMargin
     )

@@ -16,7 +16,7 @@ class ClueSuite extends BaseSuite {
   // Disabled on Dotty because the starting position doesn't include opening "("
   check(
     "lambda".tag(NoDotty), { (y: String) => y.head },
-    "(y: String) =>\n    y.head"
+    "(y: String) => y.head"
   )
 
   checkPrint(
