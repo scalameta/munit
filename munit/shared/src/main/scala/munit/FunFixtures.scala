@@ -19,9 +19,7 @@ trait FunFixtures { self: FunSuite =>
   object FunFixture {
     def map2[A, B](a: FunFixture[A], b: FunFixture[B]): FunFixture[(A, B)] =
       new FunFixture[(A, B)](
-        setup = { options =>
-          (a.setup(options), b.setup(options))
-        },
+        setup = { options => (a.setup(options), b.setup(options)) },
         teardown = {
           case (argumentA, argumentB) =>
             try a.teardown(argumentA)

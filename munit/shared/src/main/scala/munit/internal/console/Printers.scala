@@ -87,9 +87,7 @@ object Printers {
               out,
               indent,
               nextIndent
-            ) { value =>
-              loop(value, nextIndent)
-            }
+            ) { value => loop(value, nextIndent) }
           case x: Array[_] =>
             printApply(
               "Array",
@@ -97,9 +95,7 @@ object Printers {
               out,
               indent,
               nextIndent
-            ) { value =>
-              loop(value, nextIndent)
-            }
+            ) { value => loop(value, nextIndent) }
           case it: Iterator[_] =>
             if (it.isEmpty) out.append("empty iterator")
             else out.append("non-empty iterator")

@@ -14,7 +14,8 @@ final class JUnitReporter(
     settings: RunSettings,
     taskDef: TaskDef
 ) {
-  private val isAnsiSupported = loggers.forall(_.ansiCodesSupported()) && settings.color
+  private val isAnsiSupported =
+    loggers.forall(_.ansiCodesSupported()) && settings.color
 
   def reportTestSuiteStarted(): Unit = {
     log(

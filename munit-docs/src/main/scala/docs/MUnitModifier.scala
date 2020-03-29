@@ -115,7 +115,8 @@ class MUnitModifier extends PreModifier {
         Status.Skipped.toString == event.status &&
         classOf[FlakyFailure].getName() == event.exception.className
       }
-      val skippedCount = statusMap.getOrElse(Status.Skipped.toString(), 0) - flakyCount
+      val skippedCount =
+        statusMap.getOrElse(Status.Skipped.toString(), 0) - flakyCount
       val ignoredCount = statusMap.getOrElse(Status.Ignored.toString(), 0)
       val statusColumns = statuses.map { s =>
         statusMap.getOrElse(s.toString(), 0)

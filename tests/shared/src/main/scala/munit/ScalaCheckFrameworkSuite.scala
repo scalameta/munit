@@ -17,15 +17,11 @@ class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
   }
 
   property("boolean check (false)") {
-    forAll { (n: Int) =>
-      scala.math.sqrt(n * n) == n
-    }
+    forAll { (n: Int) => scala.math.sqrt(n * n) == n }
   }
 
   property("tagged".tag(new Tag("a"))) {
-    forAll { (n: Int) =>
-      n + 0 == n
-    }
+    forAll { (n: Int) => n + 0 == n }
   }
 
   property("assertions (true)") {

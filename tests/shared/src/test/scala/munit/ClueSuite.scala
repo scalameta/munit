@@ -14,9 +14,10 @@ class ClueSuite extends BaseSuite {
   check("comment", a /*comment*/ .head, "a /*comment*/ .head")
 
   // Disabled on Dotty because the starting position doesn't include opening "("
-  check("lambda".tag(NoDotty), { (y: String) =>
-    y.head
-  }, "(y: String) =>\n    y.head")
+  check(
+    "lambda".tag(NoDotty), { (y: String) => y.head },
+    "(y: String) =>\n    y.head"
+  )
 
   checkPrint(
     "string-message",

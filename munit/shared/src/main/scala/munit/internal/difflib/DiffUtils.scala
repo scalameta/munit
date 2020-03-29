@@ -98,7 +98,8 @@ object DiffUtils {
       deltaIndex < deltas.size
     }) { // for each of the other Deltas
       val nextDelta = deltas.get(deltaIndex)
-      val intermediateStart = curDelta.getOriginal.getPosition + curDelta.getOriginal.getLines.size
+      val intermediateStart =
+        curDelta.getOriginal.getPosition + curDelta.getOriginal.getLines.size
       line = intermediateStart
       while ({
         line < nextDelta.getOriginal.getPosition
@@ -117,7 +118,8 @@ object DiffUtils {
       deltaIndex += 1
     }
     // Now output the post-Delta context code, clamping the end of the file
-    contextStart = curDelta.getOriginal.getPosition + curDelta.getOriginal.getLines.size
+    contextStart =
+      curDelta.getOriginal.getPosition + curDelta.getOriginal.getLines.size
     line = contextStart
     while ({
       (line < (contextStart + contextSize)) && (line < origLines.size)
