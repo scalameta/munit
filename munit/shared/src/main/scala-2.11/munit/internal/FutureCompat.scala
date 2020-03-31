@@ -18,5 +18,12 @@ object FutureCompat {
       f.onComplete { t => p.complete(fn(t)) }
       p.future
     }
+    def transformWithCompat[B](
+        fn: Try[T] => Future[B]
+    )(implicit ec: ExecutionContext): Future[B] = {
+      val p = Promise[B]()
+      f.onComplete { t => p.completeWith(fn(t)) }
+      p.future
+    }
   }
 }
