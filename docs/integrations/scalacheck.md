@@ -124,21 +124,26 @@ non-deterministically. This can happen due to the randomness of the input values
 for each test run.
 
 When this happens, you can deterministally reproduce a property failure by using
-its seed. MUnit prints the property seed whenever a failure occurs in the form
-of:
+its seed. Whenever a failure occurs, MUnit prints the offending seed along with
+a suggestion on how to reproduce it:
 
 ```
 Failing seed: CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB=
+You can reproduce this failure by adding this to your suite:
+
+  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
+
 ```
 
-To reproduce the exact same failure, you can override the test parameters and
-provide the offending seed as the initial seed:
+To reproduce the failure you can follow the suggestion to fix the seed:
 
 ```scala
-  override def scalaCheckTestParameters =
-    super.scalaCheckTestParameters.withInitialSeed(
-      "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
-    )
+class MySuite extends ScalaCheckSuite {
+
+  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
+
+  // ...
+}
 ```
 
 Re-running the test will now fail deterministically, which allows you to work on

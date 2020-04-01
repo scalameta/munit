@@ -35,13 +35,7 @@ trait ScalaCheckSuite extends FunSuite {
 
   protected def scalaCheckPrettyParameters = Pretty.defaultParams
 
-  // Allow specifying an initial seed in its Base64 encoded form
-  implicit class XtensionScalaCheckTestParameters(
-      params: ScalaCheckTest.Parameters
-  ) {
-    def withInitialSeed(encodedSeed: String): ScalaCheckTest.Parameters =
-      params.withInitialSeed(Seed.fromBase64(encodedSeed).get)
-  }
+  protected def scalaCheckInitialSeed: String = Seed.random().toBase64
 
   private val scalaCheckPropTransform: TestTransform =
     new TestTransform("ScalaCheck Prop", t => {
@@ -55,14 +49,21 @@ trait ScalaCheckSuite extends FunSuite {
 
   private def propToTry(prop: Prop, test: Test): Try[Unit] = {
     import ScalaCheckTest._
-    val seed = scalaCheckTestParameters.initialSeed.getOrElse(Seed.random())
+    val seed =
+      scalaCheckTestParameters.initialSeed.getOrElse(
+        Seed.fromBase64(scalaCheckInitialSeed).get
+      )
     val result = check(scalaCheckTestParameters, prop.useSeed(test.name, seed))
     def renderResult(r: Result) = {
       val resultMessage = Pretty.pretty(r, scalaCheckPrettyParameters)
       if (r.passed) {
         resultMessage
       } else {
-        val seedMessage = s"Failing seed: ${seed.toBase64}\n"
+        val seedMessage = s"""|Failing seed: ${seed.toBase64}
+                              |You can reproduce this failure by adding this to your suite:
+                              |
+                              |  override val scalaCheckInitialSeed = "${seed.toBase64}"
+                              |""".stripMargin
         seedMessage + "\n" + resultMessage
       }
     }
