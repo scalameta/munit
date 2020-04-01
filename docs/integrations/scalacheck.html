@@ -151,6 +151,29 @@ customize how ScalaCheck checks the properties:</p>
 
 }
 </code></pre>
+<h2><a class="anchor" aria-hidden="true" id="reproducing-a-property-failure"></a><a href="#reproducing-a-property-failure" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Reproducing a property failure</h2>
+<p>In some cases, you may find that ScalaCheck properties fail
+non-deterministically. This can happen due to the randomness of the input values
+for each test run.</p>
+<p>When this happens, you can deterministally reproduce a property failure by using
+its seed. Whenever a failure occurs, MUnit prints the offending seed along with
+a suggestion on how to reproduce it:</p>
+<pre><code class="hljs">Failing seed: CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB=
+You can reproduce <span class="hljs-keyword">this</span> failure <span class="hljs-keyword">by</span> adding <span class="hljs-keyword">this</span> to your suite:
+
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">val</span> scalaCheckInitialSeed = <span class="hljs-string">"CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="</span>
+
+</code></pre>
+<p>To reproduce the failure you can follow the suggestion to fix the seed:</p>
+<pre><code class="hljs css language-diff"> class MySuite extends ScalaCheckSuite {
+
+<span class="hljs-addition">+  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="</span>
+
+   // ...
+ }
+</code></pre>
+<p>Re-running the test will now fail deterministically, which allows you to work on
+an appropriate fix without worrying about randomness.</p>
 <h2><a class="anchor" aria-hidden="true" id="migrating-from-scalatest"></a><a href="#migrating-from-scalatest" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Migrating from ScalaTest</h2>
 <p>ScalaTest provides two styles for writing property-based tests, which are both
 front-ends to ScalaCheck.</p>
@@ -201,7 +224,7 @@ to MUnit assertions:</p>
 
 }
 </code></pre>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/troubleshooting.html"><span class="arrow-prev">← </span><span>Troubleshooting</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#getting-started">Getting started</a></li><li><a href="#using-assertions">Using assertions</a></li><li><a href="#configuring-scalacheck">Configuring ScalaCheck</a></li><li><a href="#migrating-from-scalatest">Migrating from ScalaTest</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2020 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/troubleshooting.html"><span class="arrow-prev">← </span><span>Troubleshooting</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#getting-started">Getting started</a></li><li><a href="#using-assertions">Using assertions</a></li><li><a href="#configuring-scalacheck">Configuring ScalaCheck</a></li><li><a href="#reproducing-a-property-failure">Reproducing a property failure</a></li><li><a href="#migrating-from-scalatest">Migrating from ScalaTest</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2020 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
