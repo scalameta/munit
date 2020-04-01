@@ -137,13 +137,13 @@ You can reproduce this failure by adding this to your suite:
 
 To reproduce the failure you can follow the suggestion to fix the seed:
 
-```scala
-class MySuite extends ScalaCheckSuite {
+```diff
+ class MySuite extends ScalaCheckSuite {
 
-  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
++  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
 
-  // ...
-}
+   // ...
+ }
 ```
 
 Re-running the test will now fail deterministically, which allows you to work on
