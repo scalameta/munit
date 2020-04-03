@@ -23,7 +23,5 @@ class FrameworkSuite extends BaseFrameworkSuite {
     ScalaCheckFrameworkSuite,
     HedgehogFrameworkSuite
   )
-  tests.foreach { t =>
-    check(t)
-  }
+  tests.foreach { t => check(t) }
 }

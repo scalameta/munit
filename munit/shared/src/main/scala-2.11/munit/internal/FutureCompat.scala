@@ -15,9 +15,7 @@ object FutureCompat {
         fn: Try[T] => Try[B]
     )(implicit ec: ExecutionContext): Future[B] = {
       val p = Promise[B]()
-      f.onComplete { t =>
-        p.complete(fn(t))
-      }
+      f.onComplete { t => p.complete(fn(t)) }
       p.future
     }
   }

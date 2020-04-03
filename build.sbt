@@ -2,14 +2,14 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 val customScalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
-val scalaJSVersion = customScalaJSVersion.getOrElse("1.0.0")
+val scalaJSVersion = customScalaJSVersion.getOrElse("1.0.1")
 val scalaNativeVersion = "0.4.0-M2"
 def scala213 = "2.13.1"
 def scala212 = "2.12.11"
 def scala211 = "2.11.12"
 def dotty = "0.23.0-RC1"
 def junitVersion = "4.13"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "1.103.0"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "1.103.1"
 inThisBuild(
   List(
     version ~= { old =>

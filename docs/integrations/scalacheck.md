@@ -117,6 +117,38 @@ class IntegerSuite extends ScalaCheckSuite {
 }
 ```
 
+## Reproducing a property failure
+
+In some cases, you may find that ScalaCheck properties fail
+non-deterministically. This can happen due to the randomness of the input values
+for each test run.
+
+When this happens, you can deterministally reproduce a property failure by using
+its seed. Whenever a failure occurs, MUnit prints the offending seed along with
+a suggestion on how to reproduce it:
+
+```
+Failing seed: CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB=
+You can reproduce this failure by adding this to your suite:
+
+  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
+
+```
+
+To reproduce the failure you can follow the suggestion to fix the seed:
+
+```diff
+ class MySuite extends ScalaCheckSuite {
+
++  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
+
+   // ...
+ }
+```
+
+Re-running the test will now fail deterministically, which allows you to work on
+an appropriate fix without worrying about randomness.
+
 ## Migrating from ScalaTest
 
 ScalaTest provides two styles for writing property-based tests, which are both
