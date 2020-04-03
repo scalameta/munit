@@ -5,8 +5,8 @@ import hedgehog.core.SuccessCount
 
 class HedgehogFrameworkSuite extends HedgehogSuite {
 
-  // The default propertySeed changes on each test run so we fix it here so that test failures are always the same
-  override lazy val propertySeed = 123L
+  // The default property seed changes on each test run so we fix it here so that test failures are always the same
+  override val hedgehogSeed = 123L
 
   private val genInt: Gen[Int] =
     Gen.int(Range.linearFrom(0, Int.MinValue, Int.MaxValue))
@@ -42,8 +42,7 @@ class HedgehogFrameworkSuite extends HedgehogSuite {
   }
 
   property(
-    "custom config",
-    config = propertyConfig.copy(testLimit = SuccessCount(1000))
+    "custom config".tag(HedgehogConfig(hedgehogPropertyConfig.copy(testLimit = SuccessCount(1000))))
   ) {
     genInt.forAll.map(n => assertEquals(n + 0, n))
   }

@@ -29,61 +29,41 @@ trait HedgehogSuite extends FunSuite {
    * This can be overriden to change the default or can be changed on
    * a test-by-test basis by using an overload of `property` and `propertyF`.
    */
-  lazy val propertyConfig: PropertyConfig = PropertyConfig.default
-  lazy val propertySeed: Long = System.currentTimeMillis()
+  protected def hedgehogPropertyConfig: PropertyConfig = PropertyConfig.default
+  protected def hedgehogSeed: Long = System.currentTimeMillis()
 
   def property(
       name: String
   )(prop: PropertyT[Result])(implicit loc: Location): Unit =
-    property(name, propertyConfig)(prop)
+    property(new TestOptions(name, Set.empty, loc))(prop)
 
   def property(
       options: TestOptions
-  )(prop: PropertyT[Result])(implicit loc: Location): Unit =
-    property(options, propertyConfig)(prop)
-
-  def property(
-      name: String,
-      config: PropertyConfig
-  )(prop: PropertyT[Result])(implicit loc: Location): Unit =
-    property(new TestOptions(name, Set.empty, loc), config)(prop)
-
-  def property(
-      options: TestOptions,
-      config: PropertyConfig
-  )(prop: PropertyT[Result])(implicit loc: Location): Unit =
-    test(options)(check(prop, config, propertySeed))
+  )(prop: PropertyT[Result])(implicit loc: Location): Unit = {
+    val config = options.tags.collectFirst { case HedgehogConfig(config) => config }.getOrElse(hedgehogPropertyConfig)
+    test(options)(check(prop, config, hedgehogSeed))
+  }
 
   def propertyF[F[_]: Monad](
       name: String
   )(prop: PropertyT[F[Result]])(implicit loc: Location): Unit =
-    propertyF(name, propertyConfig)(prop)
+    propertyF(new TestOptions(name, Set.empty, loc))(prop)
 
   def propertyF[F[_]: Monad](
       options: TestOptions
-  )(prop: PropertyT[F[Result]])(implicit loc: Location): Unit =
-    propertyF(options, propertyConfig)(prop)
-
-  def propertyF[F[_]: Monad](
-      name: String,
-      config: PropertyConfig
-  )(prop: PropertyT[F[Result]])(implicit loc: Location): Unit =
-    propertyF(new TestOptions(name, Set.empty, loc), config)(prop)
-
-  def propertyF[F[_]: Monad](
-      options: TestOptions,
-      config: PropertyConfig
-  )(prop: PropertyT[F[Result]])(implicit loc: Location): Unit =
-    test(options)(checkF(prop, config, propertySeed))
+  )(prop: PropertyT[F[Result]])(implicit loc: Location): Unit = {
+    val config = options.tags.collectFirst { case HedgehogConfig(config) => config }.getOrElse(hedgehogPropertyConfig)
+    test(options)(checkF(prop, config, hedgehogSeed))
+  }
 
   /**
    * Checks the supplied `Property[Result]`, throwing a `HedgehogFailException`
    * if the property was falsified.
    */
-  def check(
+  private def check(
       prop: PropertyT[Result],
-      config: PropertyConfig = propertyConfig,
-      seed: Long = propertySeed
+      config: PropertyConfig = hedgehogPropertyConfig,
+      seed: Long = hedgehogSeed
   )(implicit loc: Location): Unit = {
     val report = Property.check(config, prop, Seed.fromLong(seed))
     HedgehogFailException.fromReport(report, seed) match {
@@ -100,10 +80,10 @@ trait HedgehogSuite extends FunSuite {
    * this should only be used with effect types that handle exceptions thrown from
    * `map`.
    */
-  def checkF[F[_]: Monad](
+  private def checkF[F[_]: Monad](
       prop: PropertyT[F[Result]],
-      config: PropertyConfig = propertyConfig,
-      seed: Long = propertySeed
+      config: PropertyConfig = hedgehogPropertyConfig,
+      seed: Long = hedgehogSeed
   )(implicit loc: Location): F[Unit] = {
     ??? // Waiting for https://github.com/hedgehogqa/scala-hedgehog/pull/147
   }
