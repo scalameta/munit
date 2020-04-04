@@ -56,9 +56,11 @@ trait FunFixtures { self: FunSuite =>
       FunFixture.async[(A, B)](
         setup = { options =>
           implicit val ec = munitExecutionContext
+          val setupA = a.setup(options)
+          val setupB = b.setup(options)
           for {
-            argumentA <- a.setup(options)
-            argumentB <- b.setup(options)
+            argumentA <- setupA
+            argumentB <- setupB
           } yield (argumentA, argumentB)
         },
         teardown = {
@@ -77,10 +79,13 @@ trait FunFixtures { self: FunSuite =>
       FunFixture.async[(A, B, C)](
         setup = { options =>
           implicit val ec = munitExecutionContext
+          val setupA = a.setup(options)
+          val setupB = b.setup(options)
+          val setupC = c.setup(options)
           for {
-            argumentA <- a.setup(options)
-            argumentB <- b.setup(options)
-            argumentC <- c.setup(options)
+            argumentA <- setupA
+            argumentB <- setupB
+            argumentC <- setupC
           } yield (argumentA, argumentB, argumentC)
         },
         teardown = {
