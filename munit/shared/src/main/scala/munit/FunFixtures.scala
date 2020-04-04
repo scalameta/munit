@@ -7,9 +7,20 @@ import scala.concurrent.Future
 trait FunFixtures { self: FunSuite =>
 
   class FunFixture[T] private (
-      val setup: TestOptions => Future[T],
-      val teardown: T => Future[Unit]
+      val setupAndTeardown: (TestOptions => Future[T], T => Future[Unit])
   ) {
+    def setup = setupAndTeardown._1
+    def teardown = setupAndTeardown._2
+
+    @deprecated("Use `FunFixture(...)` without `new` instead", "0.7.2")
+    def this(setup: TestOptions => T, teardown: T => Unit) =
+      this(
+        (
+          options => Future(setup(options))(munitExecutionContext),
+          argument => Future(teardown(argument))(munitExecutionContext)
+        )
+      )
+
     def test(options: TestOptions)(
         body: T => Any
     )(implicit loc: Location): Unit = {
@@ -34,7 +45,7 @@ trait FunFixtures { self: FunSuite =>
       )
     }
     def async[T](setup: TestOptions => Future[T], teardown: T => Future[Unit]) =
-      new FunFixture(setup, teardown)
+      new FunFixture((setup, teardown))
 
     def map2[A, B](a: FunFixture[A], b: FunFixture[B]): FunFixture[(A, B)] =
       FunFixture.async[(A, B)](
@@ -58,7 +69,7 @@ trait FunFixtures { self: FunSuite =>
         b: FunFixture[B],
         c: FunFixture[C]
     ): FunFixture[(A, B, C)] =
-      new FunFixture[(A, B, C)](
+      FunFixture.async[(A, B, C)](
         setup = { options =>
           implicit val ec = munitExecutionContext
           for {
