@@ -3,6 +3,8 @@ package munit
 import munit.internal.FutureCompat._
 
 import scala.concurrent.Future
+import scala.util.Success
+import scala.util.Failure
 
 trait FunFixtures { self: FunSuite =>
 
@@ -29,7 +31,10 @@ trait FunFixtures { self: FunSuite =>
         setup(options).flatMap { argument =>
           munitValueTransform(body(argument))
             .transformWithCompat(o =>
-              teardown(argument).transformCompat(_ => o)
+              teardown(argument).transformCompat {
+                case Success(_)     => o
+                case f @ Failure(_) => f
+              }
             )
         }
       }(loc)
