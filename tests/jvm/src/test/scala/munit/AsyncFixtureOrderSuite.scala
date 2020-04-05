@@ -19,9 +19,9 @@ class AsyncFixtureOrderSuite extends FunSuite {
   )
 
   override def afterAll(): Unit = {
-    // promise was completed first form the test
+    // promise was completed first by the test
     assertEquals(completedFromTest, Some(true))
-    // and then from the teardown
+    // and then there was a completion attempt by the teardown
     assertEquals(completedFromTeardown, Some(false))
   }
 
