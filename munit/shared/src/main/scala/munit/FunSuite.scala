@@ -29,7 +29,7 @@ abstract class FunSuite
       new Test(
         options.name, { () =>
           try {
-            munitValueTransform(body)
+            waitForCompletion(munitValueTransform(body))
           } catch {
             case NonFatal(e) =>
               Future.failed(e)

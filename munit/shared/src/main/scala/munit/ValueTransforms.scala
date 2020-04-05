@@ -23,7 +23,6 @@ trait ValueTransforms { this: FunSuite =>
       munitFutureTransform
     )
 
-  def munitTimeout: Duration = new FiniteDuration(30, TimeUnit.SECONDS)
   final def munitValueTransform(testValue: => Any): Future[Any] = {
     // Takes an arbitrarily nested future `Future[Future[Future[...]]]` and
     // returns a `Future[T]` where `T` is not a `Future`.
@@ -40,10 +39,12 @@ trait ValueTransforms { this: FunSuite =>
       nested.flattenCompat(munitExecutionContext)
     }
     val wrappedFuture = Future.fromTry(Try(StackTraces.dropOutside(testValue)))
-    val flatFuture = flattenFuture(wrappedFuture)
-    val awaitedFuture = PlatformCompat.waitAtMost(flatFuture, munitTimeout)
-    awaitedFuture
+    flattenFuture(wrappedFuture)
   }
+
+  def munitTimeout: Duration = new FiniteDuration(30, TimeUnit.SECONDS)
+  final def waitForCompletion[T](f: Future[T]) =
+    PlatformCompat.waitAtMost(f, munitTimeout)
 
   final def munitFutureTransform: ValueTransform =
     new ValueTransform("Future", { case e: Future[_] => e })
