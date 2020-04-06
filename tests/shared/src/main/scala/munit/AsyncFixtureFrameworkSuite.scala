@@ -24,6 +24,10 @@ class AsyncFixtureFrameworkSuite extends FunSuite {
 
   failingTeardown.test("fail when teardown fails") { _ => () }
 
+  failingTeardown.test("fail when test and teardown fail") { _ =>
+    fail("failure in test")
+  }
+
   FunFixture
     .map2(unitFixture, failingSetup)
     .test("fail when mapped setup fails") { _ =>
@@ -50,6 +54,10 @@ object AsyncFixtureFrameworkSuite
       classOf[AsyncFixtureFrameworkSuite],
       """|==> failure munit.AsyncFixtureFrameworkSuite.fail when setup fails - failure in setup
          |==> failure munit.AsyncFixtureFrameworkSuite.fail when teardown fails - failure in teardown
+         |==> failure munit.AsyncFixtureFrameworkSuite.fail when test and teardown fail - /scala/munit/AsyncFixtureFrameworkSuite.scala:28 failure in test
+         |27:  failingTeardown.test("fail when test and teardown fail") { _ =>
+         |28:    fail("failure in test")
+         |29:  }
          |==> failure munit.AsyncFixtureFrameworkSuite.fail when mapped setup fails - failure in setup
          |==> failure munit.AsyncFixtureFrameworkSuite.fail when even more nested mapped setup fails - failure in setup
          |==> failure munit.AsyncFixtureFrameworkSuite.fail when mapped teardown fails - failure in teardown

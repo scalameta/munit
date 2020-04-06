@@ -31,10 +31,17 @@ trait FunFixtures { self: FunSuite =>
         // the setup, test and teardown need to keep the happens-before execution order
         setup(options).flatMap { argument =>
           munitValueTransform(body(argument))
-            .transformWithCompat(o =>
+            .transformWithCompat(testValue =>
               teardown(argument).transformCompat {
-                case Success(_)     => o
-                case f @ Failure(_) => f
+                case Success(_) => testValue
+                case teardownFailure @ Failure(teardownException) =>
+                  testValue match {
+                    case testFailure @ Failure(testException) =>
+                      testException.addSuppressed(teardownException)
+                      testFailure
+                    case _ =>
+                      teardownFailure
+                  }
               }
             )
         }
