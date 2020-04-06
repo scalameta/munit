@@ -4,10 +4,6 @@ import scala.concurrent.Future
 import munit.internal.FutureCompat._
 import scala.util.Try
 import munit.internal.console.StackTraces
-import munit.internal.PlatformCompat
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration.FiniteDuration
-import java.util.concurrent.TimeUnit
 
 trait ValueTransforms { this: FunSuite =>
 
@@ -41,10 +37,6 @@ trait ValueTransforms { this: FunSuite =>
     val wrappedFuture = Future.fromTry(Try(StackTraces.dropOutside(testValue)))
     flattenFuture(wrappedFuture)
   }
-
-  def munitTimeout: Duration = new FiniteDuration(30, TimeUnit.SECONDS)
-  final def waitForCompletion[T](f: Future[T]) =
-    PlatformCompat.waitAtMost(f, munitTimeout)
 
   final def munitFutureTransform: ValueTransform =
     new ValueTransform("Future", { case e: Future[_] => e })
