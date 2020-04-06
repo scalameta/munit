@@ -28,6 +28,7 @@ trait FunFixtures { self: FunSuite =>
     )(implicit loc: Location): Unit = {
       self.test(options) {
         implicit val ec = munitExecutionContext
+        // the setup, test and teardown need to keep the happens-before execution order
         setup(options).flatMap { argument =>
           munitValueTransform(body(argument))
             .transformWithCompat(o =>
