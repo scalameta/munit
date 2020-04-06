@@ -9,18 +9,14 @@ import scala.util.Failure
 trait FunFixtures { self: FunSuite =>
 
   class FunFixture[T] private (
-      val setupAndTeardown: (TestOptions => Future[T], T => Future[Unit])
-  ) {
-    def setup = setupAndTeardown._1
-    def teardown = setupAndTeardown._2
-
+      val setup: TestOptions => Future[T],
+      val teardown: T => Future[Unit]
+  )(implicit dummy: DummyImplicit) {
     @deprecated("Use `FunFixture(...)` without `new` instead", "0.7.2")
     def this(setup: TestOptions => T, teardown: T => Unit) =
       this(
-        (
-          options => Future(setup(options))(munitExecutionContext),
-          argument => Future(teardown(argument))(munitExecutionContext)
-        )
+        (options: TestOptions) => Future(setup(options))(munitExecutionContext),
+        (argument: T) => Future(teardown(argument))(munitExecutionContext)
       )
 
     def test(options: TestOptions)(
@@ -58,7 +54,7 @@ trait FunFixtures { self: FunSuite =>
       )
     }
     def async[T](setup: TestOptions => Future[T], teardown: T => Future[Unit]) =
-      new FunFixture((setup, teardown))
+      new FunFixture(setup, teardown)
 
     def map2[A, B](a: FunFixture[A], b: FunFixture[B]): FunFixture[(A, B)] =
       FunFixture.async[(A, B)](
