@@ -2,7 +2,7 @@ package munit
 
 class FunFixtureSuite extends FunSuite {
   var tearDownName = ""
-  val files = new FunFixture[String](
+  val files = FunFixture[String](
     setup = { test => test.name + "-setup" },
     teardown = { name => tearDownName = name }
   )

@@ -15,5 +15,10 @@ object FutureCompat {
     )(implicit ec: ExecutionContext): Future[B] = {
       f.transform(fn)
     }
+    def transformWithCompat[B](
+        fn: Try[T] => Future[B]
+    )(implicit ec: ExecutionContext): Future[B] = {
+      f.transformWith(fn)
+    }
   }
 }

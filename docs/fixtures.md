@@ -16,7 +16,7 @@ resources after a test case.
 ```scala mdoc:reset
 import java.nio.file._
 class FunFixtureSuite extends munit.FunSuite {
-  val files = new FunFixture[Path](
+  val files = FunFixture[Path](
     setup = { test =>
       Files.createTempFile("tmp", test.name)
     },
