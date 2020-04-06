@@ -71,7 +71,7 @@ setup/teardown methods to initialize resources before a test case and clean up
 resources after a test case.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.nio.file._
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FunFixtureSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-keyword">val</span> files = <span class="hljs-keyword">new</span> <span class="hljs-type">FunFixture</span>[<span class="hljs-type">Path</span>](
+  <span class="hljs-keyword">val</span> files = <span class="hljs-type">FunFixture</span>[<span class="hljs-type">Path</span>](
     setup = { test =&gt;
       <span class="hljs-type">Files</span>.createTempFile(<span class="hljs-string">"tmp"</span>, test.name)
     },
@@ -89,7 +89,7 @@ resources after a test case.</p>
 <p>Use <code>FunFixture.map2</code> to compose multiple fixtures into a single fixture.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-comment">// Fixture with access to two temporary files.</span>
 <span class="hljs-keyword">val</span> files2 = <span class="hljs-type">FunFixture</span>.map2(files, files)
-<span class="hljs-comment">// files2: FunFixture[(Path, Path)] = munit.FunFixtures$FunFixture@2e420cc3</span>
+<span class="hljs-comment">// files2: FunFixture[(Path, Path)] = munit.FunFixtures$FunFixture@6f7eea61</span>
 files2.test(<span class="hljs-string">"two"</span>) {
   <span class="hljs-keyword">case</span> (file1, file2) =&gt;
     assertNotEquals(file1, file2)
