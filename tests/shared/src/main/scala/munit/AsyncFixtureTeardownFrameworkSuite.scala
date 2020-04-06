@@ -2,7 +2,7 @@ package munit
 
 import scala.concurrent.Future
 
-class AsyncFixtureTeardownSuite extends FunSuite {
+class AsyncFixtureTeardownFrameworkSuite extends FunSuite {
   @volatile var cleanedUp: Boolean = _
 
   val cleanupInTeardown = FunFixture.async[Unit](
@@ -23,10 +23,10 @@ class AsyncFixtureTeardownSuite extends FunSuite {
   }
 }
 
-object AsyncFixtureTeardownSuite
+object AsyncFixtureTeardownFrameworkSuite
     extends FrameworkTest(
-      classOf[AsyncFixtureTeardownSuite],
-      """|==> failure munit.AsyncFixtureTeardownSuite.calls teardown when test throws - failure in test
-         |==> failure munit.AsyncFixtureTeardownSuite.calls teardown when test returns failed Future - failure in test
+      classOf[AsyncFixtureTeardownFrameworkSuite],
+      """|==> failure munit.AsyncFixtureTeardownFrameworkSuite.calls teardown when test throws - failure in test
+         |==> failure munit.AsyncFixtureTeardownFrameworkSuite.calls teardown when test returns failed Future - failure in test
          |""".stripMargin
     )
