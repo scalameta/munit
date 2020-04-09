@@ -42,6 +42,27 @@ in the expression.
 assert(clue(a) > clue(b))
 ```
 
+> Note, the `-Yrangepos` compiler option is required for `clue()` to work
+> correctly. When `-Yrangepos` is not enabled you may see output like this
+> instead:
+>
+> ```
+> // Clues {
+> //   : Int = 1
+> //   : Int = 2
+> // }
+> ```
+>
+> To fix this problem in sbt, add the following line to your settings:
+>
+> ```diff
+>  // build.sbt
+>  lazy val myProject = project
+>    .settings(
+> +    scalacOptions += "-Yrangepos"
+>    )
+> ```
+
 Clues can wrap more complicated expressions.
 
 ```scala mdoc:crash
