@@ -92,6 +92,23 @@ in the expression.</p>
 <span class="hljs-comment">// }</span>
 <span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:178)</span>
 </code></pre>
+<blockquote>
+<p>Note, the <code>-Yrangepos</code> compiler option is required for <code>clue()</code> to work
+correctly. When <code>-Yrangepos</code> is not enabled you may see output like this
+instead:</p>
+<pre><code class="hljs"><span class="hljs-comment">// Clues {</span>
+<span class="hljs-comment">//   : Int = 1</span>
+<span class="hljs-comment">//   : Int = 2</span>
+<span class="hljs-comment">// }</span>
+</code></pre>
+<p>To fix this problem in sbt, add the following line to your settings:</p>
+<pre><code class="hljs css language-diff"> // build.sbt
+ lazy val myProject = project
+   .settings(
+<span class="hljs-addition">+    scalacOptions += "-Yrangepos"</span>
+   )
+</code></pre>
+</blockquote>
 <p>Clues can wrap more complicated expressions.</p>
 <pre><code class="hljs css language-scala">assert(clue(<span class="hljs-type">List</span>(a).head) &gt; clue(b))
 <span class="hljs-comment">// munit.FailException: assertion failed</span>
