@@ -134,6 +134,45 @@ class TagsSuite extends munit.FunSuite {
 | `--include-tags=include --exclude-tags=exclude` |      `a`       |
 | `--exclude-tags=exclude`                        |     `a, d`     |
 
+## Include and exclude tags by default when running sbt `test`
+
+Configure the sbt setting `testOptions.in(Test)` to automatically enable MUnit
+flags when running `myproject/test`. For example, use this to skip tests by
+default that are tagged as slow
+
+```diff
+  // build.sbt
+  val MUnitFramework = new TestFramework("munit.Framework")
+  lazy val myproject = project
+    .settings(
+      testFrameworks += MUnitFramework,
+      // ...
++     testOptions.in(Test) += Tests.Argument(MUnitFramework, "--exclude-tags=Slow")
+    )
+```
+
+You can use the same technique to create custom sbt tasks `myproject/slow:test`
+and `myproject/all:test` that run only slow tests and all tests, respectively.
+
+```diff
+  // build.sbt
+  val MUnitFramework = new TestFramework("munit.Framework")
++ val Slow = config("slow").extend(Test)
++ val All = config("slow").extend(Test)
+  lazy val myproject = project
++   .configs(Slow, All)
+    .settings(
+      testFrameworks += MUnitFramework,
++     inConfig(Slow)(Defaults.testTasks),
++     inConfig(All)(Defaults.testTasks),
+      // ...
++     testOptions.in(All) := List(),
++     testOptions.in(Test) += Tests.Argument(MUnitFramework, "--exclude-tags=Slow"),
++     testOptions.in(Slow) -= Tests.Argument(MUnitFramework, "--exclude-tags=Slow"),
++     testOptions.in(Slow) += Tests.Argument(MUnitFramework, "--include-tags=Slow")
+    )
+```
+
 ## Group test suites with categories
 
 > This feature is only supported on the JVM.
