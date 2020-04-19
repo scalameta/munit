@@ -7,7 +7,6 @@ import scala.util.control.NonFatal
 abstract class FunSuite
     extends Suite
     with Assertions
-    with FileLayout
     with FunFixtures
     with TestOptionsConversions
     with TestTransforms

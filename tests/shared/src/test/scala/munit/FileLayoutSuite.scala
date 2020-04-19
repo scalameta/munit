@@ -13,8 +13,8 @@ class FileLayoutSuite extends FunSuite {
                     |/C.scala
                     |class C
                     |""".stripMargin
-    val root = writeFileLayout(layout)
-    parseFileLayout(layout).map {
+    val root = FileLayout.write(layout)
+    FileLayout.fromString(layout).files.map {
       case (path, expectedContent) =>
         val absolutePath = root.resolve(Paths.get(path))
         val actualContent = new String(Files.readAllBytes(absolutePath))
@@ -24,7 +24,7 @@ class FileLayoutSuite extends FunSuite {
 
   test("malformed") {
     intercept[IllegalArgumentException] {
-      parseFileLayout("object A {}")
+      FileLayout.fromString("object A {}")
     }
   }
 
