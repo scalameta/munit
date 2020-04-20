@@ -23,7 +23,7 @@ object AnsiColors {
     if (s == null) {
       null
     } else {
-      var r: String = ""
+      var r: StringBuilder = new StringBuilder()
       val len = s.length
       var i = 0
       while (i < len) {
@@ -36,7 +36,7 @@ object AnsiColors {
         }
         i += 1
       }
-      r
+      r.mkString
     }
   }
 
