@@ -23,8 +23,8 @@ object AnsiColors {
     if (s == null) {
       null
     } else {
-      val r = new StringBuilder()
       val len = s.length
+      val r = new java.lang.StringBuilder(len)
       var i = 0
       while (i < len) {
         val c = s.charAt(i)
@@ -32,11 +32,11 @@ object AnsiColors {
           i += 1
           while (i < len && s.charAt(i) != 'm') i += 1
         } else {
-          r += c
+          r.append(c)
         }
         i += 1
       }
-      r.mkString
+      r.toString()
     }
   }
 
