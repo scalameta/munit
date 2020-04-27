@@ -60,7 +60,7 @@ class TypeCheckSuite extends FunSuite {
       "3" ->
         // NOTE(olafur): I'm not sure what's going on with the second errors but
         // that's what Dotty reports.
-        """|error: an identifier expected, but eof found
+        """|error: an identifier expected, but '=' found
            |val x: = 2
            |      ^
            |error: Declaration of value x not allowed here: only classes can have declared but undefined members

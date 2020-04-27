@@ -4,10 +4,10 @@ import scala.collection.mutable
 val customScalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
 val scalaJSVersion = customScalaJSVersion.getOrElse("1.0.1")
 val scalaNativeVersion = "0.4.0-M2"
-def scala213 = "2.13.1"
+def scala213 = "2.13.2"
 def scala212 = "2.12.11"
 def scala211 = "2.11.12"
-def dotty = "0.23.0-RC1"
+def dotty = "0.24.0-RC1"
 def junitVersion = "4.13"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.107.0"
 inThisBuild(
@@ -270,6 +270,7 @@ lazy val docs = project
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
+      "DOTTY_VERSION" -> dotty,
       "SUPPORTED_SCALA_VERSIONS" -> scalaVersions.mkString(", ")
     ),
     fork := false
