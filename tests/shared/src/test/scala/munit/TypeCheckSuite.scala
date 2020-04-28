@@ -57,6 +57,14 @@ class TypeCheckSuite extends FunSuite {
                 |val x: = 2
                 |       ^
                 |""".stripMargin,
+      "0.23.0" ->
+        """|error: an identifier expected, but eof found
+           |val x: = 2
+           |      ^
+           |error: Declaration of value x not allowed here: only classes can have declared but undefined members
+           |package munit
+           |   ^
+           |""".stripMargin,
       "3" ->
         // NOTE(olafur): I'm not sure what's going on with the second errors but
         // that's what Dotty reports.
