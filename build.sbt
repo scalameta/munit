@@ -7,8 +7,8 @@ val scalaNativeVersion = "0.4.0-M2"
 def scala213 = "2.13.2"
 def scala212 = "2.12.11"
 def scala211 = "2.11.12"
-def dotty = "0.24.0-RC1"
-def dottyLegacy = "0.23.0"
+def dottyNext = "0.24.0-RC1"
+def dottyStable = "0.23.0"
 def junitVersion = "4.13"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.107.0"
 inThisBuild(
@@ -57,7 +57,7 @@ addCommandAlias(
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala211, scala212, scala213)
-val scala3Versions = List(dotty, dottyLegacy)
+val scala3Versions = List(dottyStable, dottyNext)
 val scalaVersions = scala2Versions ++ scala3Versions
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
