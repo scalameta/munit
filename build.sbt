@@ -56,9 +56,9 @@ addCommandAlias(
   "; ++2.12.10 ;  scalafixEnable ; scalafix --check ; test:scalafix --check"
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
-val scala2Versions = List(scala211, scala212, scala213)
-val scala3Versions = List(dottyStable, dottyNext)
-val scalaVersions = scala2Versions ++ scala3Versions
+val scala2Versions = List(scala213, scala212, scala211)
+val scala3Versions = List(dottyNext, dottyStable)
+val allScalaVersions = scala2Versions ++ scala3Versions
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
 def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 0)
@@ -69,6 +69,9 @@ val isScalaNative = Def.setting[Boolean](
   SettingKey[String]("nativeGC").?.value.isDefined
 )
 
+val sharedJVMSettings = List(
+  crossScalaVersions := allScalaVersions
+)
 val sharedJSSettings = List(
   crossScalaVersions := scala2Versions,
   scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
@@ -111,7 +114,7 @@ lazy val junit = project
     autoScalaLibrary := false,
     crossPaths := false,
     sbtPlugin := false,
-    crossScalaVersions := List(scala213),
+    crossScalaVersions := List(allScalaVersions.head),
     libraryDependencies ++= List(
       "junit" % "junit" % junitVersion,
       "org.scala-sbt" % "test-interface" % "1.0"
@@ -123,7 +126,6 @@ lazy val junit = project
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
-    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     unmanagedSourceDirectories.in(Compile) ++= {
       val root = baseDirectory.in(ThisBuild).value / "munit"
       val base = root / "shared" / "src" / "main"
@@ -172,6 +174,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     )
   )
   .jvmSettings(
+    sharedJVMSettings,
     skip in publish := customScalaJSVersion.isDefined,
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13"
@@ -208,11 +211,11 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     moduleName := "munit-scalacheck",
     sharedSettings,
-    crossScalaVersions := List(scala213, scala212, scala211, dotty),
     libraryDependencies += ("org.scalacheck" %%% "scalacheck" % "1.14.3")
       .withDottyCompat(scalaVersion.value)
   )
   .jvmSettings(
+    sharedJVMSettings,
     skip in publish := customScalaJSVersion.isDefined
   )
   .nativeConfigure(sharedNativeConfigure)
@@ -242,7 +245,7 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeSettings(sharedNativeSettings)
   .jsSettings(sharedJSSettings)
   .jvmSettings(
-    crossScalaVersions := scalaVersions,
+    sharedJVMSettings,
     fork := true
   )
 lazy val testsJVM = tests.jvm
@@ -272,8 +275,10 @@ lazy val docs = project
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
-      "DOTTY_VERSION" -> dotty,
-      "SUPPORTED_SCALA_VERSIONS" -> scalaVersions.mkString(", ")
+      "DOTTY_VERSION" -> dottyNext,
+      "DOTTY_NEXT_VERSION" -> dottyNext,
+      "DOTTY_STABLE_VERSION" -> dottyStable,
+      "SUPPORTED_SCALA_VERSIONS" -> allScalaVersions.mkString(", ")
     ),
     fork := false
   )
