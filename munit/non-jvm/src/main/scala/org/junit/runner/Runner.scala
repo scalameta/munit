@@ -2,7 +2,7 @@ package org.junit.runner
 
 import org.junit.runner.notification.RunNotifier
 
-trait Runner {
+abstract class Runner {
   def run(notifier: RunNotifier): Unit
   def getDescription(): Description
 }
