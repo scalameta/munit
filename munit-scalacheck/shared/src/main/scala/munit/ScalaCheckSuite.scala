@@ -49,11 +49,14 @@ trait ScalaCheckSuite extends FunSuite {
 
   private def propToTry(prop: Prop, test: Test): Try[Unit] = {
     import ScalaCheckTest._
-    val seed =
+    def seed =
       scalaCheckTestParameters.initialSeed.getOrElse(
         Seed.fromBase64(scalaCheckInitialSeed).get
       )
-    val result = check(scalaCheckTestParameters, prop.useSeed(test.name, seed))
+    val result = check(
+      scalaCheckTestParameters,
+      Prop(genParams => prop(genParams.withInitialSeed(seed)))
+    )
     def renderResult(r: Result) = {
       val resultMessage = Pretty.pretty(r, scalaCheckPrettyParameters)
       if (r.passed) {
