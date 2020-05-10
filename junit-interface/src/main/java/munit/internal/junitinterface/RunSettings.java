@@ -21,7 +21,7 @@ import org.junit.runner.Description;
 
 import sbt.testing.Status;
 
-class RunSettings {
+class RunSettings implements Settings {
   private static final Object NULL = new Object();
 
   final boolean color;
@@ -30,6 +30,7 @@ class RunSettings {
   final boolean logExceptionClass;
   final Set<String> includeTags, excludeTags;
   final boolean useSbtLoggers;
+  final boolean trimStackTraces;
   final boolean verbose;
   final boolean suppressSystemError;
   final Summary summary;
@@ -42,7 +43,8 @@ class RunSettings {
   private final HashSet<String> ignoreRunners = new HashSet<String>();
 
   RunSettings(boolean color, boolean decodeScalaNames, boolean quiet,
-              boolean verbose, boolean useSbtLoggers, Summary summary, boolean logAssert, String ignoreRunners,
+              boolean verbose, boolean useSbtLoggers, boolean trimStackTraces,
+              Summary summary, boolean logAssert, String ignoreRunners,
               boolean logExceptionClass,
               boolean suppressSystemError, HashMap<String, String> sysprops,
               ArrayList<String> globPatterns,
@@ -67,6 +69,7 @@ class RunSettings {
     this.excludeCategories = excludeCategories;
     this.testFilter = testFilter;
     this.useSbtLoggers = useSbtLoggers;
+    this.trimStackTraces = trimStackTraces;
   }
 
   String decodeName(String name) {
@@ -203,6 +206,11 @@ class RunSettings {
         }
       }
     }
+  }
+
+  @Override
+  public boolean trimStackTraces() {
+    return this.trimStackTraces;
   }
 
   static enum Summary {

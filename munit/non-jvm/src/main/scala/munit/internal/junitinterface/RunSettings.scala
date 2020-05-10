@@ -13,8 +13,9 @@ final class RunSettings(
     val logAssert: Boolean,
     val notLogExceptionClass: Boolean,
     val useSbtLoggers: Boolean,
+    val trimStackTraces: Boolean,
     val tags: TagsFilter
-) {
+) extends Settings {
   def decodeName(name: String): String = {
     if (decodeScalaNames)
       Try(scala.reflect.NameTransformer.decode(name)).getOrElse(name)

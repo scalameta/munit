@@ -60,6 +60,7 @@ abstract class BaseFrameworkSuite extends FunSuite {
       val eventHandler = new EventHandler {
         def handle(event: Event): Unit = {
           try {
+            events.append(t.onEvent(event))
             val status = event.status().toString().toLowerCase()
             val name = event.fullyQualifiedName()
             events

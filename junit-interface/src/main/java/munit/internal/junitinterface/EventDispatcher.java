@@ -85,7 +85,8 @@ final class EventDispatcher extends RunListener
         trimStackTrace(
             failure.getException(),
             "java.lang.Thread",
-            failure.getDescription().getClassName()
+            failure.getDescription().getClassName(),
+            settings
         );
       } catch (Throwable t) {
         // Ignore error.
@@ -227,7 +228,8 @@ final class EventDispatcher extends RunListener
 
 
   // Removes stack trace elements that reference the reflective invocation in TestLauncher.
-  private static void trimStackTrace(Throwable ex, String fromClassName, String toClassName) {
+  private static void trimStackTrace(Throwable ex, String fromClassName, String toClassName, Settings settings) {
+    if (!settings.trimStackTraces()) return;
     Throwable cause = ex;
     while (cause != null) {
       StackTraceElement[] stackTrace = cause.getStackTrace();

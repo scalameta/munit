@@ -32,11 +32,13 @@ final class JUnitRunner implements Runner {
     this.remoteArgs = remoteArgs;
     this.testClassLoader = testClassLoader;
     this.customRunners = customRunners;
+    Settings defaults = Settings.defaults();
 
     boolean quiet = false, nocolor = false, decodeScalaNames = false,
         logAssert = true, logExceptionClass = true, useSbtLoggers = false;
     boolean verbose = false;
     boolean suppressSystemError = false;
+    boolean trimStackTraces = defaults.trimStackTraces();
     RunSettings.Summary summary = RunSettings.Summary.SBT;
     HashMap<String, String> sysprops = new HashMap<String, String>();
     ArrayList<String> globPatterns = new ArrayList<String>();
@@ -58,6 +60,8 @@ final class JUnitRunner implements Runner {
       else if("-c".equals(s)) logExceptionClass = false;
       else if("+l".equals(s)) useSbtLoggers = true;
       else if("-l".equals(s)) useSbtLoggers = false;
+      else if("-F".equals(s)) trimStackTraces = false;
+      else if("+F".equals(s)) trimStackTraces = true;
       else if(s.startsWith("--tests=")) testFilter = s.substring(8);
       else if(s.startsWith("--ignore-runners=")) ignoreRunners = s.substring(17);
       else if(s.startsWith("--run-listener=")) runListener = s.substring(15);
@@ -82,7 +86,7 @@ final class JUnitRunner implements Runner {
       else if("--stderr".equals(s)) suppressSystemError = false;
     }
     this.settings =
-      new RunSettings(!nocolor, decodeScalaNames, quiet, verbose, useSbtLoggers, summary, logAssert, ignoreRunners, logExceptionClass,
+      new RunSettings(!nocolor, decodeScalaNames, quiet, verbose, useSbtLoggers, trimStackTraces, summary, logAssert, ignoreRunners, logExceptionClass,
           suppressSystemError, sysprops, globPatterns, includeCategories, excludeCategories, includeTags, excludeTags,
         testFilter);
     this.runListener = createRunListener(runListener);
@@ -92,7 +96,7 @@ final class JUnitRunner implements Runner {
   @Override
   public Task[] tasks(TaskDef[] taskDefs) {
     used = true;
-    JUnitComputer computer = new JUnitComputer(testClassLoader, customRunners);
+    JUnitComputer computer = new JUnitComputer(testClassLoader, customRunners, settings);
     int length = taskDefs.length;
     List<Task> tasks = new ArrayList<>(taskDefs.length);
     for (int i = 0; i < length; i++) {

@@ -24,6 +24,8 @@ class FrameworkSuite extends BaseFrameworkSuite {
     AsyncFixtureFrameworkSuite,
     AsyncFixtureTeardownFrameworkSuite,
     DuplicateNameFrameworkSuite,
+    FullStackTraceFrameworkSuite,
+    SmallStackTraceFrameworkSuite,
     AssertionsFrameworkSuite
   )
   tests.foreach { t => check(t) }

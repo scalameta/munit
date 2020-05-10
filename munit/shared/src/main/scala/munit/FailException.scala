@@ -27,7 +27,9 @@ class FailException(
 
   override def fillInStackTrace(): Throwable = {
     val result = super.fillInStackTrace()
-    result.setStackTrace(result.getStackTrace().slice(0, 1))
+    if (!isStackTracesEnabled) {
+      result.setStackTrace(result.getStackTrace().slice(0, 1))
+    }
     result
   }
 }
