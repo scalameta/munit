@@ -1,7 +1,9 @@
 package munit
 
 class ClueSuite extends BaseSuite {
-  def check[T](options: TestOptions, clue: Clue[T], expected: String): Unit = {
+  def check[T](options: TestOptions, clue: Clue[T], expected: String)(
+      implicit loc: Location
+  ): Unit = {
     test(options) {
       assertEquals(clue.source, expected)
     }
