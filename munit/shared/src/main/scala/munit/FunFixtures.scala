@@ -46,7 +46,10 @@ trait FunFixtures { self: FunSuite =>
   }
 
   object FunFixture {
-    def apply[T](setup: TestOptions => T, teardown: T => Unit) = {
+    def apply[T](
+        setup: TestOptions => T,
+        teardown: T => Unit
+    ): FunFixture[T] = {
       implicit val ec = munitExecutionContext
       async[T](
         options => Future { setup(options) },

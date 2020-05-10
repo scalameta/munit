@@ -11,6 +11,7 @@ class BaseStackTraceFrameworkSuite(arguments: Array[String], expected: String)
       classOf[StackTraceFrameworkSuite],
       expected,
       arguments = arguments,
+      tags = Set(OnlyJVM),
       onEvent = { event =>
         if (event.throwable().isDefined()) {
           val s = event.throwable().get().getStackTrace()

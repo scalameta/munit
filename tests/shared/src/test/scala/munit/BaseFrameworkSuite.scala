@@ -13,7 +13,7 @@ import munit.internal.console.AnsiColors
 import munit.internal.PlatformCompat
 import scala.concurrent.Future
 
-abstract class BaseFrameworkSuite extends FunSuite {
+abstract class BaseFrameworkSuite extends BaseSuite {
   val systemOut = System.out
   override def munitIgnore: Boolean = !BuildInfo.scalaVersion.startsWith("2.13")
   def exceptionMessage(ex: Throwable): String = {
@@ -29,7 +29,7 @@ abstract class BaseFrameworkSuite extends FunSuite {
   }
 
   def check(t: FrameworkTest): Unit = {
-    test(t.cls.getSimpleName()) {
+    test(t.cls.getSimpleName().withTags(t.tags)) {
       val baos = new ByteArrayOutputStream()
       val out = new PrintStream(baos)
       val logger = new Logger {
