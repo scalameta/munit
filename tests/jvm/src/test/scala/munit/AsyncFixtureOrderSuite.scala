@@ -4,11 +4,11 @@ import scala.concurrent.Future
 import scala.concurrent.Promise
 
 class AsyncFixtureOrderSuite extends FunSuite {
-  val latch = Promise[Unit]
-  var completedFromTest = Option.empty[Boolean]
-  var completedFromTeardown = Option.empty[Boolean]
+  val latch: Promise[Unit] = Promise[Unit]
+  var completedFromTest: Option[Boolean] = None
+  var completedFromTeardown: Option[Boolean] = None
 
-  val latchOnTeardown = FunFixture.async[String](
+  val latchOnTeardown: FunFixture[String] = FunFixture.async[String](
     setup = { test => Future.successful(test.name) },
     teardown = { name =>
       implicit val ec = munitExecutionContext

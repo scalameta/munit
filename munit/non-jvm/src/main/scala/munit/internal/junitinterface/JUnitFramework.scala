@@ -46,12 +46,14 @@ abstract class JUnitFramework extends Framework {
   }
 
   private def parseRunSettings(args: Array[String]): RunSettings = {
+    val defaults = Settings.defaults()
     var verbose = false
     var noColor = false
     var decodeScalaNames = false
     var logAssert = false
     var notLogExceptionClass = false
     var useSbtLoggers = false
+    var trimStackTraces = defaults.trimStackTraces()
     var includeTags = Set.empty[String]
     var excludeTags = Set.empty[String]
     for (str <- args) {
@@ -104,6 +106,8 @@ abstract class JUnitFramework extends Framework {
         case "+c" => notLogExceptionClass = false
         case "+l" => useSbtLoggers = true
         case "-l" => useSbtLoggers = false
+        case "+F" => trimStackTraces = true
+        case "-F" => trimStackTraces = false
         case _    =>
       }
     }
@@ -114,6 +118,7 @@ abstract class JUnitFramework extends Framework {
       logAssert = logAssert,
       notLogExceptionClass = notLogExceptionClass,
       useSbtLoggers = useSbtLoggers,
+      trimStackTraces = trimStackTraces,
       tags = new TagsFilter(includeTags, excludeTags)
     )
   }

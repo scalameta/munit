@@ -5,7 +5,7 @@ import scala.concurrent.Future
 class AsyncFixtureTeardownFrameworkSuite extends FunSuite {
   @volatile var cleanedUp: Boolean = _
 
-  val cleanupInTeardown = FunFixture.async[Unit](
+  val cleanupInTeardown: FunFixture[Unit] = FunFixture.async[Unit](
     _ => { cleanedUp = false; Future.successful(()) },
     _ => { cleanedUp = true; Future.successful(()) }
   )

@@ -40,6 +40,7 @@ inThisBuild(
     resolvers += Resolver.sonatypeRepo("public"),
     useSuperShell := false,
     scalacOptions ++= List(
+      "-target:jvm-1.8",
       "-language:implicitConversions"
     )
   )

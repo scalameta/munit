@@ -1,6 +1,5 @@
 package munit
 
-import scala.runtime.Statics
 import java.lang.annotation.Annotation
 import scala.collection.mutable
 
@@ -42,25 +41,10 @@ class GenericTest[T](
     new GenericTest(name, body, tags, location)
   }
   override def toString(): String = s"GenericTest($name, $tags, $location)"
-  override def equals(obj: Any): Boolean = {
-    obj.asInstanceOf[AnyRef].eq(this) || (obj match {
-      case t: GenericTest[_] =>
-        t.name == name &&
-          // skip body
-          t.tags == tags &&
-          t.location == location
-      case _ =>
-        false
-    })
-  }
-  override def hashCode(): Int = {
-    var acc = -889275714
-    acc = Statics.mix(acc, Statics.anyHash(name))
-    // skip body
-    acc = Statics.mix(acc, Statics.anyHash(tags))
-    acc = Statics.mix(acc, Statics.anyHash(location))
-    acc
-  }
+  // NOTE(olafur): tests have reference equality because there's no reasonable
+  // structural equality that we can use to compare the test body function.
+  override def equals(obj: Any): Boolean = this.eq(obj.asInstanceOf[AnyRef])
+  override def hashCode(): Int = System.identityHashCode(this)
   def annotations: Array[Annotation] = {
     val buf = new mutable.ArrayBuffer[Annotation](tags.size + 1)
     buf ++= tags

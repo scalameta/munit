@@ -3,17 +3,17 @@ package munit
 import scala.concurrent.Future
 
 class AsyncFixtureFrameworkSuite extends FunSuite {
-  val failingSetup = FunFixture.async[Unit](
+  val failingSetup: FunFixture[Unit] = FunFixture.async[Unit](
     _ => Future.failed(new Error("failure in setup")),
     _ => Future.successful(())
   )
 
-  val failingTeardown = FunFixture.async[Unit](
+  val failingTeardown: FunFixture[Unit] = FunFixture.async[Unit](
     _ => Future.successful(()),
     _ => Future.failed(new Error("failure in teardown"))
   )
 
-  val unitFixture = FunFixture.async[Unit](
+  val unitFixture: FunFixture[Unit] = FunFixture.async[Unit](
     _ => Future.successful(()),
     _ => Future.successful(())
   )

@@ -19,8 +19,10 @@ import org.junit.runners.model.RunnerBuilder;
 
 public class JUnitComputer extends Computer {
   final Map<Class<?>, Class<?>> suiteRunners;
+  final Settings settings;
 
-  public JUnitComputer(ClassLoader testClassLoader, CustomRunners customRunners) {
+  public JUnitComputer(ClassLoader testClassLoader, CustomRunners customRunners, Settings settings) {
+    this.settings = settings;
     suiteRunners = new HashMap<>();
       customRunners.all().forEach((suite, runner) -> {
         try {
@@ -73,6 +75,10 @@ public class JUnitComputer extends Computer {
     Optional<Class<?>> runnerClass = customRunner(testClass);
     if (runnerClass.isPresent()) {
       Runner runner = (Runner) runnerClass.get().getConstructor(Class.class).newInstance(testClass);
+      if (runner instanceof Configurable) {
+        Configurable configurable = (Configurable) runner;
+        configurable.configure(this.settings);
+      }
       return new JUnitRunnerWrapper(runner);
     } else {
       return super.getRunner(builder, testClass);

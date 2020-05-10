@@ -1,5 +1,6 @@
 package munit
 
+import munit.internal.junitinterface.Configurable
 import munit.internal.PlatformCompat
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
@@ -22,24 +23,31 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.ExecutionException
+import munit.internal.junitinterface.Settings
 
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     extends Runner
-    with Filterable {
+    with Filterable
+    with Configurable {
+
   def this(cls: Class[_ <: Suite]) =
     this(MUnitRunner.ensureEligibleConstructor(cls), () => cls.newInstance())
   val suite: Suite = newInstance()
   private val suiteDescription = Description.createSuiteDescription(cls)
   private implicit val ec: ExecutionContext = suite.munitExecutionContext
   @volatile private var filter: Filter = Filter.ALL
+  @volatile private var settings: Settings = Settings.defaults()
   @volatile private var suiteAborted: Boolean = false
   val descriptions: mutable.Map[suite.Test, Description] =
     mutable.Map.empty[suite.Test, Description]
   val testNames: mutable.Set[String] = mutable.Set.empty[String]
   lazy val munitTests: Seq[suite.Test] = suite.munitTests()
 
-  def filter(filter: Filter): Unit = {
+  override def filter(filter: Filter): Unit = {
     this.filter = filter
+  }
+  override def configure(settings: Settings): Unit = {
+    this.settings = settings
   }
 
   def createTestDescription(test: suite.Test): Description = {
@@ -78,7 +86,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       }
     } catch {
       case ex: Throwable =>
-        StackTraces.trimStackTrace(ex)
+        trimStackTrace(ex)
         // Print to stdout because we don't have access to a RunNotifier
         ex.printStackTrace()
         Nil
@@ -110,7 +118,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       if (!it.hasNext) {
         Future.successful(())
       } else {
-        runTest(notifier, it.next()).flatMap(_ => loop(it))
+        val future = runTest(notifier, it.next())
+        future.value match {
+          case Some(_) =>
+            // use tail-recursive call if possible to keep stack traces clean.
+            loop(it)
+          case None =>
+            future.flatMap(_ => loop(it))
+        }
       }
     loop(munitTests.iterator)
   }
@@ -219,10 +234,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
     val onError: PartialFunction[Throwable, Future[Unit]] = {
       case ex: AssumptionViolatedException =>
-        StackTraces.trimStackTrace(ex)
+        trimStackTrace(ex)
         Future.successful(())
       case NonFatal(ex) =>
-        StackTraces.trimStackTrace(ex)
+        trimStackTrace(ex)
         val cause = ex match {
           case e: ExecutionException
               if "Boxed Exception" == e.getMessage() &&
@@ -275,7 +290,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
     result.map {
       case f: TestValues.FlakyFailure =>
-        StackTraces.trimStackTrace(f)
+        trimStackTrace(f)
         notifier.fireTestAssumptionFailed(new Failure(description, f))
       case TestValues.Ignore =>
         notifier.fireTestIgnored(description)
@@ -330,9 +345,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     val test = new suite.Test(name, () => ???, Set.empty, Location.empty)
     val description = createTestDescription(test)
     notifier.fireTestStarted(description)
-    StackTraces.trimStackTrace(ex)
+    trimStackTrace(ex)
     notifier.fireTestFailure(new Failure(description, ex))
     notifier.fireTestFinished(description)
+  }
+  private def trimStackTrace(ex: Throwable): Unit = {
+    if (settings.trimStackTraces()) {
+      StackTraces.trimStackTrace(ex)
+    }
   }
 
 }

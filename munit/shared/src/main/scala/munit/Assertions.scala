@@ -105,6 +105,17 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
           munitPrint(clue),
           printObtainedAsStripMargin = false
         )
+        // try with `.toString` in case `munitPrint()` produces identical formatting for both values.
+        Diffs.assertNoDiff(
+          obtained.toString(),
+          expected.toString(),
+          message => fail(message),
+          munitPrint(clue),
+          printObtainedAsStripMargin = false
+        )
+        fail(
+          s"values are not equal even if they have the same `toString()`: $obtained"
+        )
       }
     }
   }
