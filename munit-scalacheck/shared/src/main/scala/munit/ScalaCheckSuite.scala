@@ -57,13 +57,13 @@ trait ScalaCheckSuite extends FunSuite {
       scalaCheckTestParameters,
       Prop(genParams => prop(genParams.withInitialSeed(seed)))
     )
-    def renderResult(r: Result) = {
+    def renderResult(r: Result): String = {
       val resultMessage = Pretty.pretty(r, scalaCheckPrettyParameters)
       if (r.passed) {
         resultMessage
       } else {
         val seedMessage = s"""|Failing seed: ${seed.toBase64}
-                              |You can reproduce this failure by adding this to your suite:
+                              |You can reproduce this failure by adding the following override to your suite:
                               |
                               |  override val scalaCheckInitialSeed = "${seed.toBase64}"
                               |""".stripMargin
