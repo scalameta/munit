@@ -129,7 +129,7 @@ a suggestion on how to reproduce it:
 
 ```
 Failing seed: CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB=
-You can reproduce this failure by adding this to your suite:
+You can reproduce this failure by adding the following override to your suite:
 
   override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
 
