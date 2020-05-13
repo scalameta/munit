@@ -73,12 +73,23 @@ trait ScalaCheckSuite extends FunSuite {
 
     result.status match {
       case Passed | Proved(_) =>
-        println(renderResult(result))
         Success(())
-      case status @ PropException(_, e: FailException, _) =>
-        // Promote FailException (i.e failed assertions) to property failures
-        val r = result.copy(status = Failed(status.args, status.labels))
-        Failure(e.withMessage(e.getMessage() + "\n\n" + renderResult(r)))
+      case status @ PropException(_, e, _) =>
+        e match {
+          case f: FailException =>
+            // Promote FailException (i.e failed assertions) to property failures
+            val r = result.copy(status = Failed(status.args, status.labels))
+            Failure(f.withMessage(e.getMessage() + "\n\n" + renderResult(r)))
+          case _ =>
+            Failure(
+              new FailException(
+                message = renderResult(result),
+                cause = e,
+                isStackTracesEnabled = false,
+                location = test.location
+              )
+            )
+        }
       case _ =>
         // Fail using the test location
         Try(fail("\n" + renderResult(result))(test.location))

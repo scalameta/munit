@@ -26,7 +26,8 @@ class FrameworkSuite extends BaseFrameworkSuite {
     DuplicateNameFrameworkSuite,
     FullStackTraceFrameworkSuite,
     SmallStackTraceFrameworkSuite,
-    AssertionsFrameworkSuite
+    AssertionsFrameworkSuite,
+    ScalaCheckExceptionFrameworkSuite
   )
   tests.foreach { t => check(t) }
 }
