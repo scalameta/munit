@@ -24,7 +24,15 @@ abstract class FunSuite
   def munitTests(): Seq[Test] = {
     munitSuiteTransform(munitTestsBuffer.toList)
   }
+  override def munitPollTests(): Seq[Test] = {
+    val result = munitTests()
+    munitTestsBuffer.clear()
+    result
+  }
 
+  def describe(name: String)(body: => Any)(implicit loc: Location): Unit = {
+    test(name.tag(munit.Describe))(body)
+  }
   def test(name: String)(body: => Any)(implicit loc: Location): Unit = {
     test(new TestOptions(name, Set.empty, loc))(body)
   }

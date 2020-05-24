@@ -95,7 +95,7 @@ final class EventDispatcher extends RunListener
     uncapture(true);
     postIfFirst(new ErrorEvent(failure, Status.Failure) {
       void logTo(RichLogger logger) {
-        logger.error( settings.buildTestResult(Status.Failure) +ansiName+" "+ durationSuffix() + " " + ansiMsg, error);
+        logger.error(settings.buildTestResult(failure.getDescription(), Status.Failure) +ansiName+" "+ durationSuffix() + " " + ansiMsg, error);
       }
     });
   }
@@ -107,7 +107,7 @@ final class EventDispatcher extends RunListener
     uncapture(false);
     postIfFirst(new InfoEvent(desc, Status.Success) {
       void logTo(RichLogger logger) {
-        logger.info(settings.buildTestResult(Status.Success) +Ansi.c(desc.getMethodName(), SUCCESS1) + durationSuffix());
+        logger.info(settings.buildTestResult(desc, Status.Success) +Ansi.c(desc.getMethodName(), SUCCESS1) + durationSuffix());
       }
     });
     logger.popCurrentTestClassName();
@@ -118,7 +118,7 @@ final class EventDispatcher extends RunListener
   {
     postIfFirst(new InfoEvent(desc, Status.Skipped) {
       void logTo(RichLogger logger) {
-        logger.warn(settings.buildTestResult(Status.Ignored) + ansiName+" ignored" + durationSuffix());
+        logger.warn(settings.buildTestResult(desc, Status.Ignored) + ansiName+" ignored" + durationSuffix());
       }
     });
   }

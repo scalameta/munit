@@ -14,6 +14,7 @@ import static munit.internal.junitinterface.Ansi.SUCCESS1;
 import static munit.internal.junitinterface.Ansi.SUCCESS2;
 import static munit.internal.junitinterface.Ansi.c;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -133,16 +134,41 @@ class RunSettings implements Settings {
     return buildColoredName(desc, null, null, null);
   }
 
-  String buildTestResult(Status status) {
+  int indent(Description desc) {
+    Indent indent = desc.getAnnotation(Indent.class);
+    if (indent == null) return 2;
+    else return indent.value();
+  }
+
+  String repeat(String what, int count) {
+    StringBuilder out = new StringBuilder(what.length() * count);
+    for (int i = 0; i < count; i ++) {
+      out.append(what);
+    }
+    return out.toString();
+  }
+
+  boolean isDescribe(Description desc) {
+    for (Annotation a : desc.getAnnotations()) {
+        if (a instanceof Describe) {
+          return true;
+        }
+    }
+    return false;
+  }
+
+  String buildTestResult(Description desc, Status status) {
+    int indent = indent(desc);
+    if (isDescribe(desc)) return repeat(" ", indent);
     switch (status) {
         case Success:
-          return c("  + ", SUCCESS1);
+          return c(repeat(" ", indent) + "+ ", SUCCESS1);
         case Ignored:
-          return c("==> i ", SKIPPED);
+          return c(repeat("=", indent) + "> i ", SKIPPED);
         case Skipped:
-          return c("==> s ", SKIPPED);
+          return c(repeat("=", indent) + "> s ", SKIPPED);
         default:
-          return c("==> X ", ERRMSG);
+          return c(repeat("=", indent) + "> X ", ERRMSG);
       }
   }
 

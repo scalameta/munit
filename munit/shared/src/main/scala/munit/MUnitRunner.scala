@@ -24,6 +24,8 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.ExecutionException
 import munit.internal.junitinterface.Settings
+import munit.internal.junitinterface.Indent
+import scala.collection.immutable.Nil
 
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     extends Runner
@@ -41,7 +43,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   val descriptions: mutable.Map[suite.Test, Description] =
     mutable.Map.empty[suite.Test, Description]
   val testNames: mutable.Set[String] = mutable.Set.empty[String]
-  lazy val munitTests: Seq[suite.Test] = suite.munitTests()
+  lazy val munitTests: Seq[suite.Test] = suite.munitPollTests()
 
   override def filter(filter: Filter): Unit = {
     this.filter = filter
@@ -50,7 +52,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     this.settings = settings
   }
 
-  def createTestDescription(test: suite.Test): Description = {
+  def createTestDescription(
+      test: suite.Test,
+      parents: List[suite.Test]
+  ): Description = {
     descriptions.getOrElseUpdate(
       test, {
         val escapedName = test.name.replaceAllLiterally("\n", "\\n")
@@ -63,11 +68,23 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
           .find(candidate => !testNames.contains(candidate))
           .head
         testNames += testName
-        Description.createTestDescription(
+        val annotations =
+          if (parents.isEmpty) test.annotations
+          else {
+            val indent = (parents.length + 1) * 2
+            new Indent(indent) +: test.annotations
+          }
+        val result = Description.createTestDescription(
           cls,
           testName,
-          test.annotations: _*
+          annotations: _*
         )
+        parents match {
+          case head :: next =>
+            createTestDescription(head, next).addChild(result)
+          case _ =>
+        }
+        result
       }
     )
   }
@@ -79,7 +96,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     try {
       val suiteTests = StackTraces.dropOutside(munitTests)
       suiteTests.foreach { test =>
-        val testDescription = createTestDescription(test)
+        val testDescription = createTestDescription(test, Nil)
         if (filter.shouldRun(testDescription)) {
           suiteDescription.addChild(testDescription)
         }
@@ -99,12 +116,13 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
   def runAsync(notifier: RunNotifier): Future[Unit] = {
     notifier.fireTestSuiteStarted(suiteDescription)
+    val parents = List.empty[suite.Test]
     try {
-      runAll(notifier)
+      runAll(notifier, parents)
     } catch {
       case ex: Throwable =>
         Future.successful(
-          fireHiddenTest(notifier, "expected error running tests", ex)
+          fireHiddenTest(notifier, "expected error running tests", ex, parents)
         )
     } finally {
       notifier.fireTestSuiteFinished(suiteDescription)
@@ -112,13 +130,15 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
 
   private def runAsyncTestsSynchronously(
-      notifier: RunNotifier
+      notifier: RunNotifier,
+      tests: Seq[suite.Test],
+      parents: List[suite.Test]
   ): Future[Unit] = {
     def loop(it: Iterator[suite.Test]): Future[Unit] =
       if (!it.hasNext) {
         Future.successful(())
       } else {
-        val future = runTest(notifier, it.next())
+        val future = runTest(notifier, it.next(), parents)
         future.value match {
           case Some(_) =>
             // use tail-recursive call if possible to keep stack traces clean.
@@ -127,52 +147,64 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
             future.flatMap(_ => loop(it))
         }
       }
-    loop(munitTests.iterator)
+    loop(tests.iterator)
   }
 
-  private def runAll(notifier: RunNotifier): Future[Unit] = {
+  private def runAll(
+      notifier: RunNotifier,
+      parents: List[suite.Test]
+  ): Future[Unit] = {
     if (PlatformCompat.isIgnoreSuite(cls)) {
       notifier.fireTestIgnored(suiteDescription)
       return Future.successful(())
     }
     var isBeforeAllRun = false
     val result = {
-      val isContinue = runBeforeAll(notifier)
+      val isContinue = runBeforeAll(notifier, parents)
       isBeforeAllRun = isContinue
       if (isContinue) {
-        runAsyncTestsSynchronously(notifier)
+        runAsyncTestsSynchronously(notifier, munitTests, parents = Nil)
       } else {
         Future.successful(())
       }
     }
     result.transformCompat { s =>
       if (isBeforeAllRun) {
-        runAfterAll(notifier)
+        runAfterAll(notifier, parents)
       }
       s
     }
   }
 
-  private def runBeforeAll(notifier: RunNotifier): Boolean = {
-    var isContinue = runHiddenTest(notifier, "beforeAll", suite.beforeAll())
+  private def runBeforeAll(
+      notifier: RunNotifier,
+      parents: List[suite.Test]
+  ): Boolean = {
+    var isContinue =
+      runHiddenTest(notifier, "beforeAll", suite.beforeAll(), parents)
     suite.munitFixtures.foreach { fixture =>
       isContinue &= runHiddenTest(
         notifier,
         s"beforeAllFixture(${fixture.fixtureName})",
-        fixture.beforeAll()
+        fixture.beforeAll(),
+        parents
       )
     }
     isContinue
   }
-  private def runAfterAll(notifier: RunNotifier): Unit = {
+  private def runAfterAll(
+      notifier: RunNotifier,
+      parents: List[suite.Test]
+  ): Unit = {
     suite.munitFixtures.foreach { fixture =>
       runHiddenTest(
         notifier,
         s"afterAllFixture(${fixture.fixtureName})",
-        fixture.afterAll()
+        fixture.afterAll(),
+        parents
       )
     }
-    runHiddenTest(notifier, "afterAll", suite.afterAll())
+    runHiddenTest(notifier, "afterAll", suite.afterAll(), parents)
   }
 
   class BeforeEachResult(
@@ -211,9 +243,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private def runTest(
       notifier: RunNotifier,
-      test: suite.Test
+      test: suite.Test,
+      parents: List[suite.Test]
   ): Future[Boolean] = {
-    val description = createTestDescription(test)
+    val description = createTestDescription(test, parents)
     if (!filter.shouldRun(description)) {
       return Future.successful(false)
     }
@@ -260,9 +293,19 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     val result: Future[Unit] =
       try runTestBody(notifier, description, test).recoverWith(onError)
       catch onError
-    result.map { _ =>
+    result.flatMap { _ =>
       notifier.fireTestFinished(description)
-      true
+      val newTests = suite.munitPollTests()
+      def finish(): Boolean = {
+        true
+      }
+      if (newTests.isEmpty) {
+        Future.successful(finish())
+      } else {
+        val newParents = test :: parents
+        runAsyncTestsSynchronously(notifier, newTests, newParents)
+          .map(_ => finish())
+      }
     }
   }
 
@@ -325,14 +368,15 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private def runHiddenTest(
       notifier: RunNotifier,
       name: String,
-      thunk: => Unit
+      thunk: => Unit,
+      parents: List[suite.Test]
   ): Boolean = {
     try {
       StackTraces.dropOutside(thunk)
       true
     } catch {
       case ex: Throwable =>
-        fireHiddenTest(notifier, name, ex)
+        fireHiddenTest(notifier, name, ex, parents)
         false
     }
   }
@@ -340,10 +384,11 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private def fireHiddenTest(
       notifier: RunNotifier,
       name: String,
-      ex: Throwable
+      ex: Throwable,
+      parents: List[suite.Test]
   ): Unit = {
     val test = new suite.Test(name, () => ???, Set.empty, Location.empty)
-    val description = createTestDescription(test)
+    val description = createTestDescription(test, parents)
     notifier.fireTestStarted(description)
     trimStackTrace(ex)
     notifier.fireTestFailure(new Failure(description, ex))

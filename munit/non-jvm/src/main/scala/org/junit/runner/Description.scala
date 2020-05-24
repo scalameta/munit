@@ -1,15 +1,17 @@
 package org.junit.runner
 
 import java.lang.annotation.Annotation
+import scala.collection.mutable
 
 class Description(
     cls: Option[Class[_]] = None,
     methodName: Option[String] = None,
     annotations: List[Annotation] = Nil,
-    children: List[Description] = Nil
+    children: mutable.ListBuffer[Description] = mutable.ListBuffer.empty
 ) {
-  def addChild(description: Description): Description =
-    new Description(cls, methodName, annotations, description :: children)
+  def addChild(description: Description): Unit = {
+    children += description
+  }
   def getMethodName: String = methodName.getOrElse("<unknown>")
   def getTestClass: Option[Class[_]] = cls
   def getAnnotations: List[Annotation] = annotations

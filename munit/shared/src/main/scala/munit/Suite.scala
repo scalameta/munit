@@ -18,6 +18,8 @@ abstract class Suite extends PlatformSuite {
   /** The base class for all test suites */
   def munitTests(): Seq[Test]
 
+  def munitPollTests(): Seq[Test] = munitTests()
+
   /** Functinonal fixtures that can be reused for individual test cases or entire suites. */
   def munitFixtures: Seq[Fixture[_]] = Nil
 
