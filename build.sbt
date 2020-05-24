@@ -206,6 +206,23 @@ lazy val plugin = project
     )
   )
 
+lazy val munitCatsEffect = crossProject(JSPlatform, JVMPlatform)
+  .in(file("munit-cats-effect"))
+  .dependsOn(munit)
+  .settings(
+    moduleName := "munit-cats-effect",
+    sharedSettings,
+    libraryDependencies += ("org.typelevel" %%% "cats-effect" % "2.1.3")
+      .withDottyCompat(scalaVersion.value)
+  )
+  .jvmSettings(
+    sharedJVMSettings,
+    skip in publish := customScalaJSVersion.isDefined
+  )
+  .jsSettings(sharedJSSettings)
+lazy val munitCatsEffectJVM = munitCatsEffect.jvm
+lazy val munitCatsEffectJS = munitCatsEffect.js
+
 lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("munit-scalacheck"))
   .dependsOn(munit)
@@ -229,33 +246,43 @@ lazy val munitScalacheckJVM = munitScalacheck.jvm
 lazy val munitScalacheckJS = munitScalacheck.js
 lazy val munitScalacheckNative = munitScalacheck.native
 
-lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .dependsOn(munit, munitScalacheck)
+lazy val testsSettings = List(
+  buildInfoPackage := "munit",
+  buildInfoKeys := Seq[BuildInfoKey](
+    "sourceDirectory" ->
+      baseDirectory.in(ThisBuild).value / "tests" / "shared" / "src" / "main",
+    scalaVersion
+  ),
+  skip in publish := true
+)
+lazy val tests = crossProject(JSPlatform, JVMPlatform)
+  .dependsOn(munit, munitCatsEffect, munitScalacheck)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     sharedSettings,
-    buildInfoPackage := "munit",
-    buildInfoKeys := Seq[BuildInfoKey](
-      "sourceDirectory" ->
-        baseDirectory.in(ThisBuild).value / "tests" / "shared" / "src" / "main",
-      scalaVersion
-    ),
-    skip in publish := true
+    testsSettings
   )
-  .nativeConfigure(sharedNativeConfigure)
-  .nativeSettings(sharedNativeSettings)
   .jsSettings(sharedJSSettings)
   .jvmSettings(
     sharedJVMSettings,
     fork := true
   )
+lazy val testsN = crossProject(NativePlatform)
+  .dependsOn(munit, munitScalacheck)
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    sharedSettings,
+    testsSettings
+  )
+  .nativeConfigure(sharedNativeConfigure)
+  .nativeSettings(sharedNativeSettings)
 lazy val testsJVM = tests.jvm
 lazy val testsJS = tests.js
-lazy val testsNative = tests.native
+lazy val testsNative = testsN.native
 
 lazy val docs = project
   .in(file("munit-docs"))
-  .dependsOn(munitJVM, munitScalacheckJVM)
+  .dependsOn(munitJVM, munitCatsEffectJVM, munitScalacheckJVM)
   .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
   .settings(
     sharedSettings,
