@@ -2,29 +2,40 @@ package munit
 
 import cats.effect.IO
 
+import scala.concurrent.duration._
+
 class IOSuite extends CatsEffectSuite {
-  test("nested".fail) {
+
+  test("nested fail".fail) {
     IO {
-      Thread.sleep(2)
-      IO {
-        Thread.sleep(2)
-        IO {
-          Thread.sleep(2)
-          ???
+      IO.sleep(2.millis)(munitTimer)
+        .flatMap { _ =>
+          IO {
+            IO.sleep(2.millis)(munitTimer)
+              .flatMap { _ =>
+                IO {
+                  IO.sleep(2.millis)(munitTimer)
+                    .map(_ => assertEquals(false, true))
+                }
+              }
+          }
         }
-      }
     }
   }
   test("nested success") {
     IO {
-      Thread.sleep(2)
-      IO {
-        Thread.sleep(2)
-        IO {
-          Thread.sleep(2)
-          assertEquals(true, true)
+      IO.sleep(2.millis)(munitTimer)
+        .flatMap { _ =>
+          IO {
+            IO.sleep(2.millis)(munitTimer)
+              .flatMap { _ =>
+                IO {
+                  IO.sleep(2.millis)(munitTimer)
+                    .map(_ => assertEquals(true, true))
+                }
+              }
+          }
         }
-      }
     }
   }
 }
