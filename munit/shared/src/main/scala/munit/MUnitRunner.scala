@@ -63,11 +63,12 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
           .find(candidate => !testNames.contains(candidate))
           .head
         testNames += testName
-        Description.createTestDescription(
+        val desc = Description.createTestDescription(
           cls,
           testName,
           test.annotations: _*
         )
+        desc
       }
     )
   }

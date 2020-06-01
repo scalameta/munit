@@ -9,6 +9,9 @@ class DuplicateNameFrameworkSuite extends FunSuite {
   check("a")(() => fail("boom"))
   check("a")(() => fail("boom"))
   check("a")(() => ())
+
+  test("POST -> /[type]/[id]") {}
+  test("POST -> /[type]/[id]") {}
 }
 
 object DuplicateNameFrameworkSuite
@@ -24,5 +27,7 @@ object DuplicateNameFrameworkSuite
          |10:  check("a")(() => fail("boom"))
          |11:  check("a")(() => ())
          |==> success munit.DuplicateNameFrameworkSuite.a-3
+         |==> success munit.DuplicateNameFrameworkSuite.POST -> /[type]/[id]
+         |==> success munit.DuplicateNameFrameworkSuite.POST -> /[type]/[id]-1
          |""".stripMargin
     )
