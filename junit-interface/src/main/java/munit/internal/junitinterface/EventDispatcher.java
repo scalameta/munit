@@ -20,7 +20,7 @@ import static munit.internal.junitinterface.Ansi.*;
 final class EventDispatcher extends RunListener
 {
   private final RichLogger logger;
-  private final Set<String> reported = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+  private final Set<Description> reported = Collections.newSetFromMap(new ConcurrentHashMap<Description, Boolean>());
   private final Set<String> reportedSuites = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
   private final ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<String, Long>();
   private final EventHandler handler;
@@ -68,7 +68,7 @@ final class EventDispatcher extends RunListener
   public void testAssumptionFailure(final Failure failure)
   {
     uncapture(true);
-    postIfFirst(new ErrorEvent(failure, Status.Skipped) {
+    postIfFirst(failure.getDescription(), new ErrorEvent(failure, Status.Skipped) {
       void logTo(RichLogger logger) {
         if (settings.verbose) {
           logger.info(Ansi.c("==> i "  + failure.getDescription().getMethodName(), WARNMSG));
@@ -93,7 +93,7 @@ final class EventDispatcher extends RunListener
       }
     }
     uncapture(true);
-    postIfFirst(new ErrorEvent(failure, Status.Failure) {
+    postIfFirst(failure.getDescription(), new ErrorEvent(failure, Status.Failure) {
       void logTo(RichLogger logger) {
         logger.error( settings.buildTestResult(Status.Failure) +ansiName+" "+ durationSuffix() + " " + ansiMsg, error);
       }
@@ -105,9 +105,9 @@ final class EventDispatcher extends RunListener
   public void testFinished(Description desc)
   {
     uncapture(false);
-    postIfFirst(new InfoEvent(desc, Status.Success) {
+    postIfFirst(desc, new InfoEvent(desc, Status.Success) {
       void logTo(RichLogger logger) {
-        logger.info(settings.buildTestResult(Status.Success) +Ansi.c(desc.getMethodName(), SUCCESS1) + durationSuffix());
+        logger.info(settings.buildTestResult(Status.Success) + Ansi.c(desc.getMethodName(), SUCCESS1) + durationSuffix());
       }
     });
     logger.popCurrentTestClassName();
@@ -116,7 +116,7 @@ final class EventDispatcher extends RunListener
   @Override
   public void testIgnored(Description desc)
   {
-    postIfFirst(new InfoEvent(desc, Status.Skipped) {
+    postIfFirst(desc, new InfoEvent(desc, Status.Skipped) {
       void logTo(RichLogger logger) {
         logger.warn(settings.buildTestResult(Status.Ignored) + ansiName+" ignored" + durationSuffix());
       }
@@ -190,9 +190,9 @@ final class EventDispatcher extends RunListener
     });
   }
 
-  private void postIfFirst(AbstractEvent e)
+  private void postIfFirst(Description desc, AbstractEvent e)
   {
-    if(reported.add(e.fullyQualifiedName())) {
+    if(reported.add(desc)) {
       e.logTo(logger);
       runStatistics.captureStats(e);
       handler.handle(e);
