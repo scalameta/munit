@@ -30,3 +30,18 @@ improve the error message in failed assertions:
 - assert(a == b)
 + assertEquals(a, b)
 ```
+
+If you are coming from `WordSpec` style tests, make sure to flatten them, or your tests
+will not run. (Only the outer test will be selected to run, and the inner tests will do
+nothing).
+
+```diff
+-class FooSpec extends AnyWordSpec with Matchers {
++class FooSpec extends FunSuite {
+-  "Foo" must {
+-    "succeed" in {
++  test("Foo must succeed") {
+...
+-    }
+
+```
