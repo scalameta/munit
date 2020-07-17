@@ -84,6 +84,16 @@ improve the error message in failed assertions:</p>
 <pre><code class="hljs css language-diff"><span class="hljs-deletion">- assert(a == b)</span>
 <span class="hljs-addition">+ assertEquals(a, b)</span>
 </code></pre>
+<p>Or if you are using match-style assertions via <code>with Matchers</code>, change the
+assertions like so:</p>
+<pre><code class="hljs css language-diff"><span class="hljs-deletion">- result shouldEqual Some(Name(first, last))</span>
+<span class="hljs-addition">+ assertEquals(result, Some(Name(first, last)))</span>
+</code></pre>
+<p>MUnit doesn't ship with a large set of assertions, so some fancier matchers will
+have to be converted to a simple assertion:</p>
+<pre><code class="hljs css language-diff"><span class="hljs-deletion">- myList should have size 2</span>
+<span class="hljs-addition">+ assertEquals(myList.length, 2)</span>
+</code></pre>
 <p>If you are coming from <code>WordSpec</code> style tests, make sure to flatten them, or your tests
 will not run. (Only the outer test will be selected to run, and the inner tests will do
 nothing).</p>
