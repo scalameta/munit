@@ -1,6 +1,6 @@
 package munit
 
-import org.scalacheck.Prop
+import org.scalacheck.{Prop, Properties}
 import org.scalacheck.{Test => ScalaCheckTest}
 import org.scalacheck.util.Pretty
 import org.scalacheck.rng.Seed
@@ -22,6 +22,15 @@ trait ScalaCheckSuite extends FunSuite {
   )(body: => Prop)(implicit loc: Location): Unit = {
     test(options)(body)
   }
+
+  /** Adds all properties from another property collection to this one */
+  def include(ps: Properties): Unit =
+    include(ps, prefix = "")
+
+  /** Adds all properties from another property collection to this one
+   *  with a prefix this is prepended to each included property's name. */
+  def include(ps: Properties, prefix: String): Unit =
+    for ((n, p) <- ps.properties) property(prefix + n)(p)
 
   // Allow property bodies of type Unit
   // This is done to support using MUnit assertions in property bodies

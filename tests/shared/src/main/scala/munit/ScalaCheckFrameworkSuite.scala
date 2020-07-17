@@ -38,6 +38,16 @@ class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
     }
   }
 
+  include(IntProps)
+  include(IntProps, "Prefix")
+
+}
+
+object IntProps extends org.scalacheck.Properties("Int") {
+  property("associative") =
+    forAll((x: Int, y: Int, z: Int) => x + y + z == x + (y + z))
+  property("commutative") = forAll((x: Int, y: Int) => x + y == y + x)
+  property("identity") = forAll((x: Int) => x + 0 == x)
 }
 
 object ScalaCheckFrameworkSuite
@@ -78,5 +88,11 @@ object ScalaCheckFrameworkSuite
          |Falsified after 0 passed tests.
          |> ARG_0: -1
          |> ARG_0_ORIGINAL: 2147483647
+         |==> success munit.ScalaCheckFrameworkSuite.Int.associative
+         |==> success munit.ScalaCheckFrameworkSuite.Int.commutative
+         |==> success munit.ScalaCheckFrameworkSuite.Int.identity
+         |==> success munit.ScalaCheckFrameworkSuite.PrefixInt.associative
+         |==> success munit.ScalaCheckFrameworkSuite.PrefixInt.commutative
+         |==> success munit.ScalaCheckFrameworkSuite.PrefixInt.identity
          |""".stripMargin
     )
