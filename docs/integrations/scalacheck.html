@@ -67,22 +67,22 @@
 <h2><a class="anchor" aria-hidden="true" id="getting-started"></a><a href="#getting-started" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Getting started</h2>
 <p>ScalaCheck support is provided as a separate module. You can add it to your
 build via:</p>
-<pre><code class="hljs css language-scala">libraryDependencies += <span class="hljs-string">"org.scalameta"</span> %% <span class="hljs-string">"munit-scalacheck"</span> % <span class="hljs-string">"0.7.10"</span> % <span class="hljs-type">Test</span>
+<pre><code class="hljs css language-scala">libraryDependencies += <span class="hljs-string">"org.scalameta"</span> %% <span class="hljs-string">"munit-scalacheck"</span> % <span class="hljs-string">"0.7.10"</span> % Test
 </code></pre>
 <p>You can then extend <code>ScalaCheckSuite</code> and write ScalaCheck property tests:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.<span class="hljs-type">ScalaCheckSuite</span>
-<span class="hljs-keyword">import</span> org.scalacheck.<span class="hljs-type">Prop</span>._
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.ScalaCheckSuite
+<span class="hljs-keyword">import</span> org.scalacheck.Prop._
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
+<span class="hljs-keyword">class</span> IntegerSuite <span class="hljs-keyword">extends</span> ScalaCheckSuite {
 
   property(<span class="hljs-string">"addition is commutative"</span>) {
-    forAll { (n1: <span class="hljs-type">Int</span>, n2: <span class="hljs-type">Int</span>) =&gt;
+    forAll { <span class="hljs-function">(<span class="hljs-params">n1: Int, n2: Int</span>) =&gt;</span>
       n1 + n2 == n2 + n1
     }
   }
 
   property(<span class="hljs-string">"0 is the identity of addition"</span>) {
-    forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+    forAll { <span class="hljs-function">(<span class="hljs-params">n: Int</span>) =&gt;</span>
       n + <span class="hljs-number">0</span> == n
     }
   }
@@ -94,12 +94,12 @@ build via:</p>
 ensures that the test value is a ScalaCheck <code>Prop</code>.</p>
 <p>It supports all of <code>test</code>'s features, such as tagging and marking the property
 as expected to fail:</p>
-<pre><code class="hljs css language-scala">property(<span class="hljs-string">"my property"</span>.tag(<span class="hljs-type">WindowsOnly</span>)) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt; n * <span class="hljs-number">0</span> == <span class="hljs-number">0</span> }
+<pre><code class="hljs css language-scala">property(<span class="hljs-string">"my property"</span>.tag(WindowsOnly)) {
+  forAll { <span class="hljs-function">(<span class="hljs-params">n: Int</span>) =&gt;</span> n * <span class="hljs-number">0</span> == <span class="hljs-number">0</span> }
 }
 </code></pre>
 <pre><code class="hljs css language-scala">property(<span class="hljs-string">"issue-123"</span>.fail) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt; buggyFunction(n) }
+  forAll { <span class="hljs-function">(<span class="hljs-params">n: Int</span>) =&gt;</span> buggyFunction(n) }
 }
 </code></pre>
 </blockquote>
@@ -107,13 +107,13 @@ as expected to fail:</p>
 <p>ScalaCheck supports writing property checks as boolean expressions (as in the
 examples above).</p>
 <p>In MUnit you can also use <a href="/munit/docs/assertions.html">assertions</a> to verify properties:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.<span class="hljs-type">ScalaCheckSuite</span>
-<span class="hljs-keyword">import</span> org.scalacheck.<span class="hljs-type">Prop</span>._
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.ScalaCheckSuite
+<span class="hljs-keyword">import</span> org.scalacheck.Prop._
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> {</span>
 
   property(<span class="hljs-string">"integer identities"</span>) {
-    forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+    forAll { (n: Int) =&gt;
       assertEquals(n + <span class="hljs-number">0</span>, n)
       assertEquals(n * <span class="hljs-number">1</span>, n)
     }
@@ -123,7 +123,7 @@ examples above).</p>
 </code></pre>
 <p>The property above is equivalent to</p>
 <pre><code class="hljs css language-scala">property(<span class="hljs-string">"integer identities"</span>) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+  forAll { <span class="hljs-function">(<span class="hljs-params">n: Int</span>) =&gt;</span>
     (n + <span class="hljs-number">0</span> == n) &amp;&amp; (n * <span class="hljs-number">1</span> == n)
   }
 }
@@ -133,18 +133,18 @@ failed assertion, which is not possible when using boolean expressions.</p>
 <h2><a class="anchor" aria-hidden="true" id="configuring-scalacheck"></a><a href="#configuring-scalacheck" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuring ScalaCheck</h2>
 <p>You can override the <code>scalaCheckTestParameters</code> property of <code>ScalaCheckSuite</code> to
 customize how ScalaCheck checks the properties:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.<span class="hljs-type">ScalaCheckSuite</span>
-<span class="hljs-keyword">import</span> org.scalacheck.<span class="hljs-type">Prop</span>._
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.ScalaCheckSuite
+<span class="hljs-keyword">import</span> org.scalacheck.Prop._
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-title">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
 
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">scalaCheckTestParameters</span> </span>=
+  <span class="hljs-keyword">override</span> def scalaCheckTestParameters =
     <span class="hljs-keyword">super</span>.scalaCheckTestParameters
       .withMinSuccessfulTests(<span class="hljs-number">200</span>)
       .withMaxDiscardRatio(<span class="hljs-number">10</span>)
 
   property(<span class="hljs-string">"addition is commutative"</span>) {
-    forAll { (n1: <span class="hljs-type">Int</span>, n2: <span class="hljs-type">Int</span>) =&gt;
+    forAll { (n1: <span class="hljs-built_in">Int</span>, n2: <span class="hljs-built_in">Int</span>) =&gt;
       n1 + n2 == n2 + n1
     }
   }

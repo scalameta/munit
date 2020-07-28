@@ -102,13 +102,13 @@ flaky?&quot; and &quot;which tests are slowing down my CI?&quot;.</li>
 <p><img src="https://img.shields.io/maven-central/v/org.scalameta/munit_2.13?style=for-the-badge" alt="Badge with version of the latest release"></p>
 <pre><code class="hljs css language-scala"><span class="hljs-comment">// build.sbt</span>
 libraryDependencies += <span class="hljs-string">"org.scalameta"</span> %% <span class="hljs-string">"munit"</span> % <span class="hljs-string">"0.4.3"</span>
-testFrameworks += <span class="hljs-keyword">new</span> <span class="hljs-type">TestFramework</span>(<span class="hljs-string">"munit.Framework"</span>)
+testFrameworks += <span class="hljs-keyword">new</span> TestFramework(<span class="hljs-string">"munit.Framework"</span>)
 </code></pre>
 <p>Next, write a test case:</p>
 <pre><code class="hljs css language-scala"><span class="hljs-comment">// src/test/scala/com/MySuite.scala</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   test(<span class="hljs-string">"hello"</span>) {
-    assert(<span class="hljs-number">41</span> == <span class="hljs-number">42</span>)
+    <span class="hljs-keyword">assert</span>(<span class="hljs-number">41</span> == <span class="hljs-number">42</span>)
   }
 }
 </code></pre>
@@ -119,17 +119,17 @@ testFrameworks += <span class="hljs-keyword">new</span> <span class="hljs-type">
 reasoning about how MUnit works.</p>
 <p>Internally, a core MUnit data structure is <code>GenericTest[T]</code>, which represents a
 single test case and is roughly defined like this.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GenericTest</span>[<span class="hljs-type">T</span>](<span class="hljs-params">
-  name: <span class="hljs-type">String</span>,
-  body: (</span>) <span class="hljs-title">=&gt;</span> <span class="hljs-title">T</span>,</span>
-  tags: <span class="hljs-type">Set</span>[<span class="hljs-type">Tag</span>],
-  location: <span class="hljs-type">Location</span>
-)
-<span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Suite</span> </span>{
-  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">TestValue</span></span>
-  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Test</span> </span>= <span class="hljs-type">GenericTest</span>[<span class="hljs-type">TestValue</span>]
-  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTests</span></span>(): <span class="hljs-type">Seq</span>[<span class="hljs-type">Test</span>]
-}
+<pre><code class="hljs css language-scala"><span class="hljs-attr">case</span> <span class="hljs-string">class GenericTest[T](</span>
+  <span class="hljs-attr">name</span>: <span class="hljs-string">String,</span>
+  <span class="hljs-attr">body</span>: <span class="hljs-string">() =&gt; T,</span>
+  <span class="hljs-attr">tags</span>: <span class="hljs-string">Set[Tag],</span>
+  <span class="hljs-attr">location</span>: <span class="hljs-string">Location</span>
+<span class="hljs-attr">)</span>
+<span class="hljs-attr">abstract</span> <span class="hljs-string">class Suite {</span>
+  <span class="hljs-attr">type</span> <span class="hljs-string">TestValue</span>
+  <span class="hljs-attr">type</span> <span class="hljs-string">Test = GenericTest[TestValue]</span>
+  <span class="hljs-attr">def</span> <span class="hljs-string">munitTests(): Seq[Test]</span>
+<span class="hljs-attr">}</span>
 </code></pre>
 <p>A test suite returns a <code>Seq[Test]</code>, which you as a user can generate and
 abstract over any way you like.</p>
@@ -139,7 +139,7 @@ JUnit and MUnit test cases are not generated via macros like in utest.</p>
 <code>FunSuite</code> syntax where the type parameter for <code>GenericTest[T]</code> is defined as
 <code>Future[Any]</code>.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FunSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Suite</span> </span>{
-  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">TestValue</span> </span>= <span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>]
+  type TestValue = Future[Any]
 }
 </code></pre>
 <p>For common usage of MUnit you are not expected to write raw
@@ -156,16 +156,16 @@ Inevitably, some test cases end up getting disabled in certain environments.</p>
 <p>Imagine that we have test case that for some reason should only run on Windows
 in Scala 2.13. We can implement a custom <code>Window213</code> tag with the following
 code:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.util.<span class="hljs-type">Properties</span>
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.util.Properties
 <span class="hljs-keyword">import</span> munit._
-<span class="hljs-class"><span class="hljs-keyword">object</span> <span class="hljs-title">Windows213</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Tag</span>(<span class="hljs-params">"<span class="hljs-type">Windows213</span>"</span>)</span>
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitTestTransforms ++ <span class="hljs-type">List</span>(
-    <span class="hljs-keyword">new</span> <span class="hljs-type">TestTransform</span>(<span class="hljs-string">"Windows213"</span>, { test =&gt;
-      <span class="hljs-keyword">val</span> isIgnored =
+object <span class="hljs-type">Windows213</span> extends <span class="hljs-type">Tag</span>(<span class="hljs-string">"Windows213"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-title">extends</span> <span class="hljs-title">FunSuite</span> </span>{
+  <span class="hljs-keyword">override</span> def munitTestTransforms = <span class="hljs-keyword">super</span>.munitTestTransforms ++ <span class="hljs-type">List</span>(
+    new <span class="hljs-type">TestTransform</span>(<span class="hljs-string">"Windows213"</span>, { test =&gt;
+      val isIgnored =
         test.tags(<span class="hljs-type">Windows213</span>) &amp;&amp; !(
           <span class="hljs-type">Properties</span>.isWin &amp;&amp;
-            <span class="hljs-type">Properties</span>.versionNumberString.startsWith(<span class="hljs-string">"2.13"</span>)
+            <span class="hljs-type">Properties</span>.versionNumberString.<span class="hljs-built_in">startsWith</span>(<span class="hljs-string">"2.13"</span>)
         )
       <span class="hljs-keyword">if</span> (isIgnored) test.tag(<span class="hljs-type">Ignore</span>)
       <span class="hljs-keyword">else</span> test

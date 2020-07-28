@@ -72,19 +72,19 @@ ScalaCheck, which we'll explore in this blog post.</p>
 <a href="/munit/docs/integrations/scalacheck.html">setup the <code>munit-scalacheck</code> module</a>
 you can extend the <code>ScalaCheckSuite</code> trait and start writing your properties,
 for example:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.<span class="hljs-type">ScalaCheckSuite</span>
-<span class="hljs-keyword">import</span> org.scalacheck.<span class="hljs-type">Prop</span>._
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.ScalaCheckSuite
+<span class="hljs-keyword">import</span> org.scalacheck.Prop._
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
+<span class="hljs-keyword">class</span> IntegerSuite <span class="hljs-keyword">extends</span> ScalaCheckSuite {
 
   property(<span class="hljs-string">"addition is commutative"</span>) {
-    forAll { (n1: <span class="hljs-type">Int</span>, n2: <span class="hljs-type">Int</span>) =&gt;
+    forAll { <span class="hljs-function">(<span class="hljs-params">n1: Int, n2: Int</span>) =&gt;</span>
       n1 + n2 == n2 + n1
     }
   }
 
   property(<span class="hljs-string">"0 is the identity of addition"</span>) {
-    forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+    forAll { <span class="hljs-function">(<span class="hljs-params">n: Int</span>) =&gt;</span>
       n + <span class="hljs-number">0</span> == n
     }
   }
@@ -98,9 +98,9 @@ labels (<code>:|</code> and <code>|:</code>), conditional properties (<code>==&g
 testing multiple conditions of a property.</p>
 <p>For example, using the ScalaCheck API you may write:</p>
 <pre><code class="hljs css language-scala">property(<span class="hljs-string">"integer identities"</span>) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt;
-    (n + <span class="hljs-number">0</span> == n) :| <span class="hljs-string">"0 is the addition identity"</span> &amp;&amp;
-    (n * <span class="hljs-number">1</span> == n) :| <span class="hljs-string">"1 is the multiplication identity"</span>
+  forAll { (<span class="hljs-symbol">n:</span> Int) =&gt;
+    (n + <span class="hljs-number">0</span> == n) <span class="hljs-symbol">:|</span> <span class="hljs-string">"0 is the addition identity"</span> &amp;&amp;
+    (n * <span class="hljs-number">1</span> == n) <span class="hljs-symbol">:|</span> <span class="hljs-string">"1 is the multiplication identity"</span>
   }
 }
 </code></pre>
@@ -111,7 +111,7 @@ the expression fails.</p>
 <p>For longer expressions, however, this may become inconvenient and may choose to
 use a MUnit assertions instead:</p>
 <pre><code class="hljs css language-scala">property(<span class="hljs-string">"integer identities"</span>) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+  forAll { <span class="hljs-function">(<span class="hljs-params">n: Int</span>) =&gt;</span>
     assertEquals(n + <span class="hljs-number">0</span>, n, <span class="hljs-string">"0 is the addition identity"</span>)
     assertEquals(n * <span class="hljs-number">1</span>, n, <span class="hljs-string">"1 is the multiplication identity"</span>)
   }

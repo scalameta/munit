@@ -66,47 +66,47 @@
 <h2><a class="anchor" aria-hidden="true" id="assert"></a><a href="#assert" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>assert()</code></h2>
 <p>Use <code>assert()</code> to fail a test if a boolean condition does not hold true. For
 example, assume we have two values:</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">val</span> a = <span class="hljs-number">1</span>
-<span class="hljs-comment">// a: Int = 1</span>
-<span class="hljs-keyword">val</span> b = <span class="hljs-number">2</span>
-<span class="hljs-comment">// b: Int = 2</span>
+<pre><code class="hljs css language-scala"><span class="hljs-string">val</span> <span class="hljs-string">a</span> <span class="hljs-string">=</span> <span class="hljs-number">1</span>
+<span class="hljs-string">//</span> <span class="hljs-attr">a:</span> <span class="hljs-string">Int</span> <span class="hljs-string">=</span> <span class="hljs-number">1</span>
+<span class="hljs-string">val</span> <span class="hljs-string">b</span> <span class="hljs-string">=</span> <span class="hljs-number">2</span>
+<span class="hljs-string">//</span> <span class="hljs-attr">b:</span> <span class="hljs-string">Int</span> <span class="hljs-string">=</span> <span class="hljs-number">2</span>
 </code></pre>
 <p>In the most basic case when no hints are provided, the error message is
 &quot;assertion failed&quot; when the condition is false.</p>
 <pre><code class="hljs css language-scala">assert(a &gt; b)
-<span class="hljs-comment">// munit.FailException: assertion failed</span>
-<span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:189)</span>
-<span class="hljs-comment">//  at munit.Assertions.fail$(Assertions.scala:183)</span>
-<span class="hljs-comment">//  at munit.FunSuite.fail(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at munit.Assertions.$anonfun$assert$1(Assertions.scala:31)</span>
-<span class="hljs-comment">//  at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.scala:18)</span>
-<span class="hljs-comment">//  at munit.internal.console.StackTraces$.dropInside(StackTraces.scala:10)</span>
-<span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:28)</span>
-<span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:24)</span>
-<span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$3.apply$mcV$sp(assertions.md:29)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$3.apply(assertions.md:29)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$3.apply(assertions.md:29)</span>
+// munit.FailException: assertion failed
+//  at munit.Assertions.fail(Assertions.scala:189)
+//  at munit.Assertions.fail$(Assertions.scala:183)
+//  at munit.FunSuite.fail(FunSuite.scala:11)
+//  at munit.Assertions.<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$assert</span><span class="hljs-variable">$1</span>(Assertions.scala:31)
+//  at scala.runtime.java8.JFunction0<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>.apply(JFunction0<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>.scala:18)
+//  at munit.internal.console.StackTraces$.dropInside(StackTraces.scala:10)
+//  at munit.Assertions.assert(Assertions.scala:28)
+//  at munit.Assertions.assert$(Assertions.scala:24)
+//  at munit.FunSuite.assert(FunSuite.scala:11)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$3</span>.apply<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>(assertions.md:29)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$3</span>.apply(assertions.md:29)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$3</span>.apply(assertions.md:29)
 </code></pre>
 <p>Include an optional message to explain why the assertion failed.</p>
 <pre><code class="hljs css language-scala">assert(a &gt; b, <span class="hljs-string">"a was smaller than b"</span>)
-<span class="hljs-comment">// munit.FailException: a was smaller than b</span>
-<span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:189)</span>
-<span class="hljs-comment">//  at munit.Assertions.fail$(Assertions.scala:183)</span>
-<span class="hljs-comment">//  at munit.FunSuite.fail(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at munit.Assertions.$anonfun$assert$1(Assertions.scala:31)</span>
-<span class="hljs-comment">//  at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.scala:18)</span>
-<span class="hljs-comment">//  at munit.internal.console.StackTraces$.dropInside(StackTraces.scala:10)</span>
-<span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:28)</span>
-<span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:24)</span>
-<span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$4.apply$mcV$sp(assertions.md:37)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$4.apply(assertions.md:37)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$4.apply(assertions.md:37)</span>
+// munit.FailException: a was smaller than b
+//  at munit.Assertions.fail(Assertions.scala:189)
+//  at munit.Assertions.fail$(Assertions.scala:183)
+//  at munit.FunSuite.fail(FunSuite.scala:11)
+//  at munit.Assertions.<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$assert</span><span class="hljs-variable">$1</span>(Assertions.scala:31)
+//  at scala.runtime.java8.JFunction0<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>.apply(JFunction0<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>.scala:18)
+//  at munit.internal.console.StackTraces$.dropInside(StackTraces.scala:10)
+//  at munit.Assertions.assert(Assertions.scala:28)
+//  at munit.Assertions.assert$(Assertions.scala:24)
+//  at munit.FunSuite.assert(FunSuite.scala:11)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$4</span>.apply<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>(assertions.md:37)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$4</span>.apply(assertions.md:37)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$4</span>.apply(assertions.md:37)
 </code></pre>
 <p>Use <code>clue()</code> to include optional clues in the boolean condition based on values
 in the expression.</p>
-<pre><code class="hljs css language-scala">assert(clue(a) &gt; clue(b))
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">assert</span>(clue(a) &gt; clue(b))
 <span class="hljs-comment">// munit.FailException: assertion failed</span>
 <span class="hljs-comment">// Clues {</span>
 <span class="hljs-comment">//   a: Int = 1</span>
@@ -121,9 +121,9 @@ in the expression.</p>
 <span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:28)</span>
 <span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:24)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$5.apply$mcV$sp(assertions.md:45)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$5.apply(assertions.md:45)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$5.apply(assertions.md:45)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$5.apply$mcV$sp(assertions.md:45)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$5.apply(assertions.md:45)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$5.apply(assertions.md:45)</span>
 </code></pre>
 <blockquote>
 <p>Note, the <code>-Yrangepos</code> compiler option is required for <code>clue()</code> to work
@@ -143,7 +143,7 @@ instead:</p>
 </code></pre>
 </blockquote>
 <p>Clues can wrap more complicated expressions.</p>
-<pre><code class="hljs css language-scala">assert(clue(<span class="hljs-type">List</span>(a).head) &gt; clue(b))
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">assert</span>(clue(List(a).head) &gt; clue(b))
 <span class="hljs-comment">// munit.FailException: assertion failed</span>
 <span class="hljs-comment">// Clues {</span>
 <span class="hljs-comment">//   List(a).head: Int = 1</span>
@@ -158,13 +158,13 @@ instead:</p>
 <span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:28)</span>
 <span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:24)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$6.apply$mcV$sp(assertions.md:53)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$6.apply(assertions.md:53)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$6.apply(assertions.md:53)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$6.apply$mcV$sp(assertions.md:53)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$6.apply(assertions.md:53)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$6.apply(assertions.md:53)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="assertequals"></a><a href="#assertequals" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>assertEquals()</code></h2>
 <p>Use <code>assertEquals()</code> to assert that two values are the same.</p>
-<pre><code class="hljs css language-scala">assertEquals(a, b)
+<pre><code class="hljs css language-scala"><span class="hljs-selector-tag">assertEquals</span>(a, b)
 <span class="hljs-comment">// munit.FailException: values are not the same</span>
 <span class="hljs-comment">// =&gt; Obtained</span>
 <span class="hljs-comment">// 1</span>
@@ -182,18 +182,18 @@ instead:</p>
 <span class="hljs-comment">//  at munit.Assertions.assertEquals(Assertions.scala:100)</span>
 <span class="hljs-comment">//  at munit.Assertions.assertEquals$(Assertions.scala:94)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assertEquals(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$7.apply$mcV$sp(assertions.md:61)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$7.apply(assertions.md:61)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$7.apply(assertions.md:61)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$7.apply$mcV$sp(assertions.md:61)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$7.apply(assertions.md:61)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$7.apply(assertions.md:61)</span>
 </code></pre>
 <p>The error message automatically produces a diff on assertion failure.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Library</span>(<span class="hljs-params">name: <span class="hljs-type">String</span>, awesome: <span class="hljs-type">Boolean</span>, versions: <span class="hljs-type">Range</span> = 0.to(1</span>))</span>
-<span class="hljs-keyword">val</span> munitLibrary = <span class="hljs-type">Library</span>(<span class="hljs-string">"MUnit"</span>, <span class="hljs-literal">true</span>)
-<span class="hljs-comment">// munitLibrary: Library = Library("MUnit", true, Range(0, 1))</span>
-<span class="hljs-keyword">val</span> mdocLibrary = <span class="hljs-type">Library</span>(<span class="hljs-string">"MDoc"</span>, <span class="hljs-literal">true</span>)
-<span class="hljs-comment">// mdocLibrary: Library = Library("MDoc", true, Range(0, 1))</span>
+<pre><code class="hljs css language-scala"><span class="hljs-string">case</span> <span class="hljs-string">class</span> <span class="hljs-string">Library(name:</span> <span class="hljs-string">String,</span> <span class="hljs-attr">awesome:</span> <span class="hljs-string">Boolean,</span> <span class="hljs-attr">versions:</span> <span class="hljs-string">Range</span> <span class="hljs-string">=</span> <span class="hljs-number">0.</span><span class="hljs-string">to(1))</span>
+<span class="hljs-string">val</span> <span class="hljs-string">munitLibrary</span> <span class="hljs-string">=</span> <span class="hljs-string">Library("MUnit",</span> <span class="hljs-literal">true</span><span class="hljs-string">)</span>
+<span class="hljs-string">//</span> <span class="hljs-attr">munitLibrary:</span> <span class="hljs-string">Library</span> <span class="hljs-string">=</span> <span class="hljs-string">Library("MUnit",</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span> <span class="hljs-string">Range(0,</span> <span class="hljs-number">1</span><span class="hljs-string">))</span>
+<span class="hljs-string">val</span> <span class="hljs-string">mdocLibrary</span> <span class="hljs-string">=</span> <span class="hljs-string">Library("MDoc",</span> <span class="hljs-literal">true</span><span class="hljs-string">)</span>
+<span class="hljs-string">//</span> <span class="hljs-attr">mdocLibrary:</span> <span class="hljs-string">Library</span> <span class="hljs-string">=</span> <span class="hljs-string">Library("MDoc",</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span> <span class="hljs-string">Range(0,</span> <span class="hljs-number">1</span><span class="hljs-string">))</span>
 </code></pre>
-<pre><code class="hljs css language-scala">assertEquals(munitLibrary, mdocLibrary)
+<pre><code class="hljs css language-scala"><span class="hljs-selector-tag">assertEquals</span>(munitLibrary, mdocLibrary)
 <span class="hljs-comment">// munit.FailException: values are not the same</span>
 <span class="hljs-comment">// =&gt; Obtained</span>
 <span class="hljs-comment">// Library(</span>
@@ -220,14 +220,14 @@ instead:</p>
 <span class="hljs-comment">//  at munit.Assertions.assertEquals(Assertions.scala:100)</span>
 <span class="hljs-comment">//  at munit.Assertions.assertEquals$(Assertions.scala:94)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assertEquals(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$10.apply$mcV$sp(assertions.md:81)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$10.apply(assertions.md:81)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$10.apply(assertions.md:81)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$10.apply$mcV$sp(assertions.md:81)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$10.apply(assertions.md:81)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$10.apply(assertions.md:81)</span>
 </code></pre>
 <p>Diffs make it easy to track down differences even in large data structures.</p>
 <pre><code class="hljs css language-scala">assertEquals(
-  <span class="hljs-type">Map</span>(<span class="hljs-number">1</span> -&gt; <span class="hljs-type">List</span>(<span class="hljs-number">1.</span>to(<span class="hljs-number">3</span>))),
-  <span class="hljs-type">Map</span>(<span class="hljs-number">1</span> -&gt; <span class="hljs-type">List</span>(<span class="hljs-number">1.</span>to(<span class="hljs-number">4</span>)))
+  <span class="hljs-built_in">Map</span>(<span class="hljs-number">1</span> -&gt; List(<span class="hljs-number">1.</span>to(<span class="hljs-number">3</span>))),
+  <span class="hljs-built_in">Map</span>(<span class="hljs-number">1</span> -&gt; List(<span class="hljs-number">1.</span>to(<span class="hljs-number">4</span>)))
 )
 <span class="hljs-comment">// munit.FailException: values are not the same</span>
 <span class="hljs-comment">// =&gt; Obtained</span>
@@ -257,12 +257,12 @@ instead:</p>
 <span class="hljs-comment">//  at munit.Assertions.assertEquals(Assertions.scala:100)</span>
 <span class="hljs-comment">//  at munit.Assertions.assertEquals$(Assertions.scala:94)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assertEquals(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$11.apply$mcV$sp(assertions.md:89)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$11.apply(assertions.md:89)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$11.apply(assertions.md:89)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$11.apply$mcV$sp(assertions.md:89)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$11.apply(assertions.md:89)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$11.apply(assertions.md:89)</span>
 </code></pre>
 <p>Comparing two values of different types is a compile error.</p>
-<pre><code class="hljs css language-scala">assertEquals(<span class="hljs-number">1</span>, <span class="hljs-string">""</span>)
+<pre><code class="hljs css language-scala"><span class="hljs-selector-tag">assertEquals</span>(<span class="hljs-number">1</span>, <span class="hljs-string">""</span>)
 <span class="hljs-comment">// error: Cannot prove that String &lt;:&lt; Int.</span>
 <span class="hljs-comment">// Error occurred in an application involving default arguments.</span>
 <span class="hljs-comment">// assertEquals(1, "")</span>
@@ -270,56 +270,56 @@ instead:</p>
 </code></pre>
 <p>The &quot;expected&quot; value (second argument) must be a subtype of the &quot;obtained&quot; value
 (first argument).</p>
-<pre><code class="hljs css language-scala">assertEquals(<span class="hljs-type">Option</span>(<span class="hljs-number">1</span>), <span class="hljs-type">Some</span>(<span class="hljs-number">1</span>))
+<pre><code class="hljs css language-scala">assertEquals(<span class="hljs-built_in">Option</span>(<span class="hljs-number">1</span>), <span class="hljs-literal">Some</span>(<span class="hljs-number">1</span>))
 </code></pre>
 <p>It's a compile error if you swap the order of the arguments.</p>
-<pre><code class="hljs css language-scala">assertEquals(<span class="hljs-type">Some</span>(<span class="hljs-number">1</span>), <span class="hljs-type">Option</span>(<span class="hljs-number">1</span>))
+<pre><code class="hljs css language-scala">assertEquals(<span class="hljs-literal">Some</span>(<span class="hljs-number">1</span>), <span class="hljs-built_in">Option</span>(<span class="hljs-number">1</span>))
 <span class="hljs-comment">// error: Cannot prove that Option[Int] &lt;:&lt; Some[Int].</span>
 <span class="hljs-comment">// Error occurred in an application involving default arguments.</span>
 <span class="hljs-comment">// assertEquals(Some(1), Option(1))</span>
 <span class="hljs-comment">// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
 </code></pre>
 <p>Use <code>assertEquals[Any, Any]</code> if you really want to compare two different types.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">val</span> right1: <span class="hljs-type">Either</span>[<span class="hljs-type">String</span>      , <span class="hljs-type">Int</span>] = <span class="hljs-type">Right</span>(<span class="hljs-number">42</span>)
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">val</span> right1: Either[String      , <span class="hljs-built_in">Int</span>] = Right(<span class="hljs-number">42</span>)
 <span class="hljs-comment">// right1: Either[String, Int] = Right(42)</span>
-<span class="hljs-keyword">val</span> right2: <span class="hljs-type">Either</span>[<span class="hljs-type">List</span>[<span class="hljs-type">String</span>], <span class="hljs-type">Int</span>] = <span class="hljs-type">Right</span>(<span class="hljs-number">42</span>)
+<span class="hljs-keyword">val</span> right2: Either[List[String], <span class="hljs-built_in">Int</span>] = Right(<span class="hljs-number">42</span>)
 <span class="hljs-comment">// right2: Either[List[String], Int] = Right(42)</span>
 </code></pre>
-<pre><code class="hljs css language-scala">assertEquals[<span class="hljs-type">Any</span>, <span class="hljs-type">Any</span>](right1, right2)
+<pre><code class="hljs css language-scala">assertEquals[<span class="hljs-string">Any, Any</span>](<span class="hljs-link">right1, right2</span>)
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="assertnotequals"></a><a href="#assertnotequals" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>assertNotEquals()</code></h2>
 <p>Use <code>assertNotEqual()</code> to assert that two values are not the same.</p>
 <pre><code class="hljs css language-scala">assertNotEquals(a, a)
-<span class="hljs-comment">// munit.FailException: values are the same</span>
-<span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:189)</span>
-<span class="hljs-comment">//  at munit.Assertions.fail$(Assertions.scala:183)</span>
-<span class="hljs-comment">//  at munit.FunSuite.fail(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at munit.Assertions.$anonfun$assertNotEquals$1(Assertions.scala:70)</span>
-<span class="hljs-comment">//  at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.scala:18)</span>
-<span class="hljs-comment">//  at munit.internal.console.StackTraces$.dropInside(StackTraces.scala:10)</span>
-<span class="hljs-comment">//  at munit.Assertions.assertNotEquals(Assertions.scala:69)</span>
-<span class="hljs-comment">//  at munit.Assertions.assertNotEquals$(Assertions.scala:63)</span>
-<span class="hljs-comment">//  at munit.FunSuite.assertNotEquals(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$20.apply$mcV$sp(assertions.md:133)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$20.apply(assertions.md:133)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$20.apply(assertions.md:133)</span>
+// munit.FailException: values are the same
+//  at munit.Assertions.fail(Assertions.scala:189)
+//  at munit.Assertions.fail$(Assertions.scala:183)
+//  at munit.FunSuite.fail(FunSuite.scala:11)
+//  at munit.Assertions.<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$assertNotEquals</span><span class="hljs-variable">$1</span>(Assertions.scala:70)
+//  at scala.runtime.java8.JFunction0<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>.apply(JFunction0<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>.scala:18)
+//  at munit.internal.console.StackTraces$.dropInside(StackTraces.scala:10)
+//  at munit.Assertions.assertNotEquals(Assertions.scala:69)
+//  at munit.Assertions.assertNotEquals$(Assertions.scala:63)
+//  at munit.FunSuite.assertNotEquals(FunSuite.scala:11)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$20</span>.apply<span class="hljs-variable">$mcV</span><span class="hljs-variable">$sp</span>(assertions.md:133)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$20</span>.apply(assertions.md:133)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$20</span>.apply(assertions.md:133)
 </code></pre>
 <p>The assertion does not fail when both values are different.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-comment">// OK</span>
-assertNotEquals(a, b)
+<span class="hljs-selector-tag">assertNotEquals</span>(a, b)
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="assertnodiff"></a><a href="#assertnodiff" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>assertNoDiff()</code></h2>
 <p>Use <code>assertNoDiff()</code> to compare two multiline strings.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">val</span> obtainedString = <span class="hljs-string">"val x = 41\nval y = 43\nval z = 43"</span>
-<span class="hljs-comment">// obtainedString: String = """val x = 41</span>
-<span class="hljs-comment">// val y = 43</span>
-<span class="hljs-comment">// val z = 43"""</span>
-<span class="hljs-keyword">val</span> expectedString = <span class="hljs-string">"val x = 41\nval y = 42\nval z = 43"</span>
-<span class="hljs-comment">// expectedString: String = """val x = 41</span>
-<span class="hljs-comment">// val y = 42</span>
-<span class="hljs-comment">// val z = 43"""</span>
+<pre><code class="hljs css language-scala">val obtainedString = <span class="hljs-string">"val x = 41\nval y = 43\nval z = 43"</span>
+// obtainedString: String = <span class="hljs-string">"""val x = 41
+// val y = 43
+// val z = 43"""</span>
+val expectedString = <span class="hljs-string">"val x = 41\nval y = 42\nval z = 43"</span>
+// expectedString: String = <span class="hljs-string">"""val x = 41
+// val y = 42
+// val z = 43"""</span>
 </code></pre>
-<pre><code class="hljs css language-scala">assertNoDiff(obtainedString, expectedString)
+<pre><code class="hljs css language-scala"><span class="hljs-selector-tag">assertNoDiff</span>(obtainedString, expectedString)
 <span class="hljs-comment">// munit.FailException: diff assertion failed</span>
 <span class="hljs-comment">// =&gt; Obtained</span>
 <span class="hljs-comment">//     """|val x = 41</span>
@@ -342,9 +342,9 @@ assertNotEquals(a, b)
 <span class="hljs-comment">//  at munit.Assertions.assertNoDiff(Assertions.scala:53)</span>
 <span class="hljs-comment">//  at munit.Assertions.assertNoDiff$(Assertions.scala:47)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assertNoDiff(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$25.apply$mcV$sp(assertions.md:156)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$25.apply(assertions.md:156)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$25.apply(assertions.md:156)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$25.apply$mcV$sp(assertions.md:156)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$25.apply(assertions.md:156)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$25.apply(assertions.md:156)</span>
 </code></pre>
 <p>The difference between <code>assertNoDiff()</code> and <code>assertEquals()</code> is that
 <code>assertEquals()</code> fails according to the <code>==</code> method while <code>assertNoDiff()</code>
@@ -355,7 +355,7 @@ Windows/Unix newlines and ANSI color codes. The &quot;=&gt; Obtained&quot; secti
 <h2><a class="anchor" aria-hidden="true" id="intercept"></a><a href="#intercept" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>intercept()</code></h2>
 <p>Use <code>intercept()</code> when you expect a particular exception to be thrown by the
 test code (i.e. the test succeeds if the given exception is thrown).</p>
-<pre><code class="hljs css language-scala">intercept[java.lang.<span class="hljs-type">IllegalArgumentException</span>]{
+<pre><code class="hljs css language-scala"><span class="hljs-selector-tag">intercept</span><span class="hljs-selector-attr">[java.lang.IllegalArgumentException]</span>{
    <span class="hljs-comment">// code expected to throw exception here</span>
 }
 <span class="hljs-comment">// munit.FailException: expected exception of type 'java.lang.IllegalArgumentException' but body evaluated successfully</span>
@@ -366,13 +366,13 @@ test code (i.e. the test succeeds if the given exception is thrown).</p>
 <span class="hljs-comment">//  at munit.Assertions.intercept(Assertions.scala:126)</span>
 <span class="hljs-comment">//  at munit.Assertions.intercept$(Assertions.scala:123)</span>
 <span class="hljs-comment">//  at munit.FunSuite.intercept(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$26.apply(assertions.md:164)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$26.apply(assertions.md:164)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$26.apply(assertions.md:164)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$26.apply(assertions.md:164)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="interceptmessage"></a><a href="#interceptmessage" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>interceptMessage()</code></h2>
 <p>Like <code>intercept()</code> except additionally asserts that the thrown exception has a
 specific error message.</p>
-<pre><code class="hljs css language-scala">interceptMessage[java.lang.<span class="hljs-type">IllegalArgumentException</span>](<span class="hljs-string">"argument type mismatch"</span>){
+<pre><code class="hljs css language-scala"><span class="hljs-selector-tag">interceptMessage</span><span class="hljs-selector-attr">[java.lang.IllegalArgumentException]</span>(<span class="hljs-string">"argument type mismatch"</span>){
    <span class="hljs-comment">// code expected to throw exception here</span>
 }
 <span class="hljs-comment">// munit.FailException: expected exception of type 'java.lang.IllegalArgumentException' but body evaluated successfully</span>
@@ -383,21 +383,21 @@ specific error message.</p>
 <span class="hljs-comment">//  at munit.Assertions.interceptMessage(Assertions.scala:132)</span>
 <span class="hljs-comment">//  at munit.Assertions.interceptMessage$(Assertions.scala:129)</span>
 <span class="hljs-comment">//  at munit.FunSuite.interceptMessage(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$27.apply(assertions.md:174)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$27.apply(assertions.md:174)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$27.apply(assertions.md:174)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$27.apply(assertions.md:174)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="fail"></a><a href="#fail" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>fail()</code></h2>
 <p>Use <code>fail()</code> to make the test case fail immediately.</p>
 <pre><code class="hljs css language-scala">fail(<span class="hljs-string">"test failed"</span>)
-<span class="hljs-comment">// munit.FailException: test failed</span>
-<span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:189)</span>
-<span class="hljs-comment">//  at munit.Assertions.fail$(Assertions.scala:183)</span>
-<span class="hljs-comment">//  at munit.FunSuite.fail(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$28.apply(assertions.md:184)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$28.apply(assertions.md:184)</span>
+// munit.FailException: <span class="hljs-built_in">test</span> failed
+//  at munit.Assertions.fail(Assertions.scala:189)
+//  at munit.Assertions.fail$(Assertions.scala:183)
+//  at munit.FunSuite.fail(FunSuite.scala:11)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$28</span>.apply(assertions.md:184)
+//  at repl.MdocSession<span class="hljs-variable">$App</span>$<span class="hljs-variable">$anonfun</span><span class="hljs-variable">$28</span>.apply(assertions.md:184)
 </code></pre>
 <p>Use <code>clues()</code> to include optional context why the test failed.</p>
-<pre><code class="hljs css language-scala">fail(<span class="hljs-string">"test failed"</span>, clues(a + b))
+<pre><code class="hljs css language-scala"><span class="hljs-selector-tag">fail</span>(<span class="hljs-string">"test failed"</span>, clues(a + b))
 <span class="hljs-comment">// munit.FailException: test failed</span>
 <span class="hljs-comment">// Clues {</span>
 <span class="hljs-comment">//   a + b: Int = 3</span>
@@ -405,42 +405,42 @@ specific error message.</p>
 <span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:189)</span>
 <span class="hljs-comment">//  at munit.Assertions.fail$(Assertions.scala:183)</span>
 <span class="hljs-comment">//  at munit.FunSuite.fail(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$29.apply(assertions.md:192)</span>
-<span class="hljs-comment">//  at repl.Session$App$$anonfun$29.apply(assertions.md:192)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$29.apply(assertions.md:192)</span>
+<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$29.apply(assertions.md:192)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="compileerrors"></a><a href="#compileerrors" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>compileErrors()</code></h2>
 <p>Use <code>compileErrors()</code> to assert that an example code snippet fails with a
 specific compile-time error message.</p>
 <pre><code class="hljs css language-scala">assertNoDiff(
-  compileErrors("Set(2, 1).sorted"),
-     """|error: value sorted is not a member of scala.collection.immutable.Set[Int]
+  compileErrors(<span class="hljs-string">"Set(2, 1).sorted"</span>),
+     <span class="hljs-string">"""|error: value sorted is not a member of scala.collection.immutable.Set[Int]
         |Set(2, 1).sorted
         |          ^
-        |""".stripMargin
+        |"""</span>.stripMargin
 )
 </code></pre>
 <p>The argument to <code>compileErrors</code> must be a string literal. It's not possible to
 pass in more complicated expressions such as variables or string interpolators.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">val</span> code = <span class="hljs-string">""</span><span class="hljs-string">"val x: String = 2"</span><span class="hljs-string">""</span>
+<pre><code class="hljs css language-scala">val code = <span class="hljs-string">"""val x: String = 2"""</span>
 compileErrors(code)
-compileErrors(<span class="hljs-string">s"/* code */ <span class="hljs-subst">$code</span>"</span>)
-<span class="hljs-comment">// error: cannot compile dynamic expressions, only constant literals.</span>
-<span class="hljs-comment">// To fix this problem, pass in a string literal in double quotes "..."</span>
-<span class="hljs-comment">// compileErrors(code)</span>
-<span class="hljs-comment">//               ^^^^</span>
-<span class="hljs-comment">// error: cannot compile dynamic expressions, only constant literals.</span>
-<span class="hljs-comment">// To fix this problem, pass in a string literal in double quotes "..."</span>
-<span class="hljs-comment">// compileErrors(s"/* code */ $code")</span>
-<span class="hljs-comment">//               ^^^^^^^^^^^^^^^^^^</span>
+compileErrors(s<span class="hljs-string">"/* code */ $code"</span>)
+// error: cannot compile dynamic expressions, only constant literals.
+// To fix this problem, <span class="hljs-keyword">pass</span> <span class="hljs-keyword">in</span> a string literal <span class="hljs-keyword">in</span> double quotes <span class="hljs-string">"..."</span>
+// compileErrors(code)
+//               ^^^^
+// error: cannot compile dynamic expressions, only constant literals.
+// To fix this problem, <span class="hljs-keyword">pass</span> <span class="hljs-keyword">in</span> a string literal <span class="hljs-keyword">in</span> double quotes <span class="hljs-string">"..."</span>
+// compileErrors(s<span class="hljs-string">"/* code */ $code"</span>)
+//               ^^^^^^^^^^^^^^^^^^
 </code></pre>
 <p>Inline the <code>code</code> variable to fix the compile error.</p>
 <pre><code class="hljs css language-scala">compileErrors(<span class="hljs-string">"val x: String = 2"</span>)
-<span class="hljs-comment">// res7: String = """error:</span>
-<span class="hljs-comment">// type mismatch;</span>
-<span class="hljs-comment">//  found   : Int(2)</span>
-<span class="hljs-comment">//  required: String</span>
-<span class="hljs-comment">// val x: String = 2</span>
-<span class="hljs-comment">//                 ^"""</span>
+// res7: String = <span class="hljs-string">"""error:
+// type mismatch;
+//  found   : Int(2)
+//  required: String
+// val x: String = 2
+//                 ^"""</span>
 </code></pre>
 </span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/tests.html"><span class="arrow-prev">← </span><span>Declaring tests</span></a><a class="docs-next button" href="/munit/docs/fixtures.html"><span>Using fixtures</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#assert"><code>assert()</code></a></li><li><a href="#assertequals"><code>assertEquals()</code></a></li><li><a href="#assertnotequals"><code>assertNotEquals()</code></a></li><li><a href="#assertnodiff"><code>assertNoDiff()</code></a></li><li><a href="#intercept"><code>intercept()</code></a></li><li><a href="#interceptmessage"><code>interceptMessage()</code></a></li><li><a href="#fail"><code>fail()</code></a></li><li><a href="#compileerrors"><code>compileErrors()</code></a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2020 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
