@@ -207,3 +207,44 @@ to MUnit assertions:
 
 }
 ```
+
+## Porting existing ScalaCheck `Properties`
+
+If you have existing properties written with the built-in ScalaCheck
+`Properties` class and you don't want to rewrite them using MUnit suites yet,
+you can define a utility method along the lines of:
+
+```scala mdoc
+import org.scalacheck.Properties
+
+trait PropertiesAdapter { self: ScalaCheckSuite =>
+  def include(ps: Properties): Unit =
+    for ((name, prop) <- ps.properties) property(name)(prop)
+}
+```
+
+And use it:
+
+```scala mdoc
+object LegacyIntProps extends Properties("Int") {
+  property("commutative") = forAll((x: Int, y: Int) => x + y == y + x)
+  property("identity") = forAll((x: Int) => x + 0 == x)
+}
+
+class IntSuite extends ScalaCheckSuite with PropertiesAdapter {
+
+  // Include existing ScalaCheck Properties...
+  include(LegacyIntProps)
+
+  // ...and write new properties using MUnit
+  property("addition is associative") {
+    forAll { (x: Int, y: Int, z: Int) =>
+      x + y + z == x + (y + z)
+    }
+  }
+
+}
+```
+
+This way you can re-use the existing property definitions alongside the new ones
+written with MUnit.
