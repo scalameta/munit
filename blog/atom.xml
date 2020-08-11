@@ -32,10 +32,10 @@ ScalaCheck, which we'll explore in this blog post.</p>
         <summary type="html"><![CDATA[<p>MUnit v0.4.x did not support truly async tests on platforms like JavaScript. For
 example, the following test case would succeed even if it returns a failing
 future:</p>
-<pre><code class="hljs css language-scala">test("should fail after 100 milliseconds") {
-  val p = Promise[<span class="hljs-string">Unit</span>](<span class="hljs-link"></span>)
-  setTimeout(100) {
-<span class="hljs-code">    p.failure(new RuntimeException("boom"))</span>
+<pre><code class="hljs css language-scala">test(<span class="hljs-string">"should fail after 100 milliseconds"</span>) {
+  <span class="hljs-keyword">val</span> p = <span class="hljs-type">Promise</span>[<span class="hljs-type">Unit</span>]()
+  setTimeout(<span class="hljs-number">100</span>) {
+    p.failure(<span class="hljs-keyword">new</span> <span class="hljs-type">RuntimeException</span>(<span class="hljs-string">"boom"</span>))
   }
   p.future
 }

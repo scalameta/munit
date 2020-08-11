@@ -70,31 +70,31 @@ running.</p>
 setup/teardown methods to initialize resources before a test case and clean up
 resources after a test case.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.nio.file._
-<span class="hljs-keyword">class</span> FunFixtureSuite <span class="hljs-keyword">extends</span> munit.FunSuite {
-  val files = FunFixture[Path](
-    setup = { <span class="hljs-function"><span class="hljs-params">test</span> =&gt;</span>
-      Files.createTempFile(<span class="hljs-string">"tmp"</span>, test.name)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FunFixtureSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
+  <span class="hljs-keyword">val</span> files = <span class="hljs-type">FunFixture</span>[<span class="hljs-type">Path</span>](
+    setup = { test =&gt;
+      <span class="hljs-type">Files</span>.createTempFile(<span class="hljs-string">"tmp"</span>, test.name)
     },
-    teardown = { <span class="hljs-function"><span class="hljs-params">file</span> =&gt;</span>
+    teardown = { file =&gt;
       <span class="hljs-comment">// Always gets called, even if test failed.</span>
-      Files.deleteIfExists(file)
+      <span class="hljs-type">Files</span>.deleteIfExists(file)
     }
   )
 
-  files.test(<span class="hljs-string">"basic"</span>) { <span class="hljs-function"><span class="hljs-params">file</span> =&gt;</span>
-    assert(Files.isRegularFile(file), s<span class="hljs-string">"Files.isRegularFile($file)"</span>)
+  files.test(<span class="hljs-string">"basic"</span>) { file =&gt;
+    assert(<span class="hljs-type">Files</span>.isRegularFile(file), <span class="hljs-string">s"Files.isRegularFile(<span class="hljs-subst">$file</span>)"</span>)
   }
 }
 </code></pre>
 <p>Use <code>FunFixture.map2</code> to compose multiple fixtures into a single fixture.</p>
-<pre><code class="hljs css language-scala">// Fixture <span class="hljs-keyword">with</span> <span class="hljs-keyword">access</span> <span class="hljs-keyword">to</span> two <span class="hljs-keyword">temporary</span> files.
-val files2 = FunFixture.map2(files, files)
-// files2: FunFixture[(<span class="hljs-keyword">Path</span>, <span class="hljs-keyword">Path</span>)] = munit.FunFixtures$FunFixture@<span class="hljs-number">28</span>b4f8cb
+<pre><code class="hljs css language-scala"><span class="hljs-comment">// Fixture with access to two temporary files.</span>
+<span class="hljs-keyword">val</span> files2 = <span class="hljs-type">FunFixture</span>.map2(files, files)
+<span class="hljs-comment">// files2: FunFixture[(Path, Path)] = munit.FunFixtures$FunFixture@3440c4a4</span>
 files2.test(<span class="hljs-string">"two"</span>) {
   <span class="hljs-keyword">case</span> (file1, file2) =&gt;
     assertNotEquals(file1, file2)
-    assert(Files.isRegularFile(file1), s<span class="hljs-string">"Files.isRegularFile($file1)"</span>)
-    assert(Files.isRegularFile(file2), s<span class="hljs-string">"Files.isRegularFile($file2)"</span>)
+    assert(<span class="hljs-type">Files</span>.isRegularFile(file1), <span class="hljs-string">s"Files.isRegularFile(<span class="hljs-subst">$file1</span>)"</span>)
+    assert(<span class="hljs-type">Files</span>.isRegularFile(file2), <span class="hljs-string">s"Files.isRegularFile(<span class="hljs-subst">$file2</span>)"</span>)
 }
 </code></pre>
 <p>Functional test-local fixtures are desirable since they are easy to reason
@@ -107,25 +107,25 @@ local test case and get torn down after each test case. These increased
 capabilities come at the price of ergonomics of the API.</p>
 <p>Override the <code>beforeEach()</code> and <code>afterEach()</code> methods in the <code>Fixture[T]</code> trait
 to configure a reusable test-local fixture.</p>
-<pre><code class="hljs css language-scala">import java.nio.file.<span class="hljs-number">_</span>
-import munit.<span class="hljs-number">_</span>
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FilesSuite</span> <span class="hljs-title">extends</span> <span class="hljs-title">FunSuite</span> {</span>
-  val file = new Fixture[Path](<span class="hljs-string">"files"</span>) {
-    var <span class="hljs-symbol">file:</span> Path = null
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">apply</span><span class="hljs-params">()</span></span> = file
-    override <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">beforeEach</span><span class="hljs-params">(<span class="hljs-symbol">context:</span> BeforeEach)</span></span>: Unit = {
-      file = Files.createTempFile(<span class="hljs-string">"files"</span>, context.test.name)
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.nio.file._
+<span class="hljs-keyword">import</span> munit._
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FilesSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FunSuite</span> </span>{
+  <span class="hljs-keyword">val</span> file = <span class="hljs-keyword">new</span> <span class="hljs-type">Fixture</span>[<span class="hljs-type">Path</span>](<span class="hljs-string">"files"</span>) {
+    <span class="hljs-keyword">var</span> file: <span class="hljs-type">Path</span> = <span class="hljs-literal">null</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">apply</span></span>() = file
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">beforeEach</span></span>(context: <span class="hljs-type">BeforeEach</span>): <span class="hljs-type">Unit</span> = {
+      file = <span class="hljs-type">Files</span>.createTempFile(<span class="hljs-string">"files"</span>, context.test.name)
     }
-    override <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">afterEach</span><span class="hljs-params">(<span class="hljs-symbol">context:</span> AfterEach)</span></span>: Unit = {
-      <span class="hljs-regexp">//</span> Always gets called, even <span class="hljs-keyword">if</span> test failed.
-      Files.deleteIfExists(file)
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">afterEach</span></span>(context: <span class="hljs-type">AfterEach</span>): <span class="hljs-type">Unit</span> = {
+      <span class="hljs-comment">// Always gets called, even if test failed.</span>
+      <span class="hljs-type">Files</span>.deleteIfExists(file)
     }
   }
-  override <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitFixtures</span> = <span class="hljs-title">List</span><span class="hljs-params">(file)</span></span>
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitFixtures</span> </span>= <span class="hljs-type">List</span>(file)
 
   test(<span class="hljs-string">"exists"</span>) {
-    <span class="hljs-regexp">//</span> <span class="hljs-string">`file`</span> is the temporary file that was created <span class="hljs-keyword">for</span> this test <span class="hljs-keyword">case</span>.
-    assert(Files.exists(file()))
+    <span class="hljs-comment">// `file` is the temporary file that was created for this test case.</span>
+    assert(<span class="hljs-type">Files</span>.exists(file()))
   }
 }
 </code></pre>
@@ -133,20 +133,20 @@ import munit.<span class="hljs-number">_</span>
 <p>Reusable suite-local fixtures work the same as reusable test-local fixtures but
 they override the <code>beforeAll()</code> and <code>afterAll()</code> methods instead of
 <code>beforeEach()</code> and <code>afterEach()</code>.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.sql.Connection
-<span class="hljs-keyword">import</span> java.sql.DriverManager
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.sql.<span class="hljs-type">Connection</span>
+<span class="hljs-keyword">import</span> java.sql.<span class="hljs-type">DriverManager</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  val db = <span class="hljs-keyword">new</span> Fixture[Connection](<span class="hljs-string">"database"</span>) {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> connection: Connection = <span class="hljs-function"><span class="hljs-keyword">null</span>
-    def <span class="hljs-title">apply</span><span class="hljs-params">()</span> </span>= <span class="hljs-function">connection
-    override def <span class="hljs-title">beforeAll</span><span class="hljs-params">()</span>: Unit </span>= {
-      connection = DriverManager.getConnection(<span class="hljs-string">"jdbc:h2:mem:"</span>, <span class="hljs-string">"sa"</span>, <span class="hljs-keyword">null</span>)
+  <span class="hljs-keyword">val</span> db = <span class="hljs-keyword">new</span> <span class="hljs-type">Fixture</span>[<span class="hljs-type">Connection</span>](<span class="hljs-string">"database"</span>) {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> connection: <span class="hljs-type">Connection</span> = <span class="hljs-literal">null</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">apply</span></span>() = connection
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">beforeAll</span></span>(): <span class="hljs-type">Unit</span> = {
+      connection = <span class="hljs-type">DriverManager</span>.getConnection(<span class="hljs-string">"jdbc:h2:mem:"</span>, <span class="hljs-string">"sa"</span>, <span class="hljs-literal">null</span>)
     }
-    <span class="hljs-function">override def <span class="hljs-title">afterAll</span><span class="hljs-params">()</span>: Unit </span>= {
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">afterAll</span></span>(): <span class="hljs-type">Unit</span> = {
       connection.close()
     }
   }
-  override def munitFixtures = List(db)
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitFixtures</span> </span>= <span class="hljs-type">List</span>(db)
 
   test(<span class="hljs-string">"test1"</span>) {
     db() <span class="hljs-comment">// database connection has been initialized</span>
@@ -164,16 +164,16 @@ temporary files before executing tests or clean up acquired resources after the
 test finish.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.nio.file._
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-keyword">var</span> path: Path = <span class="hljs-keyword">null</span>
+  <span class="hljs-keyword">var</span> path: <span class="hljs-type">Path</span> = <span class="hljs-literal">null</span>
 
   <span class="hljs-comment">// Runs before each individual test.</span>
-  <span class="hljs-function">override def <span class="hljs-title">beforeEach</span><span class="hljs-params">(context: BeforeEach)</span>: Unit </span>= {
-    path = Files.createTempFile(<span class="hljs-string">"MySuite"</span>, context.test.name)
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">beforeEach</span></span>(context: <span class="hljs-type">BeforeEach</span>): <span class="hljs-type">Unit</span> = {
+    path = <span class="hljs-type">Files</span>.createTempFile(<span class="hljs-string">"MySuite"</span>, context.test.name)
   }
 
   <span class="hljs-comment">// Runs after each individual test.</span>
-  <span class="hljs-function">override def <span class="hljs-title">afterEach</span><span class="hljs-params">(context: AfterEach)</span>: Unit </span>= {
-    Files.deleteIfExists(path)
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">afterEach</span></span>(context: <span class="hljs-type">AfterEach</span>): <span class="hljs-type">Unit</span> = {
+    <span class="hljs-type">Files</span>.deleteIfExists(path)
   }
 
   test(<span class="hljs-string">"test1"</span>) {
@@ -191,19 +191,19 @@ test finish.</p>
 before all test cases start runniing and after all tests cases have finished
 running. For example, use this feature to establish a database connection that
 should be reused between test cases.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.sql.Connection
-<span class="hljs-keyword">import</span> java.sql.DriverManager
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.sql.<span class="hljs-type">Connection</span>
+<span class="hljs-keyword">import</span> java.sql.<span class="hljs-type">DriverManager</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-keyword">var</span> db: Connection = <span class="hljs-keyword">null</span>
+  <span class="hljs-keyword">var</span> db: <span class="hljs-type">Connection</span> = <span class="hljs-literal">null</span>
 
   <span class="hljs-comment">// Runs once before all tests start.</span>
-  <span class="hljs-function">override def <span class="hljs-title">beforeAll</span><span class="hljs-params">()</span>: Unit </span>= {
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">beforeAll</span></span>(): <span class="hljs-type">Unit</span> = {
     <span class="hljs-comment">// start in-memory database connection.</span>
-    db = DriverManager.getConnection(<span class="hljs-string">"jdbc:h2:mem:"</span>, <span class="hljs-string">"sa"</span>, <span class="hljs-keyword">null</span>)
+    db = <span class="hljs-type">DriverManager</span>.getConnection(<span class="hljs-string">"jdbc:h2:mem:"</span>, <span class="hljs-string">"sa"</span>, <span class="hljs-literal">null</span>)
   }
 
   <span class="hljs-comment">// Runs once after all tests have completed, regardless if tests passed or failed.</span>
-  <span class="hljs-function">override def <span class="hljs-title">afterAll</span><span class="hljs-params">()</span>: Unit </span>= {
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">afterAll</span></span>(): <span class="hljs-type">Unit</span> = {
     db.close()
   }
 }
@@ -213,12 +213,12 @@ should be reused between test cases.</p>
 avoid declaring fixture in the class constructor instead of <code>beforeAll()</code>.</p>
 <p>For example, IDEs like IntelliJ may load the class to discover the names of the
 test cases that are available.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.sql.DriverManager
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> java.sql.<span class="hljs-type">DriverManager</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-comment">// Don't do this, because the class may get initialized even if no tests run.</span>
-  val db = DriverManager.getConnection(<span class="hljs-string">"jdbc:h2:mem:"</span>, <span class="hljs-string">"sa"</span>, <span class="hljs-keyword">null</span>)
+  <span class="hljs-keyword">val</span> db = <span class="hljs-type">DriverManager</span>.getConnection(<span class="hljs-string">"jdbc:h2:mem:"</span>, <span class="hljs-string">"sa"</span>, <span class="hljs-literal">null</span>)
 
-  <span class="hljs-function">override def <span class="hljs-title">afterAll</span><span class="hljs-params">()</span>: Unit </span>= {
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">afterAll</span></span>(): <span class="hljs-type">Unit</span> = {
     <span class="hljs-comment">// May never get called, resulting in connection leaking.</span>
     db.close()
   }
