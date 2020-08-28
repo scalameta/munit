@@ -12,11 +12,18 @@ public class PantsFramework extends JUnitFramework {
       "org.scalatest.junit.JUnitRunner"
   );
 
+  // In ScalaTest 3.1+, `JUnitRunner` moved to a different package.
+  private static final CustomFingerprint scalatestPlusJunitFingerprint = CustomFingerprint.of(
+      "org.scalatest.Suite",
+      "org.scalatestplus.junit.JUnitRunner"
+  );
+
   private static final Fingerprint[] FINGERPRINTS = new Fingerprint[] {
       new RunWithFingerprint(),
       new JUnitFingerprint(),
       new JUnit3Fingerprint(),
-      scalatestFingerprint
+      scalatestFingerprint,
+      scalatestPlusJunitFingerprint
   };
 
   @Override
@@ -26,7 +33,7 @@ public class PantsFramework extends JUnitFramework {
 
   @Override
   public CustomRunners customRunners() {
-    return CustomRunners.of(scalatestFingerprint);
+    return CustomRunners.of(scalatestFingerprint, scalatestPlusJunitFingerprint);
   }
 
   @Override
