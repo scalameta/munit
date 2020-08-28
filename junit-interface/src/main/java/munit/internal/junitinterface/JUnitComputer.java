@@ -31,7 +31,8 @@ public class JUnitComputer extends Computer {
               testClassLoader.loadClass(runner)
           );
         } catch (ClassNotFoundException e) {
-          e.printStackTrace();
+          // ignore, since we'll fail to find at least one of the 2 `JUnitRunners`
+          // (it moved from `org.scalatest.junit` to `org.scalatestplus.junit` in 3.1)
         }
       });
   }
