@@ -70,14 +70,18 @@ val isScalaNative = Def.setting[Boolean](
   SettingKey[String]("nativeGC").?.value.isDefined
 )
 
+// NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
+lazy val skipIdeaSettings = SettingKey[Boolean]("ide-skip-project") := true
 val sharedJVMSettings = List(
   crossScalaVersions := allScalaVersions
 )
 val sharedJSSettings = List(
+  skipIdeaSettings,
   crossScalaVersions := scala2Versions,
   scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
 )
 val sharedNativeSettings = List(
+  skipIdeaSettings,
   scalaVersion := scala211,
   crossScalaVersions := List(scala211)
 )
