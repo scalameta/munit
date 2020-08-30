@@ -3,9 +3,9 @@
 ## Importing the build into IntelliJ
 
 This codebase is primarily developed with VS Code but it's possible to work on
-it with IntelliJ. There are a few quirks when importing the build into IntelliJ
-since MUnit is cross-compiled against multiple Scala versions (2.11, 2.12, 2.13,
-Dotty) and platforms (JVM, JavaScript and Native)
+this codebase with IntelliJ. There are a few quirks when importing the build
+into IntelliJ since MUnit is cross-compiled against multiple platforms (JVM,
+JavaScript and Native).
 
 - Use "Open or import" and select the MUnit directory.
 - If prompted to select import via sbt or bsp, select sbt.
@@ -21,12 +21,13 @@ Dotty) and platforms (JVM, JavaScript and Native)
 - If you get a "Class not found" error when running tests, you may need to
   manually edit the run configuration to use the `testsJVM` module instead of
   `tests-sources`.
+
   ![Screenshot 2020-08-30 at 08 20 51](https://user-images.githubusercontent.com/1408093/91652685-d99c0c80-ea99-11ea-9b85-f8067f9b9dec.png)
   ![Screenshot 2020-08-30 at 08 21 06](https://user-images.githubusercontent.com/1408093/91652684-d99c0c80-ea99-11ea-8ac8-8b1279cdf0da.png)
 
-- There may be highlighting errors for `PlatformCompat` and `BuildInfo` since
-  Intelli. You can ignore these highlighting errors, the project should still
-  compile successfully.
+- There may be highlighting errors for `PlatformCompat` and `BuildInfo`. You can
+  ignore these highlighting errors, the project should still compile
+  successfully.
 
 If everything is setup correctly, you should be able to run tests and debug via
 IntelliJ like normal:
