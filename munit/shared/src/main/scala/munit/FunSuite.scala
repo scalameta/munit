@@ -26,7 +26,7 @@ abstract class FunSuite
   }
 
   def test(name: String)(body: => Any)(implicit loc: Location): Unit = {
-    test(new TestOptions(name, Set.empty, loc))(body)
+    test(new TestOptions(name))(body)
   }
   def test(options: TestOptions)(body: => Any)(implicit loc: Location): Unit = {
     munitTestsBuffer += munitTestTransform(

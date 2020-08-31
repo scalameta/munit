@@ -12,6 +12,8 @@ final class TestOptions(
     val tags: Set[Tag],
     val location: Location
 ) extends Serializable {
+  def this(name: String)(implicit loc: munit.Location) =
+    this(name, Set.empty, loc)
 
   def withName(newName: String): TestOptions =
     copy(name = newName)
@@ -35,6 +37,11 @@ final class TestOptions(
 
   override def toString: String =
     s"TestOptions($name, $tags, $location)"
+}
+
+object TestOptions extends TestOptionsConversions {
+  def apply(name: String)(implicit loc: munit.Location): TestOptions =
+    new TestOptions(name)
 }
 
 trait TestOptionsConversions {
