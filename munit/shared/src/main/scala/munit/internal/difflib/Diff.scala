@@ -105,6 +105,6 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
   }
 
   private def splitIntoLines(string: String): Seq[String] = {
-    string.trim().replaceAllLiterally("\r\n", "\n").split("\n").toIndexedSeq
+    string.trim().replace("\r\n", "\n").split("\n").toIndexedSeq
   }
 }
