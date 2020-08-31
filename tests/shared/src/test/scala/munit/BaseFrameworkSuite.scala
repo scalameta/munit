@@ -20,7 +20,7 @@ abstract class BaseFrameworkSuite extends BaseSuite {
     if (ex.getMessage() == null) "null"
     else {
       ex.getMessage()
-        .replaceAllLiterally(
+        .replace(
           BuildInfo.sourceDirectory.toString(),
           ""
         )
@@ -103,7 +103,7 @@ abstract class BaseFrameworkSuite extends BaseSuite {
         val obtained = AnsiColors.filterAnsi(
           t.format match {
             case SbtFormat =>
-              events.toString().replaceAllLiterally("\"\"\"", "'''")
+              events.toString().replace("\"\"\"", "'''")
             case StdoutFormat =>
               elapsedTimePattern.matcher(stdout).replaceAll(" <elapsed time>")
           }

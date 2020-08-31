@@ -53,7 +53,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   def createTestDescription(test: suite.Test): Description = {
     descriptions.getOrElseUpdate(
       test, {
-        val escapedName = test.name.replaceAllLiterally("\n", "\\n")
+        val escapedName = test.name.replace("\n", "\\n")
         val testName = munit.internal.Compat.LazyList
           .from(0)
           .map {

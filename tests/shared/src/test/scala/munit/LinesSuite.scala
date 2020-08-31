@@ -39,7 +39,7 @@ class LinesSuite extends FunSuite {
     test(options) {
       val obtained = munitLines
         .formatLine(location, message)
-        .replaceAllLiterally(location.path, location.filename)
+        .replace(location.path, location.filename)
       assertNoDiff(obtained, expected)
     }
   }
