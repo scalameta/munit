@@ -3,7 +3,7 @@ val scalaJSVersion =
 
 addSbtPlugin("com.geirsson" % "sbt-ci-release" % "1.5.3")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.2.3")
+addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.2.6")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.4")
 addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.2")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.19")
