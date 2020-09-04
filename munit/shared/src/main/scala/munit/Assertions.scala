@@ -120,6 +120,26 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     }
   }
 
+  /**
+   * Asserts that two doubles or floats are equal to within a positive delta.
+   * If the expected value is infinity then the delta value is ignored.
+   * NaNs are considered equal: assertEquals(Double.NaN, Double.NaN, *) passes
+   */
+  def assertEquals(
+      obtained: Double,
+      expected: Double,
+      delta: Double,
+      clue: => Any = "values are not the same"
+  )(implicit loc: Location): Unit = {
+    StackTraces.dropInside {
+      val exactlyTheSame = java.lang.Double.compare(expected, obtained) == 0
+      val almostTheSame = Math.abs(expected - obtained) <= delta
+      if (!exactlyTheSame && !almostTheSame) {
+        fail(munitPrint(clue))
+      }
+    }
+  }
+
   def intercept[T <: Throwable](
       body: => Any
   )(implicit T: ClassTag[T], loc: Location): T = {
