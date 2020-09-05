@@ -67,7 +67,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   )(implicit loc: Location, ev: A =:= B): Unit = {
     StackTraces.dropInside {
       if (obtained == expected) {
-        fail(munitPrint(clue))
+        fail(s"${munitPrint(clue)} expected same: $expected was not: $obtained")
       }
     }
   }
@@ -149,7 +149,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       val exactlyTheSame = java.lang.Double.compare(expected, obtained) == 0
       val almostTheSame = Math.abs(expected - obtained) <= delta
       if (!exactlyTheSame && !almostTheSame) {
-        fail(munitPrint(clue))
+        fail(s"${munitPrint(clue)} expected: $expected but was: $obtained")
       }
     }
   }
