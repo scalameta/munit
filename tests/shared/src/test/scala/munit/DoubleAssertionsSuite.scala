@@ -29,7 +29,7 @@ class DoubleAssertionsFrameworkSuite extends BaseSuite {
     assertEquals(Double.NegativeInfinity, Double.NegativeInfinity, 0.0)
   }
 
-  test("All Infinities".fail) {
+  test("All Infinities") {
     assertEquals(
       Double.PositiveInfinity,
       Double.NegativeInfinity,
@@ -66,7 +66,7 @@ class DoubleAssertionsFrameworkSuite extends BaseSuite {
     assertEquals(Float.NegativeInfinity, Float.NegativeInfinity, 0.0)
   }
 
-  test("All Infinities".fail) {
+  test("All Infinities") {
     assertEquals(
       Float.PositiveInfinity,
       Float.NegativeInfinity,
