@@ -53,12 +53,14 @@ trait ScalaCheckSuite extends FunSuite {
       scalaCheckTestParameters.initialSeed.getOrElse(
         Seed.fromBase64(scalaCheckInitialSeed).get
       )
-    var seed: Seed = null
+    val initialSeed = makeSeed()
+    var seed: Seed = initialSeed
     val result = check(
       scalaCheckTestParameters,
       Prop { genParams =>
-        seed = makeSeed()
-        prop(genParams.withInitialSeed(seed))
+        val r = prop(genParams.withInitialSeed(seed))
+        seed = seed.next
+        r
       }
     )
     def renderResult(r: Result): String = {
@@ -66,10 +68,10 @@ trait ScalaCheckSuite extends FunSuite {
       if (r.passed) {
         resultMessage
       } else {
-        val seedMessage = s"""|Failing seed: ${seed.toBase64}
+        val seedMessage = s"""|Failing seed: ${initialSeed.toBase64}
                               |You can reproduce this failure by adding the following override to your suite:
                               |
-                              |  override val scalaCheckInitialSeed = "${seed.toBase64}"
+                              |  override val scalaCheckInitialSeed = "${initialSeed.toBase64}"
                               |""".stripMargin
         seedMessage + "\n" + resultMessage
       }
