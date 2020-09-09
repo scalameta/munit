@@ -49,23 +49,29 @@ trait ScalaCheckSuite extends FunSuite {
 
   private def propToTry(prop: Prop, test: Test): Try[Unit] = {
     import ScalaCheckTest._
-    def seed =
+    def makeSeed() =
       scalaCheckTestParameters.initialSeed.getOrElse(
         Seed.fromBase64(scalaCheckInitialSeed).get
       )
+    val initialSeed = makeSeed()
+    var seed: Seed = initialSeed
     val result = check(
       scalaCheckTestParameters,
-      Prop(genParams => prop(genParams.withInitialSeed(seed)))
+      Prop { genParams =>
+        val r = prop(genParams.withInitialSeed(seed))
+        seed = seed.next
+        r
+      }
     )
     def renderResult(r: Result): String = {
       val resultMessage = Pretty.pretty(r, scalaCheckPrettyParameters)
       if (r.passed) {
         resultMessage
       } else {
-        val seedMessage = s"""|Failing seed: ${seed.toBase64}
+        val seedMessage = s"""|Failing seed: ${initialSeed.toBase64}
                               |You can reproduce this failure by adding the following override to your suite:
                               |
-                              |  override val scalaCheckInitialSeed = "${seed.toBase64}"
+                              |  override val scalaCheckInitialSeed = "${initialSeed.toBase64}"
                               |""".stripMargin
         seedMessage + "\n" + resultMessage
       }
