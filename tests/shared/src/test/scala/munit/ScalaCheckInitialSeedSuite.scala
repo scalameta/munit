@@ -3,9 +3,11 @@ package munit
 import scala.collection.mutable
 import org.scalacheck.Prop.forAll
 
-// Regression test for https://github.com/scalameta/munit/issues/118
-final class ScalaCheckSeedSuite extends ScalaCheckSuite {
+final class ScalaCheckInitialSeedSuite extends ScalaCheckSuite {
 
+  // initial seed should be used for the first out of 100 `minSuccessfulTests` only
+  override val scalaCheckInitialSeed =
+    "9SohH7wEYXCdXK4b9yM2d6TKIN2jBFcBs4QBta-2yTD="
   private val ints = mutable.Set.empty[Int]
 
   property("generating int") {
