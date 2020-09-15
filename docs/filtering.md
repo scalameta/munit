@@ -16,19 +16,6 @@ line.
 > testOnly -- com.foo.controllers.*
 ```
 
-Use `testOnly -- --only=$TEST_FILTER` to filter an individual test name from the
-command line.
-
-```scala mdoc:invisible
-object Tests extends munit.FunSuite
-import Tests._
-```
-
-```sh
-# sbt shell
-> testOnly -- --only=issue-456
-```
-
 Use `.only` to run only a single test without custom command-line arguments.
 
 ```scala mdoc
@@ -41,6 +28,26 @@ test("issue-456".only) {
 test("issue-455") {
   // will not run
 }
+```
+
+Use `testOnly -- --tests=$REGEXP` to filter an individual test name from the
+command line.
+
+```scala mdoc:invisible
+object Tests extends munit.FunSuite
+import Tests._
+```
+
+```sh
+# sbt shell
+> testOnly -- --tests=issue-456
+```
+
+It's necessary to quote the `--tests=` flag if the test name contains spaces.
+
+```sh
+# sbt shell
+> testOnly -- "--tests=test case with space"
 ```
 
 ## Ignore single test case
