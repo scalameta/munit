@@ -121,32 +121,38 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   }
 
   /**
-   * Asserts that two doubles or floats are equal to within a positive delta.
+   * Asserts that two doubles are equal to within a positive delta.
    * If the expected value is infinity then the delta value is ignored.
    * NaNs are considered equal: assertEquals(Double.NaN, Double.NaN, *) passes.
    */
-  def assertEquals(
-      obtained: Double,
-      expected: Double,
-      delta: Double
-  )(implicit loc: Location): Unit = {
-    val defaultClue = "values are not the same"
-    assertEquals(obtained, expected, delta, defaultClue)
-  }
-
-  /**
-   * Asserts that two doubles or floats are equal to within a positive delta.
-   * If the expected value is infinity then the delta value is ignored.
-   * NaNs are considered equal: assertEquals(Double.NaN, Double.NaN, *, *) passes.
-   */
-  def assertEquals(
+  def assertEqualsDouble(
       obtained: Double,
       expected: Double,
       delta: Double,
-      clue: => Any
+      clue: => Any = "values are not the same"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
       val exactlyTheSame = java.lang.Double.compare(expected, obtained) == 0
+      val almostTheSame = Math.abs(expected - obtained) <= delta
+      if (!exactlyTheSame && !almostTheSame) {
+        fail(s"${munitPrint(clue)} expected: $expected but was: $obtained")
+      }
+    }
+  }
+
+  /**
+   * Asserts that two floats are equal to within a positive delta.
+   * If the expected value is infinity then the delta value is ignored.
+   * NaNs are considered equal: assertEquals(Float.NaN, Float.NaN, *) passes.
+   */
+  def assertEqualsFloat(
+      obtained: Float,
+      expected: Float,
+      delta: Float,
+      clue: => Any = "values are not the same"
+  )(implicit loc: Location): Unit = {
+    StackTraces.dropInside {
+      val exactlyTheSame = java.lang.Float.compare(expected, obtained) == 0
       val almostTheSame = Math.abs(expected - obtained) <= delta
       if (!exactlyTheSame && !almostTheSame) {
         fail(s"${munitPrint(clue)} expected: $expected but was: $obtained")
