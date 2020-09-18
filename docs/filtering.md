@@ -18,6 +18,11 @@ line.
 
 Use `.only` to run only a single test without custom command-line arguments.
 
+```scala mdoc:invisible
+object Tests extends munit.FunSuite
+import Tests._
+```
+
 ```scala mdoc
 test("issue-457") {
   // will not run
@@ -33,10 +38,6 @@ test("issue-455") {
 Use `testOnly -- --tests=$REGEXP` to filter an individual test name from the
 command line.
 
-```scala mdoc:invisible
-object Tests extends munit.FunSuite
-import Tests._
-```
 
 ```sh
 # sbt shell
