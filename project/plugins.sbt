@@ -12,7 +12,7 @@ addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.0.0")
 addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.4.0-M2")
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % scalaJSVersion)
 
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.112.0"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.113.0"
 
 unmanagedSourceDirectories.in(Compile) +=
   baseDirectory.in(ThisBuild).value.getParentFile /
