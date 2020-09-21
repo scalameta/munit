@@ -33,8 +33,10 @@ object DiffUtils {
           // position.
           // And if it is, add it to the current set
           val nextDelta = patchDeltas.get(i)
-          if ((position + delta.getOriginal.size + contextSize) >=
-                (nextDelta.getOriginal.getPosition - contextSize)) {
+          if (
+            (position + delta.getOriginal.size + contextSize) >=
+              (nextDelta.getOriginal.getPosition - contextSize)
+          ) {
             deltas.add(nextDelta)
           } else { // if it isn't, output the current set,
             // then create a new set and add the current Delta to

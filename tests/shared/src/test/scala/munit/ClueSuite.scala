@@ -1,8 +1,8 @@
 package munit
 
 class ClueSuite extends BaseSuite {
-  def check[T](options: TestOptions, clue: Clue[T], expected: String)(
-      implicit loc: Location
+  def check[T](options: TestOptions, clue: Clue[T], expected: String)(implicit
+      loc: Location
   ): Unit = {
     test(options) {
       assertEquals(clue.source, expected)
@@ -17,7 +17,8 @@ class ClueSuite extends BaseSuite {
 
   // Disabled on Dotty because the starting position doesn't include opening "("
   check(
-    "lambda".tag(NoDotty), { (y: String) => y.head },
+    "lambda".tag(NoDotty),
+    { (y: String) => y.head },
     "(y: String) => y.head"
   )
 

@@ -8,8 +8,8 @@ import scala.annotation.switch
 import munit.Clues
 
 object Printers {
-  def log(any: Any, printer: Printer = EmptyPrinter)(
-      implicit loc: Location
+  def log(any: Any, printer: Printer = EmptyPrinter)(implicit
+      loc: Location
   ): Unit = {
     println(loc.toString)
     println(print(any, printer))
@@ -74,11 +74,10 @@ object Printers {
               out,
               indent,
               nextIndent
-            ) {
-              case (key, value) =>
-                loop(key, nextIndent)
-                out.append(" -> ")
-                loop(value, nextIndent)
+            ) { case (key, value) =>
+              loop(key, nextIndent)
+              out.append(" -> ")
+              loop(value, nextIndent)
             }
           case x: Iterable[_] =>
             printApply(
@@ -111,12 +110,11 @@ object Printers {
               out,
               indent,
               nextIndent
-            ) {
-              case (value, key) =>
-                if (key.nonEmpty) {
-                  out.append(key).append(" = ")
-                }
-                loop(value, nextIndent)
+            ) { case (value, key) =>
+              if (key.nonEmpty) {
+                out.append(key).append(" = ")
+              }
+              loop(value, nextIndent)
             }
           case _ =>
             out.append(a.toString())

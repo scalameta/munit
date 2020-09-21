@@ -32,9 +32,11 @@ object MacroCompat {
         val chars = value.pos.source.content
         val start = value.pos.start
         val end = value.pos.end
-        if (end > start &&
-            start >= 0 && start < chars.length &&
-            end >= 0 && end < chars.length) {
+        if (
+          end > start &&
+          start >= 0 && start < chars.length &&
+          end >= 0 && end < chars.length
+        ) {
           new String(chars, start, end - start)
         } else {
           ""

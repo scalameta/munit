@@ -156,8 +156,10 @@ final class JUnitReporter(
     var top = 0
     var i = top
     while (i <= m2) {
-      if (trace(i).toString.startsWith("org.junit.") ||
-          trace(i).toString.startsWith("org.hamcrest.")) {
+      if (
+        trace(i).toString.startsWith("org.junit.") ||
+        trace(i).toString.startsWith("org.hamcrest.")
+      ) {
         if (i == top) {
           top += 1
         } else {
@@ -165,8 +167,10 @@ final class JUnitReporter(
           var break = false
           while (m2 > top && !break) {
             val s = trace(m2).toString
-            if (!s.startsWith("java.lang.reflect.") &&
-                !s.startsWith("sun.reflect.")) {
+            if (
+              !s.startsWith("java.lang.reflect.") &&
+              !s.startsWith("sun.reflect.")
+            ) {
               break = true
             } else {
               m2 -= 1

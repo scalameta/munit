@@ -18,8 +18,8 @@ trait SuiteTransforms { this: FunSuite =>
 
   final def munitSuiteTransform(tests: List[Test]): List[Test] = {
     try {
-      munitSuiteTransforms.foldLeft(tests) {
-        case (ts, fn) => fn(ts)
+      munitSuiteTransforms.foldLeft(tests) { case (ts, fn) =>
+        fn(ts)
       }
     } catch {
       case NonFatal(e) =>
@@ -34,31 +34,37 @@ trait SuiteTransforms { this: FunSuite =>
 
   def munitIgnore: Boolean = false
   final def munitIgnoreSuiteTransform: SuiteTransform =
-    new SuiteTransform("munitIgnore", { tests =>
-      if (munitIgnore) Nil
-      else tests
-    })
+    new SuiteTransform(
+      "munitIgnore",
+      { tests =>
+        if (munitIgnore) Nil
+        else tests
+      }
+    )
 
   def isCI: Boolean = "true" == System.getenv("CI")
   final def munitOnlySuiteTransform: SuiteTransform =
-    new SuiteTransform("only", { tests =>
-      val onlySuite = tests.filter(_.tags(Only))
-      if (onlySuite.nonEmpty) {
-        if (!isCI) {
-          onlySuite
+    new SuiteTransform(
+      "only",
+      { tests =>
+        val onlySuite = tests.filter(_.tags(Only))
+        if (onlySuite.nonEmpty) {
+          if (!isCI) {
+            onlySuite
+          } else {
+            onlySuite.map(t =>
+              if (t.tags(Only)) {
+                t.withBody[TestValue](() =>
+                  fail("'Only' tag is not allowed when `isCI=true`")(t.location)
+                )
+              } else {
+                t
+              }
+            )
+          }
         } else {
-          onlySuite.map(t =>
-            if (t.tags(Only)) {
-              t.withBody[TestValue](() =>
-                fail("'Only' tag is not allowed when `isCI=true`")(t.location)
-              )
-            } else {
-              t
-            }
-          )
+          tests
         }
-      } else {
-        tests
       }
-    })
+    )
 }

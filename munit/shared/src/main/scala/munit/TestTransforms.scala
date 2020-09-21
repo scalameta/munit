@@ -21,8 +21,8 @@ trait TestTransforms { this: FunSuite =>
 
   final def munitTestTransform(test: Test): Test = {
     try {
-      munitTestTransforms.foldLeft(test) {
-        case (t, fn) => fn(t)
+      munitTestTransforms.foldLeft(test) { case (t, fn) =>
+        fn(t)
       }
     } catch {
       case NonFatal(e) =>
@@ -31,45 +31,51 @@ trait TestTransforms { this: FunSuite =>
   }
 
   final def munitFailTransform: TestTransform =
-    new TestTransform("fail", { t =>
-      if (t.tags(Fail)) {
-        t.withBodyMap[TestValue](
-          _.transformCompat {
-            case Success(value) =>
-              Failure(
-                throw new FailException(
-                  munitLines.formatLine(
-                    t.location,
-                    "expected failure but test passed"
-                  ),
-                  t.location
+    new TestTransform(
+      "fail",
+      { t =>
+        if (t.tags(Fail)) {
+          t.withBodyMap[TestValue](
+            _.transformCompat {
+              case Success(value) =>
+                Failure(
+                  throw new FailException(
+                    munitLines.formatLine(
+                      t.location,
+                      "expected failure but test passed"
+                    ),
+                    t.location
+                  )
                 )
-              )
-            case Failure(exception) =>
-              Success(())
-          }(munitExecutionContext)
-        )
-      } else {
-        t
+              case Failure(exception) =>
+                Success(())
+            }(munitExecutionContext)
+          )
+        } else {
+          t
+        }
       }
-    })
+    )
 
   def munitFlakyOK: Boolean = "true" == System.getenv("MUNIT_FLAKY_OK")
   final def munitFlakyTransform: TestTransform =
-    new TestTransform("flaky", { t =>
-      if (t.tags(Flaky)) {
-        t.withBodyMap(_.transformCompat {
-          case Success(value) => Success(value)
-          case Failure(exception) =>
-            if (munitFlakyOK) {
-              Success(new TestValues.FlakyFailure(exception))
-            } else {
-              throw exception
-            }
-        }(munitExecutionContext))
-      } else {
-        t
+    new TestTransform(
+      "flaky",
+      { t =>
+        if (t.tags(Flaky)) {
+          t.withBodyMap(_.transformCompat {
+            case Success(value) => Success(value)
+            case Failure(exception) =>
+              if (munitFlakyOK) {
+                Success(new TestValues.FlakyFailure(exception))
+              } else {
+                throw exception
+              }
+          }(munitExecutionContext))
+        } else {
+          t
+        }
       }
-    })
+    )
 
 }
