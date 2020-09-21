@@ -270,7 +270,7 @@ lazy val docs = project
       .in(plugin, Compile)
       .value / "scala" / "munit" / "sbtmunit" / "MUnitTestReport.scala",
     libraryDependencies ++= List(
-      "org.scala-lang.modules" %% "scala-xml" % "2.0.0-M1",
+      "org.scala-lang.modules" %% "scala-xml" % "2.0.0-M2",
       gcp
     ),
     test := {},
