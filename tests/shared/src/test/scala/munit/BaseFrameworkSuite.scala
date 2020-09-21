@@ -87,15 +87,14 @@ abstract class BaseFrameworkSuite extends BaseSuite {
       TestingConsole.out = out
       TestingConsole.err = out
       for {
-        _ <- tasks.foldLeft(Future.successful(())) {
-          case (base, task) =>
-            base.flatMap(_ =>
-              PlatformCompat.executeAsync(
-                task,
-                eventHandler,
-                Array(logger)
-              )
+        _ <- tasks.foldLeft(Future.successful(())) { case (base, task) =>
+          base.flatMap(_ =>
+            PlatformCompat.executeAsync(
+              task,
+              eventHandler,
+              Array(logger)
             )
+          )
         }
       } yield {
         val stdout =

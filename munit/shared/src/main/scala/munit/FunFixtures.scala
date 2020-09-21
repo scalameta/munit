@@ -75,12 +75,11 @@ trait FunFixtures { self: FunSuite =>
             argumentB <- setupB
           } yield (argumentA, argumentB)
         },
-        teardown = {
-          case (argumentA, argumentB) =>
-            implicit val ec = munitExecutionContext
-            Future
-              .sequence(List(a.teardown(argumentA), b.teardown(argumentB)))
-              .map(_ => ())
+        teardown = { case (argumentA, argumentB) =>
+          implicit val ec = munitExecutionContext
+          Future
+            .sequence(List(a.teardown(argumentA), b.teardown(argumentB)))
+            .map(_ => ())
         }
       )
     def map3[A, B, C](
@@ -100,18 +99,17 @@ trait FunFixtures { self: FunSuite =>
             argumentC <- setupC
           } yield (argumentA, argumentB, argumentC)
         },
-        teardown = {
-          case (argumentA, argumentB, argumentC) =>
-            implicit val ec = munitExecutionContext
-            Future
-              .sequence(
-                List(
-                  a.teardown(argumentA),
-                  b.teardown(argumentB),
-                  c.teardown(argumentC)
-                )
+        teardown = { case (argumentA, argumentB, argumentC) =>
+          implicit val ec = munitExecutionContext
+          Future
+            .sequence(
+              List(
+                a.teardown(argumentA),
+                b.teardown(argumentB),
+                c.teardown(argumentC)
               )
-              .map(_ => ())
+            )
+            .map(_ => ())
         }
       )
   }

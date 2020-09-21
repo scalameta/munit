@@ -51,8 +51,10 @@ class ScalaCheckExceptionFrameworkSuites
          |""".stripMargin,
       tags = Set(OnlyJVM),
       onEvent = { event =>
-        if (event.throwable.isDefined &&
-            event.throwable().get.getCause() != null) {
+        if (
+          event.throwable.isDefined &&
+          event.throwable().get.getCause() != null
+        ) {
           event
             .throwable()
             .get

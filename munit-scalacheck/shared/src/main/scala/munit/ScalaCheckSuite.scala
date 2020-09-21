@@ -38,14 +38,17 @@ trait ScalaCheckSuite extends FunSuite {
   protected def scalaCheckInitialSeed: String = Seed.random().toBase64
 
   private val scalaCheckPropTransform: TestTransform =
-    new TestTransform("ScalaCheck Prop", t => {
-      t.withBodyMap[TestValue](
-        _.transformCompat {
-          case Success(prop: Prop) => propToTry(prop, t)
-          case r                   => r
-        }(munitExecutionContext)
-      )
-    })
+    new TestTransform(
+      "ScalaCheck Prop",
+      t => {
+        t.withBodyMap[TestValue](
+          _.transformCompat {
+            case Success(prop: Prop) => propToTry(prop, t)
+            case r                   => r
+          }(munitExecutionContext)
+        )
+      }
+    )
 
   private def propToTry(prop: Prop, test: Test): Try[Unit] = {
     import ScalaCheckTest._

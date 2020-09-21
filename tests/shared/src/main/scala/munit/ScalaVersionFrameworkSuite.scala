@@ -5,9 +5,12 @@ class ScalaVersionFrameworkSuite extends munit.FunSuite {
 
   override def munitTestTransforms: List[TestTransform] =
     super.munitTestTransforms ++ List(
-      new TestTransform("append scala version", { test =>
-        test.withName(test.name + "-" + scalaVersion)
-      })
+      new TestTransform(
+        "append scala version",
+        { test =>
+          test.withName(test.name + "-" + scalaVersion)
+        }
+      )
     )
 
   test("foo") {

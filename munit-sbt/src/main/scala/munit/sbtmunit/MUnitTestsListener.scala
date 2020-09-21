@@ -54,16 +54,15 @@ class MUnitTestsListener(
       projectName = projectName,
       javaVersion = System.getProperty("java.version"),
       os = System.getProperty("os.name"),
-      groups = groups.asScala.iterator.map {
-        case (group, events) =>
-          MUnitTestReport.Group(
-            name = group,
-            result = overallResult(events.asScala).toString,
-            events = events.asScala.iterator
-              .flatMap(_.detail)
-              .map(newTestEvent)
-              .toArray
-          )
+      groups = groups.asScala.iterator.map { case (group, events) =>
+        MUnitTestReport.Group(
+          name = group,
+          result = overallResult(events.asScala).toString,
+          events = events.asScala.iterator
+            .flatMap(_.detail)
+            .map(newTestEvent)
+            .toArray
+        )
       }.toArray
     )
   }

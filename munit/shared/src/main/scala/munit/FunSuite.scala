@@ -31,7 +31,8 @@ abstract class FunSuite
   def test(options: TestOptions)(body: => Any)(implicit loc: Location): Unit = {
     munitTestsBuffer += munitTestTransform(
       new Test(
-        options.name, { () =>
+        options.name,
+        { () =>
           try {
             waitForCompletion(munitValueTransform(body))
           } catch {

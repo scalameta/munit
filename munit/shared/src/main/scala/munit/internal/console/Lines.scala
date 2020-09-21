@@ -18,9 +18,11 @@ class Lines extends Serializable {
   def formatLine(location: Location, message: String, clues: Clues): String = {
     try {
       val path = Paths.get(location.path)
-      val lines = filecache.getOrElseUpdate(path, {
-        Files.readAllLines(path).asScala.toArray
-      })
+      val lines = filecache.getOrElseUpdate(
+        path, {
+          Files.readAllLines(path).asScala.toArray
+        }
+      )
       val slice = lines.slice(location.line - 2, location.line + 1)
       val out = new StringBuilder()
       if (slice.length == 3) {

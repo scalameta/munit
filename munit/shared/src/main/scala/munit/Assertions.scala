@@ -146,7 +146,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
         throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
-          if (expectedExceptionMessage.isEmpty || e.getMessage == expectedExceptionMessage.get)
+          if (
+            expectedExceptionMessage.isEmpty || e.getMessage == expectedExceptionMessage.get
+          )
             e.asInstanceOf[T]
           else {
             val obtained = e.getClass().getName()
@@ -170,8 +172,8 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     }
   }
 
-  def fail(message: String, cause: Throwable)(
-      implicit loc: Location
+  def fail(message: String, cause: Throwable)(implicit
+      loc: Location
   ): Nothing = {
     throw new FailException(
       munitFilterAnsi(munitLines.formatLine(loc, message)),

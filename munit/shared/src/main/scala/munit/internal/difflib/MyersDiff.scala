@@ -25,9 +25,11 @@ class MyersDiff[T](equalizer: Equalizer[T])
     var path = _path
     val patch = new munit.internal.difflib.Patch[T]
     if (path.isSnake) path = path.prev
-    while (path != null &&
-           path.prev != null &&
-           path.prev.j >= 0) {
+    while (
+      path != null &&
+      path.prev != null &&
+      path.prev.j >= 0
+    ) {
       if (path.isSnake)
         throw new IllegalStateException(
           "bad diffpath: found snake when looking for diff"
@@ -103,9 +105,11 @@ class MyersDiff[T](equalizer: Equalizer[T])
         // orig and rev are zero-based
         // but the algorithm is one-based
         // that's why there's no +1 when indexing the sequences
-        while (i < N &&
-               j < M &&
-               equalizer.equals(orig.get(i), rev.get(j))) {
+        while (
+          i < N &&
+          j < M &&
+          equalizer.equals(orig.get(i), rev.get(j))
+        ) {
           i += 1
           j += 1
         }
