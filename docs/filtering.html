@@ -70,11 +70,6 @@ line.</p>
 &gt; testOnly -- *issue-456
 &gt; testOnly -- com.foo.controllers.*
 </code></pre>
-<p>Use <code>testOnly -- --only=$TEST_FILTER</code> to filter an individual test name from the
-command line.</p>
-<pre><code class="hljs css language-sh"><span class="hljs-comment"># sbt shell</span>
-&gt; testOnly -- --only=issue-456
-</code></pre>
 <p>Use <code>.only</code> to run only a single test without custom command-line arguments.</p>
 <pre><code class="hljs css language-scala">test(<span class="hljs-string">"issue-457"</span>) {
   <span class="hljs-comment">// will not run</span>
@@ -85,6 +80,15 @@ test(<span class="hljs-string">"issue-456"</span>.only) {
 test(<span class="hljs-string">"issue-455"</span>) {
   <span class="hljs-comment">// will not run</span>
 }
+</code></pre>
+<p>Use <code>testOnly -- --tests=$REGEXP</code> to filter an individual test name from the
+command line.</p>
+<pre><code class="hljs css language-sh"><span class="hljs-comment"># sbt shell</span>
+&gt; testOnly -- --tests=issue-456
+</code></pre>
+<p>It's necessary to quote the <code>--tests=</code> flag if the test name contains spaces.</p>
+<pre><code class="hljs css language-sh"><span class="hljs-comment"># sbt shell</span>
+&gt; testOnly -- <span class="hljs-string">"--tests=test case with space"</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="ignore-single-test-case"></a><a href="#ignore-single-test-case" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Ignore single test case</h2>
 <p>Use <code>.ignore</code> to skip an individual test case in a test suite.</p>
