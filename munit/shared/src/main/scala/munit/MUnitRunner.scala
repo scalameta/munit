@@ -32,19 +32,28 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   def this(cls: Class[_ <: Suite]) =
     this(MUnitRunner.ensureEligibleConstructor(cls), () => cls.newInstance())
+
   val suite: Suite = newInstance()
-  private val suiteDescription = Description.createSuiteDescription(cls)
+
   private implicit val ec: ExecutionContext = suite.munitExecutionContext
-  @volatile private var filter: Filter = Filter.ALL
+
   @volatile private var settings: Settings = Settings.defaults()
   @volatile private var suiteAborted: Boolean = false
-  val descriptions: mutable.Map[suite.Test, Description] =
+
+  private val descriptions: mutable.Map[suite.Test, Description] =
     mutable.Map.empty[suite.Test, Description]
-  val testNames: mutable.Set[String] = mutable.Set.empty[String]
-  lazy val munitTests: Seq[suite.Test] = suite.munitTests()
+  private val testNames: mutable.Set[String] =
+    mutable.Set.empty[String]
+
+  private lazy val munitTests: mutable.ArrayBuffer[suite.Test] =
+    mutable.ArrayBuffer[suite.Test](suite.munitTests(): _*)
 
   override def filter(filter: Filter): Unit = {
-    this.filter = filter
+    val newTests = munitTests.filter { t =>
+      filter.shouldRun(createTestDescription(t))
+    }
+    munitTests.clear()
+    munitTests ++= newTests
   }
   override def configure(settings: Settings): Unit = {
     this.settings = settings
@@ -73,33 +82,30 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     )
   }
 
-  // NOTE(olafur): this method is a lazy val to avoid repeated computations.
-  // This method may get multiple times by clients such as IntelliJ, see
-  // https://github.com/scalameta/munit/issues/47
-  override lazy val getDescription: Description = {
+  override def getDescription: Description = {
+    val description = Description.createSuiteDescription(cls)
+
     try {
       val suiteTests = StackTraces.dropOutside(munitTests)
-      suiteTests.foreach { test =>
-        val testDescription = createTestDescription(test)
-        if (filter.shouldRun(testDescription)) {
-          suiteDescription.addChild(testDescription)
-        }
-      }
+      suiteTests.iterator
+        .map(createTestDescription)
+        .foreach(description.addChild)
     } catch {
       case ex: Throwable =>
         trimStackTrace(ex)
         // Print to stdout because we don't have access to a RunNotifier
         ex.printStackTrace()
-        Nil
     }
-    suiteDescription
+
+    description
   }
 
   override def run(notifier: RunNotifier): Unit = {
     Await.result(runAsync(notifier), Duration.Inf)
   }
   def runAsync(notifier: RunNotifier): Future[Unit] = {
-    notifier.fireTestSuiteStarted(suiteDescription)
+    val description = getDescription
+    notifier.fireTestSuiteStarted(description)
     try {
       runAll(notifier)
     } catch {
@@ -108,7 +114,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
           fireHiddenTest(notifier, "expected error running tests", ex)
         )
     } finally {
-      notifier.fireTestSuiteFinished(suiteDescription)
+      notifier.fireTestSuiteFinished(description)
     }
   }
 
@@ -133,7 +139,8 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private def runAll(notifier: RunNotifier): Future[Unit] = {
     if (PlatformCompat.isIgnoreSuite(cls)) {
-      notifier.fireTestIgnored(suiteDescription)
+      val description = getDescription
+      notifier.fireTestIgnored(description)
       return Future.successful(())
     }
     var isBeforeAllRun = false
@@ -215,9 +222,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       test: suite.Test
   ): Future[Boolean] = {
     val description = createTestDescription(test)
-    if (!filter.shouldRun(description)) {
-      return Future.successful(false)
-    }
+
     if (suiteAborted) {
       notifier.fireTestAssumptionFailed(
         new Failure(
