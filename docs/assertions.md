@@ -98,36 +98,6 @@ assertEquals(
 )
 ```
 
-Comparing two values of different types is a compile error.
-
-```scala mdoc:fail
-assertEquals(1, "")
-```
-
-The "expected" value (second argument) must be a subtype of the "obtained" value
-(first argument).
-
-```scala mdoc
-assertEquals(Option(1), Some(1))
-```
-
-It's a compile error if you swap the order of the arguments.
-
-```scala mdoc:fail
-assertEquals(Some(1), Option(1))
-```
-
-Use `assertEquals[Any, Any]` if you really want to compare two different types.
-
-```scala mdoc
-val right1: Either[String      , Int] = Right(42)
-val right2: Either[List[String], Int] = Right(42)
-```
-
-```scala mdoc
-assertEquals[Any, Any](right1, right2)
-```
-
 ## `assertNotEquals()`
 
 Use `assertNotEquals()` to assert that two values are not the same.

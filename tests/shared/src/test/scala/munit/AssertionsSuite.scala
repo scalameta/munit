@@ -50,15 +50,19 @@ class AssertionsSuite extends BaseSuite {
 
   test("subtype".tag(NoDotty)) {
     assertEquals(Option(1), Some(1))
-    assertNoDiff(
-      compileErrors("assertEquals(Some(1), Option(1))"),
-      """|error: Cannot prove that Option[Int] <:< Some[Int].
-         |assertEquals(Some(1), Option(1))
-         |            ^
-         |""".stripMargin
-    )
+    assertEquals(Some(1), Option(1))
+    class A {
+      override def equals(x: Any): Boolean = true
+    }
+    class B {
+      override def equals(x: Any): Boolean = true
+    }
+    // This compiles by default in Scala 3 because we haven't enabled strict
+    // equality for this file. See AssertionsEqlSuite for Scala 3 tests where
+    // strict equality is enabled and the following assertion fails to compile.
+    assertEquals(new A, new B)
   }
-  test("array-sameElements") {
+  test("array-sameElements".fail) {
     val e = intercept[ComparisonFailException] {
       assertEquals(Array(1, 2), Array(1, 2))
     }

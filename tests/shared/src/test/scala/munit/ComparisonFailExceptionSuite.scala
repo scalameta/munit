@@ -15,6 +15,7 @@ class ComparisonFailExceptionSuite extends BaseSuite {
       assertEquals[Any, Any](List("1", "2", "3"), List(1, 2))
     }
     assert(clue(e).isInstanceOf[ComparisonFailure])
+    assert(clue(e).isInstanceOf[Serializable])
     // NOTE: assert that we use the `toString` of values in the
     // `org.junit.ComparisionFailure` exception. The stdout message in the
     // console still uses `munitPrint()`, which would have displayed `List("1",
@@ -60,10 +61,10 @@ class ComparisonFailExceptionSuite extends BaseSuite {
     }
     assertNoDiff(
       e.getMessage(),
-      """|ComparisonFailExceptionSuite.scala:59
-         |58:    val e = intercept[ComparisonFailException] {
-         |59:      assertNoDiff("", "Lorem ipsum")
-         |60:    }
+      """|ComparisonFailExceptionSuite.scala:60
+         |59:    val e = intercept[ComparisonFailException] {
+         |60:      assertNoDiff("", "Lorem ipsum")
+         |61:    }
          |Obtained empty output!
          |=> Expected:
          |Lorem ipsum

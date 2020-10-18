@@ -6,8 +6,7 @@ class FailException(
     val isStackTracesEnabled: Boolean,
     val location: Location
 ) extends AssertionError(message, cause)
-    with FailExceptionLike[FailException]
-    with Serializable {
+    with FailExceptionLike[FailException] {
   def this(message: String, location: Location) =
     this(message, null, isStackTracesEnabled = true, location)
   def this(message: String, cause: Throwable, location: Location) = this(
@@ -26,7 +25,6 @@ class FailException(
       location: Location = this.location
   ): FailException =
     new FailException(message, cause, isStackTracesEnabled, location)
-
   override def fillInStackTrace(): Throwable = {
     val result = super.fillInStackTrace()
     if (!isStackTracesEnabled) {
@@ -34,4 +32,5 @@ class FailException(
     }
     result
   }
+
 }
