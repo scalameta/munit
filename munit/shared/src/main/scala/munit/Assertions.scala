@@ -1,6 +1,7 @@
 package munit
 
 import munit.internal.console.{Lines, Printers, StackTraces}
+import munit.internal.difflib.ComparisonFailExceptionHandler
 import munit.internal.difflib.Diffs
 
 import scala.reflect.ClassTag
@@ -16,6 +17,19 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   val munitLines = new Lines
 
   def munitAnsiColors: Boolean = true
+
+  private def munitComparisonHandler(
+      actualObtained: Any,
+      actualExpected: Any
+  ): ComparisonFailExceptionHandler =
+    new ComparisonFailExceptionHandler {
+      override def handle(
+          message: String,
+          unusedObtained: String,
+          unusedExpected: String,
+          loc: Location
+      ): Nothing = failComparison(message, actualObtained, actualExpected)(loc)
+    }
 
   private def munitFilterAnsi(message: String): String =
     if (munitAnsiColors) message
@@ -53,7 +67,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       Diffs.assertNoDiff(
         obtained,
         expected,
-        message => fail(message),
+        munitComparisonHandler(obtained, expected),
         munitPrint(clue),
         printObtainedAsStripMargin = true
       )
@@ -67,7 +81,11 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   )(implicit loc: Location, ev: A =:= B): Unit = {
     StackTraces.dropInside {
       if (obtained == expected) {
-        fail(s"${munitPrint(clue)} expected same: $expected was not: $obtained")
+        failComparison(
+          s"${munitPrint(clue)} expected same: $expected was not: $obtained",
+          obtained,
+          expected
+        )
       }
     }
   }
@@ -101,7 +119,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
         Diffs.assertNoDiff(
           munitPrint(obtained),
           munitPrint(expected),
-          message => fail(message),
+          munitComparisonHandler(obtained, expected),
           munitPrint(clue),
           printObtainedAsStripMargin = false
         )
@@ -109,12 +127,14 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
         Diffs.assertNoDiff(
           obtained.toString(),
           expected.toString(),
-          message => fail(message),
+          munitComparisonHandler(obtained, expected),
           munitPrint(clue),
           printObtainedAsStripMargin = false
         )
-        fail(
-          s"values are not equal even if they have the same `toString()`: $obtained"
+        failComparison(
+          s"values are not equal even if they have the same `toString()`: $obtained",
+          obtained,
+          expected
         )
       }
     }
@@ -135,7 +155,11 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       val exactlyTheSame = java.lang.Double.compare(expected, obtained) == 0
       val almostTheSame = Math.abs(expected - obtained) <= delta
       if (!exactlyTheSame && !almostTheSame) {
-        fail(s"${munitPrint(clue)} expected: $expected but was: $obtained")
+        failComparison(
+          s"${munitPrint(clue)} expected: $expected but was: $obtained",
+          obtained,
+          expected
+        )
       }
     }
   }
@@ -155,7 +179,11 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       val exactlyTheSame = java.lang.Float.compare(expected, obtained) == 0
       val almostTheSame = Math.abs(expected - obtained) <= delta
       if (!exactlyTheSame && !almostTheSame) {
-        fail(s"${munitPrint(clue)} expected: $expected but was: $obtained")
+        failComparison(
+          s"${munitPrint(clue)} expected: $expected but was: $obtained",
+          obtained,
+          expected
+        )
       }
     }
   }
@@ -182,7 +210,8 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
         s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully"
       )
     } catch {
-      case e: FailException if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
+      case e: FailExceptionLike[_]
+          if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
         throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
@@ -222,12 +251,27 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       location = loc
     )
   }
+
   def fail(
       message: String,
       clues: Clues = new Clues(Nil)
   )(implicit loc: Location): Nothing = {
     throw new FailException(
       munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+      loc
+    )
+  }
+
+  def failComparison(
+      message: String,
+      obtained: Any,
+      expected: Any,
+      clues: Clues = new Clues(Nil)
+  )(implicit loc: Location): Nothing = {
+    throw new ComparisonFailException(
+      munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+      obtained,
+      expected,
       loc
     )
   }

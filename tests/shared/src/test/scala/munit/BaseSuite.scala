@@ -1,8 +1,11 @@
 package munit
 
 import munit.internal.PlatformCompat
+import munit.internal.console.Lines
+import java.nio.file.Paths
 
 class BaseSuite extends FunSuite {
+
   override def munitTestTransforms: List[TestTransform] =
     super.munitTestTransforms ++ List(
       new TestTransform(

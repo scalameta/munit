@@ -7,6 +7,7 @@ object Diffs {
   def create(obtained: String, expected: String): Diff =
     new Diff(obtained, expected)
 
+  @deprecated("")
   def assertNoDiff(
       obtained: String,
       expected: String,
@@ -14,13 +15,41 @@ object Diffs {
       title: String = "",
       printObtainedAsStripMargin: Boolean = true
   )(implicit loc: Location): Boolean = {
+    assertNoDiff(
+      obtained,
+      expected,
+      new ComparisonFailExceptionHandler {
+        def handle(
+            message: String,
+            obtained: String,
+            expected: String,
+            loc: Location
+        ): Nothing = fail(message)
+      },
+      title,
+      printObtainedAsStripMargin
+    )
+  }
+
+  def assertNoDiff(
+      obtained: String,
+      expected: String,
+      handler: ComparisonFailExceptionHandler,
+      title: String,
+      printObtainedAsStripMargin: Boolean
+  )(implicit loc: Location): Boolean = {
     if (obtained.isEmpty && !expected.isEmpty) {
-      fail("Obtained empty output!")
+      handler.handle("Obtained empty output!", obtained, expected, loc)
     }
     val diff = new Diff(obtained, expected)
     if (diff.isEmpty) true
     else {
-      fail(diff.createReport(title, printObtainedAsStripMargin))
+      handler.handle(
+        diff.createReport(title, printObtainedAsStripMargin),
+        obtained,
+        expected,
+        loc
+      )
     }
   }
 

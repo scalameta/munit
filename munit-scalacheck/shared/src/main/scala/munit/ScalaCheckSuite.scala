@@ -85,7 +85,7 @@ trait ScalaCheckSuite extends FunSuite {
         Success(())
       case status @ PropException(_, e, _) =>
         e match {
-          case f: FailException =>
+          case f: FailExceptionLike[_] =>
             // Promote FailException (i.e failed assertions) to property failures
             val r = result.copy(status = Failed(status.args, status.labels))
             Failure(f.withMessage(e.getMessage() + "\n\n" + renderResult(r)))
