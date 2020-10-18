@@ -1,10 +1,16 @@
 package munit.internal
 
 import munit.Clue
+import munit.Compare
 import munit.Location
 import scala.quoted._
 
 object MacroCompat {
+
+  trait CompareMacro {
+    implicit def defaultCompareImplicit[A, B](using eql: Eql[A, B]): Compare[A, B] =
+      Compare.defaultCompare[A, B]
+  }
 
   trait LocationMacro {
     inline implicit def generate: Location = ${ locationImpl() }

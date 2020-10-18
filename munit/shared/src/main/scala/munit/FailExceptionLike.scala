@@ -17,4 +17,5 @@ trait FailExceptionLike[T <: AssertionError] extends Serializable {
   self: AssertionError =>
   def withMessage(message: String): T
   def location: Location
+  def isStackTracesEnabled: Boolean
 }

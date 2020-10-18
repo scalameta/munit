@@ -167,28 +167,8 @@ lazy val junit = project
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
-    unmanagedSourceDirectories.in(Compile) ++= {
-      val root = baseDirectory.in(ThisBuild).value / "munit"
-      val base = root / "shared" / "src" / "main"
-      val result = mutable.ListBuffer.empty[File]
-      val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
-      if (isScalaJS.value || isScalaNative.value) {
-        result += root / "non-jvm" / "src" / "main"
-      }
-      if (isPreScala213(partialVersion)) {
-        result += base / "scala-pre-2.13"
-      }
-      if (isNotScala211(partialVersion)) {
-        result += base / "scala-post-2.11"
-      }
-      if (isScala2(partialVersion)) {
-        result += base / "scala-2"
-      }
-      if (isScala3(partialVersion)) {
-        result += base / "scala-3"
-      }
-      result.toList
-    },
+    unmanagedSourceDirectories.in(Compile) ++=
+      crossBuildingDirectories("munit", "main").value,
     libraryDependencies ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((0, _)) => Nil
@@ -282,6 +262,8 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         baseDirectory.in(ThisBuild).value / "tests" / "shared" / "src" / "main",
       scalaVersion
     ),
+    unmanagedSourceDirectories.in(Test) ++=
+      crossBuildingDirectories("tests", "test").value,
     skip in publish := true
   )
   .nativeConfigure(sharedNativeConfigure)
@@ -296,6 +278,31 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
 lazy val testsJVM = tests.jvm
 lazy val testsJS = tests.js
 lazy val testsNative = tests.native
+
+lazy val testsStrictEquality =
+  crossProject(JSPlatform, JVMPlatform, NativePlatform)
+    .in(file("tests-strict-equality"))
+    .dependsOn(tests)
+    .settings(
+      sharedSettings,
+      scalacOptions ++= {
+        val v = CrossVersion.partialVersion(scalaVersion.value)
+        if (isScala2(v)) List("-Xmacro-settings:munit.strictEquality")
+        else if (isScala3(v))
+          List("-language:strictEquality,implicitConversions")
+        else Nil
+      },
+      unmanagedSourceDirectories.in(Test) ++=
+        crossBuildingDirectories("tests-strict-equality", "test").value,
+      skip in publish := true
+    )
+    .nativeConfigure(sharedNativeConfigure)
+    .nativeSettings(sharedNativeSettings)
+    .jsSettings(sharedJSSettings)
+    .jvmSettings(
+      sharedJVMSettings,
+      fork := true
+    )
 
 lazy val docs = project
   .in(file("munit-docs"))
@@ -328,3 +335,27 @@ lazy val docs = project
     ),
     fork := false
   )
+
+def crossBuildingDirectories(name: String, config: String) =
+  Def.setting[Seq[File]] {
+    val root = baseDirectory.in(ThisBuild).value / name
+    val base = root / "shared" / "src" / config
+    val result = mutable.ListBuffer.empty[File]
+    val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
+    if (isScalaJS.value || isScalaNative.value) {
+      result += root / "non-jvm" / "src" / config
+    }
+    if (isPreScala213(partialVersion)) {
+      result += base / "scala-pre-2.13"
+    }
+    if (isNotScala211(partialVersion)) {
+      result += base / "scala-post-2.11"
+    }
+    if (isScala2(partialVersion)) {
+      result += base / "scala-2"
+    }
+    if (isScala3(partialVersion)) {
+      result += base / "scala-3"
+    }
+    result.toList
+  }
