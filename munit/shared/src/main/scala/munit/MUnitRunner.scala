@@ -252,7 +252,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
           case e => e
         }
         val failure = new Failure(description, cause)
-        ex match {
+        cause match {
           case _: AssumptionViolatedException =>
             notifier.fireTestAssumptionFailed(failure)
           case _: FailSuiteException =>

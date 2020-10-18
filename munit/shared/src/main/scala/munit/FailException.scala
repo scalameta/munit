@@ -5,7 +5,7 @@ class FailException(
     val cause: Throwable,
     val isStackTracesEnabled: Boolean,
     val location: Location
-) extends Exception(message, cause)
+) extends AssertionError(message, cause)
     with Serializable {
   def this(message: String, location: Location) =
     this(message, null, true, location)

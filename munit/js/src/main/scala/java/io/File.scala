@@ -5,8 +5,6 @@ import java.nio.file.Path
 
 import munit.internal.{JSIO, JSPath, NodeNIOPath}
 
-import munit.internal._
-
 // obtained implementation by experimentation on the JDK.
 class File(path: String) {
   def this(parent: String, child: String) =
