@@ -15,6 +15,8 @@ class Lines extends Serializable {
   def formatLine(location: Location, message: String): String = {
     formatLine(location, message, new Clues(Nil))
   }
+  def formatPath(location: Location): String =
+    location.path
   def formatLine(location: Location, message: String, clues: Clues): String = {
     try {
       val path = Paths.get(location.path)
@@ -34,7 +36,7 @@ class Lines extends Serializable {
         }
         val isMultilineMessage = message.contains('\n')
         out
-          .append(location.path)
+          .append(formatPath(location))
           .append(':')
           .append(location.line.toString())
         if (message.length() > 0 && !isMultilineMessage) {
