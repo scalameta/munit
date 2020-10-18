@@ -10,9 +10,10 @@ import scala.collection.mutable
 import munit.internal.console.AnsiColors
 import org.junit.AssumptionViolatedException
 import munit.internal.MacroCompat
+import munit.internal.EqualityCompat
 
 object Assertions extends Assertions
-trait Assertions extends MacroCompat.CompileErrorMacro {
+trait Assertions extends MacroCompat.CompileErrorMacro with EqualityCompat {
 
   val munitLines = new Lines
 
@@ -78,7 +79,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: A,
       expected: B,
       clue: => Any = "values are the same"
-  )(implicit loc: Location, ev: A =:= B): Unit = {
+  )(implicit loc: Location, ev: Eql[A, B]): Unit = {
     StackTraces.dropInside {
       if (obtained == expected) {
         failComparison(
@@ -113,7 +114,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: A,
       expected: B,
       clue: => Any = "values are not the same"
-  )(implicit loc: Location, ev: B <:< A): Unit = {
+  )(implicit loc: Location, ev: Eql[A, B]): Unit = {
     StackTraces.dropInside {
       if (obtained != expected) {
         Diffs.assertNoDiff(
