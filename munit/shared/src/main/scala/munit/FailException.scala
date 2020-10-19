@@ -9,16 +9,17 @@ class FailException(
     with FailExceptionLike[FailException]
     with Serializable {
   def this(message: String, location: Location) =
-    this(message, null, true, location)
+    this(message, null, isStackTracesEnabled = true, location)
   def this(message: String, cause: Throwable, location: Location) = this(
     message,
     cause,
-    true,
+    isStackTracesEnabled = true,
     location
   )
   def withMessage(newMessage: String): FailException =
     copy(message = newMessage)
-  def copy(
+
+  private[munit] def copy(
       message: String = this.message,
       cause: Throwable = this.cause,
       isStackTracesEnabled: Boolean = this.isStackTracesEnabled,

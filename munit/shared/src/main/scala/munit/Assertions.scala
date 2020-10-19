@@ -320,7 +320,8 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
       obtained,
       expected,
-      loc
+      loc,
+      isStackTracesEnabled = false
     )
   }
 
