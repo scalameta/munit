@@ -54,7 +54,8 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
     else {
       val out = new StringBuilder
       val lines = obtained.trim.linesIterator
-      out.append("    \"\"\"|" + lines.next() + "\n")
+      val head = if (lines.hasNext) lines.next() else ""
+      out.append("    \"\"\"|" + head + "\n")
       lines.foreach(line => {
         out.append("       |").append(line).append("\n")
       })
