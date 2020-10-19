@@ -27,12 +27,10 @@ class Lines extends Serializable {
       )
       val slice = lines.slice(location.line - 2, location.line + 1)
       val out = new StringBuilder()
-      if (slice.length == 3) {
-        val width = (location.line + 1).toString().length()
+      if (slice.length >= 2) {
+        val width = (location.line + 1).toString().length() + 1
         def format(n: Int): String = {
-          val number = n.toString() + ":"
-          val padding = " " * (width - number.length() + 1)
-          number + padding
+          s"$n:".padTo(width, ' ')
         }
         val isMultilineMessage = message.contains('\n')
         out
@@ -51,9 +49,11 @@ class Lines extends Serializable {
           .append(format(location.line))
           .append(slice(1))
           .append(AnsiColors.Reset)
-          .append('\n')
-          .append(format(location.line + 1))
-          .append(slice(2))
+        if (slice.length >= 3)
+          out
+            .append('\n')
+            .append(format(location.line + 1))
+            .append(slice(2))
         if (isMultilineMessage) {
           out.append('\n').append(message)
         }

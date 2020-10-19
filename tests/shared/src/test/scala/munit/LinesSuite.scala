@@ -43,4 +43,12 @@ class LinesSuite extends FunSuite {
       assertNoDiff(obtained, expected)
     }
   }
-}
+
+  val line = Location.generate.line + 7
+  val endOfFileExpected =
+    s"""|LinesSuite.scala:${line} issue-211
+        |${line - 1}:  // hello!
+        |${line}:  check("end-of-file", "issue-211", Location.generate, endOfFileExpected ) }
+        |""".stripMargin
+  // hello!
+  check("end-of-file", "issue-211", Location.generate, endOfFileExpected ) }
