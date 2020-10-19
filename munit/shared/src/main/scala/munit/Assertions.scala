@@ -70,9 +70,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: A,
       expected: B,
       clue: => Any = "values are the same"
-  )(implicit loc: Location, ev: Compare[A, B]): Unit = {
+  )(implicit loc: Location, compare: Compare[A, B]): Unit = {
     StackTraces.dropInside {
-      if (ev.isEqual(obtained, expected)) {
+      if (compare.isEqual(obtained, expected)) {
         failComparison(
           s"${munitPrint(clue)} expected same: $expected was not: $obtained",
           obtained,

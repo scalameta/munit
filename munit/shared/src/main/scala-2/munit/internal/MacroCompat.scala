@@ -52,6 +52,9 @@ object MacroCompat {
     if (!isStrictEqualityEnabled(c)) {
       reify(Compare.defaultCompare[A, B])
     } else {
+      // NOTE: report compile error because the user has enabled strict equality
+      // and implicit search still picked the default instance in the
+      // low-priority `CompareMacro` trait.
       val A = weakTypeOf[A]
       val B = weakTypeOf[B]
       val solutions = mutable.ListBuffer.empty[String]

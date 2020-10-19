@@ -9,7 +9,7 @@ import scala.language.experimental.macros
 object MacroCompat {
 
   trait CompareMacro {
-    implicit def defaultCompareImplicit[A, B](using eql: Eql[A, B]): Compare[A, B] =
+    given [A, B](using eql: Eql[A, B]) as Compare[A, B] =
       Compare.defaultCompare[A, B]
   }
 

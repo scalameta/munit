@@ -82,9 +82,7 @@ abstract class Compare[A, B] {
 }
 
 object Compare extends MacroCompat.CompareMacro {
-  private val anyEquality: Compare[Any, Any] = new Compare[Any, Any] {
-    def isEqual(a: Any, b: Any): Boolean = a == b
-  }
+  private val anyEquality: Compare[Any, Any] = _ == _
   def defaultCompare[A, B]: Compare[A, B] =
     anyEquality.asInstanceOf[Compare[A, B]]
 }
