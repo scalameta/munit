@@ -8,11 +8,6 @@ import scala.language.experimental.macros
 
 object MacroCompat {
 
-  trait CompareMacro {
-    given [A, B](using eql: Eql[A, B]) as Compare[A, B] =
-      Compare.defaultCompare[A, B]
-  }
-
   trait LocationMacro {
     inline implicit def generate: Location = ${ locationImpl() }
     implicit def generate: Location = macro MacroCompatScala2.locationImpl
