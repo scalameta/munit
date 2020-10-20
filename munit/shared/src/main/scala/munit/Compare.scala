@@ -18,7 +18,7 @@ import scala.annotation.implicitNotFound
  */
 @implicitNotFound(
   // NOTE: Dotty ignores this message if the string is formatted as a multiline string """..."""
-  "Can't compare these two types:\n  First type:  ${A}\n  Second type: ${B}\nPossible ways to fix this error:\n  Alternative 1: provide an implicit instance for Compare[${A}, ${B}]\n  Alternative 2: upcast either type into `Any`"
+  "Can't compare these two types:\n  First type:  ${A}\n  Second type: ${B}\nPossible ways to fix this error:\n  Alternative 1: provide an implicit instance for Compare[${A}, ${B}]\n  Alternative 2: upcast either type into `Any` or a shared supertype"
 )
 trait Compare[A, B] {
 
@@ -105,7 +105,7 @@ trait ComparePriority1 extends ComparePriority2 {
 /**
  * Allows comparison between A and B when B is a subtype of A.
  *
- * This implicit is defined separately from ComparePriority2 in order to avoid
+ * This implicit is defined separately from ComparePriority1 in order to avoid
  * diverging implicit search when comparing equal types.
  */
 trait ComparePriority2 {
