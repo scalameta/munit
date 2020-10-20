@@ -64,7 +64,7 @@ class AssertionsSuite extends BaseSuite {
            |  Second type: Vector[Int]
            |Possible ways to fix this error:
            |  Alternative 1: provide an implicit instance for Compare[List[Int], Vector[Int]]
-           |  Alternative 2: upcast either type into `Any`.
+           |  Alternative 2: upcast either type into `Any` or a shared supertype.
            |I found:
            |
            |    munit.Compare.compareSupertypeWithSubtype[A, B](
@@ -87,7 +87,7 @@ class AssertionsSuite extends BaseSuite {
            |  Second type: scala.collection.immutable.Vector[Int]
            |Possible ways to fix this error:
            |  Alternative 1: provide an implicit instance for Compare[List[Int], scala.collection.immutable.Vector[Int]]
-           |  Alternative 2: upcast either type into `Any`
+           |  Alternative 2: upcast either type into `Any` or a shared supertype
            |assertEquals(List(1), Vector(1))
            |            ^
            |""".stripMargin
@@ -110,7 +110,7 @@ class AssertionsSuite extends BaseSuite {
            |  Second type: B
            |Possible ways to fix this error:
            |  Alternative 1: provide an implicit instance for Compare[A, B]
-           |  Alternative 2: upcast either type into `Any`.
+           |  Alternative 2: upcast either type into `Any` or a shared supertype.
            |I found:
            |
            |    munit.Compare.compareSupertypeWithSubtype[A, B](/* missing */summon[B <:< A])
@@ -131,7 +131,7 @@ class AssertionsSuite extends BaseSuite {
            |  Second type: B
            |Possible ways to fix this error:
            |  Alternative 1: provide an implicit instance for Compare[A, B]
-           |  Alternative 2: upcast either type into `Any`
+           |  Alternative 2: upcast either type into `Any` or a shared supertype
            |assertEquals(new A, new B)
            |            ^
            |""".stripMargin
@@ -148,7 +148,7 @@ class AssertionsSuite extends BaseSuite {
            |  Second type: Int
            |Possible ways to fix this error:
            |  Alternative 1: provide an implicit instance for Compare[Char, Int]
-           |  Alternative 2: upcast either type into `Any`.
+           |  Alternative 2: upcast either type into `Any` or a shared supertype.
            |I found:
            |
            |    munit.Compare.compareSupertypeWithSubtype[A, B](
@@ -171,8 +171,48 @@ class AssertionsSuite extends BaseSuite {
            |  Second type: Int
            |Possible ways to fix this error:
            |  Alternative 1: provide an implicit instance for Compare[Char, Int]
-           |  Alternative 2: upcast either type into `Any`
+           |  Alternative 2: upcast either type into `Any` or a shared supertype
            |assertEquals('a', 'a'.toInt)
+           |            ^
+           |""".stripMargin
+    )
+  }
+
+  test("some-none-nokj") {
+    assertNoDiff(
+      compileErrors("assertEquals(None, Some(1))"),
+      if (isDotty)
+        """|error:
+           |Can't compare these two types:
+           |  First type:  None.type
+           |  Second type: Some[Int]
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[None.type, Some[Int]]
+           |  Alternative 2: upcast either type into `Any` or a shared supertype.
+           |I found:
+           |
+           |    munit.Compare.compareSupertypeWithSubtype[A, B](
+           |      /* missing */summon[Some[Int] <:< None.type]
+           |    )
+           |
+           |But no implicit values were found that match type Some[Int] <:< None.type.
+           |
+           |The following import might make progress towards fixing the problem:
+           |
+           |  import munit.CustomCompare.fromCustomEquality
+           |
+           |assertEquals(None, Some(1))
+           |                          ^
+           |""".stripMargin
+      else
+        """|error:
+           |Can't compare these two types:
+           |  First type:  None.type
+           |  Second type: Some[Int]
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[None.type, Some[Int]]
+           |  Alternative 2: upcast either type into `Any` or a shared supertype
+           |assertEquals(None, Some(1))
            |            ^
            |""".stripMargin
     )
