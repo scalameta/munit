@@ -98,6 +98,42 @@ assertEquals(
 )
 ```
 
+Comparing two values of different types is a compile error.
+
+```scala mdoc:fail
+assertEquals(Option("message"), "message")
+```
+
+It's a compile error even if the comparison is true at runtime.
+
+```scala mdoc:fail
+assertEquals(List(1), Vector(1))
+```
+
+```scala mdoc:fail
+assertEquals('a', 'a'.toInt)
+```
+
+It's OK to compare two types as long as one argument is a subtype of the other
+type.
+
+```scala mdoc
+assertEquals(Option(1), Some(1)) // OK
+assertEquals(Some(1), Option(1)) // OK
+```
+
+Use `assertEquals[Any, Any]` if you think it's OK to compare the two types at
+runtime.
+
+```scala mdoc
+val right1: Either[String      , Int] = Right(42)
+val right2: Either[List[String], Int] = Right(42)
+```
+
+```scala mdoc
+assertEquals[Any, Any](right1, right2)
+```
+
 ## `assertNotEquals()`
 
 Use `assertNotEqual()` to assert that two values are not the same.

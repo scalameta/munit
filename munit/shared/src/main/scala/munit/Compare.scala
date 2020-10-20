@@ -1,18 +1,26 @@
 package munit
 
-import munit.internal.MacroCompat
 import munit.internal.difflib.Diffs
 import munit.internal.difflib.ComparisonFailExceptionHandler
+import scala.annotation.implicitNotFound
 
 /**
  * A type-class that is used to compare values in MUnit assertions.
  *
- * By default, uses == and allows comparison between any two types, even if the
- * types are unrelated. Optionally, enable strict equality by adding the
- * compiler option "-Xmacro-settings:munit.strictEquality" in Scala 2 or
- * the language option "-language:strictEquality" in Scala 3.
+ * By default, uses == and allows comparison between any two types as long
+ * they have a supertype/subtype relationship. For example:
+ *
+ * - Compare[T, T] OK
+ * - Compare[Some[Int], Option[Int]] OK, subtype
+ * - Compare[Option[Int], Some[Int]] OK, supertype
+ * - Compare[List[Int], collection.Seq[Int]] OK, subtype
+ * - Compare[List[Int], Vector[Int]] Error, requires upcast to `Seq[Int]`
  */
-abstract class Compare[A, B] {
+@implicitNotFound(
+  // NOTE: Dotty ignores this message if the string is formatted as a multiline string """..."""
+  "Can't compare these two types:\n  First type:  ${A}\n  Second type: ${B}\nPossible ways to fix this error:\n  Alternative 1: provide an implicit instance for Compare[${A}, ${B}]\n  Alternative 2: upcast either type into `Any`"
+)
+trait Compare[A, B] {
 
   /**
    * Returns true if the values are equal according to the rules of this `Compare[A, B]` instance.
@@ -81,8 +89,27 @@ abstract class Compare[A, B] {
 
 }
 
-object Compare extends MacroCompat.CompareMacro {
+object Compare extends ComparePriority1 {
   private val anyEquality: Compare[Any, Any] = _ == _
   def defaultCompare[A, B]: Compare[A, B] =
     anyEquality.asInstanceOf[Compare[A, B]]
+}
+
+/** Allows comparison between A and B when A is a subtype of B */
+trait ComparePriority1 extends ComparePriority2 {
+  implicit def compareSubtypeWithSupertype[A, B](implicit
+      ev: A <:< B
+  ): Compare[A, B] = Compare.defaultCompare
+}
+
+/**
+ * Allows comparison between A and B when B is a subtype of A.
+ *
+ * This implicit is defined separately from ComparePriority2 in order to avoid
+ * diverging implicit search when comparing equal types.
+ */
+trait ComparePriority2 {
+  implicit def compareSupertypeWithSubtype[A, B](implicit
+      ev: A <:< B
+  ): Compare[B, A] = Compare.defaultCompare
 }

@@ -279,31 +279,6 @@ lazy val testsJVM = tests.jvm
 lazy val testsJS = tests.js
 lazy val testsNative = tests.native
 
-lazy val testsStrictEquality =
-  crossProject(JSPlatform, JVMPlatform, NativePlatform)
-    .in(file("tests-strict-equality"))
-    .dependsOn(tests)
-    .settings(
-      sharedSettings,
-      scalacOptions ++= {
-        val v = CrossVersion.partialVersion(scalaVersion.value)
-        if (isScala2(v)) List("-Xmacro-settings:munit.strictEquality")
-        else if (isScala3(v))
-          List("-language:strictEquality,implicitConversions")
-        else Nil
-      },
-      unmanagedSourceDirectories.in(Test) ++=
-        crossBuildingDirectories("tests-strict-equality", "test").value,
-      skip in publish := true
-    )
-    .nativeConfigure(sharedNativeConfigure)
-    .nativeSettings(sharedNativeSettings)
-    .jsSettings(sharedJSSettings)
-    .jvmSettings(
-      sharedJVMSettings,
-      fork := true
-    )
-
 lazy val docs = project
   .in(file("munit-docs"))
   .dependsOn(munitJVM, munitScalacheckJVM)

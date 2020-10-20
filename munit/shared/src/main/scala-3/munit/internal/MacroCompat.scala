@@ -7,11 +7,6 @@ import scala.quoted._
 
 object MacroCompat {
 
-  trait CompareMacro {
-    given [A, B](using eql: Eql[A, B]) as Compare[A, B] =
-      Compare.defaultCompare[A, B]
-  }
-
   trait LocationMacro {
     inline implicit def generate: Location = ${ locationImpl() }
   }

@@ -51,16 +51,131 @@ class AssertionsSuite extends BaseSuite {
   test("subtype".tag(NoDotty)) {
     assertEquals(Option(1), Some(1))
     assertEquals(Some(1), Option(1))
+    assertEquals(Option(1), Option(1))
+  }
+
+  test("false-negative") {
+    assertNoDiff(
+      compileErrors("assertEquals(List(1), Vector(1))"),
+      if (isDotty)
+        """|error:
+           |Can't compare these two types:
+           |  First type:  List[Int]
+           |  Second type: Vector[Int]
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[List[Int], Vector[Int]]
+           |  Alternative 2: upcast either type into `Any`.
+           |I found:
+           |
+           |    munit.Compare.compareSupertypeWithSubtype[A, B](
+           |      /* missing */summon[Vector[Int] <:< List[Int]]
+           |    )
+           |
+           |But no implicit values were found that match type Vector[Int] <:< List[Int].
+           |
+           |The following import might make progress towards fixing the problem:
+           |
+           |  import munit.CustomCompare.fromCustomEquality
+           |
+           |assertEquals(List(1), Vector(1))
+           |                               ^
+           |""".stripMargin
+      else
+        """|error:
+           |Can't compare these two types:
+           |  First type:  List[Int]
+           |  Second type: scala.collection.immutable.Vector[Int]
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[List[Int], scala.collection.immutable.Vector[Int]]
+           |  Alternative 2: upcast either type into `Any`
+           |assertEquals(List(1), Vector(1))
+           |            ^
+           |""".stripMargin
+    )
+  }
+
+  test("unrelated") {
     class A {
       override def equals(x: Any): Boolean = true
     }
     class B {
       override def equals(x: Any): Boolean = true
     }
-    // This compiles by default in Scala 3 because we haven't enabled strict
-    // equality for this file. See AssertionsEqlSuite for Scala 3 tests where
-    // strict equality is enabled and the following assertion fails to compile.
-    assertEquals(new A, new B)
+    assertNoDiff(
+      compileErrors("assertEquals(new A, new B)"),
+      if (isDotty)
+        """|error:
+           |Can't compare these two types:
+           |  First type:  A
+           |  Second type: B
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[A, B]
+           |  Alternative 2: upcast either type into `Any`.
+           |I found:
+           |
+           |    munit.Compare.compareSupertypeWithSubtype[A, B](/* missing */summon[B <:< A])
+           |
+           |But no implicit values were found that match type B <:< A.
+           |
+           |The following import might make progress towards fixing the problem:
+           |
+           |  import munit.CustomCompare.fromCustomEquality
+           |
+           |assertEquals(new A, new B)
+           |                         ^
+           |""".stripMargin
+      else
+        """|error:
+           |Can't compare these two types:
+           |  First type:  A
+           |  Second type: B
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[A, B]
+           |  Alternative 2: upcast either type into `Any`
+           |assertEquals(new A, new B)
+           |            ^
+           |""".stripMargin
+    )
+  }
+
+  test("chat-int-nok") {
+    assertNoDiff(
+      compileErrors("assertEquals('a', 'a'.toInt)"),
+      if (isDotty)
+        """|error:
+           |Can't compare these two types:
+           |  First type:  Char
+           |  Second type: Int
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[Char, Int]
+           |  Alternative 2: upcast either type into `Any`.
+           |I found:
+           |
+           |    munit.Compare.compareSupertypeWithSubtype[A, B](
+           |      /* missing */summon[Int <:< Char]
+           |    )
+           |
+           |But no implicit values were found that match type Int <:< Char.
+           |
+           |The following import might make progress towards fixing the problem:
+           |
+           |  import munit.CustomCompare.fromCustomEquality
+           |
+           |assertEquals('a', 'a'.toInt)
+           |                           ^
+           |""".stripMargin
+      else
+        """|error:
+           |Can't compare these two types:
+           |  First type:  Char
+           |  Second type: Int
+           |Possible ways to fix this error:
+           |  Alternative 1: provide an implicit instance for Compare[Char, Int]
+           |  Alternative 2: upcast either type into `Any`
+           |assertEquals('a', 'a'.toInt)
+           |            ^
+           |""".stripMargin
+    )
   }
 
 }
