@@ -10,7 +10,7 @@ def scala211 = "2.11.12"
 def dottyNext = "0.27.0-RC1"
 def dottyStable = "0.26.0"
 def junitVersion = "4.13"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.1"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.2"
 inThisBuild(
   List(
     version ~= { old =>
