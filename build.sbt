@@ -216,8 +216,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     moduleName := "munit-scalacheck",
     sharedSettings,
-    libraryDependencies += ("org.scalacheck" %%% "scalacheck" % "1.14.3")
-      .withDottyCompat(scalaVersion.value)
+    libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.15.0"
   )
   .jvmSettings(
     sharedJVMSettings,
