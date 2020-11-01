@@ -1,9 +1,13 @@
+import com.typesafe.tools.mima.core.DirectMissingMethodProblem
+import com.typesafe.tools.mima.core.ProblemFilters
+import com.typesafe.tools.mima.core.MissingTypesProblem
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 val customScalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
 val scalaJSVersion = customScalaJSVersion.getOrElse("1.3.0")
 val scalaNativeVersion = "0.4.0-M2"
+def previousVersion = "0.7.0"
 def scala213 = "2.13.2"
 def scala212 = "2.12.11"
 def scala211 = "2.11.12"
@@ -46,6 +50,7 @@ inThisBuild(
 )
 
 skip in publish := true
+mimaPreviousArtifacts := Set.empty
 crossScalaVersions := List()
 addCommandAlias(
   "scalafixAll",
@@ -71,21 +76,52 @@ val isScalaNative = Def.setting[Boolean](
 
 // NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
 lazy val skipIdeaSettings = SettingKey[Boolean]("ide-skip-project") := true
-val sharedJVMSettings = List(
-  crossScalaVersions := allScalaVersions
+lazy val mimaEnable: List[Def.Setting[_]] = List(
+  mimaBinaryIssueFilters ++= List(
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.MUnitRunner.descriptions"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.MUnitRunner.testNames"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.MUnitRunner.munitTests"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.ValueTransforms.munitTimeout"
+    ),
+    ProblemFilters.exclude[MissingTypesProblem]("munit.FailException"),
+    ProblemFilters.exclude[MissingTypesProblem]("munit.FailSuiteException"),
+    ProblemFilters.exclude[MissingTypesProblem](
+      "munit.TestValues$FlakyFailure"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.junitinterface.JUnitComputer.this"
+    )
+  ),
+  mimaPreviousArtifacts := {
+    if (crossPaths.value)
+      Set("org.scalameta" %% moduleName.value % previousVersion)
+    else Set("org.scalameta" % moduleName.value % previousVersion)
+  }
 )
-val sharedJSSettings = List(
+val sharedJVMSettings: List[Def.Setting[_]] = List(
+  crossScalaVersions := allScalaVersions
+) ++ mimaEnable
+val sharedJSSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
   crossScalaVersions := scala2Versions,
   scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
 )
-val sharedNativeSettings = List(
+val sharedJSConfigure: Project => Project =
+  _.disablePlugins(MimaPlugin)
+val sharedNativeSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
   scalaVersion := scala211,
   crossScalaVersions := List(scala211)
 )
 val sharedNativeConfigure: Project => Project =
-  _.disablePlugins(ScalafixPlugin)
+  _.disablePlugins(ScalafixPlugin, MimaPlugin)
 
 val sharedSettings = List(
   scalacOptions ++= {
@@ -112,6 +148,7 @@ val sharedSettings = List(
 lazy val junit = project
   .in(file("junit-interface"))
   .settings(
+    mimaEnable,
     moduleName := "junit-interface",
     description := "A Java implementation of sbt's test interface for JUnit 4",
     skip in publish := customScalaJSVersion.isDefined,
@@ -170,6 +207,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       "org.scala-native" %%% "test-interface" % scalaNativeVersion
     )
   )
+  .jsConfigure(sharedJSConfigure)
   .jsSettings(
     sharedJSSettings,
     libraryDependencies ++= List(
@@ -208,6 +246,7 @@ lazy val plugin = project
       gcp
     )
   )
+  .disablePlugins(MimaPlugin)
 
 lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("munit-scalacheck"))
@@ -226,6 +265,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     sharedNativeSettings,
     skip in publish := customScalaJSVersion.isDefined
   )
+  .jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
 lazy val munitScalacheckJVM = munitScalacheck.jvm
 lazy val munitScalacheckJS = munitScalacheck.js
@@ -246,11 +286,13 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(sharedNativeSettings)
+  .jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
   .jvmSettings(
     sharedJVMSettings,
     fork := true
   )
+  .disablePlugins(MimaPlugin)
 lazy val testsJVM = tests.jvm
 lazy val testsJS = tests.js
 lazy val testsNative = tests.native
@@ -259,6 +301,7 @@ lazy val docs = project
   .in(file("munit-docs"))
   .dependsOn(munitJVM, munitScalacheckJVM)
   .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
+  .disablePlugins(MimaPlugin)
   .settings(
     sharedSettings,
     moduleName := "munit-docs",
