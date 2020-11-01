@@ -2,7 +2,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 val customScalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
-val scalaJSVersion = customScalaJSVersion.getOrElse("1.0.1")
+val scalaJSVersion = customScalaJSVersion.getOrElse("1.3.0")
 val scalaNativeVersion = "0.4.0-M2"
 def scala213 = "2.13.2"
 def scala212 = "2.12.11"
@@ -37,7 +37,6 @@ inThisBuild(
     testFrameworks := List(
       new TestFramework("munit.Framework")
     ),
-    resolvers += Resolver.sonatypeRepo("public"),
     useSuperShell := false,
     scalacOptions ++= List(
       "-target:jvm-1.8",
@@ -216,8 +215,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     moduleName := "munit-scalacheck",
     sharedSettings,
-    libraryDependencies += ("org.scalacheck" %%% "scalacheck" % "1.14.3")
-      .withDottyCompat(scalaVersion.value)
+    libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.15.0"
   )
   .jvmSettings(
     sharedJVMSettings,
