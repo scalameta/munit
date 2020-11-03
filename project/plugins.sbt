@@ -1,7 +1,7 @@
 val scalaJSVersion =
   Option(System.getenv("SCALAJS_VERSION")).getOrElse("1.3.0")
 
-addSbtPlugin("com.geirsson" % "sbt-ci-release" % "1.5.3")
+addSbtPlugin("com.geirsson" % "sbt-ci-release" % "1.5.4")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
 addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.2.10")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.4")
