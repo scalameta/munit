@@ -11,8 +11,8 @@ def previousVersion = "0.7.0"
 def scala213 = "2.13.2"
 def scala212 = "2.12.11"
 def scala211 = "2.11.12"
-def dottyNext = "0.27.0-RC1"
-def dottyStable = "0.26.0"
+def scala3Stable = "3.0.0-M1"
+def scala3Previous = "0.27.0-RC1"
 def junitVersion = "4.13"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.2"
 inThisBuild(
@@ -62,11 +62,11 @@ addCommandAlias(
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212, scala211)
-val scala3Versions = List(dottyNext, dottyStable)
+val scala3Versions = List(scala3Previous, scala3Stable)
 val allScalaVersions = scala2Versions ++ scala3Versions
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
-def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 0)
+def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 != 2)
 val isScalaJS = Def.setting[Boolean](
   SettingKey[Boolean]("scalaJSUseMainModuleInitializer").?.value.isDefined
 )
@@ -132,7 +132,7 @@ val sharedSettings = List(
           "-Xexperimental",
           "-Ywarn-unused-import"
         )
-      case Some((0, _)) => List()
+      case Some((major, _)) if major != 2 => List()
       case _ =>
         List(
           "-target:jvm-1.8",
@@ -191,7 +191,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     },
     libraryDependencies ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((0, _)) => Nil
+        case Some((major, _)) if major != 2 => Nil
         case _ =>
           List(
             "org.scala-lang" % "scala-reflect" % scalaVersion.value
@@ -321,9 +321,8 @@ lazy val docs = project
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
-      "DOTTY_VERSION" -> dottyNext,
-      "DOTTY_NEXT_VERSION" -> dottyNext,
-      "DOTTY_STABLE_VERSION" -> dottyStable,
+      "SCALA3_PREVIOUS_VERSION" -> scala3Stable,
+      "SCALA3_STABLE_VERSION" -> scala3Stable,
       "SUPPORTED_SCALA_VERSIONS" -> allScalaVersions.mkString(", ")
     ),
     fork := false
