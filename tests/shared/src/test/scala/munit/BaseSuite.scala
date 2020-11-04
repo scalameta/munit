@@ -12,7 +12,7 @@ class BaseSuite extends FunSuite {
         "BaseSuite",
         { test =>
           def isDotty: Boolean =
-            BuildInfo.scalaVersion.startsWith("0.")
+            !BuildInfo.scalaVersion.startsWith("2.")
           def is213: Boolean =
             BuildInfo.scalaVersion.startsWith("2.13") || isDotty
           if (test.tags(NoDotty) && isDotty) {
