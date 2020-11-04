@@ -110,7 +110,7 @@ val sharedJVMSettings: List[Def.Setting[_]] = List(
 ) ++ mimaEnable
 val sharedJSSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := scala2Versions,
+  crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0.")),
   scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
 )
 val sharedJSConfigure: Project => Project =
@@ -211,8 +211,8 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .jsSettings(
     sharedJSSettings,
     libraryDependencies ++= List(
-      "org.scala-js" %% "scalajs-test-interface" % scalaJSVersion,
-      "org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion
+      ("org.scala-js" %% "scalajs-test-interface" % scalaJSVersion).withDottyCompat(scalaVersion.value),
+      ("org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion).withDottyCompat(scalaVersion.value)
     )
   )
   .jvmSettings(
