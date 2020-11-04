@@ -9,7 +9,7 @@ coursier resolve \
   org.scalameta:munit_2.11:$version \
   org.scalameta:munit_2.12:$version \
   org.scalameta:munit_2.13:$version \
-  org.scalameta:munit_3.0:$version \
+  org.scalameta:munit_3.0.0-M1:$version \
   org.scalameta:munit_0.27:$version \
   org.scalameta:munit_native0.4.0-M2_2.11:$version \
   org.scalameta:munit_sjs0.6_2.11:$version \
@@ -22,7 +22,7 @@ coursier resolve \
   org.scalameta:munit-scalacheck_2.12:$version \
   org.scalameta:munit-scalacheck_2.13:$version \
   org.scalameta:munit-scalacheck_0.27:$version \
-  org.scalameta:munit-scalacheck_3.0:$version \
+  org.scalameta:munit-scalacheck_3.0.0-M1:$version \
   org.scalameta:munit-scalacheck_native0.4.0-M2_2.11:$version \
   org.scalameta:munit-scalacheck_sjs0.6_2.11:$version \
   org.scalameta:munit-scalacheck_sjs0.6_2.12:$version \
