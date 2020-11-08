@@ -23,15 +23,12 @@ jobs:
   js:
     strategy:
       fail-fast: false
-      matrix:
-        scalajs: ["1.3.0", "0.6.32"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v7
       - run: sbt +testsJS/test
         env:
-          SCALAJS_VERSION: ${{ matrix.scalajs }}
           GOOGLE_APPLICATION_CREDENTIALS:
             ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON:

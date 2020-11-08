@@ -4,8 +4,7 @@ import com.typesafe.tools.mima.core.MissingTypesProblem
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
-val customScalaJSVersion = Option(System.getenv("SCALAJS_VERSION"))
-val scalaJSVersion = customScalaJSVersion.getOrElse("1.3.0")
+val scalaJSVersion = "1.3.0"
 val scalaNativeVersion = "0.4.0-M2"
 def previousVersion = "0.7.0"
 def scala213 = "2.13.2"
@@ -151,7 +150,6 @@ lazy val junit = project
     mimaEnable,
     moduleName := "junit-interface",
     description := "A Java implementation of sbt's test interface for JUnit 4",
-    skip in publish := customScalaJSVersion.isDefined,
     autoScalaLibrary := false,
     crossPaths := false,
     sbtPlugin := false,
@@ -202,7 +200,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(
     sharedNativeSettings,
-    skip in publish := customScalaJSVersion.isDefined,
     libraryDependencies ++= List(
       "org.scala-native" %%% "test-interface" % scalaNativeVersion
     )
@@ -217,7 +214,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .jvmSettings(
     sharedJVMSettings,
-    skip in publish := customScalaJSVersion.isDefined,
     libraryDependencies ++= List(
       "junit" % "junit" % "4.13.1"
     )
@@ -234,7 +230,6 @@ lazy val plugin = project
     sharedSettings,
     moduleName := "sbt-munit",
     sbtPlugin := true,
-    skip in publish := customScalaJSVersion.isDefined,
     scalaVersion := scala212,
     crossScalaVersions := List(scala212),
     buildInfoPackage := "munit.sbtmunit",
@@ -257,13 +252,11 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.15.0"
   )
   .jvmSettings(
-    sharedJVMSettings,
-    skip in publish := customScalaJSVersion.isDefined
+    sharedJVMSettings
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(
-    sharedNativeSettings,
-    skip in publish := customScalaJSVersion.isDefined
+    sharedNativeSettings
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
@@ -305,7 +298,6 @@ lazy val docs = project
   .settings(
     sharedSettings,
     moduleName := "munit-docs",
-    skip in publish := customScalaJSVersion.isDefined,
     crossScalaVersions := List(scala213, scala212),
     unmanagedSources.in(Compile) += sourceDirectory
       .in(plugin, Compile)
