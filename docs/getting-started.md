@@ -27,13 +27,13 @@ libraryDependencies += "org.scalameta" %% "munit" % "@VERSION@" % Test
 testFrameworks += new TestFramework("munit.Framework")
 ```
 
-| Scala Version             | JVM | Scala.js (0.6.x, 1.x) | Native (0.4.x) |
-| ------------------------- | :-: | :-------------------: | :------------: |
-| 2.11.x                    | ✅  |          ✅           |       ✅       |
-| 2.12.x                    | ✅  |          ✅           |      n/a       |
-| 2.13.x                    | ✅  |          ✅           |      n/a       |
-| @SCALA3_PREVIOUS_VERSION@ | ✅  |          n/a          |      n/a       |
-| @SCALA3_STABLE_VERSION@   | ✅  |          n/a          |      n/a       |
+| Scala Version             | JVM | Scala.js (0.6.x) |  Scala.js (1.x) | Native (0.4.x) |
+| ------------------------- | :-: | :--------------: |  :------------: | :------------: |
+| 2.11.x                    | ✅  | ✅ until 0.7.16  |        ✅       |       ✅       |
+| 2.12.x                    | ✅  | ✅ until 0.7.16  |        ✅       |      n/a       |
+| 2.13.x                    | ✅  | ✅ until 0.7.16  |        ✅       |      n/a       |
+| @SCALA3_PREVIOUS_VERSION@ | ✅  |        n/a       |        ✅       |      n/a       |
+| @SCALA3_STABLE_VERSION@   | ✅  |        n/a       |        ✅       |      n/a       |
 
 Next, write a test suite.
 
