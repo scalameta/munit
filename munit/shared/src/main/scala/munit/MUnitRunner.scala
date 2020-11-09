@@ -82,7 +82,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     )
   }
 
-  override def getDescription: Description = {
+  override def getDescription(): Description = {
     val description = Description.createSuiteDescription(cls)
 
     try {
@@ -104,7 +104,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     Await.result(runAsync(notifier), Duration.Inf)
   }
   def runAsync(notifier: RunNotifier): Future[Unit] = {
-    val description = getDescription
+    val description = getDescription()
     notifier.fireTestSuiteStarted(description)
     try {
       runAll(notifier)
@@ -139,7 +139,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private def runAll(notifier: RunNotifier): Future[Unit] = {
     if (PlatformCompat.isIgnoreSuite(cls)) {
-      val description = getDescription
+      val description = getDescription()
       notifier.fireTestIgnored(description)
       return Future.successful(())
     }
@@ -356,7 +356,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     notifier.fireTestFinished(description)
   }
   private def trimStackTrace(ex: Throwable): Unit = {
-    if (settings.trimStackTraces()) {
+    if (settings.trimStackTraces) {
       StackTraces.trimStackTrace(ex)
     }
   }
