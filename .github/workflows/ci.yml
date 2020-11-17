@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v7
+      - uses: olafurpg/setup-scala@v10
       - run: sbt +testsJVM/test plugin/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v7
+      - uses: olafurpg/setup-scala@v10
       - run: sbt +testsJS/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v7
+      - uses: olafurpg/setup-scala@v10
       - run: sbt +testsNative/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -48,7 +48,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v7
+      - uses: olafurpg/setup-scala@v10
       - run: csbt +testsJVM/test
         shell: bash
         env:
@@ -60,20 +60,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v7
+      - uses: olafurpg/setup-scala@v10
       - run: sbt mimaReportBinaryIssues
   scalafmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v7
+      - uses: olafurpg/setup-scala@v10
       - run: ./bin/scalafmt --check
   docs:
     name: Scalafix and Docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v7
+      - uses: olafurpg/setup-scala@v10
       - run: sbt scalafixAll
       - run: sbt docs/docusaurusCreateSite
         env:
