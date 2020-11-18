@@ -74,7 +74,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v10
-      - run: sbt scalafixAll
+      - run: sbt scalafixCheckAll
       - run: sbt docs/docusaurusCreateSite
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
