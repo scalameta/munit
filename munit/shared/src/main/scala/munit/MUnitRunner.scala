@@ -24,6 +24,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.ExecutionException
 import munit.internal.junitinterface.Settings
+import munit.internal.console.Printers
 
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     extends Runner
@@ -62,7 +63,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   def createTestDescription(test: suite.Test): Description = {
     descriptions.getOrElseUpdate(
       test, {
-        val escapedName = test.name.replace("\n", "\\n")
+        val escapedName = Printers.escapeNonVisible(test.name)
         val testName = munit.internal.Compat.LazyList
           .from(0)
           .map {

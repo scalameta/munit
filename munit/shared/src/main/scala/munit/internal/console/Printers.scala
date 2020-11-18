@@ -188,7 +188,39 @@ object Printers {
     }
   }
 
-  private def printChar(c: Char, sb: StringBuilder) =
+  /**
+   * Pretty-prints this string with non-visible characters escaped.
+   *
+   * The exact definition of "non-visible" is fuzzy and is subject to change.
+   * The original motivation for this method was to fix
+   * https://github.com/scalameta/munit/issues/258 related to escaping \r in
+   * test names.
+   *
+   * The spirit of this method is to preserve "visible" characters like emojis
+   * and double quotes and escape "non-visible" characters like newlines and
+   * ANSI escape codes. A non-goal of this method is to make the output
+   * copy-pasteable back into source code unlike the `printChar` method, which
+   * escapes for example double-quote characters.
+   */
+  def escapeNonVisible(string: String): String = {
+    val out = new StringBuilder()
+    var i = 0
+    while (i < string.length()) {
+      val ch = string.charAt(i)
+      (ch: @switch) match {
+        case '"' | '\'' => out.append(ch)
+        case _          => printChar(ch, out, isEscapeUnicode = false)
+      }
+      i += 1
+    }
+    out.toString()
+  }
+
+  private def printChar(
+      c: Char,
+      sb: StringBuilder,
+      isEscapeUnicode: Boolean = true
+  ): Unit =
     (c: @switch) match {
       case '"'  => sb.append("\\\"")
       case '\\' => sb.append("\\\\")
@@ -198,9 +230,9 @@ object Printers {
       case '\r' => sb.append("\\r")
       case '\t' => sb.append("\\t")
       case c =>
-        val isUnicode = false
-        if (c < ' ' || (c > '~' && isUnicode))
-          sb.append("\\u%04x" format c.toInt)
+        val isNonReadableAscii = c < ' ' || (c > '~' && isEscapeUnicode)
+        if (isNonReadableAscii && !Character.isLetter(c))
+          sb.append("\\u%04x".format(c.toInt))
         else sb.append(c)
     }
 
