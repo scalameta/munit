@@ -39,6 +39,16 @@ class PrintersSuite extends FunSuite { self =>
     "'\\n'"
   )
   check(
+    "char-single-quote",
+    '\'',
+    "'\\''"
+  )
+  check(
+    "string-single-quote",
+    "'a'",
+    "\"'a'\""
+  )
+  check(
     "map",
     Map(1 -> 2, 3 -> 4, 5 -> Map(6 -> 7)),
     """|Map(

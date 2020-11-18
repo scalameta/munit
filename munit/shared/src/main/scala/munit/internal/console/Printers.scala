@@ -34,7 +34,8 @@ object Printers {
           case x: Printable => x.print(out, indent)
           case x: Char =>
             out.append('\'')
-            printChar(x, out)
+            if (x == '\'') out.append("\\'")
+            else printChar(x, out)
             out.append('\'')
           case x: Byte   => out.append(x.toString())
           case x: Short  => out.append(x.toString())
@@ -190,7 +191,6 @@ object Printers {
   private def printChar(c: Char, sb: StringBuilder) =
     (c: @switch) match {
       case '"'  => sb.append("\\\"")
-      case '\'' => sb.append("\\'")
       case '\\' => sb.append("\\\\")
       case '\b' => sb.append("\\b")
       case '\f' => sb.append("\\f")
