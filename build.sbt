@@ -10,8 +10,8 @@ def previousVersion = "0.7.0"
 def scala213 = "2.13.2"
 def scala212 = "2.12.11"
 def scala211 = "2.11.12"
-def scala3Stable = "3.0.0-M1"
-def scala3Previous = "0.27.0-RC1"
+def scala3Stable = "3.0.0-M2"
+def scala3Previous = List("3.0.0-M1", "0.27.0-RC1")
 def junitVersion = "4.13"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.4"
 inThisBuild(
@@ -61,7 +61,7 @@ addCommandAlias(
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212, scala211)
-val scala3Versions = List(scala3Previous, scala3Stable)
+val scala3Versions = scala3Stable :: scala3Previous
 val allScalaVersions = scala2Versions ++ scala3Versions
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
@@ -316,7 +316,7 @@ lazy val docs = project
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
       "SCALA3_PREVIOUS_VERSION" -> scala3Stable,
-      "SCALA3_STABLE_VERSION" -> scala3Stable,
+      "SCALA3_STABLE_VERSION" -> scala3Previous.head,
       "SUPPORTED_SCALA_VERSIONS" -> allScalaVersions.mkString(", ")
     ),
     fork := false
