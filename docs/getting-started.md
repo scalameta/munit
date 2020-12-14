@@ -21,10 +21,46 @@ MUnit is a Scala testing library with the following goals:
 
 ![Badge with version of the latest release](https://img.shields.io/maven-central/v/org.scalameta/munit_2.13?style=for-the-badge)
 
+**sbt:**
+
 ```scala
 libraryDependencies += "org.scalameta" %% "munit" % "@VERSION@" % Test
 // Use %%% for non-JVM projects.
 testFrameworks += new TestFramework("munit.Framework")
+```
+
+**Mill**
+
+```scala
+object test extends Tests {
+  def ivyDeps =
+    Agg(
+      ivy"org.scalameta::munit::@VERSION@"
+    )
+
+  def testFrameworks = Seq("munit.Framework")
+}
+```
+
+### Scala.js setup
+
+Additionally, if you are using Scala.js you will need to export your tests as CommonJS modules:
+
+**sbt:**
+
+```scala
+// The use of "Test / " allows the rest of your project to use a different module kind
+Test / scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
+```
+
+**Mill**
+
+```scala
+object test extends Tests {
+  ...
+  
+  override def moduleKind = T(mill.scalajslib.api.ModuleKind.CommonJSModule)
+}
 ```
 
 | Scala Version             | JVM | Scala.js (0.6.x) |  Scala.js (1.x) | Native (0.4.x) |
