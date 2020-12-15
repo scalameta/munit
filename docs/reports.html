@@ -68,6 +68,1033 @@ data is stored in Google Cloud Storage and the HTML report is rendered with an
 <a href="https://scalameta.org/mdoc/docs/modifiers.html">MDoc markdown modifier</a>.</p>
 <h2><a class="anchor" aria-hidden="true" id="example"></a><a href="#example" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example</h2>
 <p>Below is the generated report from the tests in the MUnit codebase.</p>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+<p><strong>D</strong>: Average duration in milliseconds,
+<strong>P</strong>: Passed,
+<strong>E</strong>: Failed,
+<strong>F</strong>: Flaky,
+<strong>R</strong>: Flaky/Passed ratio,
+<strong>S</strong>: Skipped,
+<strong>I</strong>: Ignored,
+<strong>O</strong>: Other</p>
+<table id="munit" class="display">
+      <col width="300"/>
+      <thead>
+      <tr>
+      <th>Name</th>
+      <th>D</th>
+      <th>P</th>
+      <th>E</th>
+      <th>F</th>
+      <th>R</th>
+      <th>S</th>
+      <th>I</th>
+      <th>O</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr>
+        <td title="munit.AssertionsSuite.basic">munit.AssertionsSuite.basic</td>
+        <td>25</td>
+        <td>2464</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AssertionsSuite.expr">munit.AssertionsSuite.expr</td>
+        <td>0</td>
+        <td>2464</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AssertionsSuite.subexpr">munit.AssertionsSuite.subexpr</td>
+        <td>2</td>
+        <td>2464</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AssertionsSuite.subtype">munit.AssertionsSuite.subtype</td>
+        <td>1</td>
+        <td>1906</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>652</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AsyncFixtureOrderSuite.teardown runs only after test completes">munit.AsyncFixtureOrderSuite.teardown runs only after test completes</td>
+        <td>52</td>
+        <td>1450</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AsyncJSSuite.async-error">munit.AsyncJSSuite.async-error</td>
+        <td>0</td>
+        <td>802</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.AsyncJSSuite.async-ok">munit.AsyncJSSuite.async-ok</td>
+        <td>0</td>
+        <td>802</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.clue">munit.ClueSuite.clue</td>
+        <td>0</td>
+        <td>2464</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.clues">munit.ClueSuite.clues</td>
+        <td>0</td>
+        <td>2464</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.comment">munit.ClueSuite.comment</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.identifier">munit.ClueSuite.identifier</td>
+        <td>4</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.lambda">munit.ClueSuite.lambda</td>
+        <td>0</td>
+        <td>2446</td>
+        <td>18</td>
+        <td>0</td>
+        <td>0.00560398505603985</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.list">munit.ClueSuite.list</td>
+        <td>0</td>
+        <td>2464</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.product">munit.ClueSuite.product</td>
+        <td>0</td>
+        <td>986</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>1595</td>
+        <td>726</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.select">munit.ClueSuite.select</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ClueSuite.string-message">munit.ClueSuite.string-message</td>
+        <td>0</td>
+        <td>2464</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>720</td>
+        <td>28</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ComparisonFailExceptionSuite.comparison-failure">munit.ComparisonFailExceptionSuite.comparison-failure</td>
+        <td>14</td>
+        <td>717</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DiffsSuite.ansi">munit.DiffsSuite.ansi</td>
+        <td>5</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DiffsSuite.trailing-whitespace">munit.DiffsSuite.trailing-whitespace</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DiffsSuite.windows-crlf">munit.DiffsSuite.windows-crlf</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.All Infinities">munit.DoubleAssertionsFrameworkSuite.All Infinities</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.All Infinities-1">munit.DoubleAssertionsFrameworkSuite.All Infinities-1</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Equals NaN Fails">munit.DoubleAssertionsFrameworkSuite.Assert Equals NaN Fails</td>
+        <td>66</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Equals NaN Fails-1">munit.DoubleAssertionsFrameworkSuite.Assert Equals NaN Fails-1</td>
+        <td>2</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals Fails">munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals Fails</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals Fails-1">munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals Fails-1</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals NaN">munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals NaN</td>
+        <td>4</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals NaN-1">munit.DoubleAssertionsFrameworkSuite.Assert NaN Equals NaN-1</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Neg Infinity Equals Infinity">munit.DoubleAssertionsFrameworkSuite.Assert Neg Infinity Equals Infinity</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Neg Infinity Equals Infinity-1">munit.DoubleAssertionsFrameworkSuite.Assert Neg Infinity Equals Infinity-1</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Equals Infinity">munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Equals Infinity</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Equals Infinity-1">munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Equals Infinity-1</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals">munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals Neg Infinity">munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals Neg Infinity</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals Neg Infinity-1">munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals Neg Infinity...</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals-1">munit.DoubleAssertionsFrameworkSuite.Assert Pos Infinity Not Equals-1</td>
+        <td>0</td>
+        <td>893</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FailExceptionSuite.assertion-error">munit.FailExceptionSuite.assertion-error</td>
+        <td>1</td>
+        <td>739</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.AssertionsFrameworkSuite">munit.FrameworkSuite.AssertionsFrameworkSuite</td>
+        <td>6</td>
+        <td>384</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.AsyncFixtureFrameworkSuite">munit.FrameworkSuite.AsyncFixtureFrameworkSuite</td>
+        <td>19</td>
+        <td>469</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.AsyncFixtureTeardownFrameworkSuite">munit.FrameworkSuite.AsyncFixtureTeardownFrameworkSuite</td>
+        <td>3</td>
+        <td>469</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.BoxedFrameworkSuite">munit.FrameworkSuite.BoxedFrameworkSuite</td>
+        <td>3</td>
+        <td>4</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.CiOnlyFrameworkSuite">munit.FrameworkSuite.CiOnlyFrameworkSuite</td>
+        <td>10</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.DiffProductFrameworkSuite">munit.FrameworkSuite.DiffProductFrameworkSuite</td>
+        <td>12</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.DuplicateNameFrameworkSuite">munit.FrameworkSuite.DuplicateNameFrameworkSuite</td>
+        <td>4</td>
+        <td>384</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.FailFrameworkSuite">munit.FrameworkSuite.FailFrameworkSuite</td>
+        <td>4</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.FailSuiteFrameworkSuite">munit.FrameworkSuite.FailSuiteFrameworkSuite</td>
+        <td>3</td>
+        <td>620</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.FixtureFrameworkSuite">munit.FrameworkSuite.FixtureFrameworkSuite</td>
+        <td>6</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.InterceptFrameworkSuite">munit.FrameworkSuite.InterceptFrameworkSuite</td>
+        <td>9</td>
+        <td>674</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.Issue179FrameworkSuite">munit.FrameworkSuite.Issue179FrameworkSuite</td>
+        <td>2</td>
+        <td>135</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.ScalaCheckExceptionFrameworkSuite">munit.FrameworkSuite.ScalaCheckExceptionFrameworkSuite</td>
+        <td>6</td>
+        <td>239</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>140</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.ScalaCheckFrameworkSuite">munit.FrameworkSuite.ScalaCheckFrameworkSuite</td>
+        <td>194</td>
+        <td>584</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.ScalaVersionFrameworkSuite">munit.FrameworkSuite.ScalaVersionFrameworkSuite</td>
+        <td>2</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.StackTraceFrameworkSuite">munit.FrameworkSuite.StackTraceFrameworkSuite</td>
+        <td>4</td>
+        <td>242</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>142</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.StackTraceFrameworkSuite-1">munit.FrameworkSuite.StackTraceFrameworkSuite-1</td>
+        <td>1</td>
+        <td>242</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>142</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.SuiteTransformCrashFrameworkSuite">munit.FrameworkSuite.SuiteTransformCrashFrameworkSuite</td>
+        <td>3</td>
+        <td>610</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.SuiteTransformFrameworkSuite">munit.FrameworkSuite.SuiteTransformFrameworkSuite</td>
+        <td>3</td>
+        <td>610</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.SwallowedExceptionSuite">munit.FrameworkSuite.SwallowedExceptionSuite</td>
+        <td>7</td>
+        <td>669</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TagsFrameworkSuite">munit.FrameworkSuite.TagsFrameworkSuite</td>
+        <td>3</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TagsFrameworkSuite-1">munit.FrameworkSuite.TagsFrameworkSuite-1</td>
+        <td>1</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TagsFrameworkSuite-2">munit.FrameworkSuite.TagsFrameworkSuite-2</td>
+        <td>1</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TestNameFrameworkSuite">munit.FrameworkSuite.TestNameFrameworkSuite</td>
+        <td>3</td>
+        <td>754</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TestTransformCrashFrameworkSuite">munit.FrameworkSuite.TestTransformCrashFrameworkSuite</td>
+        <td>5</td>
+        <td>610</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.TestTransformFrameworkSuite">munit.FrameworkSuite.TestTransformFrameworkSuite</td>
+        <td>1</td>
+        <td>610</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.ValueTransformCrashFrameworkSuite">munit.FrameworkSuite.ValueTransformCrashFrameworkSuite</td>
+        <td>3</td>
+        <td>610</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FrameworkSuite.ValueTransformFrameworkSuite">munit.FrameworkSuite.ValueTransformFrameworkSuite</td>
+        <td>6</td>
+        <td>610</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FunFixtureSuite.basic">munit.FunFixtureSuite.basic</td>
+        <td>1</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.FutureSuite.nested">munit.FutureSuite.nested</td>
+        <td>26</td>
+        <td>1928</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.LazyFutureSuite.nested">munit.LazyFutureSuite.nested</td>
+        <td>1</td>
+        <td>2536</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.LazyFutureSuite.ok-task">munit.LazyFutureSuite.ok-task</td>
+        <td>0</td>
+        <td>2859</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.LinesSuite.basic">munit.LinesSuite.basic</td>
+        <td>4</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.LinesSuite.end-of-file">munit.LinesSuite.end-of-file</td>
+        <td>0</td>
+        <td>651</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.LinesSuite.multiline">munit.LinesSuite.multiline</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.array">munit.PrintersSuite.array</td>
+        <td>1</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.basic">munit.PrintersSuite.basic</td>
+        <td>1</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.char-single-quote">munit.PrintersSuite.char-single-quote</td>
+        <td>0</td>
+        <td>252</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.list">munit.PrintersSuite.list</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.map">munit.PrintersSuite.map</td>
+        <td>2</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.multiline">munit.PrintersSuite.multiline</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.newline">munit.PrintersSuite.newline</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.single-quote">munit.PrintersSuite.single-quote</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.string-single-quote">munit.PrintersSuite.string-single-quote</td>
+        <td>0</td>
+        <td>252</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.user1">munit.PrintersSuite.user1</td>
+        <td>1</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.PrintersSuite.user2">munit.PrintersSuite.user2</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ScalaCheckInitialSeedSuite.generated int are not all the same">munit.ScalaCheckInitialSeedSuite.generated int are not all the same</td>
+        <td>0</td>
+        <td>1179</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ScalaCheckInitialSeedSuite.generating int">munit.ScalaCheckInitialSeedSuite.generating int</td>
+        <td>83</td>
+        <td>1179</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ScalaCheckSeedSuite.generated int are not all the same">munit.ScalaCheckSeedSuite.generated int are not all the same</td>
+        <td>0</td>
+        <td>1790</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.ScalaCheckSeedSuite.generating int">munit.ScalaCheckSeedSuite.generating int</td>
+        <td>30</td>
+        <td>1790</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.1">munit.SuiteLocalFixtureSuite.1</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.2">munit.SuiteLocalFixtureSuite.2</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.3">munit.SuiteLocalFixtureSuite.3</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.4">munit.SuiteLocalFixtureSuite.4</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.SuiteLocalFixtureSuite.5">munit.SuiteLocalFixtureSuite.5</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TestLocalFixtureSuite.basic">munit.TestLocalFixtureSuite.basic</td>
+        <td>1</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TestLocalFixtureSuite.two">munit.TestLocalFixtureSuite.two</td>
+        <td>0</td>
+        <td>3212</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TimeoutSuite.fast">munit.TimeoutSuite.fast</td>
+        <td>2</td>
+        <td>2144</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TimeoutSuite.slow">munit.TimeoutSuite.slow</td>
+        <td>102</td>
+        <td>2144</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TypeCheckSuite.not a member">munit.TypeCheckSuite.not a member</td>
+        <td>4</td>
+        <td>2741</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TypeCheckSuite.parse error">munit.TypeCheckSuite.parse error</td>
+        <td>0</td>
+        <td>2741</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr><tr>
+        <td title="munit.TypeCheckSuite.type mismatch">munit.TypeCheckSuite.type mismatch</td>
+        <td>0</td>
+        <td>2741</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      </tbody>
+    </table>
+<script>
+  $(document).ready( function () {
+    $('#munit').DataTable({
+      paging: false,
+    });
+  });
+</script>
 <h2><a class="anchor" aria-hidden="true" id="installation"></a><a href="#installation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Installation</h2>
 <blockquote>
 <p>These installation instructions are experimental and subject to change.</p>
