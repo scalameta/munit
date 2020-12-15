@@ -4,7 +4,9 @@ import munit.internal.junitinterface.Configurable
 import munit.internal.PlatformCompat
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
+import java.lang.reflect.UndeclaredThrowableException
 
 import munit.internal.FutureCompat._
 import munit.internal.console.StackTraces
@@ -245,13 +247,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         Future.successful(())
       case NonFatal(ex) =>
         trimStackTrace(ex)
-        val cause = ex match {
-          case e: ExecutionException
-              if "Boxed Exception" == e.getMessage() &&
-                e.getCause() != null =>
-            e.getCause()
-          case e => e
-        }
+        val cause = rootCause(ex)
         val failure = new Failure(description, cause)
         cause match {
           case _: AssumptionViolatedException =>
@@ -271,6 +267,16 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier.fireTestFinished(description)
       true
     }
+  }
+
+  // NOTE(olafur): these exceptions appear when we await on futures. We unwrap
+  // these exception in order to provide more helpful error messages.
+  private def rootCause(x: Throwable): Throwable = x match {
+    case _: InvocationTargetException | _: ExceptionInInitializerError |
+        _: UndeclaredThrowableException | _: ExecutionException
+        if x.getCause != null =>
+      rootCause(x.getCause)
+    case _ => x
   }
 
   private def futureFromAny(any: Any): Future[Any] = any match {
