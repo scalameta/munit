@@ -11,7 +11,7 @@ def scala213 = "2.13.2"
 def scala212 = "2.12.11"
 def scala211 = "2.11.12"
 def scala3Stable = "3.0.0-M3"
-def scala3Previous = List("3.0.0-M2", "3.0.0-M1")
+def scala3Previous = List("3.0.0-M2")
 def junitVersion = "4.13"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.6"
 inThisBuild(
@@ -251,13 +251,8 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     moduleName := "munit-scalacheck",
     sharedSettings,
-    libraryDependencies += {
-      // scalcheck was wrongly released for 1.5.1 instead of 1.15.1
-      if (scalaVersion.value == "3.0.0-M3")
-        "org.scalacheck" %%% "scalacheck" % "1.5.1"
-      else
-        "org.scalacheck" %%% "scalacheck" % "1.15.1"
-    }
+    libraryDependencies +=
+      "org.scalacheck" %%% "scalacheck" % "1.15.2"
   )
   .jvmSettings(
     sharedJVMSettings
