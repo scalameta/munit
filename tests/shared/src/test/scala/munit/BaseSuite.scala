@@ -15,6 +15,10 @@ class BaseSuite extends FunSuite {
             BuildInfo.scalaVersion.startsWith("2.13") || isDotty
           if (test.tags(NoDotty) && isDotty) {
             test.tag(Ignore)
+          } else if (
+            test.tags(OnlyFromM3) && "3.0.0-M2" == BuildInfo.scalaVersion
+          ) {
+            test.tag(Ignore)
           } else if (test.tags(Only213) && !is213) {
             test.tag(Ignore)
           } else if (test.tags(OnlyJVM) && !PlatformCompat.isJVM) {
