@@ -40,11 +40,7 @@ inThisBuild(
     testFrameworks := List(
       new TestFramework("munit.Framework")
     ),
-    useSuperShell := false,
-    scalacOptions ++= List(
-      "-target:jvm-1.8",
-      "-language:implicitConversions"
-    )
+    useSuperShell := false
   )
 )
 
@@ -187,15 +183,12 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       }
       result.toList
     },
-    libraryDependencies ++= {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((major, _)) if major != 2 => Nil
-        case _ =>
-          List(
-            "org.scala-lang" % "scala-reflect" % scalaVersion.value
-          )
-      }
-    }
+    libraryDependencies ++= List(
+      "org.scala-lang" % "scala-reflect" % {
+        if (isDotty.value) scala213
+        else scalaVersion.value
+      } % Provided
+    )
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(
