@@ -4,9 +4,6 @@ import munit.Clue
 import munit.Location
 import scala.quoted._
 import scala.language.experimental.macros
-import scala.reflect.macros.blackbox.Context
-import scala.reflect.macros.TypecheckException
-import scala.reflect.macros.ParseException
 
 object MacroCompat {
 
