@@ -4,7 +4,7 @@
         <title>MUnit Blog</title>
         <link>http://scalameta.org/munit/munit/blog</link>
         <description>The best place to stay up-to-date with the latest MUnit news and events.</description>
-        <lastBuildDate>Tue, 24 Mar 2020 06:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 05 Jan 2021 06:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <image>
@@ -13,6 +13,13 @@
             <link>http://scalameta.org/munit/munit/blog</link>
         </image>
         <copyright>Copyright © 2021 Scalameta</copyright>
+        <item>
+            <title><![CDATA[Publish Scala 2 and Scala 3 macros together]]></title>
+            <link>http://scalameta.org/munit/munit/blog/2021/01/05/macromix.html</link>
+            <guid>http://scalameta.org/munit/munit/blog/2021/01/05/macromix.html</guid>
+            <pubDate>Tue, 05 Jan 2021 06:00:00 GMT</pubDate>
+            <description><![CDATA[<p>The next release of MUnit makes use of a new compiler feature that allows you to publish Scala 2 and Scala 3 macros together in a single artifact. The blog post <a href="https://www.scala-lang.org/blog/2020/11/19/scala-3-forward-compat.html">Forward Compatibility for the Scala 3 Transition</a> by Jamie Thompson explains this feature ...</p>]]></description>
+        </item>
         <item>
             <title><![CDATA[Using ScalaCheck with MUnit]]></title>
             <link>http://scalameta.org/munit/munit/blog/2020/03/24/scalacheck.html</link>
