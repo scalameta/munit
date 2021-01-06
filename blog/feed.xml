@@ -12,7 +12,7 @@
             <url>http://scalameta.org/munit/munit/img/scalameta-logo.png</url>
             <link>http://scalameta.org/munit/munit/blog</link>
         </image>
-        <copyright>Copyright © 2020 Scalameta</copyright>
+        <copyright>Copyright © 2021 Scalameta</copyright>
         <item>
             <title><![CDATA[Using ScalaCheck with MUnit]]></title>
             <link>http://scalameta.org/munit/munit/blog/2020/03/24/scalacheck.html</link>
