@@ -207,7 +207,7 @@ object Printers {
     var i = 0
     while (i < string.length()) {
       val ch = string.charAt(i)
-      (ch: @switch) match {
+      ch match {
         case '"' | '\'' => out.append(ch)
         case _          => printChar(ch, out, isEscapeUnicode = false)
       }

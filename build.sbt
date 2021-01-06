@@ -127,7 +127,10 @@ val sharedSettings = List(
           "-Xexperimental",
           "-Ywarn-unused-import"
         )
-      case Some((major, _)) if major != 2 => List()
+      case Some((major, _)) if major != 2 =>
+        List(
+          "-language:implicitConversions"
+        )
       case _ =>
         List(
           "-target:jvm-1.8",
