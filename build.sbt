@@ -125,7 +125,8 @@ val sharedSettings = List(
         List(
           "-Yrangepos",
           "-Xexperimental",
-          "-Ywarn-unused-import"
+          "-Ywarn-unused-import",
+          "-target:jvm-1.8"
         )
       case Some((major, _)) if major != 2 =>
         List(
