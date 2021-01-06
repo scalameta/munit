@@ -61,6 +61,10 @@ val scala3Versions = scala3Stable :: scala3Previous
 val allScalaVersions = scala2Versions ++ scala3Versions
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
+val isScala3Setting = Def.setting {
+  isScala3(CrossVersion.partialVersion(scalaVersion.value))
+}
+
 def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 != 2)
 val isScalaJS = Def.setting[Boolean](
   SettingKey[Boolean]("scalaJSUseMainModuleInitializer").?.value.isDefined
@@ -189,7 +193,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     },
     libraryDependencies ++= List(
       "org.scala-lang" % "scala-reflect" % {
-        if (isDotty.value) scala213
+        if (isScala3Setting.value) scala213
         else scalaVersion.value
       } % Provided
     )
