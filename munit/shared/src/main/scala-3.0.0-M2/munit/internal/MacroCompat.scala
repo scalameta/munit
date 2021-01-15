@@ -3,11 +3,13 @@ package munit.internal
 import munit.Clue
 import munit.Location
 import scala.quoted._
+import scala.language.experimental.macros
 
 object MacroCompat {
 
   trait LocationMacro {
     inline implicit def generate: Location = ${ locationImpl() }
+    implicit def generate: Location = macro MacroCompatScala2.locationImpl
   }
 
   def locationImpl()(using Quotes): Expr[Location] = {
@@ -20,6 +22,7 @@ object MacroCompat {
 
   trait ClueMacro {
     inline implicit def generate[T](value: T): Clue[T] = ${ clueImpl('value) }
+    implicit def generate[T](value: T): Clue[T] = macro MacroCompatScala2.clueImpl
   }
 
   def clueImpl[T: Type](value: Expr[T])(using Quotes): Expr[Clue[T]] = {
@@ -42,6 +45,8 @@ object MacroCompat {
         s"error:${separator}${trimMessage}\n${error.lineContent}\n${indent}^"
       }.mkString("\n")
     }
+    def compileErrors(code: String): String = macro MacroCompatScala2.compileErrorsImpl
   }
+
 
 }

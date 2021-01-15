@@ -4,7 +4,7 @@ import com.typesafe.tools.mima.core.MissingTypesProblem
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
-val scalaJSVersion = "1.3.1"
+val scalaJSVersion = "1.4.0"
 val scalaNativeVersion = "0.4.0-M2"
 def previousVersion = "0.7.0"
 def scala213 = "2.13.2"
@@ -13,7 +13,7 @@ def scala211 = "2.11.12"
 def scala3Stable = "3.0.0-M3"
 def scala3Previous = List("3.0.0-M2")
 def junitVersion = "4.13"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.6"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.9"
 inThisBuild(
   List(
     version ~= { old =>
@@ -40,11 +40,7 @@ inThisBuild(
     testFrameworks := List(
       new TestFramework("munit.Framework")
     ),
-    useSuperShell := false,
-    scalacOptions ++= List(
-      "-target:jvm-1.8",
-      "-language:implicitConversions"
-    )
+    useSuperShell := false
   )
 )
 
@@ -65,6 +61,10 @@ val scala3Versions = scala3Stable :: scala3Previous
 val allScalaVersions = scala2Versions ++ scala3Versions
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
+val isScala3Setting = Def.setting {
+  isScala3(CrossVersion.partialVersion(scalaVersion.value))
+}
+
 def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 != 2)
 val isScalaJS = Def.setting[Boolean](
   SettingKey[Boolean]("scalaJSUseMainModuleInitializer").?.value.isDefined
@@ -129,9 +129,13 @@ val sharedSettings = List(
         List(
           "-Yrangepos",
           "-Xexperimental",
-          "-Ywarn-unused-import"
+          "-Ywarn-unused-import",
+          "-target:jvm-1.8"
         )
-      case Some((major, _)) if major != 2 => List()
+      case Some((major, _)) if major != 2 =>
+        List(
+          "-language:implicitConversions"
+        )
       case _ =>
         List(
           "-target:jvm-1.8",
@@ -187,15 +191,12 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       }
       result.toList
     },
-    libraryDependencies ++= {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((major, _)) if major != 2 => Nil
-        case _ =>
-          List(
-            "org.scala-lang" % "scala-reflect" % scalaVersion.value
-          )
-      }
-    }
+    libraryDependencies ++= List(
+      "org.scala-lang" % "scala-reflect" % {
+        if (isScala3Setting.value) scala213
+        else scalaVersion.value
+      } % Provided
+    )
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(
