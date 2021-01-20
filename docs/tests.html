@@ -100,7 +100,7 @@ await.</p>
 <p>Note that <code>Await.result()</code> only works on the JVM. Scala.js and Scala Native
 tests that return uncompleted <code>Future[T]</code> values will fail.</p>
 <p>MUnit has special handling for <code>scala.concurrent.Future[T]</code> since it is
-available in the standard library. Override <code>munitTestValue</code> to add custom
+available in the standard library. Override <code>munitValueTransforms</code> to add custom
 handling for other asynchronous types.</p>
 <p>For example, imagine that you have a <code>LazyFuture[T]</code> data type that is a lazy
 future.</p>
@@ -120,8 +120,8 @@ test(<span class="hljs-string">"buggy-task"</span>) {
 }
 </code></pre>
 <p>Since tasks are lazy, a test that returns <code>LazyFuture[T]</code> will always pass since
-you need to call <code>run()</code> to start the task execution. Override <code>munitTestValue</code>
-to add make sure that <code>LazyFuture.run()</code> gets called.</p>
+you need to call <code>run()</code> to start the task execution. Override <code>munitValueTransforms</code>
+to make sure that <code>LazyFuture.run()</code> gets called.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.concurrent.<span class="hljs-type">ExecutionContext</span>.<span class="hljs-type">Implicits</span>.global
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaskSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitValueTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitValueTransforms ++ <span class="hljs-type">List</span>(
@@ -199,7 +199,7 @@ checkEager(<span class="hljs-string">"file"</span>, <span class="hljs-type">File
 the test fails. This feature is helpful if you want to for example reproduce a
 bug report but don't have a solution to fix the issue yet.</p>
 <h2><a class="anchor" aria-hidden="true" id="customize-evaluation-of-tests-with-tags"></a><a href="#customize-evaluation-of-tests-with-tags" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Customize evaluation of tests with tags</h2>
-<p>Override <code>munitRunTest()</code> to extend the default behavior for how test bodies are
+<p>Override <code>munitTestTransforms()</code> to extend the default behavior for how test bodies are
 evaluated. For example, use this feature to implement a <code>Rerun(N)</code> modifier to
 evaluate the body multiple times.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Rerun</span>(<span class="hljs-params">count: <span class="hljs-type">Int</span></span>) <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">Tag</span>(<span class="hljs-params">"<span class="hljs-type">Rerun</span>"</span>)</span>
@@ -225,7 +225,7 @@ evaluate the body multiple times.</p>
   }
 }
 </code></pre>
-<p>The <code>munitRunTest()</code> method is similar to <code>munitTestValue()</code> but is different in
+<p>The <code>munitTestTransforms()</code> method is similar to <code>munitValueTransforms()</code> but is different in
 that you also have access information about the test in <code>TestOptions</code> such as
 tags.</p>
 <h2><a class="anchor" aria-hidden="true" id="customize-test-name-based-on-a-dynamic-condition"></a><a href="#customize-test-name-based-on-a-dynamic-condition" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Customize test name based on a dynamic condition</h2>
