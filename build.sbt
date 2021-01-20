@@ -5,7 +5,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 val scalaJSVersion = "1.4.0"
-val scalaNativeVersion = "0.4.0-M2"
+val scalaNativeVersion = "0.4.0"
 def previousVersion = "0.7.0"
 def scala213 = "2.13.4"
 def scala212 = "2.12.13"
@@ -66,12 +66,6 @@ val isScala3Setting = Def.setting {
 }
 
 def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 != 2)
-val isScalaJS = Def.setting[Boolean](
-  SettingKey[Boolean]("scalaJSUseMainModuleInitializer").?.value.isDefined
-)
-val isScalaNative = Def.setting[Boolean](
-  SettingKey[String]("nativeGC").?.value.isDefined
-)
 
 // NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
 lazy val skipIdeaSettings = SettingKey[Boolean]("ide-skip-project") := true
@@ -116,8 +110,7 @@ val sharedJSConfigure: Project => Project =
   _.disablePlugins(MimaPlugin)
 val sharedNativeSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  scalaVersion := scala211,
-  crossScalaVersions := List(scala211)
+  crossScalaVersions := scala2Versions
 )
 val sharedNativeConfigure: Project => Project =
   _.disablePlugins(ScalafixPlugin, MimaPlugin)
@@ -174,9 +167,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       val base = root / "shared" / "src" / "main"
       val result = mutable.ListBuffer.empty[File]
       val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
-      if (isScalaJS.value || isScalaNative.value) {
-        result += root / "non-jvm" / "src" / "main"
-      }
       if (isPreScala213(partialVersion)) {
         result += base / "scala-pre-2.13"
       }
@@ -203,7 +193,10 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     sharedNativeSettings,
     libraryDependencies ++= List(
       "org.scala-native" %%% "test-interface" % scalaNativeVersion
-    )
+    ),
+    unmanagedSourceDirectories.in(Compile) += baseDirectory
+      .in(ThisBuild)
+      .value / "munit" / "non-jvm" / "src" / "main"
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(
@@ -213,7 +206,10 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         .withDottyCompat(scalaVersion.value),
       ("org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion)
         .withDottyCompat(scalaVersion.value)
-    )
+    ),
+    unmanagedSourceDirectories.in(Compile) += baseDirectory
+      .in(ThisBuild)
+      .value / "munit" / "non-jvm" / "src" / "main"
   )
   .jvmSettings(
     sharedJVMSettings,

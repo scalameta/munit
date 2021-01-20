@@ -44,7 +44,8 @@ object test extends Tests {
 
 ### Scala.js setup
 
-Additionally, if you are using Scala.js you will need to export your tests as CommonJS modules:
+Additionally, if you are using Scala.js you will need to export your tests as
+CommonJS modules:
 
 **sbt:**
 
@@ -58,18 +59,18 @@ Test / scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
 ```scala
 object test extends Tests {
   ...
-  
+
   override def moduleKind = T(mill.scalajslib.api.ModuleKind.CommonJSModule)
 }
 ```
 
-| Scala Version             | JVM | Scala.js (0.6.x) |  Scala.js (1.x) | Native (0.4.x) |
-| ------------------------- | :-: | :--------------: |  :------------: | :------------: |
-| 2.11.x                    | ✅  | ✅ until 0.7.16  |        ✅       |       ✅       |
-| 2.12.x                    | ✅  | ✅ until 0.7.16  |        ✅       |      n/a       |
-| 2.13.x                    | ✅  | ✅ until 0.7.16  |        ✅       |      n/a       |
-| @SCALA3_PREVIOUS_VERSION@ | ✅  |        n/a       |        ✅       |      n/a       |
-| @SCALA3_STABLE_VERSION@   | ✅  |        n/a       |        ✅       |      n/a       |
+| Scala Version             | JVM | Scala.js (0.6.x) | Scala.js (1.x) | Native (0.4.x) |
+| ------------------------- | :-: | :--------------: | :------------: | :------------: |
+| 2.11.x                    | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
+| 2.12.x                    | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
+| 2.13.x                    | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
+| @SCALA3_PREVIOUS_VERSION@ | ✅  |       n/a        |       ✅       |      n/a       |
+| @SCALA3_STABLE_VERSION@   | ✅  |       n/a        |       ✅       |      n/a       |
 
 Next, write a test suite.
 
