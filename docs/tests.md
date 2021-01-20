@@ -62,7 +62,7 @@ Note that `Await.result()` only works on the JVM. Scala.js and Scala Native
 tests that return uncompleted `Future[T]` values will fail.
 
 MUnit has special handling for `scala.concurrent.Future[T]` since it is
-available in the standard library. Override `munitTestValue` to add custom
+available in the standard library. Override `munitValueTransforms` to add custom
 handling for other asynchronous types.
 
 For example, imagine that you have a `LazyFuture[T]` data type that is a lazy
@@ -86,8 +86,8 @@ test("buggy-task") {
 ```
 
 Since tasks are lazy, a test that returns `LazyFuture[T]` will always pass since
-you need to call `run()` to start the task execution. Override `munitTestValue`
-to add make sure that `LazyFuture.run()` gets called.
+you need to call `run()` to start the task execution. Override `munitValueTransforms`
+to make sure that `LazyFuture.run()` gets called.
 
 ```scala mdoc
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -191,7 +191,7 @@ bug report but don't have a solution to fix the issue yet.
 
 ## Customize evaluation of tests with tags
 
-Override `munitRunTest()` to extend the default behavior for how test bodies are
+Override `munitTestTransforms()` to extend the default behavior for how test bodies are
 evaluated. For example, use this feature to implement a `Rerun(N)` modifier to
 evaluate the body multiple times.
 
@@ -220,7 +220,7 @@ class MyRerunSuite extends munit.FunSuite {
 }
 ```
 
-The `munitRunTest()` method is similar to `munitTestValue()` but is different in
+The `munitTestTransforms()` method is similar to `munitValueTransforms()` but is different in
 that you also have access information about the test in `TestOptions` such as
 tags.
 
