@@ -3,7 +3,7 @@ package munit.internal
 import sbt.testing.TaskDef
 import munit.MUnitRunner
 import scala.concurrent.Future
-import scala.scalanative.testinterface.PreloadedClassLoader
+import scala.scalanative.reflect.Reflect
 import sbt.testing.Task
 import sbt.testing.EventHandler
 import sbt.testing.Logger
@@ -33,13 +33,14 @@ object PlatformCompat {
       taskDef: TaskDef,
       classLoader: ClassLoader
   ): Option[MUnitRunner] = {
-    scala.util.Try {
-      val suite = classLoader
-        .asInstanceOf[PreloadedClassLoader]
-        .loadPreloaded(taskDef.fullyQualifiedName)
-        .asInstanceOf[munit.Suite]
-      new MUnitRunner(suite.getClass, () => suite)
-    }.toOption
+    Reflect
+      .lookupInstantiatableClass(taskDef.fullyQualifiedName())
+      .map(cls =>
+        new MUnitRunner(
+          cls.runtimeClass.asInstanceOf[Class[_ <: munit.Suite]],
+          () => cls.newInstance().asInstanceOf[munit.Suite]
+        )
+      )
   }
   private var myClassLoader: ClassLoader = _
   def setThisClassLoader(loader: ClassLoader): Unit = myClassLoader = loader
