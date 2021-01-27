@@ -27,6 +27,13 @@ First, install the sbt-munit plugin.
 addSbtPlugin("org.scalameta" % "sbt-munit" % "@VERSION@")
 ```
 
+and set the name of the bucket via:
+
+```scala
+// build.sbt
+ThisBuild / munitBucketName := Some("my-unique-bucket-name"),
+```
+
 Next, setup up
 [Google Cloud authentication credentials](https://console.cloud.google.com/apis/credentials/serviceaccountkey).
 You should have a JSON file that looks like this.
@@ -39,6 +46,8 @@ You should have a JSON file that looks like this.
   // ...
 }
 ```
+
+You will need the `Storage Admin` role for the created service account.
 
 Next, add the following two secret environment variables to your CI settings.
 
