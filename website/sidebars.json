@@ -6,7 +6,6 @@
       "assertions",
       "fixtures",
       "filtering",
-      "reports",
       "scalatest",
       "troubleshooting"
     ],
