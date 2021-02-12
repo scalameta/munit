@@ -4,7 +4,7 @@ import com.typesafe.tools.mima.core.MissingTypesProblem
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
-val scalaJSVersion = "1.4.0"
+val scalaJSVersion = "1.5.0"
 val scalaNativeVersion = "0.4.0"
 def previousVersion = "0.7.0"
 def scala213 = "2.13.4"
