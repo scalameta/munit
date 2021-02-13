@@ -9,6 +9,9 @@
       "scalatest",
       "troubleshooting"
     ],
-    "Integrations": ["integrations/scalacheck"]
+    "Integrations": [
+      "integrations/scalacheck",
+      "integrations/external-integrations"
+    ]
   }
 }
