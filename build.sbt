@@ -139,6 +139,7 @@ val sharedSettings = List(
         )
     }
   },
+  // see <https://github.com/sbt/sbt/issues/5934>
   Test / scalacOptions := (Compile / scalacOptions).value
 )
 
