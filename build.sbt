@@ -138,7 +138,8 @@ val sharedSettings = List(
           "-Ywarn-unused:imports"
         )
     }
-  }
+  },
+  Test / scalacOptions := (Compile / scalacOptions).value
 )
 
 lazy val junit = project
