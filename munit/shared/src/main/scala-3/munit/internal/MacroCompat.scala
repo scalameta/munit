@@ -27,10 +27,11 @@ object MacroCompat {
 
   def clueImpl[T: Type](value: Expr[T])(using Quotes): Expr[Clue[T]] = {
     import quotes.reflect._
-    val source = Term.of(value).pos.sourceCode
-    val valueType = Type.show[T]
+    val source = value.asTerm.pos.sourceCode.getOrElse("")
+    val valueType = TypeTree.of[T].show(using Printer.TreeShortCode)
     '{ new Clue(${Expr(source)}, $value, ${Expr(valueType)}) }
   }
+
 
   trait CompileErrorMacro {
     inline def compileErrors(inline code: String): String = {
@@ -47,6 +48,5 @@ object MacroCompat {
     }
     def compileErrors(code: String): String = macro MacroCompatScala2.compileErrorsImpl
   }
-
 
 }
