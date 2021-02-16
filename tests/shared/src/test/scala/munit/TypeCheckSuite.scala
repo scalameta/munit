@@ -35,11 +35,22 @@ class TypeCheckSuite extends FunSuite {
            |msg.foobar
            |    ^
            |""".stripMargin,
-      "3" ->
+      "3.0.0-M3" ->
         """|error:
            |value foobar is not a member of String, but could be made available as an extension method.
            |
            |The following import might fix the problem:
+           |
+           |  import munit.Clue.generate
+           |
+           |msg.foobar
+           |   ^
+           |""".stripMargin,
+      "3.0.0-RC1" ->
+        """|error:
+           |value foobar is not a member of String, but could be made available as an extension method.
+           |
+           |The following import might make progress towards fixing the problem:
            |
            |  import munit.Clue.generate
            |

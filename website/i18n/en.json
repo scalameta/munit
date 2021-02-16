@@ -17,6 +17,9 @@
       "getting-started": {
         "title": "Getting started"
       },
+      "integrations/external-integrations": {
+        "title": "External Integrations"
+      },
       "integrations/scalacheck": {
         "title": "ScalaCheck"
       },

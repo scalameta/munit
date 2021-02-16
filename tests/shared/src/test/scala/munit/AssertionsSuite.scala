@@ -8,7 +8,7 @@ class AssertionsSuite extends BaseSuite {
       cond: => Boolean,
       expected: String
   )(implicit loc: Location): Unit =
-    test(name.tag(OnlyFromM3)) {
+    test(name) {
       val (_, clues) = munitCaptureClues(cond)
       assertNoDiff(Printers.print(clues), expected)
     }
