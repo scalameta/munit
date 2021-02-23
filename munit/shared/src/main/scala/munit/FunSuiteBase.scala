@@ -51,4 +51,3 @@ trait FunSuiteBase
     PlatformCompat.waitAtMost(f, munitTimeout)
 
 }
-
