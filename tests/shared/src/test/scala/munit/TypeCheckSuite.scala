@@ -35,18 +35,7 @@ class TypeCheckSuite extends FunSuite {
            |msg.foobar
            |    ^
            |""".stripMargin,
-      "3.0.0-M3" ->
-        """|error:
-           |value foobar is not a member of String, but could be made available as an extension method.
-           |
-           |The following import might fix the problem:
-           |
-           |  import munit.Clue.generate
-           |
-           |msg.foobar
-           |   ^
-           |""".stripMargin,
-      "3.0.0-RC1" ->
+      "3" ->
         """|error:
            |value foobar is not a member of String, but could be made available as an extension method.
            |
@@ -76,7 +65,7 @@ class TypeCheckSuite extends FunSuite {
            |package munit
            |   ^
            |""".stripMargin,
-      "3" ->
+      "3.0.0-RC1" ->
         // NOTE(olafur): I'm not sure what's going on with the second errors but
         // that's what Dotty reports.
         """|error: an identifier expected, but '=' found
@@ -85,6 +74,11 @@ class TypeCheckSuite extends FunSuite {
            |error: Declaration of value x not allowed here: only classes can have declared but undefined members
            |package munit
            |   ^
+           |""".stripMargin,
+      "3.0.0-RC2" ->
+        """|error: an identifier expected, but '=' found
+           |val x: = 2
+           |      ^
            |""".stripMargin
     )
   )
