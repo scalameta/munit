@@ -294,20 +294,13 @@ lazy val testsNative = tests.native
 lazy val docs = project
   .in(file("munit-docs"))
   .dependsOn(munitJVM, munitScalacheckJVM)
-  .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
+  .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .disablePlugins(MimaPlugin)
   .settings(
     sharedSettings,
     moduleName := "munit-docs",
     crossScalaVersions := List(scala213, scala212),
-    Compile / unmanagedSources +=
-      (plugin / Compile / sourceDirectory).value / "scala" / "munit" / "sbtmunit" / "MUnitTestReport.scala",
-    libraryDependencies ++= List(
-      "org.scala-lang.modules" %% "scala-xml" % "2.0.0-RC1",
-      gcp
-    ),
     test := {},
-    munitRepository := Some("scalameta/munit"),
     mdocOut :=
       (ThisBuild / baseDirectory).value / "website" / "target" / "docs",
     mdocExtraArguments := List("--no-link-hygiene"),

@@ -10,7 +10,3 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.5.1")
 addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "0.8.1")
 
 libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.113.13"
-
-unmanagedSourceDirectories.in(Compile) +=
-  baseDirectory.in(ThisBuild).value.getParentFile /
-    "munit-sbt" / "src" / "main" / "scala"
