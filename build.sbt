@@ -37,9 +37,6 @@ inThisBuild(
       )
     ),
     scalaVersion := scala213,
-    testFrameworks := List(
-      new TestFramework("munit.Framework")
-    ),
     useSuperShell := false
   )
 )
