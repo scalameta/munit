@@ -37,14 +37,11 @@ inThisBuild(
       )
     ),
     scalaVersion := scala213,
-    testFrameworks := List(
-      new TestFramework("munit.Framework")
-    ),
     useSuperShell := false
   )
 )
 
-skip in publish := true
+publish / skip := true
 mimaPreviousArtifacts := Set.empty
 crossScalaVersions := List()
 addCommandAlias(
@@ -68,7 +65,8 @@ val isScala3Setting = Def.setting {
 def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 != 2)
 
 // NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
-lazy val skipIdeaSettings = SettingKey[Boolean]("ide-skip-project") := true
+lazy val skipIdeaSettings =
+  SettingKey[Boolean]("ide-skip-project").withRank(KeyRanks.Invisible) := true
 lazy val mimaEnable: List[Def.Setting[_]] = List(
   mimaBinaryIssueFilters ++= List(
     ProblemFilters.exclude[DirectMissingMethodProblem](
@@ -138,9 +136,7 @@ val sharedSettings = List(
           "-Ywarn-unused:imports"
         )
     }
-  },
-  // see <https://github.com/sbt/sbt/issues/5934>
-  Test / scalacOptions := (Compile / scalacOptions).value
+  }
 )
 
 lazy val junit = project
@@ -157,15 +153,15 @@ lazy val junit = project
       "junit" % "junit" % junitVersion,
       "org.scala-sbt" % "test-interface" % "1.0"
     ),
-    javacOptions in Compile ++= List("-target", "1.8", "-source", "1.8"),
-    javacOptions in (Compile, doc) --= List("-target", "1.8")
+    Compile / javacOptions ++= List("-target", "1.8", "-source", "1.8"),
+    Compile / doc / javacOptions --= List("-target", "1.8")
   )
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
-    unmanagedSourceDirectories.in(Compile) ++= {
-      val root = baseDirectory.in(ThisBuild).value / "munit"
+    Compile / unmanagedSourceDirectories ++= {
+      val root = (ThisBuild / baseDirectory).value / "munit"
       val base = root / "shared" / "src" / "main"
       val result = mutable.ListBuffer.empty[File]
       val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
@@ -196,22 +192,20 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     libraryDependencies ++= List(
       "org.scala-native" %%% "test-interface" % scalaNativeVersion
     ),
-    unmanagedSourceDirectories.in(Compile) += baseDirectory
-      .in(ThisBuild)
-      .value / "munit" / "non-jvm" / "src" / "main"
+    Compile / unmanagedSourceDirectories +=
+      (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(
     sharedJSSettings,
     libraryDependencies ++= List(
       ("org.scala-js" %% "scalajs-test-interface" % scalaJSVersion)
-        .withDottyCompat(scalaVersion.value),
+        .cross(CrossVersion.for3Use2_13),
       ("org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion)
-        .withDottyCompat(scalaVersion.value)
+        .cross(CrossVersion.for3Use2_13)
     ),
-    unmanagedSourceDirectories.in(Compile) += baseDirectory
-      .in(ThisBuild)
-      .value / "munit" / "non-jvm" / "src" / "main"
+    Compile / unmanagedSourceDirectories +=
+      (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
   )
   .jvmSettings(
     sharedJVMSettings,
@@ -279,10 +273,10 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
       "sourceDirectory" ->
-        baseDirectory.in(ThisBuild).value / "tests" / "shared" / "src" / "main",
+        (ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main",
       scalaVersion
     ),
-    skip in publish := true
+    publish / skip := true
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(sharedNativeSettings)
@@ -300,23 +294,15 @@ lazy val testsNative = tests.native
 lazy val docs = project
   .in(file("munit-docs"))
   .dependsOn(munitJVM, munitScalacheckJVM)
-  .enablePlugins(MdocPlugin, MUnitReportPlugin, DocusaurusPlugin)
+  .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .disablePlugins(MimaPlugin)
   .settings(
     sharedSettings,
     moduleName := "munit-docs",
     crossScalaVersions := List(scala213, scala212),
-    unmanagedSources.in(Compile) += sourceDirectory
-      .in(plugin, Compile)
-      .value / "scala" / "munit" / "sbtmunit" / "MUnitTestReport.scala",
-    libraryDependencies ++= List(
-      "org.scala-lang.modules" %% "scala-xml" % "2.0.0-RC1",
-      gcp
-    ),
     test := {},
-    munitRepository := Some("scalameta/munit"),
     mdocOut :=
-      baseDirectory.in(ThisBuild).value / "website" / "target" / "docs",
+      (ThisBuild / baseDirectory).value / "website" / "target" / "docs",
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
@@ -326,3 +312,7 @@ lazy val docs = project
     ),
     fork := false
   )
+
+Global / excludeLintKeys ++= Set(
+  mimaPreviousArtifacts
+)

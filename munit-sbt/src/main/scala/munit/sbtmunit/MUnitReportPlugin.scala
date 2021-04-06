@@ -11,9 +11,9 @@ object MUnitReportPlugin extends AutoPlugin {
       if ("unknown" == BuildInfo.munitVersion) Nil
       else List("org.scalameta" %% "munit-docs" % BuildInfo.munitVersion)
     },
-    resourceGenerators.in(Compile) += Def.task[List[File]] {
+    Compile / resourceGenerators += Def.task[List[File]] {
       val out =
-        managedResourceDirectories.in(Compile).value.head / "munit.properties"
+        (Compile / managedResourceDirectories).value.head / "munit.properties"
       val props = new java.util.Properties()
       munitRepository.value.foreach { repo =>
         props.put("munitRepository", repo)
