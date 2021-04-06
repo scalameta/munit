@@ -211,15 +211,15 @@ class MyFastSuite extends munit.FunSuite {
 }
 ```
 
-Next, use `--include-category=$CATEGORY` and `--exclude-category=$CATEGORY` to
+Next, use `--include-categories=$CATEGORY` and `--exclude-categories=$CATEGORY` to
 determine what test suites to run from the command line.
 
 ```sh
 # matches: MySlowSuite, MySlowFastSuite
-> testOnly -- --include-category=myapp.Slow
+> testOnly -- --include-categories=myapp.Slow
 
 # matches: MySlowSuite
-> testOnly -- --include-category=myapp.Slow --exclude-category=myapp.Fast
+> testOnly -- --include-categories=myapp.Slow --exclude-categories=myapp.Fast
 ```
 
 ## Filter tests cases based on a dynamic conditions

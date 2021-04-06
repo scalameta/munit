@@ -12,6 +12,7 @@ src_managed/
 project/boot/
 project/plugins/project/
 .bloop
+.bsp
 
 _site/
 
