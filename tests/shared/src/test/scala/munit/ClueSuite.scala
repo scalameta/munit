@@ -17,7 +17,7 @@ class ClueSuite extends BaseSuite {
 
   // Disabled on Dotty because the starting position doesn't include opening "("
   check(
-    "lambda".tag(NoDotty),
+    "lambda",
     { (y: String) => y.head },
     "(y: String) => y.head"
   )
@@ -83,7 +83,7 @@ class ClueSuite extends BaseSuite {
       clues: Clues,
       expected: String
   )(implicit loc: Location): Unit = {
-    test(options.tag(NoDotty)) {
+    test(options) {
       val obtained = munitPrint(clues)
       assertNoDiff(obtained, expected)
     }

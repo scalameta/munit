@@ -10,8 +10,8 @@ def previousVersion = "0.7.0"
 def scala213 = "2.13.4"
 def scala212 = "2.12.13"
 def scala211 = "2.11.12"
-def scala3Stable = "3.0.0-RC2"
-def scala3Previous = List("3.0.0-RC1")
+def scala3Stable = "3.0.0-RC3"
+def scala3Previous = List("3.0.0-RC2")
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.14"
 inThisBuild(
