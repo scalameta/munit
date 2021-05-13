@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v10
+        with:
+          java-version: "adopt@1.${{ matrix.java }}"
       - run: sbt +testsJVM/test plugin/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
