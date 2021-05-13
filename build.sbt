@@ -10,8 +10,7 @@ def previousVersion = "0.7.0"
 def scala213 = "2.13.4"
 def scala212 = "2.12.13"
 def scala211 = "2.11.12"
-def scala3Stable = "3.0.0"
-def scala3Previous = List("3.0.0-RC3")
+def scala3 = "3.0.0"
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.16"
 inThisBuild(
@@ -54,7 +53,7 @@ addCommandAlias(
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212, scala211)
-val scala3Versions = scala3Stable :: scala3Previous
+val scala3Versions = List(scala3)
 val allScalaVersions = scala2Versions ++ scala3Versions
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
@@ -62,7 +61,7 @@ val isScala3Setting = Def.setting {
   isScala3(CrossVersion.partialVersion(scalaVersion.value))
 }
 
-def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 != 2)
+def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
 
 // NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
 lazy val skipIdeaSettings =
@@ -173,9 +172,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       }
       if (isScala2(partialVersion)) {
         result += base / "scala-2"
-      }
-      if (isScala3(partialVersion)) {
-        result += base / "scala-3"
       }
       result.toList
     },
