@@ -69,13 +69,12 @@ object test extends Tests {
 }
 ```
 
-| Scala Version             | JVM | Scala.js (0.6.x) | Scala.js (1.x) | Native (0.4.x) |
-| ------------------------- | :-: | :--------------: | :------------: | :------------: |
-| 2.11.x                    | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
-| 2.12.x                    | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
-| 2.13.x                    | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
-| @SCALA3_PREVIOUS_VERSION@ | ✅  |       n/a        |       ✅       |      n/a       |
-| @SCALA3_STABLE_VERSION@   | ✅  |       n/a        |       ✅       |      n/a       |
+| Scala Version | JVM | Scala.js (0.6.x) | Scala.js (1.x) | Native (0.4.x) |
+| ------------- | :-: | :--------------: | :------------: | :------------: |
+| 2.11.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
+| 2.12.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
+| 2.13.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
+| 3.0.x         | ✅  |       n/a        |       ✅       |      n/a       |
 
 Next, write a test suite.
 
