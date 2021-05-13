@@ -10,8 +10,8 @@ def previousVersion = "0.7.0"
 def scala213 = "2.13.4"
 def scala212 = "2.12.13"
 def scala211 = "2.11.12"
-def scala3Stable = "3.0.0-RC3"
-def scala3Previous = List("3.0.0-RC2")
+def scala3Stable = "3.0.0"
+def scala3Previous = List("3.0.0-RC3")
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "1.113.16"
 inThisBuild(
@@ -305,10 +305,7 @@ lazy val docs = project
       (ThisBuild / baseDirectory).value / "website" / "target" / "docs",
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
-      "VERSION" -> version.value.replaceFirst("\\+.*", ""),
-      "SCALA3_PREVIOUS_VERSION" -> scala3Stable,
-      "SCALA3_STABLE_VERSION" -> scala3Previous.head,
-      "SUPPORTED_SCALA_VERSIONS" -> allScalaVersions.mkString(", ")
+      "VERSION" -> version.value.replaceFirst("\\+.*", "")
     ),
     fork := false
   )
