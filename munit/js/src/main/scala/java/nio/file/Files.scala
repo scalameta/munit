@@ -1,9 +1,10 @@
 package java.nio.file
 
+import scala.scalajs.js
 import java.{util => ju}
 import java.nio.charset.StandardCharsets
 
-import munit.internal.{JSFs, JSIO}
+import munit.internal.JSIO
 
 import scala.collection.JavaConverters._
 
@@ -13,8 +14,12 @@ object Files {
     val text = new String(bytes, StandardCharsets.UTF_8)
     text.linesIterator.toSeq.asJava
   }
-  def readAllBytes(path: Path): Array[Byte] = JSIO.inNode {
-    val jsArray = JSFs.readFileSync(path.toString)
+  def readAllBytes(path: Path): Array[Byte] = {
+    val jsArray = JSIO.fs match {
+      case Some(fs) =>
+        fs.readFileSync(path.toString).asInstanceOf[js.Array[Int]]
+      case None => new js.Array[Int](0)
+    }
     val len = jsArray.length
     val result = new Array[Byte](len)
     var curr = 0

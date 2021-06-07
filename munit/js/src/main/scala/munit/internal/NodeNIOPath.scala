@@ -29,9 +29,10 @@ case class NodeNIOPath(filename: String) extends Path {
     )
   override def toFile: File =
     new File(filename)
-  override def isAbsolute: Boolean =
-    if (JSIO.isNode) JSPath.isAbsolute(filename)
-    else filename.startsWith(File.separator)
+  override def isAbsolute: Boolean = JSIO.path match {
+    case Some(path) => path.isAbsolute(filename).asInstanceOf[Boolean]
+    case None       => filename.startsWith(File.separator)
+  }
   override def getName(index: Int): Path =
     NodeNIOPath(
       filename
@@ -40,12 +41,29 @@ case class NodeNIOPath(filename: String) extends Path {
         .getOrElse(throw new IllegalArgumentException)
     )
   override def getParent: Path =
-    NodeNIOPath(JSPath.dirname(filename))
+    JSIO.path match {
+      case Some(path) =>
+        NodeNIOPath(path.dirname(filename).asInstanceOf[String])
+      case None =>
+        throw new UnsupportedOperationException(
+          "Path.getParent() is only supported in Node.js"
+        )
+    }
+
   override def toAbsolutePath: Path =
     if (isAbsolute) this
     else NodeNIOPath.workingDirectory.resolve(this)
   override def relativize(other: Path): Path =
-    NodeNIOPath(JSPath.relative(filename, other.toString))
+    JSIO.path match {
+      case Some(path) =>
+        NodeNIOPath(
+          path.relative(filename, other.toString()).asInstanceOf[String]
+        )
+      case None =>
+        throw new UnsupportedOperationException(
+          "Path.relativize() is only supported in Node.js"
+        )
+    }
   override def getNameCount: Int = {
     val strippeddrive =
       if ((filename.length > 1) && (filename(1) == ':')) filename.substring(2)
@@ -57,13 +75,26 @@ case class NodeNIOPath(filename: String) extends Path {
   }
   override def toUri: URI = toFile.toURI
   override def getFileName: Path =
-    NodeNIOPath(JSPath.basename(filename))
+    JSIO.path match {
+      case Some(path) =>
+        NodeNIOPath(path.basename(filename).asInstanceOf[String])
+      case None =>
+        throw new UnsupportedOperationException(
+          "Path.getFileName() is only supported in Node.js"
+        )
+    }
   override def getRoot: Path =
     if (!isAbsolute) null
     else NodeNIOPath(File.separator)
   override def normalize(): Path =
-    if (JSIO.isNode) NodeNIOPath(JSPath.normalize(filename))
-    else this
+    JSIO.path match {
+      case Some(path) =>
+        NodeNIOPath(path.normalize(filename).asInstanceOf[String])
+      case None =>
+        throw new UnsupportedOperationException(
+          "Path.normalize() is only supported in Node.js"
+        )
+    }
   override def endsWith(other: Path): Boolean =
     endsWith(other.toString)
   override def endsWith(other: String): Boolean =
@@ -76,13 +107,33 @@ case class NodeNIOPath(filename: String) extends Path {
   override def resolveSibling(other: Path): Path =
     resolveSibling(other.toString)
   override def resolveSibling(other: String): Path =
-    adjustResolvedPath(
-      NodeNIOPath(JSPath.resolve(JSPath.dirname(filename), other))
-    )
+    JSIO.path match {
+      case Some(path) =>
+        adjustResolvedPath(
+          NodeNIOPath(
+            path
+              .resolve(path.dirname(filename).asInstanceOf[String], other)
+              .asInstanceOf[String]
+          )
+        )
+      case None =>
+        throw new UnsupportedOperationException(
+          "Path.normalize() is only supported in Node.js"
+        )
+    }
   override def resolve(other: Path): Path =
     resolve(other.toString)
   override def resolve(other: String): Path =
-    adjustResolvedPath(NodeNIOPath(JSPath.resolve(filename, other)))
+    JSIO.path match {
+      case Some(path) =>
+        adjustResolvedPath(
+          NodeNIOPath(path.resolve(filename, other).asInstanceOf[String])
+        )
+      case None =>
+        throw new UnsupportedOperationException(
+          "Path.normalize() is only supported in Node.js"
+        )
+    }
   override def startsWith(other: Path): Boolean =
     startsWith(other.toString)
   override def startsWith(other: String): Boolean =
