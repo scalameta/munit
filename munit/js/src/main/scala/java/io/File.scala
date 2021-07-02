@@ -2,8 +2,8 @@ package java.io
 
 import java.net.URI
 import java.nio.file.Path
-
-import munit.internal.{JSIO, JSPath, NodeNIOPath}
+import munit.internal.JSIO
+import munit.internal.NodeNIOPath
 
 // obtained implementation by experimentation on the JDK.
 class File(path: String) {
@@ -55,8 +55,12 @@ class File(path: String) {
 object File {
   def listRoots(): Array[File] = Array(
     new File(
-      if (JSIO.isNode) JSPath.parse(JSPath.resolve()).root
-      else "/"
+      JSIO.path match {
+        case Some(p) => p.parse(p.resolve()).root.asInstanceOf[String]
+        case None    => "/"
+      }
+      // if (JSIO.isNode) JSPath.parse(JSPath.resolve()).root
+      // else "/"
     )
   )
 
@@ -64,10 +68,14 @@ object File {
     separator.charAt(0)
 
   def separator: String =
-    if (JSIO.isNode) JSPath.sep
-    else "/"
+    JSIO.path match {
+      case Some(p) => p.sep.asInstanceOf[String]
+      case None    => "/"
+    }
 
   def pathSeparator: String =
-    if (JSIO.isNode) JSPath.delimiter
-    else ":"
+    JSIO.path match {
+      case Some(p) => p.delimeter.asInstanceOf[String]
+      case None    => ":"
+    }
 }

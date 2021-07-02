@@ -100,8 +100,7 @@ val sharedJVMSettings: List[Def.Setting[_]] = List(
 ) ++ mimaEnable
 val sharedJSSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0.")),
-  scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+  crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0."))
 )
 val sharedJSConfigure: Project => Project =
   _.disablePlugins(MimaPlugin)
