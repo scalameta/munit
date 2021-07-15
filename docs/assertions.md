@@ -228,3 +228,16 @@ Inline the `code` variable to fix the compile error.
 ```scala mdoc
 compileErrors("val x: String = 2")
 ```
+
+## `assertSameElements()`
+
+Use `assertSameElements()` for comparison elements of two collections.
+It also might be useful for comparison collections when `==` equality is not
+applicable (e.g. `Array[A]`).
+Note that assertion on unsorted collections will produce
+an unpredictable result.
+
+```scala mdoc:crash
+assertSameElements(Array[Byte](0, 1, 2, 4), Array[Byte](0, 1, 2, 4))
+assertSameElements(List("0", "1", "2", "4"), Vector("0", "1", "2", "4"))
+```

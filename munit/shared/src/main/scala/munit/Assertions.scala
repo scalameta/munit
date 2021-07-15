@@ -1,15 +1,15 @@
 package munit
 
+import munit.internal.console.AnsiColors
 import munit.internal.console.{Lines, Printers, StackTraces}
 import munit.internal.difflib.ComparisonFailExceptionHandler
 import munit.internal.difflib.Diffs
+import munit.internal.MacroCompat
+import org.junit.AssumptionViolatedException
 
+import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
-import scala.collection.mutable
-import munit.internal.console.AnsiColors
-import org.junit.AssumptionViolatedException
-import munit.internal.MacroCompat
 
 object Assertions extends Assertions
 trait Assertions extends MacroCompat.CompileErrorMacro {
@@ -181,6 +181,43 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       if (!exactlyTheSame && !almostTheSame) {
         failComparison(
           s"${munitPrint(clue)} expected: $expected but was: $obtained",
+          obtained,
+          expected
+        )
+      }
+    }
+  }
+
+  /**
+   * Asserts that two collections contain the same elements.
+   * It might be useful for comparison collections when `==` equality is not applicable.
+   * Note that assertion on unsorted collections will produce an unpredictable result.
+   */
+  def assertSameElements[A, B](
+      obtained: Iterable[A],
+      expected: Iterable[B],
+      clue: => Any = "collections elements are not the same"
+  )(implicit loc: Location, ev: B <:< A): Unit = {
+    StackTraces.dropInside {
+      if (!obtained.iterator.sameElements(expected.toIterator)) {
+        Diffs.assertNoDiff(
+          munitPrint(obtained),
+          munitPrint(expected),
+          munitComparisonHandler(obtained, expected),
+          munitPrint(clue),
+          printObtainedAsStripMargin = false
+        )
+
+        Diffs.assertNoDiff(
+          obtained.toString,
+          expected.toString,
+          munitComparisonHandler(obtained, expected),
+          munitPrint(clue),
+          printObtainedAsStripMargin = false
+        )
+
+        failComparison(
+          s"collection contain different elements: $obtained",
           obtained,
           expected
         )
