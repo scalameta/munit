@@ -58,4 +58,14 @@ class AssertionsSuite extends BaseSuite {
          |""".stripMargin
     )
   }
+  test("array-sameElements") {
+    val e = intercept[ComparisonFailException] {
+      assertEquals(Array(1, 2), Array(1, 2))
+    }
+    assert(
+      clue(e).getMessage.contains(
+        "arrays have the same elements but different reference equality. Convert the arrays to a non-Array collection if you intend to assert the two arrays have the same elements. For example, `assertEquals(a.toSeq, b.toSeq)"
+      )
+    )
+  }
 }
