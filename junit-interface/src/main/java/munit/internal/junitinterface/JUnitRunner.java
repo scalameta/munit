@@ -35,7 +35,7 @@ final class JUnitRunner implements Runner {
     Settings defaults = Settings.defaults();
 
     boolean quiet = false, nocolor = false, decodeScalaNames = false,
-        logAssert = true, logExceptionClass = true, useSbtLoggers = false;
+        logAssert = true, logExceptionClass = true, useSbtLoggers = false, useBufferedLoggers = false;
     boolean verbose = false;
     boolean suppressSystemError = false;
     boolean trimStackTraces = defaults.trimStackTraces();
@@ -59,6 +59,10 @@ final class JUnitRunner implements Runner {
       else if("-a".equals(s)) logAssert = true;
       else if("-c".equals(s)) logExceptionClass = false;
       else if("+l".equals(s)) useSbtLoggers = true;
+      else if("+b".equals(s)) useBufferedLoggers = true;
+      else if("-b".equals(s)) useBufferedLoggers = false;
+      else if("--logger=sbt".equals(s)) useSbtLoggers = true;
+      else if("--logger=buffered".equals(s)) useBufferedLoggers = true;
       else if("-l".equals(s)) useSbtLoggers = false;
       else if("-F".equals(s)) trimStackTraces = false;
       else if("+F".equals(s)) trimStackTraces = true;
@@ -86,7 +90,7 @@ final class JUnitRunner implements Runner {
       else if("--stderr".equals(s)) suppressSystemError = false;
     }
     this.settings =
-      new RunSettings(!nocolor, decodeScalaNames, quiet, verbose, useSbtLoggers, trimStackTraces, summary, logAssert, ignoreRunners, logExceptionClass,
+      new RunSettings(!nocolor, decodeScalaNames, quiet, verbose, useSbtLoggers, useBufferedLoggers, trimStackTraces, summary, logAssert, ignoreRunners, logExceptionClass,
           suppressSystemError, sysprops, globPatterns, includeCategories, excludeCategories, includeTags, excludeTags,
         testFilter);
     this.runListener = createRunListener(runListener);

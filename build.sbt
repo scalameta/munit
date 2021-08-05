@@ -279,7 +279,9 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .jsSettings(sharedJSSettings)
   .jvmSettings(
     sharedJVMSettings,
-    fork := true
+    fork := true,
+    Test / parallelExecution := true,
+    Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "+b")
   )
   .disablePlugins(MimaPlugin)
 lazy val testsJVM = tests.jvm

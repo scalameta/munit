@@ -30,6 +30,7 @@ class RunSettings implements Settings {
   final boolean logExceptionClass;
   final Set<String> includeTags, excludeTags;
   final boolean useSbtLoggers;
+  final boolean useBufferedLoggers;
   final boolean trimStackTraces;
   final boolean verbose;
   final boolean suppressSystemError;
@@ -43,7 +44,7 @@ class RunSettings implements Settings {
   private final HashSet<String> ignoreRunners = new HashSet<String>();
 
   RunSettings(boolean color, boolean decodeScalaNames, boolean quiet,
-              boolean verbose, boolean useSbtLoggers, boolean trimStackTraces,
+              boolean verbose, boolean useSbtLoggers, boolean useBufferedLoggers, boolean trimStackTraces,
               Summary summary, boolean logAssert, String ignoreRunners,
               boolean logExceptionClass,
               boolean suppressSystemError, HashMap<String, String> sysprops,
@@ -69,6 +70,7 @@ class RunSettings implements Settings {
     this.excludeCategories = excludeCategories;
     this.testFilter = testFilter;
     this.useSbtLoggers = useSbtLoggers;
+    this.useBufferedLoggers = useBufferedLoggers;
     this.trimStackTraces = trimStackTraces;
   }
 
