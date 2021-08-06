@@ -94,7 +94,7 @@ final class RichLogger
 
   private void bufferMessage(Description desc, String message) {
     ConcurrentLinkedDeque<String> logs = buffers.computeIfAbsent(String.valueOf(desc.getClassName()), d -> new ConcurrentLinkedDeque<>());
-    logs.push(message);
+    logs.addLast(message);
   }
   private void logStackTrace(Description desc, Throwable t)
   {
