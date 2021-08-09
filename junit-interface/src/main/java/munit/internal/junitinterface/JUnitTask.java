@@ -1,7 +1,5 @@
 package munit.internal.junitinterface;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,9 +53,7 @@ final class JUnitTask implements Task {
     if (runner.runListener != null) ju.addListener(runner.runListener);
 
     Map<String, Object> oldprops = settings.overrideSystemProperties();
-    PrintStream oldSystemError = System.err;
     try {
-      suppressSystemError();
       try {
         Class<?> cl = runner.testClassLoader.loadClass(testClassName);
         boolean isRun = shouldRun(fingerprint, cl, settings);
@@ -84,20 +80,8 @@ final class JUnitTask implements Task {
       }
     } finally {
       settings.restoreSystemProperties(oldprops);
-      System.setErr(oldSystemError);
     }
     return new Task[0]; // junit tests do not nest
-  }
-
-
-  private static final PrintStream EMPTY_PRINTSTREAM = new PrintStream(new OutputStream() {
-    @Override
-    public void write(int b) {}
-  });
-  private void suppressSystemError() {
-    if (settings.suppressSystemError) {
-      System.setErr(EMPTY_PRINTSTREAM);
-    }
   }
 
 
