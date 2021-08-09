@@ -118,12 +118,12 @@ parallel test suite execution in sbt, add the following setting to `build.sbt`.
 Test / parallelExecution := false
 ```
 
-In case you do run your tests in parallel, you might also want to enable buffered logging, 
-so that the test results of multiple suites do not appear interleaved.
-In contrast to other test frameworks, buffered logging is not the default in munit.
+In case you do not run your tests in parallel, you can also disable buffered logging, 
+which is on by default to prevent test results of multiple suites from appearing interleaved.
+Switching buffering off would give you immediate feedback on the console while a suite is running.
 
 ```sh
-Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "+b")
+Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
 ```
 
 To learn more about sbt test execution, see
