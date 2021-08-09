@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -20,15 +21,13 @@ final class EventDispatcher extends RunListener
 {
   private final RichLogger logger;
   private final Set<Description> reported = Collections.newSetFromMap(new ConcurrentHashMap<Description, Boolean>());
-  private final Set<String> reportedSuites = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+  private final AtomicBoolean suiteStartReported = new AtomicBoolean(false);
   private final ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<String, Long>();
   private final EventHandler handler;
   private final RunSettings settings;
   private final Fingerprint fingerprint;
   private final String taskInfo;
   private final RunStatistics runStatistics;
-
-  private final static Description TEST_RUN = Description.createTestDescription("Test", "run");
 
   EventDispatcher(RichLogger logger, EventHandler handler, RunSettings settings, Fingerprint fingerprint,
                   Description taskDescription, RunStatistics runStatistics)
@@ -70,7 +69,7 @@ final class EventDispatcher extends RunListener
     postIfFirst(failure.getDescription(), new ErrorEvent(failure, Status.Skipped) {
       void logTo(RichLogger logger) {
         if (settings.verbose) {
-          logger.info(failure.getDescription(), Ansi.c("==> i "  + failure.getDescription().getMethodName(), WARNMSG));
+          logger.info(Ansi.c("==> i "  + failure.getDescription().getMethodName(), WARNMSG));
         }
       }
     });
@@ -93,7 +92,7 @@ final class EventDispatcher extends RunListener
     }
     postIfFirst(failure.getDescription(), new ErrorEvent(failure, Status.Failure) {
       void logTo(RichLogger logger) {
-        logger.error( failure.getDescription(), settings.buildTestResult(Status.Failure) +ansiName+" "+ durationSuffix() + " " + ansiMsg, error);
+        logger.error(settings.buildTestResult(Status.Failure) +ansiName+" "+ durationSuffix() + " " + ansiMsg, error);
       }
     });
   }
@@ -104,10 +103,9 @@ final class EventDispatcher extends RunListener
   {
     postIfFirst(desc, new InfoEvent(desc, Status.Success) {
       void logTo(RichLogger logger) {
-        logger.info(desc, settings.buildTestResult(Status.Success) + Ansi.c(desc.getMethodName(), SUCCESS1) + durationSuffix());
+        logger.info(settings.buildTestResult(Status.Success) + Ansi.c(desc.getMethodName(), SUCCESS1) + durationSuffix());
       }
     });
-    logger.popCurrentTestClassName();
   }
 
   @Override
@@ -115,7 +113,7 @@ final class EventDispatcher extends RunListener
   {
     postIfFirst(desc, new InfoEvent(desc, Status.Skipped) {
       void logTo(RichLogger logger) {
-        logger.warn(desc, settings.buildTestResult(Status.Ignored) + ansiName+" ignored" + durationSuffix());
+        logger.warn(settings.buildTestResult(Status.Ignored) + ansiName+" ignored" + durationSuffix());
       }
     });
   }
@@ -125,8 +123,7 @@ final class EventDispatcher extends RunListener
   public void testSuiteStarted(Description desc)
   {
     if (desc == null || desc.getClassName() == null || desc.getClassName().equals("null")) return;
-    reportedSuites.add(desc.getClassName());
-    logger.info(desc, c(desc.getClassName() + ":", SUCCESS1));
+    if (suiteStartReported.compareAndSet(false, true)) logger.info(c(desc.getClassName() + ":", SUCCESS1));
   }
 
 
@@ -134,21 +131,18 @@ final class EventDispatcher extends RunListener
   public void testStarted(Description desc)
   {
     recordStartTime(desc);
-    if (reportedSuites.add(desc.getClassName())) {
-      testSuiteStarted(desc);
-    }
-    logger.pushCurrentTestClassName(desc.getClassName());
+    testSuiteStarted(desc);
     if (settings.verbose) {
-      logger.info(desc, settings.buildPlainName(desc) + " started");
+      logger.info(settings.buildPlainName(desc) + " started");
     }
   }
 
   private void recordStartTime(Description description) {
-    startTimes.putIfAbsent(settings.buildPlainName(description), System.currentTimeMillis());
+    startTimes.putIfAbsent(description.getMethodName(), System.currentTimeMillis());
   }
 
   private Long elapsedTime(Description description) {
-    Long startTime = startTimes.get(settings.buildPlainName(description));
+    Long startTime = startTimes.get(description.getMethodName());
     if( startTime == null ) {
       return 0l;
     } else {
@@ -160,26 +154,27 @@ final class EventDispatcher extends RunListener
   public void testRunFinished(Result result)
   {
       if (settings.verbose) {
-        logger.info(TEST_RUN, "Test run " +taskInfo+" finished: "+
+        logger.info("Test run " +taskInfo+" finished: "+
           result.getFailureCount()+" failed" +
           ", " +
           result.getIgnoreCount()+" ignored" +
           ", "+result.getRunCount()+" total, "+(result.getRunTime()/1000.0)+"s") ;
+        logger.flush();
       }
     runStatistics.addTime(result.getRunTime());
-      logger.flush(TEST_RUN);
   }
 
   @Override
-  public void testSuiteFinished(Description description) throws Exception {
-    logger.flush(description);
+  public void testSuiteFinished(Description desc) throws Exception {
+    logger.flush();
   }
 
   @Override
   public void testRunStarted(Description desc)
   {
       if (settings.verbose) {
-        logger.info(desc, taskInfo + " started");
+        logger.info(taskInfo + " started");
+        logger.flush();
       }
   }
 
@@ -187,7 +182,8 @@ final class EventDispatcher extends RunListener
   {
     post(new Event(Ansi.c(testName, Ansi.ERRMSG), settings.buildErrorMessage(err), Status.Error, 0L, err) {
       void logTo(RichLogger logger) {
-        logger.error(TEST_RUN, ansiName+" failed: "+ansiMsg, error);
+        logger.error(ansiName+" failed: "+ansiMsg, error);
+        logger.flush();
       }
     });
   }
@@ -220,7 +216,7 @@ final class EventDispatcher extends RunListener
         int end = stackTrace.length - 1;
         StackTraceElement last = stackTrace[end];
         if (last.getClassName() != null && last.getClassName().equals(fromClassName)) {
-          for (int i = 0; end >= 0; end--) {
+          for (; end >= 0; end--) {
             StackTraceElement e = stackTrace[end];
             if (e.getClassName().equals(toClassName)) {
               break;
