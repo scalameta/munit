@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
+import org.junit.runner.Description;
 import sbt.testing.Logger;
 import static munit.internal.junitinterface.Ansi.*;
 
@@ -21,6 +23,7 @@ final class RichLogger
   /* The top element is the test class of the currently executing test */
   private final Stack<String> currentTestClassName = new Stack<String>();
   private final Map<String, Boolean> highlightedCache = new HashMap<>();
+  private final ConcurrentHashMap<String, ConcurrentLinkedDeque<String>> buffers = new ConcurrentHashMap<>();
 
   RichLogger(Logger[] loggers, RunSettings settings, String testClassName, JUnitRunner runner)
   {
@@ -37,70 +40,71 @@ final class RichLogger
     if(currentTestClassName.size() > 1) currentTestClassName.pop();
   }
 
-  void debug(String s)
-  {
-    // Disabled by default because debug logging is noisy and enabled by default in sbt.
-    if (settings.useSbtLoggers) {
-      for(Logger l : loggers)
-      if(settings.color && l.ansiCodesSupported()) l.debug(s);
-      else l.debug(filterAnsi(s));
-    }
-  }
-
-  void error(String s)
+  void error(Description desc, String s)
   {
     if (settings.useSbtLoggers) {
       for (Logger l : loggers)
         if (settings.color && l.ansiCodesSupported()) l.error(s);
         else l.error(filterAnsi(s));
+    } else if (settings.useBufferedLoggers) {
+      bufferMessage(desc, s);
     } else {
       System.out.println(s);
     }
   }
 
-  void error(String s, Throwable t)
+  void error(Description desc, String s, Throwable t)
   {
-    error(s);
-    if(t != null && (settings.logAssert || !(t instanceof AssertionError))) logStackTrace(t);
+    error(desc, s);
+    if(t != null && (settings.logAssert || !(t instanceof AssertionError))) logStackTrace(desc, t);
   }
 
-  void info(String s)
+  void info(Description desc, String s)
   {
     if (settings.useSbtLoggers) {
       for (Logger l : loggers)
         if (settings.color && l.ansiCodesSupported()) l.info(s);
         else l.info(filterAnsi(s));
+    } else if (settings.useBufferedLoggers) {
+      bufferMessage(desc, s);
     } else {
       System.out.println(s);
     }
   }
 
-  void warn(String s)
+  void warn(Description desc, String s)
   {
     if (settings.useSbtLoggers) {
       for (Logger l : loggers)
         if (settings.color && l.ansiCodesSupported()) l.warn(s);
         else l.warn(filterAnsi(s));
+    } else if (settings.useBufferedLoggers) {
+      bufferMessage(desc, s);
     } else {
       System.out.println(s);
     }
   }
 
-  void warn(String s, Throwable t)
-  {
-    warn(s);
-    if(t != null && (settings.logAssert || !(t instanceof AssertionError))) logStackTrace(t);
+  void flush(Description desc) {
+    ConcurrentLinkedDeque<String> logs = buffers.remove(String.valueOf(desc.getClassName()));
+    if (logs != null) {
+      System.out.println(String.join("\n", logs));
+    }
   }
 
-  private void logStackTrace(Throwable t)
+  private void bufferMessage(Description desc, String message) {
+    ConcurrentLinkedDeque<String> logs = buffers.computeIfAbsent(String.valueOf(desc.getClassName()), d -> new ConcurrentLinkedDeque<>());
+    logs.addLast(message);
+  }
+  private void logStackTrace(Description desc, Throwable t)
   {
     StackTraceElement[] trace = t.getStackTrace();
     String testClassName = currentTestClassName.peek();
     String testFileName = settings.color ? findTestFileName(trace, testClassName) : null;
-    logStackTracePart(trace, trace.length-1, 0, t, testClassName, testFileName);
+    logStackTracePart(desc, trace, trace.length-1, 0, t, testClassName, testFileName);
   }
 
-  private void logStackTracePart(StackTraceElement[] trace, int m, int framesInCommon, Throwable t, String testClassName, String testFileName)
+  private void logStackTracePart(Description desc, StackTraceElement[] trace, int m, int framesInCommon, Throwable t, String testClassName, String testFileName)
   {
     final int m0 = m;
     int top = 0;
@@ -126,22 +130,22 @@ final class RichLogger
     }
     for(int i=top; i<=m; i++) {
       if (!trace[i].getClassName().startsWith("scala.runtime."))
-        error(stackTraceElementToString(trace[i], testClassName, testFileName));
+        error(desc, stackTraceElementToString(trace[i], testClassName, testFileName));
     }
     if(m0 != m)
     {
       // skip junit-related frames
-      error("    ...");
+      error(desc, "    ...");
     }
     else if(framesInCommon != 0)
     {
       // skip frames that were in the previous trace too
-      error("    ... " + framesInCommon + " more");
+      error(desc, "    ... " + framesInCommon + " more");
     }
-    logStackTraceAsCause(trace, t.getCause(), testClassName, testFileName);
+    logStackTraceAsCause(desc, trace, t.getCause(), testClassName, testFileName);
   }
 
-  private void logStackTraceAsCause(StackTraceElement[] causedTrace, Throwable t, String testClassName, String testFileName)
+  private void logStackTraceAsCause(Description desc, StackTraceElement[] causedTrace, Throwable t, String testClassName, String testFileName)
   {
     if(t == null) return;
     StackTraceElement[] trace = t.getStackTrace();
@@ -151,8 +155,8 @@ final class RichLogger
       m--;
       n--;
     }
-    error("Caused by: " + t);
-    logStackTracePart(trace, m, trace.length-1-m, t, testClassName, testFileName);
+    error(desc, "Caused by: " + t);
+    logStackTracePart(desc, trace, m, trace.length-1-m, t, testClassName, testFileName);
   }
 
   private String findTestFileName(StackTraceElement[] trace, String testClassName)
