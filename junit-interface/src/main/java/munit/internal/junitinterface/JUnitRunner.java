@@ -35,7 +35,7 @@ final class JUnitRunner implements Runner {
     Settings defaults = Settings.defaults();
 
     boolean quiet = false, nocolor = false, decodeScalaNames = false,
-        logAssert = true, logExceptionClass = true, useSbtLoggers = false, useBufferedLoggers = false;
+        logAssert = true, logExceptionClass = true, useSbtLoggers = false, useBufferedLoggers = true;
     boolean verbose = false;
     boolean suppressSystemError = false;
     boolean trimStackTraces = defaults.trimStackTraces();
