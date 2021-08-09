@@ -145,10 +145,10 @@ automatically parallelizes the execution of multiple test suites. To disable
 parallel test suite execution in sbt, add the following setting to <code>build.sbt</code>.</p>
 <pre><code class="hljs css language-sh">Test / parallelExecution := <span class="hljs-literal">false</span>
 </code></pre>
-<p>In case you do run your tests in parallel, you might also want to enable buffered logging,
-so that the test results of multiple suites do not appear interleaved.
-In contrast to other test frameworks, buffered logging is not the default in munit.</p>
-<pre><code class="hljs css language-sh">Test / testOptions += Tests.Argument(TestFrameworks.MUnit, <span class="hljs-string">"+b"</span>)
+<p>In case you do not run your tests in parallel, you can also disable buffered logging,
+which is on by default to prevent test results of multiple suites from appearing interleaved.
+Switching buffering off would give you immediate feedback on the console while a suite is running.</p>
+<pre><code class="hljs css language-sh">Test / testOptions += Tests.Argument(TestFrameworks.MUnit, <span class="hljs-string">"-b"</span>)
 </code></pre>
 <p>To learn more about sbt test execution, see
 <a href="https://www.scala-sbt.org/1.x/docs/Testing.html">https://www.scala-sbt.org/1.x/docs/Testing.html</a>.</p>
