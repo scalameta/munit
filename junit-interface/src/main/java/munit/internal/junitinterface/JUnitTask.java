@@ -79,6 +79,7 @@ final class JUnitTask implements Task {
         ed.testExecutionFailed(testClassName, ex);
       }
     } finally {
+      logger.flush();
       settings.restoreSystemProperties(oldprops);
     }
     return new Task[0]; // junit tests do not nest
