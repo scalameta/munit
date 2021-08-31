@@ -159,7 +159,6 @@ final class EventDispatcher extends RunListener
           ", " +
           result.getIgnoreCount()+" ignored" +
           ", "+result.getRunCount()+" total, "+(result.getRunTime()/1000.0)+"s") ;
-        logger.flush();
       }
     runStatistics.addTime(result.getRunTime());
   }
@@ -174,7 +173,6 @@ final class EventDispatcher extends RunListener
   {
       if (settings.verbose) {
         logger.info(taskInfo + " started");
-        logger.flush();
       }
   }
 
@@ -183,7 +181,6 @@ final class EventDispatcher extends RunListener
     post(new Event(Ansi.c(testName, Ansi.ERRMSG), settings.buildErrorMessage(err), Status.Error, 0L, err) {
       void logTo(RichLogger logger) {
         logger.error(ansiName+" failed: "+ansiMsg, error);
-        logger.flush();
       }
     });
   }
