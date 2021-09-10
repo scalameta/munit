@@ -4,8 +4,6 @@ import com.typesafe.tools.mima.core.MissingTypesProblem
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
-val scalaJSVersion = "1.6.0"
-val scalaNativeVersion = "0.4.0"
 def previousVersion = "0.7.0"
 def scala213 = "2.13.6"
 def scala212 = "2.12.14"
@@ -185,7 +183,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeSettings(
     sharedNativeSettings,
     libraryDependencies ++= List(
-      "org.scala-native" %%% "test-interface" % scalaNativeVersion
+      "org.scala-native" %%% "test-interface" % nativeVersion
     ),
     Compile / unmanagedSourceDirectories +=
       (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
