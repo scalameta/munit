@@ -1,7 +1,8 @@
 package munit
 
 import org.junit.runner.RunWith
-import scala.concurrent.ExecutionContext
+
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * The base class for all test suites.
@@ -19,8 +20,11 @@ abstract class Suite extends PlatformSuite {
   /** The base class for all test suites */
   def munitTests(): Seq[Test]
 
-  /** Functinonal fixtures that can be reused for individual test cases or entire suites. */
+  /** Functional fixtures that can be reused for individual test cases or entire suites. */
   def munitFixtures: Seq[Fixture[_]] = Nil
+
+  /** Functional asynchronous fixtures that can be reused for individual test cases or entire suites. */
+  def munitAsyncFixtures: Seq[AsyncFixture[_]] = Nil
 
   private val parasiticExecutionContext = new ExecutionContext {
     def execute(runnable: Runnable): Unit = runnable.run()
@@ -29,7 +33,7 @@ abstract class Suite extends PlatformSuite {
   def munitExecutionContext: ExecutionContext = parasiticExecutionContext
 
   /**
-   * @param name The name of this fixture, used for displaying an error message if
+   * @param fixtureName The name of this fixture, used for displaying an error message if
    * `beforeAll()` or `afterAll()` fail.
    */
   abstract class Fixture[T](val fixtureName: String) {
@@ -51,6 +55,32 @@ abstract class Suite extends PlatformSuite {
 
     /** Runs once after the test suite has finished, regardless if the tests failed or not. */
     def afterAll(): Unit = ()
+
+  }
+
+  /**
+   * @param fixtureName The name of this fixture, used for displaying an error message if
+   * `beforeAll()` or `afterAll()` fail.
+   */
+  abstract class AsyncFixture[T](val fixtureName: String) {
+
+    /** The value produced by this suite-local fixture that can be reused for all test cases. */
+    def apply(): T
+
+    /** Runs once before the test suite starts */
+    def beforeAll(): Future[Unit] = Future.successful(())
+
+    /**
+     * Runs before each individual test case.
+     * An error in this method aborts the test case.
+     */
+    def beforeEach(context: BeforeEach): Future[Unit] = Future.successful(())
+
+    /** Runs after each individual test case. */
+    def afterEach(context: AfterEach): Future[Unit] = Future.successful(())
+
+    /** Runs once after the test suite has finished, regardless if the tests failed or not. */
+    def afterAll(): Future[Unit] = Future.successful(())
 
   }
 

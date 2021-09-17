@@ -19,12 +19,12 @@ import org.junit.runner.Runner
 import org.junit.AssumptionViolatedException
 
 import scala.collection.mutable
-import scala.util.Try
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.ExecutionException
+
 import munit.internal.junitinterface.Settings
 import munit.internal.console.Printers
 
@@ -144,80 +144,215 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     if (PlatformCompat.isIgnoreSuite(cls)) {
       val description = getDescription()
       notifier.fireTestIgnored(description)
-      return Future.successful(())
-    }
-    var isBeforeAllRun = false
-    val result = {
-      val isContinue = runBeforeAll(notifier)
-      isBeforeAllRun = isContinue
-      if (isContinue) {
-        runAsyncTestsSynchronously(notifier)
-      } else {
-        Future.successful(())
+      Future.successful(())
+    } else {
+      val result =
+        for {
+          isBeforeAllRun <- runBeforeAll(notifier)
+          if isBeforeAllRun
+          _ <- runAsyncTestsSynchronously(notifier)
+        } yield isBeforeAllRun
+
+      result.transformWithCompat {
+        case util.Success(true) =>
+          runAfterAll(notifier)
+
+        case util.Success(false) =>
+          Future.successful(())
+
+        case util.Failure(ex) =>
+          Future.failed(ex)
       }
-    }
-    result.transformCompat { s =>
-      if (isBeforeAllRun) {
-        runAfterAll(notifier)
-      }
-      s
     }
   }
 
-  private def runBeforeAll(notifier: RunNotifier): Boolean = {
-    var isContinue = runHiddenTest(notifier, "beforeAll", suite.beforeAll())
-    suite.munitFixtures.foreach { fixture =>
-      isContinue &= runHiddenTest(
-        notifier,
-        s"beforeAllFixture(${fixture.fixtureName})",
-        fixture.beforeAll()
+  private def runBeforeAll(notifier: RunNotifier): Future[Boolean] = {
+    val suiteBeforeAllF = Future(
+      runHiddenTest(notifier, "beforeAll", suite.beforeAll())
+    )
+
+    def beforeAllFixtureF =
+      Future.sequence(
+        suite.munitFixtures.map(f =>
+          Future(
+            runHiddenTest(
+              notifier,
+              s"beforeAllFixture(${f.fixtureName})",
+              f.beforeAll()
+            )
+          )
+        )
       )
-    }
-    isContinue
-  }
-  private def runAfterAll(notifier: RunNotifier): Unit = {
-    suite.munitFixtures.foreach { fixture =>
-      runHiddenTest(
-        notifier,
-        s"afterAllFixture(${fixture.fixtureName})",
-        fixture.afterAll()
-      )
-    }
-    runHiddenTest(notifier, "afterAll", suite.afterAll())
+
+    def beforeAllAsyncFixtureF =
+      Future
+        .sequence(
+          suite.munitAsyncFixtures.map(asyncFixture =>
+            asyncFixture.beforeAll().map { r =>
+              runHiddenTest(
+                notifier,
+                s"beforeAllAsyncFixture(${asyncFixture.fixtureName})",
+                r
+              )
+            }
+          )
+        )
+
+    for {
+      suiteBeforeAll <- suiteBeforeAllF
+      beforeAllFixture <- beforeAllFixtureF
+      beforeAllAsyncFixture <- beforeAllAsyncFixtureF
+    } yield suiteBeforeAll && beforeAllFixture.forall(_ == true) &&
+      beforeAllAsyncFixture.forall(_ == true)
   }
 
-  class BeforeEachResult(
-      val error: Option[Throwable],
-      val loadedFixtures: List[suite.Fixture[_]]
-  )
-  private def runBeforeEach(
-      test: suite.Test
-  ): BeforeEachResult = {
-    val beforeEach = new GenericBeforeEach(test)
-    val fixtures = mutable.ListBuffer.empty[suite.Fixture[_]]
-    val error = foreachUnsafe(
-      List(() => suite.beforeEach(beforeEach)) ++
-        suite.munitFixtures.map(fixture =>
-          () => {
-            fixture.beforeEach(beforeEach)
-            fixtures += fixture
-            ()
+  private def runAfterAll(notifier: RunNotifier): Future[Unit] = {
+    def suiteAfterAllF = Future(
+      runHiddenTest(notifier, "afterAll", suite.afterAll())
+    )
+
+    def afterAllFixtureF =
+      Future.sequence(
+        suite.munitFixtures.map(f =>
+          Future(
+            runHiddenTest(
+              notifier,
+              s"afterAllFixture(${f.fixtureName})",
+              f.afterAll()
+            )
+          )
+        )
+      )
+
+    def afterAllAsyncFixtureF =
+      Future.sequence(
+        suite.munitAsyncFixtures.map(asyncFixture =>
+          asyncFixture.afterAll().map { r =>
+            runHiddenTest(
+              notifier,
+              s"afterAllAsyncFixture(${asyncFixture.fixtureName})",
+              r
+            )
           }
         )
+      )
+
+    for {
+      _ <- afterAllFixtureF
+      _ <- afterAllAsyncFixtureF
+      _ <- suiteAfterAllF
+    } yield ()
+  }
+
+  private[munit] class BeforeEachResult(
+      val error: Option[Throwable],
+      val loadedFixtures: List[suite.Fixture[_]],
+      val loadedAsyncFixtures: List[suite.AsyncFixture[_]]
+  )
+
+  private def runBeforeEach(
+      test: suite.Test
+  ): Future[BeforeEachResult] = {
+    val beforeEach = new GenericBeforeEach(test)
+
+    def suiteBeforeEachF = foreachUnsafe[Unit](
+      List(() -> (() => Future(suite.beforeEach(beforeEach))))
     )
-    new BeforeEachResult(error.failed.toOption, fixtures.toList)
+
+    def beforeEachFixtureF =
+      foreachUnsafe[suite.Fixture[_]](
+        suite.munitFixtures.toList.map(fixture =>
+          fixture -> (() => Future(fixture.beforeEach(beforeEach)))
+        )
+      )
+
+    def beforeEachAsyncFixtureF =
+      foreachUnsafe[suite.AsyncFixture[_]](
+        suite.munitAsyncFixtures.toList.map(fixture =>
+          fixture -> (() => fixture.beforeEach(beforeEach))
+        )
+      )
+
+    for {
+      suiteBeforeEach <- suiteBeforeEachF
+      result <- suiteBeforeEach match {
+        case Left((ex, _)) =>
+          Future.successful(
+            new BeforeEachResult(Some(ex), List.empty, List.empty)
+          )
+
+        case Right(_) =>
+          beforeEachFixtureF.flatMap {
+            case Left((ex, allocatedFixtures)) =>
+              Future.successful(
+                new BeforeEachResult(Some(ex), allocatedFixtures, List.empty)
+              )
+
+            case Right(allocatedFixtures) =>
+              beforeEachAsyncFixtureF.map {
+                case Left((ex, allocatedAsyncFixtures)) =>
+                  new BeforeEachResult(
+                    Some(ex),
+                    allocatedFixtures,
+                    allocatedAsyncFixtures
+                  )
+
+                case Right(allocatedAsyncFixtures) =>
+                  new BeforeEachResult(
+                    None,
+                    allocatedFixtures,
+                    allocatedAsyncFixtures
+                  )
+              }
+          }
+      }
+    } yield result
   }
 
   private def runAfterEach(
       test: suite.Test,
-      fixtures: List[suite.Fixture[_]]
-  ): Unit = {
+      fixtures: List[suite.Fixture[_]],
+      asyncFixtures: List[suite.AsyncFixture[_]]
+  ): Future[Unit] = {
     val afterEach = new GenericAfterEach(test)
-    val error = foreachUnsafe(
-      fixtures.map(fixture => () => fixture.afterEach(afterEach)) ++
-        List(() => suite.afterEach(afterEach))
+
+    def suiteAfterEachF = foreachUnsafe[Unit](
+      List(() -> (() => Future(suite.afterEach(afterEach))))
     )
-    error.get // throw exception if it exists.
+
+    def afterEachFixtureF =
+      foreachUnsafe[suite.Fixture[_]](
+        fixtures.map(fixture =>
+          fixture -> (() => Future(fixture.afterEach(afterEach)))
+        )
+      )
+
+    def afterEachAsyncFixtureF =
+      foreachUnsafe[suite.AsyncFixture[_]](
+        asyncFixtures.map(fixture =>
+          fixture -> (() => fixture.afterEach(afterEach))
+        )
+      )
+
+    afterEachFixtureF.flatMap {
+      case Left((ex, _)) =>
+        Future.failed(ex)
+
+      case Right(_) =>
+        afterEachAsyncFixtureF.flatMap {
+          case Left((ex, _)) =>
+            Future.failed(ex)
+
+          case Right(_) =>
+            suiteAfterEachF.flatMap {
+              case Left((ex, _)) =>
+                Future.failed(ex)
+
+              case Right(_) =>
+                Future.successful(())
+            }
+        }
+    }
   }
 
   private def runTest(
@@ -279,61 +414,85 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     case _ => x
   }
 
-  private def futureFromAny(any: Any): Future[Any] = any match {
-    case f: Future[_] => f
-    case _            => Future.successful(any)
-  }
-
   private def runTestBody(
       notifier: RunNotifier,
       description: Description,
       test: suite.Test
   ): Future[Unit] = {
-    val result: Future[Any] = StackTraces.dropOutside {
+    val result = StackTraces.dropOutside {
       val beforeEachResult = runBeforeEach(test)
-      val any = beforeEachResult.error match {
-        case None =>
-          try test.body()
-          finally runAfterEach(test, beforeEachResult.loadedFixtures)
-        case Some(error) =>
-          try runAfterEach(test, beforeEachResult.loadedFixtures)
-          finally throw error
+      beforeEachResult.flatMap { r =>
+        r.error match {
+          case None =>
+            Future(test.body()).transformWithCompat {
+              case util.Failure(ex) =>
+                runAfterEach(test, r.loadedFixtures, r.loadedAsyncFixtures)
+                  .transformWithCompat(_ => Future.failed(ex))
+
+              case util.Success(testResult) =>
+                runAfterEach(test, r.loadedFixtures, r.loadedAsyncFixtures)
+                  .transformWithCompat {
+                    case util.Failure(ex) =>
+                      Future.failed(ex)
+
+                    case util.Success(_) =>
+                      Future.successful(testResult)
+                  }
+            }
+
+          case Some(ex) =>
+            runAfterEach(test, r.loadedFixtures, r.loadedAsyncFixtures)
+              .transformWithCompat(_ => Future.failed(ex))
+        }
       }
-      futureFromAny(any)
     }
-    result.map {
-      case f: TestValues.FlakyFailure =>
+
+    result
+      .map {
+        case TestValues.Ignore =>
+          notifier.fireTestIgnored(description)
+        case _ =>
+          ()
+      }
+      .recover { case f: TestValues.FlakyFailure =>
         trimStackTrace(f)
         notifier.fireTestAssumptionFailed(new Failure(description, f))
-      case TestValues.Ignore =>
-        notifier.fireTestIgnored(description)
-      case _ =>
-        ()
-    }
+      }
   }
 
-  private def foreachUnsafe(thunks: Iterable[() => Unit]): Try[Unit] = {
-    var errors = mutable.ListBuffer.empty[Throwable]
-    thunks.foreach { thunk =>
-      try {
-        thunk()
-      } catch {
-        case ex if NonFatal(ex) =>
-          errors += ex
-      }
-    }
-    errors.toList match {
-      case head :: tail =>
-        tail.foreach { e =>
-          if (e ne head) {
-            head.addSuppressed(e)
+  private def foreachUnsafe[A](
+      thunks: Seq[(A, () => Future[Unit])]
+  ): Future[Either[(Throwable, List[A]), List[A]]] =
+    for {
+      computed <- Future.sequence(
+        thunks.map { case (fixture, computation) =>
+          computation().map(_ => Right[Throwable, A](fixture)).recover {
+            case ex if NonFatal(ex) =>
+              Left[Throwable, A](ex)
           }
         }
-        scala.util.Failure(head)
-      case _ =>
-        scala.util.Success(())
-    }
-  }
+      )
+
+      aggregated = computed.foldLeft(List.empty[Throwable] -> List.empty[A]) {
+        case (acc, Left(ex))       => (acc._1 :+ ex) -> acc._2
+        case (acc, Right(fixture)) => acc._1 -> (acc._2 :+ fixture)
+      }
+
+      result <- aggregated match {
+        case (head :: tail, allocatedFixtures) =>
+          Future(
+            tail.foreach {
+              case e if e ne head =>
+                head.addSuppressed(e)
+              case _ => ()
+            }
+          ).map(_ => Left(head -> allocatedFixtures))
+
+        case (Nil, allocatedFixtures) =>
+          Future.successful(Right(allocatedFixtures))
+      }
+
+    } yield result
 
   private def runHiddenTest(
       notifier: RunNotifier,
