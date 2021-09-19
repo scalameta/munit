@@ -57,12 +57,12 @@ to reusable or ad-hoc fixtures when necessary.
 ## Reusable test-local fixtures
 
 Reusable test-local fixtures are more powerful than functional test-local
-fixtures because they can declare custom logic that gets evaluted before each
+fixtures because they can declare custom logic that gets evaluated before each
 local test case and get torn down after each test case. These increased
 capabilities come at the price of ergonomics of the API.
 
-Override the `beforeEach()` and `afterEach()` methods in the `Fixture[T]` trait
-to configure a reusable test-local fixture.
+Override the `beforeEach()`, `afterEach()` and `munitFixtures` methods in the 
+`Fixture[T]` trait to configure a reusable test-local fixture.
 
 ```scala mdoc:reset
 import java.nio.file._
@@ -80,6 +80,38 @@ class FilesSuite extends FunSuite {
     }
   }
   override def munitFixtures = List(file)
+
+  test("exists") {
+    // `file` is the temporary file that was created for this test case.
+    assert(Files.exists(file()))
+  }
+}
+```
+
+If `beforeEach()` and `afterEach()` methods supposed to be asynchronous computations 
+using `scala.concurrent.Future[T]` it's possible to use `AsyncFixture[T]`. 
+As well as for `Fixture[T]` you should override the 
+`beforeEach()`, `afterEach()` and `munitAsyncFixtures` methods in the `AsyncFixture[T]` trait
+to configure a reusable test-local fixture.
+
+```scala mdoc:reset
+import java.nio.file._
+import munit._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+class AsyncFilesSuite extends FunSuite {
+  val file = new AsyncFixture[Path]("files") {
+    var file: Path = null
+    def apply() = file
+    override def beforeEach(context: BeforeEach): Future[Unit] = Future {
+      file = Files.createTempFile("files", context.test.name)
+    }
+    override def afterEach(context: AfterEach): Unit = Future {
+      // Always gets called, even if test failed.
+      Files.deleteIfExists(file)
+    }
+  }
+  override def munitAsyncFixtures = List(file)
 
   test("exists") {
     // `file` is the temporary file that was created for this test case.
@@ -109,6 +141,40 @@ class MySuite extends munit.FunSuite {
     }
   }
   override def munitFixtures = List(db)
+
+  test("test1") {
+    db() // database connection has been initialized
+  }
+  test("test2") {
+    // ...
+    db() // the same `db` instance as in "test1"
+  }
+}
+```
+
+If `beforeAll()` and `afterAll()` methods supposed to be asynchronous computations 
+using `scala.concurrent.Future[T]` it's possible to use `AsyncFixture[T]`. 
+As well as for `Fixture[T]` you should override the 
+`beforeAll()`, `afterAll()` and `munitAsyncFixtures` methods in the `AsyncFixture[T]` trait
+to configure a reusable suite-local fixture.
+
+```scala mdoc:reset
+import java.sql.Connection
+import java.sql.DriverManager
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+class AsyncFixtureMySuite extends munit.FunSuite {
+  val db = new AsyncFixture[Connection]("database") {
+    private var connection: Connection = null
+    def apply() = connection
+    override def beforeAll(): Future[Unit] = Future {
+      connection = DriverManager.getConnection("jdbc:h2:mem:", "sa", null)
+    }
+    override def afterAll(): Future[Unit] = Future {
+      connection.close()
+    }
+  }
+  override def munitAsyncFixtures = List(db)
 
   test("test1") {
     db() // database connection has been initialized

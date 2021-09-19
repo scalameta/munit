@@ -59,6 +59,8 @@ abstract class Suite extends PlatformSuite {
   }
 
   /**
+   * The same as [[Fixture]] except that allows asynchronously compute `before` and `after` methods.
+   *
    * @param fixtureName The name of this fixture, used for displaying an error message if
    * `beforeAll()` or `afterAll()` fail.
    */
@@ -67,19 +69,19 @@ abstract class Suite extends PlatformSuite {
     /** The value produced by this suite-local fixture that can be reused for all test cases. */
     def apply(): T
 
-    /** Runs once before the test suite starts */
+    /** Runs asynchronously once before the test suite starts. */
     def beforeAll(): Future[Unit] = Future.successful(())
 
     /**
-     * Runs before each individual test case.
+     * Runs asynchronously before each individual test case.
      * An error in this method aborts the test case.
      */
     def beforeEach(context: BeforeEach): Future[Unit] = Future.successful(())
 
-    /** Runs after each individual test case. */
+    /** Runs asynchronously after each individual test case. */
     def afterEach(context: AfterEach): Future[Unit] = Future.successful(())
 
-    /** Runs once after the test suite has finished, regardless if the tests failed or not. */
+    /** Runs asynchronously once after the test suite has finished, regardless if the tests failed or not. */
     def afterAll(): Future[Unit] = Future.successful(())
 
   }
