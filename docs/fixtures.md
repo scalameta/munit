@@ -106,7 +106,7 @@ class AsyncFilesSuite extends FunSuite {
     override def beforeEach(context: BeforeEach): Future[Unit] = Future {
       file = Files.createTempFile("files", context.test.name)
     }
-    override def afterEach(context: AfterEach): Unit = Future {
+    override def afterEach(context: AfterEach): Future[Unit] = Future {
       // Always gets called, even if test failed.
       Files.deleteIfExists(file)
     }
