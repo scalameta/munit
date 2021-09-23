@@ -118,6 +118,14 @@ parallel test suite execution in sbt, add the following setting to `build.sbt`.
 Test / parallelExecution := false
 ```
 
+In case you do not run your tests in parallel, you can also disable buffered logging, 
+which is on by default to prevent test results of multiple suites from appearing interleaved.
+Switching buffering off would give you immediate feedback on the console while a suite is running.
+
+```sh
+Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
+```
+
 To learn more about sbt test execution, see
 https://www.scala-sbt.org/1.x/docs/Testing.html.
 

@@ -4,15 +4,13 @@ import com.typesafe.tools.mima.core.MissingTypesProblem
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
-val scalaJSVersion = "1.6.0"
-val scalaNativeVersion = "0.4.0"
 def previousVersion = "0.7.0"
 def scala213 = "2.13.6"
-def scala212 = "2.12.14"
+def scala212 = "2.12.15"
 def scala211 = "2.11.12"
 def scala3 = "3.0.1"
 def junitVersion = "4.13.2"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "1.115.0"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "1.118.1"
 inThisBuild(
   List(
     version ~= { old =>
@@ -185,7 +183,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeSettings(
     sharedNativeSettings,
     libraryDependencies ++= List(
-      "org.scala-native" %%% "test-interface" % scalaNativeVersion
+      "org.scala-native" %%% "test-interface" % nativeVersion
     ),
     Compile / unmanagedSourceDirectories +=
       (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
@@ -279,7 +277,9 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .jsSettings(sharedJSSettings)
   .jvmSettings(
     sharedJVMSettings,
-    fork := true
+    fork := true,
+    Test / parallelExecution := true,
+    Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "+b")
   )
   .disablePlugins(MimaPlugin)
 lazy val testsJVM = tests.jvm

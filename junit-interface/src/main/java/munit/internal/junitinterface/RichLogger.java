@@ -1,13 +1,9 @@
 package munit.internal.junitinterface;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import sbt.testing.Logger;
 import static munit.internal.junitinterface.Ansi.*;
@@ -18,33 +14,16 @@ final class RichLogger
   private final Logger[] loggers;
   private final RunSettings settings;
   private final JUnitRunner runner;
-  /* The top element is the test class of the currently executing test */
-  private final Stack<String> currentTestClassName = new Stack<String>();
+  private final String testClassName;
   private final Map<String, Boolean> highlightedCache = new HashMap<>();
+  private final ConcurrentLinkedDeque<String> buffer = new ConcurrentLinkedDeque<>();
 
   RichLogger(Logger[] loggers, RunSettings settings, String testClassName, JUnitRunner runner)
   {
     this.loggers = loggers;
     this.settings = settings;
     this.runner = runner;
-    currentTestClassName.push(testClassName);
-  }
-
-  void pushCurrentTestClassName(String s) { currentTestClassName.push(s); }
-
-  void popCurrentTestClassName()
-  {
-    if(currentTestClassName.size() > 1) currentTestClassName.pop();
-  }
-
-  void debug(String s)
-  {
-    // Disabled by default because debug logging is noisy and enabled by default in sbt.
-    if (settings.useSbtLoggers) {
-      for(Logger l : loggers)
-      if(settings.color && l.ansiCodesSupported()) l.debug(s);
-      else l.debug(filterAnsi(s));
-    }
+    this.testClassName = testClassName;
   }
 
   void error(String s)
@@ -53,6 +32,8 @@ final class RichLogger
       for (Logger l : loggers)
         if (settings.color && l.ansiCodesSupported()) l.error(s);
         else l.error(filterAnsi(s));
+    } else if (settings.useBufferedLoggers) {
+      bufferMessage(s);
     } else {
       System.out.println(s);
     }
@@ -70,6 +51,8 @@ final class RichLogger
       for (Logger l : loggers)
         if (settings.color && l.ansiCodesSupported()) l.info(s);
         else l.info(filterAnsi(s));
+    } else if (settings.useBufferedLoggers) {
+      bufferMessage(s);
     } else {
       System.out.println(s);
     }
@@ -81,26 +64,31 @@ final class RichLogger
       for (Logger l : loggers)
         if (settings.color && l.ansiCodesSupported()) l.warn(s);
         else l.warn(filterAnsi(s));
+    } else if (settings.useBufferedLoggers) {
+      bufferMessage(s);
     } else {
       System.out.println(s);
     }
   }
 
-  void warn(String s, Throwable t)
-  {
-    warn(s);
-    if(t != null && (settings.logAssert || !(t instanceof AssertionError))) logStackTrace(t);
+  void flush() {
+    if (!buffer.isEmpty()) {
+      System.out.println(String.join("\n", buffer));
+      buffer.clear();
+    }
   }
 
+  private void bufferMessage(String message) {
+    buffer.addLast(message);
+  }
   private void logStackTrace(Throwable t)
   {
     StackTraceElement[] trace = t.getStackTrace();
-    String testClassName = currentTestClassName.peek();
     String testFileName = settings.color ? findTestFileName(trace, testClassName) : null;
-    logStackTracePart(trace, trace.length-1, 0, t, testClassName, testFileName);
+    logStackTracePart(trace, trace.length-1, 0, t, testFileName);
   }
 
-  private void logStackTracePart(StackTraceElement[] trace, int m, int framesInCommon, Throwable t, String testClassName, String testFileName)
+  private void logStackTracePart(StackTraceElement[] trace, int m, int framesInCommon, Throwable t, String testFileName)
   {
     final int m0 = m;
     int top = 0;
@@ -126,7 +114,7 @@ final class RichLogger
     }
     for(int i=top; i<=m; i++) {
       if (!trace[i].getClassName().startsWith("scala.runtime."))
-        error(stackTraceElementToString(trace[i], testClassName, testFileName));
+        error(stackTraceElementToString(trace[i], testFileName));
     }
     if(m0 != m)
     {
@@ -138,10 +126,10 @@ final class RichLogger
       // skip frames that were in the previous trace too
       error("    ... " + framesInCommon + " more");
     }
-    logStackTraceAsCause(trace, t.getCause(), testClassName, testFileName);
+    logStackTraceAsCause(trace, t.getCause(), testFileName);
   }
 
-  private void logStackTraceAsCause(StackTraceElement[] causedTrace, Throwable t, String testClassName, String testFileName)
+  private void logStackTraceAsCause(StackTraceElement[] causedTrace, Throwable t, String testFileName)
   {
     if(t == null) return;
     StackTraceElement[] trace = t.getStackTrace();
@@ -152,7 +140,7 @@ final class RichLogger
       n--;
     }
     error("Caused by: " + t);
-    logStackTracePart(trace, m, trace.length-1-m, t, testClassName, testFileName);
+    logStackTracePart(trace, m, trace.length-1-m, t, testFileName);
   }
 
   private String findTestFileName(StackTraceElement[] trace, String testClassName)
@@ -180,7 +168,7 @@ final class RichLogger
     }
   }
 
-  private String stackTraceElementToString(StackTraceElement e, String testClassName, String testFileName)
+  private String stackTraceElementToString(StackTraceElement e, String testFileName)
   {
     boolean highlight = settings.color && (
         testClassName.equals(e.getClassName()) ||

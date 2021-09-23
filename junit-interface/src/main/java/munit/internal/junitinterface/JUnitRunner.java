@@ -34,10 +34,9 @@ final class JUnitRunner implements Runner {
     this.customRunners = customRunners;
     Settings defaults = Settings.defaults();
 
-    boolean quiet = false, nocolor = false, decodeScalaNames = false,
-        logAssert = true, logExceptionClass = true, useSbtLoggers = false;
+    boolean nocolor = false, decodeScalaNames = false,
+        logAssert = true, logExceptionClass = true, useSbtLoggers = false, useBufferedLoggers = true;
     boolean verbose = false;
-    boolean suppressSystemError = false;
     boolean trimStackTraces = defaults.trimStackTraces();
     RunSettings.Summary summary = RunSettings.Summary.SBT;
     HashMap<String, String> sysprops = new HashMap<String, String>();
@@ -51,14 +50,17 @@ final class JUnitRunner implements Runner {
     String ignoreRunners = "org.junit.runners.Suite";
     String runListener = null;
     for(String s : args) {
-      if("-q".equals(s)) quiet = true;
-      else if("-v".equals(s) || "--verbose".equals(s)) verbose = true;
+      if("-v".equals(s) || "--verbose".equals(s)) verbose = true;
       else if(s.startsWith("--summary=")) summary = RunSettings.Summary.values()[Integer.parseInt(s.substring(10))];
       else if("-n".equals(s)) nocolor = true;
       else if("-s".equals(s)) decodeScalaNames = true;
       else if("-a".equals(s)) logAssert = true;
       else if("-c".equals(s)) logExceptionClass = false;
       else if("+l".equals(s)) useSbtLoggers = true;
+      else if("+b".equals(s)) useBufferedLoggers = true;
+      else if("-b".equals(s)) useBufferedLoggers = false;
+      else if("--logger=sbt".equals(s)) useSbtLoggers = true;
+      else if("--logger=buffered".equals(s)) useBufferedLoggers = true;
       else if("-l".equals(s)) useSbtLoggers = false;
       else if("-F".equals(s)) trimStackTraces = false;
       else if("+F".equals(s)) trimStackTraces = true;
@@ -76,18 +78,15 @@ final class JUnitRunner implements Runner {
       else if(!s.startsWith("-") && !s.startsWith("+")) globPatterns.add(s);
     }
     for(String s : args) {
-      if("+q".equals(s)) quiet = false;
-      else if("+n".equals(s)) nocolor = false;
+      if("+n".equals(s)) nocolor = false;
       else if("+s".equals(s)) decodeScalaNames = false;
       else if("+a".equals(s)) logAssert = false;
       else if("+c".equals(s)) logExceptionClass = true;
       else if("+l".equals(s)) useSbtLoggers = true;
-      else if("--no-stderr".equals(s)) suppressSystemError = true;
-      else if("--stderr".equals(s)) suppressSystemError = false;
     }
     this.settings =
-      new RunSettings(!nocolor, decodeScalaNames, quiet, verbose, useSbtLoggers, trimStackTraces, summary, logAssert, ignoreRunners, logExceptionClass,
-          suppressSystemError, sysprops, globPatterns, includeCategories, excludeCategories, includeTags, excludeTags,
+      new RunSettings(!nocolor, decodeScalaNames, verbose, useSbtLoggers, useBufferedLoggers, trimStackTraces, summary, logAssert, ignoreRunners, logExceptionClass,
+          sysprops, globPatterns, includeCategories, excludeCategories, includeTags, excludeTags,
         testFilter);
     this.runListener = createRunListener(runListener);
     this.runStatistics = new RunStatistics(settings);

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -21,14 +21,13 @@ final class EventDispatcher extends RunListener
 {
   private final RichLogger logger;
   private final Set<Description> reported = Collections.newSetFromMap(new ConcurrentHashMap<Description, Boolean>());
-  private final Set<String> reportedSuites = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+  private final AtomicBoolean suiteStartReported = new AtomicBoolean(false);
   private final ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<String, Long>();
   private final EventHandler handler;
   private final RunSettings settings;
   private final Fingerprint fingerprint;
   private final String taskInfo;
   private final RunStatistics runStatistics;
-  private OutputCapture capture;
 
   EventDispatcher(RichLogger logger, EventHandler handler, RunSettings settings, Fingerprint fingerprint,
                   Description taskDescription, RunStatistics runStatistics)
@@ -67,7 +66,6 @@ final class EventDispatcher extends RunListener
   @Override
   public void testAssumptionFailure(final Failure failure)
   {
-    uncapture(true);
     postIfFirst(failure.getDescription(), new ErrorEvent(failure, Status.Skipped) {
       void logTo(RichLogger logger) {
         if (settings.verbose) {
@@ -92,10 +90,9 @@ final class EventDispatcher extends RunListener
         // Ignore error.
       }
     }
-    uncapture(true);
     postIfFirst(failure.getDescription(), new ErrorEvent(failure, Status.Failure) {
       void logTo(RichLogger logger) {
-        logger.error( settings.buildTestResult(Status.Failure) +ansiName+" "+ durationSuffix() + " " + ansiMsg, error);
+        logger.error(settings.buildTestResult(Status.Failure) +ansiName+" "+ durationSuffix() + " " + ansiMsg, error);
       }
     });
   }
@@ -104,13 +101,11 @@ final class EventDispatcher extends RunListener
   @Override
   public void testFinished(Description desc)
   {
-    uncapture(false);
     postIfFirst(desc, new InfoEvent(desc, Status.Success) {
       void logTo(RichLogger logger) {
         logger.info(settings.buildTestResult(Status.Success) + Ansi.c(desc.getMethodName(), SUCCESS1) + durationSuffix());
       }
     });
-    logger.popCurrentTestClassName();
   }
 
   @Override
@@ -125,34 +120,29 @@ final class EventDispatcher extends RunListener
 
 
   @Override
-  public void testSuiteStarted(Description description)
+  public void testSuiteStarted(Description desc)
   {
-    if (description == null || description.getClassName() == null || description.getClassName().equals("null")) return;
-    reportedSuites.add(description.getClassName());
-    logger.info(c(description.getClassName() + ":", SUCCESS1));
+    if (desc == null || desc.getClassName() == null || desc.getClassName().equals("null")) return;
+    if (suiteStartReported.compareAndSet(false, true)) logger.info(c(desc.getClassName() + ":", SUCCESS1));
   }
 
 
   @Override
-  public void testStarted(Description description)
+  public void testStarted(Description desc)
   {
-    recordStartTime(description);
-    if (reportedSuites.add(description.getClassName())) {
-      testSuiteStarted(description);
-    }
-    logger.pushCurrentTestClassName(description.getClassName());
+    recordStartTime(desc);
+    testSuiteStarted(desc);
     if (settings.verbose) {
-      logger.info(settings.buildPlainName(description) + " started");
+      logger.info(settings.buildPlainName(desc) + " started");
     }
-    capture();
   }
 
   private void recordStartTime(Description description) {
-    startTimes.putIfAbsent(settings.buildPlainName(description), System.currentTimeMillis());
+    startTimes.putIfAbsent(description.getMethodName(), System.currentTimeMillis());
   }
 
   private Long elapsedTime(Description description) {
-    Long startTime = startTimes.get(settings.buildPlainName(description));
+    Long startTime = startTimes.get(description.getMethodName());
     if( startTime == null ) {
       return 0l;
     } else {
@@ -174,7 +164,12 @@ final class EventDispatcher extends RunListener
   }
 
   @Override
-  public void testRunStarted(Description description)
+  public void testSuiteFinished(Description desc) throws Exception {
+    logger.flush();
+  }
+
+  @Override
+  public void testRunStarted(Description desc)
   {
       if (settings.verbose) {
         logger.info(taskInfo + " started");
@@ -189,6 +184,7 @@ final class EventDispatcher extends RunListener
       }
     });
   }
+
 
   private void postIfFirst(Description desc, AbstractEvent e)
   {
@@ -206,26 +202,6 @@ final class EventDispatcher extends RunListener
     handler.handle(e);
   }
 
-  private void capture()
-  {
-    if(settings.quiet && capture == null)
-      capture = OutputCapture.start();
-  }
-
-  void uncapture(boolean replay)
-  {
-    if(settings.quiet && capture != null)
-    {
-      capture.stop();
-      if(replay)
-      {
-        try { capture.replay(); }
-        catch(IOException ex) { logger.error("Error replaying captured stdio", ex); }
-      }
-      capture = null;
-    }
-  }
-
 
   // Removes stack trace elements that reference the reflective invocation in TestLauncher.
   private static void trimStackTrace(Throwable ex, String fromClassName, String toClassName, Settings settings) {
@@ -237,7 +213,7 @@ final class EventDispatcher extends RunListener
         int end = stackTrace.length - 1;
         StackTraceElement last = stackTrace[end];
         if (last.getClassName() != null && last.getClassName().equals(fromClassName)) {
-          for (int i = 0; end >= 0; end--) {
+          for (; end >= 0; end--) {
             StackTraceElement e = stackTrace[end];
             if (e.getClassName().equals(toClassName)) {
               break;

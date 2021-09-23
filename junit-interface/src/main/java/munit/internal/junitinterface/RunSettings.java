@@ -25,14 +25,13 @@ class RunSettings implements Settings {
   private static final Object NULL = new Object();
 
   final boolean color;
-  final boolean quiet;
   final boolean logAssert;
   final boolean logExceptionClass;
   final Set<String> includeTags, excludeTags;
   final boolean useSbtLoggers;
+  final boolean useBufferedLoggers;
   final boolean trimStackTraces;
   final boolean verbose;
-  final boolean suppressSystemError;
   final Summary summary;
   final ArrayList<String> globPatterns;
   final Set<String> includeCategories, excludeCategories;
@@ -42,23 +41,21 @@ class RunSettings implements Settings {
   private final HashMap<String, String> sysprops;
   private final HashSet<String> ignoreRunners = new HashSet<String>();
 
-  RunSettings(boolean color, boolean decodeScalaNames, boolean quiet,
-              boolean verbose, boolean useSbtLoggers, boolean trimStackTraces,
+  RunSettings(boolean color, boolean decodeScalaNames,
+              boolean verbose, boolean useSbtLoggers, boolean useBufferedLoggers, boolean trimStackTraces,
               Summary summary, boolean logAssert, String ignoreRunners,
               boolean logExceptionClass,
-              boolean suppressSystemError, HashMap<String, String> sysprops,
+              HashMap<String, String> sysprops,
               ArrayList<String> globPatterns,
               Set<String> includeCategories, Set<String> excludeCategories,
               Set<String> includeTags, Set<String> excludeTags,
               String testFilter) {
     this.color = color;
     this.decodeScalaNames = decodeScalaNames;
-    this.quiet = quiet;
     this.verbose = verbose;
     this.summary = summary;
     this.logAssert = logAssert;
     this.logExceptionClass = logExceptionClass;
-    this.suppressSystemError = suppressSystemError;
     this.includeTags = includeTags;
     this.excludeTags = excludeTags;
     for(String s : ignoreRunners.split(","))
@@ -69,6 +66,7 @@ class RunSettings implements Settings {
     this.excludeCategories = excludeCategories;
     this.testFilter = testFilter;
     this.useSbtLoggers = useSbtLoggers;
+    this.useBufferedLoggers = useBufferedLoggers;
     this.trimStackTraces = trimStackTraces;
   }
 
