@@ -88,11 +88,8 @@ class FilesSuite extends FunSuite {
 }
 ```
 
-If `beforeEach()` and `afterEach()` methods supposed to be asynchronous computations 
-using `scala.concurrent.Future[T]` it's possible to use `AsyncFixture[T]`. 
-As well as for `Fixture[T]` you should override the 
-`beforeEach()`, `afterEach()` and `munitAsyncFixtures` methods in the `AsyncFixture[T]` trait
-to configure a reusable test-local fixture.
+Use `AsyncFixture[T]` for fixtures that need to be loaded asynchronously. 
+Override the `munitAsyncFixtures` method to register async fixtures.
 
 ```scala mdoc:reset
 import java.nio.file._
@@ -152,11 +149,8 @@ class MySuite extends munit.FunSuite {
 }
 ```
 
-If `beforeAll()` and `afterAll()` methods supposed to be asynchronous computations 
-using `scala.concurrent.Future[T]` it's possible to use `AsyncFixture[T]`. 
-As well as for `Fixture[T]` you should override the 
-`beforeAll()`, `afterAll()` and `munitAsyncFixtures` methods in the `AsyncFixture[T]` trait
-to configure a reusable suite-local fixture.
+Use `AsyncFixture[T]` for fixtures that need to be loaded asynchronously. 
+Override the `munitAsyncFixtures` method to register async fixtures.
 
 ```scala mdoc:reset
 import java.sql.Connection
