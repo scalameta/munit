@@ -28,6 +28,8 @@ import java.util.concurrent.ExecutionException
 import munit.internal.junitinterface.Settings
 import munit.internal.console.Printers
 
+import scala.util.Try
+
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     extends Runner
     with Filterable
@@ -167,14 +169,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
 
   private def runBeforeAll(notifier: RunNotifier): Future[Boolean] = {
-    val suiteBeforeAllF = Future(
+    val suiteBeforeAllF = Future.fromTry(
       runHiddenTest(notifier, "beforeAll", suite.beforeAll())
     )
 
     def beforeAllFixtureF =
       Future.sequence(
         suite.munitFixtures.map(f =>
-          Future(
+          Future.fromTry(
             runHiddenTest(
               notifier,
               s"beforeAllFixture(${f.fixtureName})",
@@ -188,11 +190,13 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       Future
         .sequence(
           suite.munitAsyncFixtures.map(asyncFixture =>
-            asyncFixture.beforeAll().map { r =>
-              runHiddenTest(
-                notifier,
-                s"beforeAllAsyncFixture(${asyncFixture.fixtureName})",
-                r
+            asyncFixture.beforeAll().flatMap { r =>
+              Future.fromTry(
+                runHiddenTest(
+                  notifier,
+                  s"beforeAllAsyncFixture(${asyncFixture.fixtureName})",
+                  r
+                )
               )
             }
           )
@@ -207,14 +211,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
 
   private def runAfterAll(notifier: RunNotifier): Future[Unit] = {
-    def suiteAfterAllF = Future(
+    def suiteAfterAllF = Future.fromTry(
       runHiddenTest(notifier, "afterAll", suite.afterAll())
     )
 
     def afterAllFixtureF =
       Future.sequence(
         suite.munitFixtures.map(f =>
-          Future(
+          Future.fromTry(
             runHiddenTest(
               notifier,
               s"afterAllFixture(${f.fixtureName})",
@@ -227,11 +231,13 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     def afterAllAsyncFixtureF =
       Future.sequence(
         suite.munitAsyncFixtures.map(asyncFixture =>
-          asyncFixture.afterAll().map { r =>
-            runHiddenTest(
-              notifier,
-              s"afterAllAsyncFixture(${asyncFixture.fixtureName})",
-              r
+          asyncFixture.afterAll().flatMap { r =>
+            Future.fromTry(
+              runHiddenTest(
+                notifier,
+                s"afterAllAsyncFixture(${asyncFixture.fixtureName})",
+                r
+              )
             )
           }
         )
@@ -498,15 +504,13 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier: RunNotifier,
       name: String,
       thunk: => Unit
-  ): Boolean = {
-    try {
-      StackTraces.dropOutside(thunk)
-      true
-    } catch {
-      case ex: Throwable =>
-        fireHiddenTest(notifier, name, ex)
-        false
-    }
+  ): Try[Boolean] = Try {
+    StackTraces.dropOutside(thunk)
+    true
+  }.recover {
+    case ex: Throwable =>
+      fireHiddenTest(notifier, name, ex)
+      false
   }
 
   private def fireHiddenTest(
