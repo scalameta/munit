@@ -150,11 +150,13 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       Future.successful(())
     } else {
       val result =
-        for {
-          isBeforeAllRun <- runBeforeAll(notifier)
-          if isBeforeAllRun
-          _ <- runAsyncTestsSynchronously(notifier)
-        } yield isBeforeAllRun
+        runBeforeAll(notifier).flatMap {
+          case true =>
+            runAsyncTestsSynchronously(notifier).map(_ => true)
+
+          case false =>
+            Future.successful(false)
+        }
 
       result.transformWithCompat {
         case util.Success(true) =>
