@@ -171,13 +171,36 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
   }
 
+  private def runAsyncFixturesSynchronously[A](
+      fixtures: Seq[Future[A]]
+  ): Future[Seq[A]] = {
+    def loop(
+        fixtures: Seq[Future[A]],
+        acc: Seq[A]
+    ): Future[Seq[A]] = fixtures match {
+      case Seq() =>
+        Future.successful(acc)
+
+      case Seq(fixture, xs @ _*) =>
+        fixture.value match {
+          case Some(res) =>
+            Future.fromTry(res).flatMap(r => loop(xs, r +: acc))
+
+          case None =>
+            fixture.flatMap(r => loop(xs, r +: acc))
+        }
+    }
+
+    loop(fixtures, Seq.empty)
+  }
+
   private def runBeforeAll(notifier: RunNotifier): Future[Boolean] = {
     val suiteBeforeAllF = Future.fromTry(
       runHiddenTest(notifier, "beforeAll", suite.beforeAll())
     )
 
     def beforeAllFixtureF =
-      Future.sequence(
+      runAsyncFixturesSynchronously(
         suite.munitFixtures.map(f =>
           Future.fromTry(
             runHiddenTest(
@@ -190,20 +213,19 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       )
 
     def beforeAllAsyncFixtureF =
-      Future
-        .sequence(
-          suite.munitAsyncFixtures.map(asyncFixture =>
-            asyncFixture.beforeAll().flatMap { r =>
-              Future.fromTry(
-                runHiddenTest(
-                  notifier,
-                  s"beforeAllAsyncFixture(${asyncFixture.fixtureName})",
-                  r
-                )
+      runAsyncFixturesSynchronously(
+        suite.munitAsyncFixtures.map(asyncFixture =>
+          asyncFixture.beforeAll().flatMap { r =>
+            Future.fromTry(
+              runHiddenTest(
+                notifier,
+                s"beforeAllAsyncFixture(${asyncFixture.fixtureName})",
+                r
               )
-            }
-          )
+            )
+          }
         )
+      )
 
     for {
       suiteBeforeAll <- suiteBeforeAllF
@@ -219,7 +241,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     )
 
     def afterAllFixtureF =
-      Future.sequence(
+      runAsyncFixturesSynchronously(
         suite.munitFixtures.map(f =>
           Future.fromTry(
             runHiddenTest(
@@ -232,7 +254,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       )
 
     def afterAllAsyncFixtureF =
-      Future.sequence(
+      runAsyncFixturesSynchronously(
         suite.munitAsyncFixtures.map(asyncFixture =>
           asyncFixture.afterAll().flatMap { r =>
             Future.fromTry(
@@ -493,15 +515,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       thunks: Seq[(A, () => Future[Unit])]
   ): Future[Either[(Throwable, List[A]), List[A]]] =
     for {
-      aggregated <- Future
-        .sequence(
-          thunks.map { case (fixture, computation) =>
-            computation().map(_ => Right[Throwable, A](fixture)).recover {
-              case ex if NonFatal(ex) =>
-                Left[Throwable, A](ex)
-            }
+      aggregated <- runAsyncFixturesSynchronously(
+        thunks.map { case (fixture, computation) =>
+          computation().map(_ => Right[Throwable, A](fixture)).recover {
+            case ex if NonFatal(ex) =>
+              Left[Throwable, A](ex)
           }
-        )
+        }
+      )
         .map(aggregateComputedFixtures)
 
       result <- aggregated match {
