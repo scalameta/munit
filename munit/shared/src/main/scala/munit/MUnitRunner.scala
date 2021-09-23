@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutionException
 import munit.internal.junitinterface.Settings
 import munit.internal.console.Printers
 
+import scala.annotation.tailrec
 import scala.util.Try
 
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
@@ -466,23 +467,40 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       }
   }
 
+  private def aggregateComputedFixtures[A](
+      fixtures: Seq[Either[Throwable, A]]
+  ) = {
+    @tailrec
+    def loop(
+        fixtures: Seq[Either[Throwable, A]],
+        acc: (List[Throwable], List[A])
+    ): (List[Throwable], List[A]) =
+      fixtures match {
+        case Seq() => acc
+
+        case Seq(Left(ex), xs @ _*) => loop(xs, (acc._1 :+ ex) -> acc._2)
+
+        case Seq(Right(fixture), xs @ _*) =>
+          loop(xs, acc._1 -> (acc._2 :+ fixture))
+      }
+
+    loop(fixtures, List.empty[Throwable] -> List.empty[A])
+  }
+
   private def foreachUnsafe[A](
       thunks: Seq[(A, () => Future[Unit])]
   ): Future[Either[(Throwable, List[A]), List[A]]] =
     for {
-      computed <- Future.sequence(
-        thunks.map { case (fixture, computation) =>
-          computation().map(_ => Right[Throwable, A](fixture)).recover {
-            case ex if NonFatal(ex) =>
-              Left[Throwable, A](ex)
+      aggregated <- Future
+        .sequence(
+          thunks.map { case (fixture, computation) =>
+            computation().map(_ => Right[Throwable, A](fixture)).recover {
+              case ex if NonFatal(ex) =>
+                Left[Throwable, A](ex)
+            }
           }
-        }
-      )
-
-      aggregated = computed.foldLeft(List.empty[Throwable] -> List.empty[A]) {
-        case (acc, Left(ex))       => (acc._1 :+ ex) -> acc._2
-        case (acc, Right(fixture)) => acc._1 -> (acc._2 :+ fixture)
-      }
+        )
+        .map(aggregateComputedFixtures)
 
       result <- aggregated match {
         case (head :: tail, allocatedFixtures) =>
@@ -507,10 +525,9 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   ): Try[Boolean] = Try {
     StackTraces.dropOutside(thunk)
     true
-  }.recover {
-    case ex: Throwable =>
-      fireHiddenTest(notifier, name, ex)
-      false
+  }.recover { case ex: Throwable =>
+    fireHiddenTest(notifier, name, ex)
+    false
   }
 
   private def fireHiddenTest(
