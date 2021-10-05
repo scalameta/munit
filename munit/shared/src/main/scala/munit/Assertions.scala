@@ -153,11 +153,18 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
           munitPrint(clue),
           printObtainedAsStripMargin = false
         )
-        failComparison(
-          s"values are not equal even if they have the same `toString()`: $obtained",
-          obtained,
-          expected
-        )
+        if (obtained.toString() == expected.toString())
+          failComparison(
+            s"values are not equal even if they have the same `toString()`: $obtained",
+            obtained,
+            expected
+          )
+        else
+          failComparison(
+            s"values are not equal, even if their text representation only differs in leading/trailing whitespace and ANSI escape characters: $obtained",
+            obtained,
+            expected
+          )
       }
     }
   }
