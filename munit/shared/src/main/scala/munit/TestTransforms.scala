@@ -26,7 +26,7 @@ trait TestTransforms { this: FunSuite =>
       }
     } catch {
       case NonFatal(e) =>
-        test.withBody[TestValue](() => Future.failed(e))
+        test.withBody(() => Future.failed(e))
     }
   }
 

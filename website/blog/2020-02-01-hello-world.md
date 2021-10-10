@@ -65,49 +65,6 @@ class MySuite extends munit.FunSuite {
 Check out the
 [getting started guide](https://scalameta.org/munit/docs/getting-started.html).
 
-## Tests as values
-
-If you know how to write normal Scala programs you should feel comfortable
-reasoning about how MUnit works.
-
-Internally, a core MUnit data structure is `GenericTest[T]`, which represents a
-single test case and is roughly defined like this.
-
-```scala
-case class GenericTest[T](
-  name: String,
-  body: () => T,
-  tags: Set[Tag],
-  location: Location
-)
-abstract class Suite {
-  type TestValue
-  type Test = GenericTest[TestValue]
-  def munitTests(): Seq[Test]
-}
-```
-
-A test suite returns a `Seq[Test]`, which you as a user can generate and
-abstract over any way you like.
-
-Importantly, MUnit test cases are not discovered via runtime reflection like in
-JUnit and MUnit test cases are not generated via macros like in utest.
-
-MUnit provides a high-level API to write tests in a ScalaTest-inspired
-`FunSuite` syntax where the type parameter for `GenericTest[T]` is defined as
-`Future[Any]`.
-
-```scala
-abstract class FunSuite extends Suite {
-  type TestValue = Future[Any]
-}
-```
-
-For common usage of MUnit you are not expected to write raw
-`GenericTest[T](...)` expressions but knowing this underlying data model helps
-you implement features like test retries, disabling tests based on dynamic
-conditions, enforce stricter type safety and more.
-
 ## Rich filtering capabilities
 
 Using tags, MUnit provides a extensible way to disable/enable tests based on

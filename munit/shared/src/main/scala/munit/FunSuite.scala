@@ -17,8 +17,6 @@ abstract class FunSuite
     with SuiteTransforms
     with ValueTransforms { self =>
 
-  final type TestValue = Future[Any]
-
   final val munitTestsBuffer: mutable.ListBuffer[Test] =
     mutable.ListBuffer.empty[Test]
   def munitTests(): Seq[Test] = {

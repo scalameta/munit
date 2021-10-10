@@ -57,12 +57,12 @@ to reusable or ad-hoc fixtures when necessary.
 ## Reusable test-local fixtures
 
 Reusable test-local fixtures are more powerful than functional test-local
-fixtures because they can declare custom logic that gets evaluted before each
+fixtures because they can declare custom logic that gets evaluated before each
 local test case and get torn down after each test case. These increased
 capabilities come at the price of ergonomics of the API.
 
-Override the `beforeEach()` and `afterEach()` methods in the `Fixture[T]` trait
-to configure a reusable test-local fixture.
+Override the `beforeEach()`, `afterEach()` and `munitFixtures` methods in the
+`Fixture[T]` trait to configure a reusable test-local fixture.
 
 ```scala mdoc:reset
 import java.nio.file._
@@ -116,6 +116,58 @@ class MySuite extends munit.FunSuite {
   test("test2") {
     // ...
     db() // the same `db` instance as in "test1"
+  }
+}
+```
+
+## Asynchronous fixtures
+
+Return a `Future`-like value from the methods `beforeAll`, `beforeEach`,
+`afterEach` and `afterAll` to make an asynchronous fixture. By default, only
+`Future[_]` values are recognized. Override `munitValueTransforms` to add
+support for writing async fixture with other `Future`-like types, see
+[declare async tests](tests.md#declare-async-test) for more details.
+
+```scala mdoc:reset
+import java.nio.file._
+import java.sql.Connection
+import java.sql.DriverManager
+import munit._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class AsyncFilesSuite extends FunSuite {
+
+  // Test-local async fixture
+  val file = new Fixture[Path]("files") {
+    var file: Path = null
+    def apply() = file
+    override def beforeEach(context: BeforeEach): Future[Unit] = Future {
+      file = Files.createTempFile("files", context.test.name)
+    }
+    override def afterEach(context: AfterEach): Future[Unit] = Future {
+      // Always gets called, even if test failed.
+      Files.deleteIfExists(file)
+    }
+  }
+
+  // Suite-local async fixture
+  val db = new Fixture[Connection]("database") {
+    private var connection: Connection = null
+    def apply() = connection
+    override def beforeAll(): Future[Unit] = Future {
+      connection = DriverManager.getConnection("jdbc:h2:mem:", "sa", null)
+    }
+    override def afterAll(): Future[Unit] = Future {
+      connection.close()
+    }
+  }
+
+  override def munitFixtures = List(file, db)
+
+  test("exists") {
+    // `file` is the temporary file that was created for this test case.
+    assert(Files.exists(file()))
   }
 }
 ```

@@ -13,7 +13,7 @@ class TestLocalFixtureSuite extends FunSuite {
   }
   val name2 = name
 
-  override def afterEach(context: GenericAfterEach[TestValue]): Unit = {
+  override def afterEach(context: AfterEach): Unit = {
     assertEquals(name(), context.test.name + "-after")
   }
 

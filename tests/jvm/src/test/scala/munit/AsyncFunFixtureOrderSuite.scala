@@ -3,7 +3,7 @@ package munit
 import scala.concurrent.Future
 import scala.concurrent.Promise
 
-class AsyncFixtureOrderSuite extends FunSuite {
+class AsyncFunFixtureOrderSuite extends FunSuite {
   val latch: Promise[Unit] = Promise[Unit]
   var completedFromTest: Option[Boolean] = None
   var completedFromTeardown: Option[Boolean] = None

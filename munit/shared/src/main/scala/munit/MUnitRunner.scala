@@ -1,32 +1,31 @@
 package munit
 
-import munit.internal.junitinterface.Configurable
+import munit.internal.FutureCompat._
 import munit.internal.PlatformCompat
+import munit.internal.console.Printers
+import munit.internal.console.StackTraces
+import munit.internal.junitinterface.Configurable
+import munit.internal.junitinterface.Settings
+import org.junit.AssumptionViolatedException
 import org.junit.runner.Description
+import org.junit.runner.Runner
+import org.junit.runner.manipulation.Filter
+import org.junit.runner.manipulation.Filterable
+import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
+
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 import java.lang.reflect.UndeclaredThrowableException
-
-import munit.internal.FutureCompat._
-import munit.internal.console.StackTraces
-import org.junit.runner.notification.Failure
-
-import scala.util.control.NonFatal
-import org.junit.runner.manipulation.Filterable
-import org.junit.runner.manipulation.Filter
-import org.junit.runner.Runner
-import org.junit.AssumptionViolatedException
-
-import scala.collection.mutable
-import scala.util.Try
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
 import java.util.concurrent.ExecutionException
-import munit.internal.junitinterface.Settings
-import munit.internal.console.Printers
+import scala.collection.mutable
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.util.Success
+import scala.util.Try
+import scala.util.control.NonFatal
 
 class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     extends Runner
@@ -43,13 +42,25 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   @volatile private var settings: Settings = Settings.defaults()
   @volatile private var suiteAborted: Boolean = false
 
-  private val descriptions: mutable.Map[suite.Test, Description] =
-    mutable.Map.empty[suite.Test, Description]
+  private val descriptions: mutable.Map[Test, Description] =
+    mutable.Map.empty[Test, Description]
   private val testNames: mutable.Set[String] =
     mutable.Set.empty[String]
 
-  private lazy val munitTests: mutable.ArrayBuffer[suite.Test] =
-    mutable.ArrayBuffer[suite.Test](suite.munitTests(): _*)
+  private lazy val munitTests: mutable.ArrayBuffer[Test] =
+    mutable.ArrayBuffer[Test](suite.munitTests(): _*)
+  private val suiteFixture = new Fixture[Unit](cls.getName()) {
+    def apply(): Unit = ()
+    override def beforeAll(): Any =
+      suite.beforeAll()
+    override def beforeEach(context: BeforeEach): Any =
+      suite.beforeEach(context)
+    override def afterEach(context: AfterEach): Any = suite.afterEach(context)
+    override def afterAll(): Any =
+      suite.afterAll()
+  }
+  private lazy val munitFixtures: List[Fixture[_]] =
+    suiteFixture :: suite.munitFixtures.toList
 
   override def filter(filter: Filter): Unit = {
     val newTests = munitTests.filter { t =>
@@ -62,7 +73,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     this.settings = settings
   }
 
-  def createTestDescription(test: suite.Test): Description = {
+  private def createTestDescription(test: Test): Description = {
     descriptions.getOrElseUpdate(
       test, {
         val escapedName = Printers.escapeNonVisible(test.name)
@@ -114,30 +125,45 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     } catch {
       case ex: Throwable =>
         Future.successful(
-          fireHiddenTest(notifier, "expected error running tests", ex)
+          fireFailedHiddenTest(notifier, "expected error running tests", ex)
         )
     } finally {
       notifier.fireTestSuiteFinished(description)
     }
   }
 
-  private def runAsyncTestsSynchronously(
+  private def runTests(
       notifier: RunNotifier
-  ): Future[Unit] = {
-    def loop(it: Iterator[suite.Test]): Future[Unit] =
+  ): Future[List[Try[Boolean]]] = {
+    runAsyncTestsSynchronously(
+      munitTests.iterator.map(t => runTest(notifier, t))
+    )
+  }
+
+  private def runAsyncTestsSynchronously[A](
+      tests: Iterator[Future[A]]
+  ): Future[List[Try[A]]] = {
+    def loop(
+        it: Iterator[Future[A]],
+        acc: mutable.ListBuffer[Try[A]]
+    ): Future[List[Try[A]]] =
       if (!it.hasNext) {
-        Future.successful(())
+        Future.successful(acc.toList)
       } else {
-        val future = runTest(notifier, it.next())
+        val future = it.next()
         future.value match {
-          case Some(_) =>
+          case Some(value) =>
+            acc += value
             // use tail-recursive call if possible to keep stack traces clean.
-            loop(it)
+            loop(it, acc)
           case None =>
-            future.flatMap(_ => loop(it))
+            future.flatMap(t => {
+              acc += util.Success(t)
+              loop(it, acc)
+            })
         }
       }
-    loop(munitTests.iterator)
+    loop(tests, mutable.ListBuffer.empty)
   }
 
   private def runAll(notifier: RunNotifier): Future[Unit] = {
@@ -146,83 +172,96 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier.fireTestIgnored(description)
       return Future.successful(())
     }
-    var isBeforeAllRun = false
-    val result = {
-      val isContinue = runBeforeAll(notifier)
-      isBeforeAllRun = isContinue
-      if (isContinue) {
-        runAsyncTestsSynchronously(notifier)
-      } else {
-        Future.successful(())
+    for {
+      beforeAll <- runBeforeAll(notifier)
+      _ <- {
+        if (beforeAll.isSuccess) {
+          runTests(notifier)
+        } else {
+          Future.successful(Nil)
+        }
       }
-    }
-    result.transformCompat { s =>
-      if (isBeforeAllRun) {
-        runAfterAll(notifier)
-      }
-      s
-    }
+      _ <- runAfterAll(notifier, beforeAll)
+    } yield ()
   }
 
-  private def runBeforeAll(notifier: RunNotifier): Boolean = {
-    var isContinue = runHiddenTest(notifier, "beforeAll", suite.beforeAll())
-    suite.munitFixtures.foreach { fixture =>
-      isContinue &= runHiddenTest(
-        notifier,
-        s"beforeAllFixture(${fixture.fixtureName})",
-        fixture.beforeAll()
-      )
-    }
-    isContinue
-  }
-  private def runAfterAll(notifier: RunNotifier): Unit = {
-    suite.munitFixtures.foreach { fixture =>
-      runHiddenTest(
-        notifier,
-        s"afterAllFixture(${fixture.fixtureName})",
-        fixture.afterAll()
-      )
-    }
-    runHiddenTest(notifier, "afterAll", suite.afterAll())
-  }
-
-  class BeforeEachResult(
-      val error: Option[Throwable],
-      val loadedFixtures: List[suite.Fixture[_]]
+  private[munit] class BeforeAllResult(
+      val isSuccess: Boolean,
+      val loadedFixtures: List[Fixture[_]],
+      val errors: List[Throwable]
   )
-  private def runBeforeEach(
-      test: suite.Test
-  ): BeforeEachResult = {
-    val beforeEach = new GenericBeforeEach(test)
-    val fixtures = mutable.ListBuffer.empty[suite.Fixture[_]]
-    val error = foreachUnsafe(
-      List(() => suite.beforeEach(beforeEach)) ++
-        suite.munitFixtures.map(fixture =>
-          () => {
-            fixture.beforeEach(beforeEach)
-            fixtures += fixture
-            ()
-          }
+
+  private def runBeforeAll(notifier: RunNotifier): Future[BeforeAllResult] = {
+    val result: Future[List[Try[(Fixture[_], Boolean)]]] =
+      runAsyncTestsSynchronously(
+        munitFixtures.iterator.map(f =>
+          runHiddenTest(
+            notifier,
+            s"beforeAll(${f.fixtureName})",
+            () => f.beforeAll()
+          ).map(isSuccess => f -> isSuccess)
         )
-    )
-    new BeforeEachResult(error.failed.toOption, fixtures.toList)
+      )
+    result.map { results =>
+      val loadedFixtures = results.collect { case Success((fixture, true)) =>
+        fixture
+      }
+      val errors = results.collect { case util.Failure(ex) => ex }
+      val isSuccess = loadedFixtures.length == results.length
+      new BeforeAllResult(isSuccess, loadedFixtures, errors)
+    }
+  }
+
+  private def runAfterAll(
+      notifier: RunNotifier,
+      beforeAll: BeforeAllResult
+  ): Future[Unit] = {
+    runAsyncTestsSynchronously[Boolean](
+      beforeAll.loadedFixtures.iterator.map(f =>
+        runHiddenTest(
+          notifier,
+          s"afterAll(${f.fixtureName})",
+          () => f.afterAll()
+        )
+      )
+    ).map(_ => ())
+  }
+
+  private[munit] class BeforeEachResult(
+      val error: Option[Throwable],
+      val loadedFixtures: List[Fixture[_]]
+  )
+
+  private def runBeforeEach(
+      test: Test
+  ): Future[BeforeAllResult] = {
+    val context = new BeforeEach(test)
+    val fixtures = mutable.ListBuffer.empty[Fixture[_]]
+    runAsyncTestsSynchronously(
+      munitFixtures.iterator.map(f =>
+        valueTransform(() => f.beforeEach(context)).map(_ => f)
+      )
+    ).map { results =>
+      val loadedFixtures = results.collect { case Success(f) => f }
+      val errors = results.collect { case util.Failure(ex) => ex }
+      val isSuccess = loadedFixtures.length == results.length
+      new BeforeAllResult(isSuccess, loadedFixtures, errors)
+    }
   }
 
   private def runAfterEach(
-      test: suite.Test,
-      fixtures: List[suite.Fixture[_]]
-  ): Unit = {
-    val afterEach = new GenericAfterEach(test)
-    val error = foreachUnsafe(
-      fixtures.map(fixture => () => fixture.afterEach(afterEach)) ++
-        List(() => suite.afterEach(afterEach))
-    )
-    error.get // throw exception if it exists.
+      test: Test,
+      fixtures: List[Fixture[_]]
+  ): Future[Unit] = {
+    val context = new AfterEach(test)
+    runAsyncTestsSynchronously(
+      fixtures.iterator.map(f => valueTransform(() => f.afterEach(context)))
+    ).map(_ => ())
   }
 
   private def runTest(
       notifier: RunNotifier,
-      test: suite.Test
+      test: Test
   ): Future[Boolean] = {
     val description = createTestDescription(test)
 
@@ -287,20 +326,25 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private def runTestBody(
       notifier: RunNotifier,
       description: Description,
-      test: suite.Test
+      test: Test
   ): Future[Unit] = {
-    val result: Future[Any] = StackTraces.dropOutside {
-      val beforeEachResult = runBeforeEach(test)
-      val any = beforeEachResult.error match {
-        case None =>
-          try test.body()
-          finally runAfterEach(test, beforeEachResult.loadedFixtures)
-        case Some(error) =>
-          try runAfterEach(test, beforeEachResult.loadedFixtures)
-          finally throw error
+    val result: Future[Any] =
+      runBeforeEach(test).flatMap[Any] { beforeEach =>
+        beforeEach.errors match {
+          case Nil =>
+            StackTraces
+              .dropOutside(test.body())
+              .transformWithCompat(result =>
+                runAfterEach(test, beforeEach.loadedFixtures).transform(_ =>
+                  result
+                )
+              )
+          case error :: errors =>
+            errors.foreach(err => error.addSuppressed(err))
+            try runAfterEach(test, beforeEach.loadedFixtures)
+            finally throw error
+        }
       }
-      futureFromAny(any)
-    }
     result.map {
       case f: TestValues.FlakyFailure =>
         trimStackTrace(f)
@@ -312,11 +356,22 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
   }
 
-  private def foreachUnsafe(thunks: Iterable[() => Unit]): Try[Unit] = {
+  private[munit] class ForeachUnsafeResult(
+      val sync: Try[Unit],
+      val async: List[Future[Any]]
+  )
+  private def foreachUnsafe(
+      thunks: Iterable[() => Any]
+  ): ForeachUnsafeResult = {
     var errors = mutable.ListBuffer.empty[Throwable]
+    val async = mutable.ListBuffer.empty[Future[Any]]
     thunks.foreach { thunk =>
       try {
-        thunk()
+        thunk() match {
+          case f: Future[_] =>
+            async += f
+          case _ =>
+        }
       } catch {
         case ex if NonFatal(ex) =>
           errors += ex
@@ -329,42 +384,57 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
             head.addSuppressed(e)
           }
         }
-        scala.util.Failure(head)
+        new ForeachUnsafeResult(scala.util.Failure(head), Nil)
       case _ =>
-        scala.util.Success(())
+        new ForeachUnsafeResult(scala.util.Success(()), Nil)
     }
   }
 
   private def runHiddenTest(
       notifier: RunNotifier,
       name: String,
-      thunk: => Unit
-  ): Boolean = {
+      thunk: () => Any
+  ): Future[Boolean] = {
     try {
-      StackTraces.dropOutside(thunk)
-      true
+      StackTraces.dropOutside {
+        valueTransform(thunk)
+          .transformCompat {
+            case util.Success(value) =>
+              util.Success(true)
+            case util.Failure(exception) =>
+              fireFailedHiddenTest(notifier, name, exception)
+              util.Success(false)
+          }
+      }
     } catch {
       case ex: Throwable =>
-        fireHiddenTest(notifier, name, ex)
-        false
+        fireFailedHiddenTest(notifier, name, ex)
+        Future.successful(false)
     }
   }
 
-  private def fireHiddenTest(
+  private def fireFailedHiddenTest(
       notifier: RunNotifier,
       name: String,
       ex: Throwable
   ): Unit = {
-    val test = new suite.Test(name, () => ???, Set.empty, Location.empty)
+    val test = new Test(name, () => ???, Set.empty, Location.empty)
     val description = createTestDescription(test)
     notifier.fireTestStarted(description)
     trimStackTrace(ex)
-    notifier.fireTestFailure(new Failure(description, ex))
+    notifier.fireTestFailure(new Failure(description, rootCause(ex)))
     notifier.fireTestFinished(description)
   }
   private def trimStackTrace(ex: Throwable): Unit = {
     if (settings.trimStackTraces) {
       StackTraces.trimStackTrace(ex)
+    }
+  }
+
+  private def valueTransform(thunk: () => Any): Future[Any] = {
+    suite match {
+      case funSuite: FunSuite => funSuite.munitValueTransform(thunk())
+      case _                  => futureFromAny(thunk())
     }
   }
 

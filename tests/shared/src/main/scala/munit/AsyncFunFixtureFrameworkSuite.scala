@@ -2,7 +2,7 @@ package munit
 
 import scala.concurrent.Future
 
-class AsyncFixtureFrameworkSuite extends FunSuite {
+class AsyncFunFixtureFrameworkSuite extends FunSuite {
   val failingSetup: FunFixture[Unit] = FunFixture.async[Unit](
     _ => Future.failed(new Error("failure in setup")),
     _ => Future.successful(())
@@ -49,9 +49,9 @@ class AsyncFixtureFrameworkSuite extends FunSuite {
     .test("fail when even more nested mapped teardown fails") { _ => () }
 }
 
-object AsyncFixtureFrameworkSuite
+object AsyncFunFixtureFrameworkSuite
     extends FrameworkTest(
-      classOf[AsyncFixtureFrameworkSuite],
+      classOf[AsyncFunFixtureFrameworkSuite],
       """|==> failure munit.AsyncFixtureFrameworkSuite.fail when setup fails - failure in setup
          |==> failure munit.AsyncFixtureFrameworkSuite.fail when teardown fails - failure in teardown
          |==> failure munit.AsyncFixtureFrameworkSuite.fail when test and teardown fail - /scala/munit/AsyncFixtureFrameworkSuite.scala:28 failure in test
