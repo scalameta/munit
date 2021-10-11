@@ -52,15 +52,15 @@ class AsyncFunFixtureFrameworkSuite extends FunSuite {
 object AsyncFunFixtureFrameworkSuite
     extends FrameworkTest(
       classOf[AsyncFunFixtureFrameworkSuite],
-      """|==> failure munit.AsyncFixtureFrameworkSuite.fail when setup fails - failure in setup
-         |==> failure munit.AsyncFixtureFrameworkSuite.fail when teardown fails - failure in teardown
-         |==> failure munit.AsyncFixtureFrameworkSuite.fail when test and teardown fail - /scala/munit/AsyncFixtureFrameworkSuite.scala:28 failure in test
+      """|==> failure munit.AsyncFunFixtureFrameworkSuite.fail when setup fails - failure in setup
+         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when teardown fails - failure in teardown
+         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when test and teardown fail - /scala/munit/AsyncFunFixtureFrameworkSuite.scala:28 failure in test
          |27:  failingTeardown.test("fail when test and teardown fail") { _ =>
          |28:    fail("failure in test")
          |29:  }
-         |==> failure munit.AsyncFixtureFrameworkSuite.fail when mapped setup fails - failure in setup
-         |==> failure munit.AsyncFixtureFrameworkSuite.fail when even more nested mapped setup fails - failure in setup
-         |==> failure munit.AsyncFixtureFrameworkSuite.fail when mapped teardown fails - failure in teardown
-         |==> failure munit.AsyncFixtureFrameworkSuite.fail when even more nested mapped teardown fails - failure in teardown
+         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when mapped setup fails - failure in setup
+         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when even more nested mapped setup fails - failure in setup
+         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when mapped teardown fails - failure in teardown
+         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when even more nested mapped teardown fails - failure in teardown
          |""".stripMargin
     )

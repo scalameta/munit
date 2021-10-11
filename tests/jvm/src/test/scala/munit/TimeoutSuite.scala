@@ -7,9 +7,9 @@ import scala.concurrent.duration.FiniteDuration
 
 class TimeoutSuite extends munit.FunSuite {
   override val munitTimeout: FiniteDuration = Duration(100, "ms")
-  test("slow".fail) {
+  test("infinite-loop".fail) {
     Future {
-      Thread.sleep(1000)
+      while (true) {}
     }
   }
   test("fast") {

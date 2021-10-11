@@ -120,28 +120,27 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   def runAsync(notifier: RunNotifier): Future[Unit] = {
     val description = getDescription()
     notifier.fireTestSuiteStarted(description)
-    try {
-      runAll(notifier)
-    } catch {
-      case ex: Throwable =>
-        Future.successful(
-          fireFailedHiddenTest(notifier, "expected error running tests", ex)
+    runAll(notifier)
+      .transformCompat[Unit](result => {
+        result.failed.foreach(ex =>
+          fireFailedHiddenTest(notifier, "unexpected error running tests", ex)
         )
-    } finally {
-      notifier.fireTestSuiteFinished(description)
-    }
+        notifier.fireTestSuiteFinished(description)
+        util.Success(())
+      })
   }
 
   private def runTests(
       notifier: RunNotifier
   ): Future[List[Try[Boolean]]] = {
-    runAsyncTestsSynchronously(
+    sequenceFutures(
       munitTests.iterator.map(t => runTest(notifier, t))
     )
   }
 
-  private def runAsyncTestsSynchronously[A](
-      tests: Iterator[Future[A]]
+  // Similar `Future.sequence` but with cleaner stack traces for non-async code.
+  private def sequenceFutures[A](
+      futures: Iterator[Future[A]]
   ): Future[List[Try[A]]] = {
     def loop(
         it: Iterator[Future[A]],
@@ -163,7 +162,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
             })
         }
       }
-    loop(tests, mutable.ListBuffer.empty)
+    loop(futures, mutable.ListBuffer.empty)
+  }
+
+  private def munitTimeout(): Option[Duration] = {
+    suite match {
+      case funSuite: FunSuite => Some(funSuite.munitTimeout)
+      case _                  => None
+    }
   }
 
   private def runAll(notifier: RunNotifier): Future[Unit] = {
@@ -193,7 +199,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private def runBeforeAll(notifier: RunNotifier): Future[BeforeAllResult] = {
     val result: Future[List[Try[(Fixture[_], Boolean)]]] =
-      runAsyncTestsSynchronously(
+      sequenceFutures(
         munitFixtures.iterator.map(f =>
           runHiddenTest(
             notifier,
@@ -216,7 +222,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier: RunNotifier,
       beforeAll: BeforeAllResult
   ): Future[Unit] = {
-    runAsyncTestsSynchronously[Boolean](
+    sequenceFutures[Boolean](
       beforeAll.loadedFixtures.iterator.map(f =>
         runHiddenTest(
           notifier,
@@ -237,7 +243,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   ): Future[BeforeAllResult] = {
     val context = new BeforeEach(test)
     val fixtures = mutable.ListBuffer.empty[Fixture[_]]
-    runAsyncTestsSynchronously(
+    sequenceFutures(
       munitFixtures.iterator.map(f =>
         valueTransform(() => f.beforeEach(context)).map(_ => f)
       )
@@ -254,7 +260,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       fixtures: List[Fixture[_]]
   ): Future[Unit] = {
     val context = new AfterEach(test)
-    runAsyncTestsSynchronously(
+    sequenceFutures(
       fixtures.iterator.map(f => valueTransform(() => f.afterEach(context)))
     ).map(_ => ())
   }
@@ -335,9 +341,8 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
             StackTraces
               .dropOutside(test.body())
               .transformWithCompat(result =>
-                runAfterEach(test, beforeEach.loadedFixtures).transform(_ =>
-                  result
-                )
+                runAfterEach(test, beforeEach.loadedFixtures)
+                  .transformCompat(_ => result)
               )
           case error :: errors =>
             errors.foreach(err => error.addSuppressed(err))

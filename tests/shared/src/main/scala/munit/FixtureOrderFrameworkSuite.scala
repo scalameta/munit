@@ -45,7 +45,7 @@ class FixtureOrderFrameworkSuite extends FunSuite {
 object FixtureOrderFrameworkSuite
     extends FrameworkTest(
       classOf[FixtureOrderFrameworkSuite],
-      """|munit.FixtureFrameworkSuite:
+      """|munit.FixtureOrderFrameworkSuite:
          |beforeAll(ad-hoc)
          |beforeAll(a)
          |beforeAll(b)

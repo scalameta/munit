@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext
 import java.util.concurrent.ScheduledExecutorService
 
 class AsyncFixtureSuite extends BaseSuite {
-  case class PromiseWrapper(promise: Promise[_])
+  case class PromiseWrapper(name: String, promise: Promise[_])
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(
       new ValueTransform(
@@ -34,7 +34,7 @@ class AsyncFixtureSuite extends BaseSuite {
         timeout,
         TimeUnit.MILLISECONDS
       )
-      PromiseWrapper(setBeforeAllBit)
+      PromiseWrapper("beforeAll", setBeforeAllBit)
     }
     override def beforeEach(context: BeforeEach): Any = {
       assertEquals(
@@ -51,7 +51,7 @@ class AsyncFixtureSuite extends BaseSuite {
         timeout,
         TimeUnit.MILLISECONDS
       )
-      PromiseWrapper(promise)
+      PromiseWrapper("beforeEach", promise)
     }
     override def afterEach(context: AfterEach): Any = {
       val resetPromise = Promise[Unit]()
@@ -63,7 +63,7 @@ class AsyncFixtureSuite extends BaseSuite {
         timeout,
         TimeUnit.MILLISECONDS
       )
-      PromiseWrapper(resetPromise)
+      PromiseWrapper("afterEach", resetPromise)
     }
     override def afterAll(): Any = {
       val shutdownPromise = Promise[Unit]()
@@ -73,7 +73,7 @@ class AsyncFixtureSuite extends BaseSuite {
         assert(runningJobs.isEmpty(), runningJobs)
         shutdownPromise.success(())
       })
-      PromiseWrapper(shutdownPromise)
+      PromiseWrapper("afterAll", shutdownPromise)
     }
   }
   val message = new ScheduledMessage()

@@ -8,6 +8,7 @@ import sbt.testing.Task
 import sbt.testing.EventHandler
 import sbt.testing.Logger
 import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext
 
 object PlatformCompat {
   def executeAsync(
@@ -18,7 +19,11 @@ object PlatformCompat {
     task.execute(eventHandler, loggers)
     Future.successful(())
   }
-  def waitAtMost[T](future: Future[T], duration: Duration): Future[T] = {
+  def waitAtMost[T](
+      future: Future[T],
+      duration: Duration,
+      ec: ExecutionContext
+  ): Future[T] = {
     future
   }
 

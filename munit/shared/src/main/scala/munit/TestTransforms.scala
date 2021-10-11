@@ -35,7 +35,7 @@ trait TestTransforms { this: FunSuite =>
       "fail",
       { t =>
         if (t.tags(Fail)) {
-          t.withBodyMap[TestValue](
+          t.withBodyMap(
             _.transformCompat {
               case Success(value) =>
                 Failure(

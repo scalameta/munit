@@ -30,7 +30,7 @@ sealed class Test(
   def withLocation(newLocation: Location): Test =
     copy(location = newLocation)
 
-  def withBodyMap[A](newBody: Future[Any] => Future[Any]): Test =
+  def withBodyMap(newBody: Future[Any] => Future[Any]): Test =
     withBody(() => newBody(body()))
 
   private[this] def copy[A](
