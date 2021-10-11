@@ -21,6 +21,7 @@ object PlatformCompat {
     task.execute(eventHandler, loggers, _ => p.success(()))
     p.future
   }
+
   def waitAtMost[T](
       future: Future[T],
       duration: Duration,

@@ -23,6 +23,13 @@ object PlatformCompat {
     Future.successful(())
   }
   private[this] val _blockContext = new ThreadLocal[BlockContext]()
+  @deprecated("use the overload with an explicit ExecutionContext", "1.0.0")
+  def waitAtMost[T](
+      future: Future[T],
+      duration: Duration
+  ): Future[T] = {
+    waitAtMost(future, duration, ExecutionContext.global)
+  }
   def waitAtMost[T](
       future: Future[T],
       duration: Duration,
