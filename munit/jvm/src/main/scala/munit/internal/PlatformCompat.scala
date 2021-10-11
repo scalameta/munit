@@ -33,21 +33,26 @@ object PlatformCompat {
       duration: Duration,
       ec: ExecutionContext
   ): Future[T] = {
-    val onComplete = Promise[T]()
-    var onCancel: () => Unit = () => ()
-    future.onComplete { result =>
-      onComplete.tryComplete(result)
-    }(ec)
-    val timeout = sh.schedule[Unit](
-      () =>
-        onComplete.tryFailure(
-          new TimeoutException(s"test timed out after $duration")
-        ),
-      duration.toMillis,
-      TimeUnit.MILLISECONDS
-    )
-    onCancel = () => timeout.cancel(false)
-    onComplete.future
+    if (future.value.isDefined) {
+      // Avoid heavy timeout overhead for non-async tests.
+      future
+    } else {
+      val onComplete = Promise[T]()
+      var onCancel: () => Unit = () => ()
+      future.onComplete { result =>
+        onComplete.tryComplete(result)
+      }(ec)
+      val timeout = sh.schedule[Unit](
+        () =>
+          onComplete.tryFailure(
+            new TimeoutException(s"test timed out after $duration")
+          ),
+        duration.toMillis,
+        TimeUnit.MILLISECONDS
+      )
+      onCancel = () => timeout.cancel(false)
+      onComplete.future
+    }
   }
 
   def isIgnoreSuite(cls: Class[_]): Boolean =
