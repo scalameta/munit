@@ -13,8 +13,7 @@ abstract class Fixture[T](val fixtureName: String) {
   def beforeAll(): Any = ()
 
   /**
-   * Runs before each individual test case.
-   * An error in this method aborts the test case.
+   * Runs before each individual test case.  An error in this method aborts the test case.
    */
   def beforeEach(context: BeforeEach): Any = ()
 

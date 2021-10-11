@@ -1,5 +1,5 @@
 package munit
 
-class BeforeEach(
+class AfterEach(
     val test: Test
 ) extends Serializable

@@ -12,7 +12,8 @@ import scala.concurrent.Future
 abstract class Suite extends PlatformSuite {
 
   /** The value produced by test bodies. */
-  type TestValue = Future[Any]
+  final type TestValue = Future[Any]
+  final type Fixture[T] = munit.Fixture[T]
   final type Test = munit.Test
   final type BeforeEach = munit.BeforeEach
   final type AfterEach = munit.AfterEach
@@ -28,8 +29,6 @@ abstract class Suite extends PlatformSuite {
     def reportFailure(cause: Throwable): Unit = cause.printStackTrace()
   }
   def munitExecutionContext: ExecutionContext = parasiticExecutionContext
-
-  type Fixture[T] = munit.Fixture[T]
 
   /**
    * Runs once before all test cases and before all suite-local fixtures are setup.

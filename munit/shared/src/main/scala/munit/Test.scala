@@ -11,7 +11,7 @@ import scala.concurrent.Future
  * @param tags the annotated tags for this test case.
  * @param location the file and line number where this test was defined.
  */
-sealed class Test(
+final class Test(
     val name: String,
     val body: () => Future[Any],
     val tags: Set[Tag],

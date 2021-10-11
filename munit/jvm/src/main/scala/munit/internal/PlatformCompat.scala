@@ -5,7 +5,6 @@ import sbt.testing.Task
 import sbt.testing.EventHandler
 import sbt.testing.Logger
 import scala.concurrent.duration.Duration
-import scala.concurrent.BlockContext
 import java.util.concurrent.Executors
 import scala.concurrent.Promise
 import scala.concurrent.ExecutionContext
@@ -22,7 +21,6 @@ object PlatformCompat {
     task.execute(eventHandler, loggers)
     Future.successful(())
   }
-  private[this] val _blockContext = new ThreadLocal[BlockContext]()
   @deprecated("use the overload with an explicit ExecutionContext", "1.0.0")
   def waitAtMost[T](
       future: Future[T],

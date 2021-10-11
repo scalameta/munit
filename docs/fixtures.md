@@ -125,7 +125,7 @@ class MySuite extends munit.FunSuite {
 Return a `Future`-like value from the methods `beforeAll`, `beforeEach`,
 `afterEach` and `afterAll` to make an asynchronous fixture. By default, only
 `Future[_]` values are recognized. Override `munitValueTransforms` to add
-support for writing async fixture with other `Future`-like types, see
+support for other `Future`-like types, see
 [declare async tests](tests.md#declare-async-test) for more details.
 
 ```scala mdoc:reset
