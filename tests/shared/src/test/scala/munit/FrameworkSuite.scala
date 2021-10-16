@@ -28,6 +28,7 @@ class FrameworkSuite extends BaseFrameworkSuite {
     SmallStackTraceFrameworkSuite,
     AssertionsFrameworkSuite,
     Issue179FrameworkSuite,
+    Issue285FrameworkSuite,
     ScalaCheckExceptionFrameworkSuite,
     BoxedFrameworkSuite
   )

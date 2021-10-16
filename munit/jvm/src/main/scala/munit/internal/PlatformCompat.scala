@@ -53,6 +53,16 @@ object PlatformCompat {
     onComplete.future
   }
 
+  def setTimeout(ms: Int)(body: => Unit): () => Unit = {
+    val scheduled = sh.schedule[Unit](
+      () => body,
+      ms,
+      TimeUnit.MILLISECONDS
+    )
+
+    () => scheduled.cancel(false)
+  }
+
   def isIgnoreSuite(cls: Class[_]): Boolean =
     cls.getAnnotationsByType(classOf[munit.IgnoreSuite]).nonEmpty
   def isJVM: Boolean = true

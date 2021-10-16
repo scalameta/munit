@@ -83,7 +83,7 @@ abstract class BaseFrameworkSuite extends BaseSuite {
       }
       implicit val ec = munitExecutionContext
       val elapsedTimePattern =
-        Pattern.compile(" \\d+\\.\\d+s$", Pattern.MULTILINE)
+        Pattern.compile(" \\d+\\.\\d+s ?", Pattern.MULTILINE)
       TestingConsole.out = out
       TestingConsole.err = out
       for {
