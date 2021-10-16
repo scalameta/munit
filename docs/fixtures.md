@@ -120,57 +120,8 @@ class MySuite extends munit.FunSuite {
 }
 ```
 
-## Asynchronous fixtures
-
-Return a `Future`-like value from the methods `beforeAll`, `beforeEach`,
-`afterEach` and `afterAll` to make an asynchronous fixture. By default, only
-`Future[_]` values are recognized. Override `munitValueTransforms` to add
-support for other `Future`-like types, see
-[declare async tests](tests.md#declare-async-test) for more details.
-
-```scala mdoc:reset
-import java.nio.file._
-import java.sql.Connection
-import java.sql.DriverManager
-import munit._
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class AsyncFilesSuite extends FunSuite {
-
-  // Test-local async fixture
-  val file = new Fixture[Path]("files") {
-    var file: Path = null
-    def apply() = file
-    override def beforeEach(context: BeforeEach): Future[Unit] = Future {
-      file = Files.createTempFile("files", context.test.name)
-    }
-    override def afterEach(context: AfterEach): Future[Unit] = Future {
-      // Always gets called, even if test failed.
-      Files.deleteIfExists(file)
-    }
-  }
-
-  // Suite-local async fixture
-  val db = new Fixture[Connection]("database") {
-    private var connection: Connection = null
-    def apply() = connection
-    override def beforeAll(): Future[Unit] = Future {
-      connection = DriverManager.getConnection("jdbc:h2:mem:", "sa", null)
-    }
-    override def afterAll(): Future[Unit] = Future {
-      connection.close()
-    }
-  }
-
-  override def munitFixtures = List(file, db)
-
-  test("exists") {
-    // `file` is the temporary file that was created for this test case.
-    assert(Files.exists(file()))
-  }
-}
-```
+Next, extend `munitValueTransforms` to convert `Resource[T]` into `Future[T]`,
+see [declare async tests](tests.md#declare-async-test) for more details.
 
 ## Ad-hoc test-local fixtures
 
@@ -228,6 +179,83 @@ class MySuite extends munit.FunSuite {
   override def afterAll(): Unit = {
     db.close()
   }
+}
+```
+
+## Asynchronous fixtures with `FutureFixture`
+
+Extend `FutureFixture[T]` to return `Future[T]` values from the lifecycle
+methods `beforeAll`, `beforeEach`, `afterEach` and `afterAll`.
+
+```scala mdoc:reset
+import java.nio.file._
+import java.sql.Connection
+import java.sql.DriverManager
+import munit.FutureFixture
+import munit.FunSuite
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class AsyncFilesSuite extends FunSuite {
+
+  // Test-local async fixture
+  val file = new FutureFixture[Path]("files") {
+    var file: Path = null
+    def apply() = file
+    override def beforeEach(context: BeforeEach): Future[Unit] = Future {
+      file = Files.createTempFile("files", context.test.name)
+    }
+    override def afterEach(context: AfterEach): Future[Unit] = Future {
+      // Always gets called, even if test failed.
+      Files.deleteIfExists(file)
+    }
+  }
+
+  // Suite-local async fixture
+  val db = new FutureFixture[Connection]("database") {
+    private var connection: Connection = null
+    def apply() = connection
+    override def beforeAll(): Future[Unit] = Future {
+      connection = DriverManager.getConnection("jdbc:h2:mem:", "sa", null)
+    }
+    override def afterAll(): Future[Unit] = Future {
+      connection.close()
+    }
+  }
+
+  override def munitFixtures = List(file, db)
+
+  test("exists") {
+    // `file` is the temporary file that was created for this test case.
+    assert(Files.exists(file()))
+  }
+}
+```
+
+## Asynchronous fixtures with custom effect type
+
+First, create a new `EffectFixture[T]` class that extends `munit.AnyFixture[T]`
+and overrides all lifecycle methods to return values of type `Effect[Unit]`. For
+example:
+
+```scala mdoc:reset
+import munit.AfterEach
+import munit.BeforeEach
+
+// Hypothetical effect type called "Resource"
+sealed abstract class Resource[+T]
+object Resource {
+  def unit: Resource[Unit] = ???
+}
+
+abstract class ResourceFixture[T](name: String) extends munit.AnyFixture[T](name) {
+  // The main purpose of "ResourceFixture" is to help IDEs auto-complete
+  // the result type "Resource[Unit]" instead of "Any" when implementing the
+  // "ResourceFixture" class.
+  override def beforeAll(): Resource[Unit] = Resource.unit
+  override def beforeEach(context: BeforeEach): Resource[Unit] = Resource.unit
+  override def afterEach(context: AfterEach): Resource[Unit] = Resource.unit
+  override def afterAll(): Resource[Unit] = Resource.unit
 }
 ```
 
