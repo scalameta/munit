@@ -23,8 +23,8 @@ test("basic") {
 
 ## Declare async test
 
-Async tests are declared the same way as basic tests. Test bodies that return
-`Future[T]` will automatically be awaited upon with `Await.result()`.
+Async tests are declared the same way as basic tests, except their test bodies
+return a value that can be converted into `Future[T]`.
 
 ```scala mdoc:silent
 import scala.concurrent.Future
@@ -35,31 +35,6 @@ test("async") {
   }
 }
 ```
-
-```scala mdoc:passthrough
-println(s"The default timeout for async tests is $munitTimeout.")
-```
-
-Override `munitTimeout` to customize the timeout for how long tests should
-await.
-
-```scala mdoc
-import scala.concurrent.duration.Duration
-class CustomTimeoutSuite extends munit.FunSuite {
-  // await one second instead of default
-  override val munitTimeout = Duration(1, "s")
-  test("slow-async") {
-    Future {
-      Thread.sleep(5000)
-      // Test times out before `println()` is evaluated.
-      println("pass")
-    }
-  }
-}
-```
-
-Note that `Await.result()` only works on the JVM. Scala.js and Scala Native
-tests that return uncompleted `Future[T]` values will fail.
 
 MUnit has special handling for `scala.concurrent.Future[T]` since it is
 available in the standard library. Override `munitValueTransforms` to add custom
@@ -85,9 +60,9 @@ test("buggy-task") {
 }
 ```
 
-Since tasks are lazy, a test that returns `LazyFuture[T]` will always pass since
-you need to call `run()` to start the task execution. Override
-`munitValueTransforms` to make sure that `LazyFuture.run()` gets called.
+The `LazyFuture` class doesn't evaluate the body until the `run()` method is
+invoked. Override `munitValueTransforms` to make sure that `LazyFuture.run()`
+gets called.
 
 ```scala mdoc
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -107,6 +82,42 @@ class TaskSuite extends munit.FunSuite {
   }
 }
 ```
+
+## Customize test timeouts
+
+> This feature is only available for the JVM and Scala.js. It's not available
+> for Scala Native.
+
+```scala mdoc:passthrough
+println(s"The default timeout for async tests is $munitTimeout.")
+println(s"Tests that exceed this timeout fail with an error message.")
+```
+
+```
+==> X munit.TimeoutSuite.slow  0.106s java.util.concurrent.TimeoutException: test timed out after 100 milliseconds
+```
+
+Override `munitTimeout` to customize the timeout for how long tests should
+await.
+
+```scala mdoc
+import scala.concurrent.duration.Duration
+class CustomTimeoutSuite extends munit.FunSuite {
+  // await one second instead of default
+  override val munitTimeout = Duration(1, "s")
+  test("slow-async") {
+    Future {
+      Thread.sleep(5000)
+      // Test times out before `println()` is evaluated.
+      println("pass")
+    }
+  }
+}
+```
+
+Note that old version for MUnit (v0.x series) the timeout only applied to async
+tests. Since the release of MUnit v1.0, the timeout applies to all tests
+including non-async tests.
 
 ## Run tests in parallel
 

@@ -20,11 +20,11 @@ object PlatformCompat {
     Future.successful(())
   }
   def waitAtMost[T](
-      future: Future[T],
+      startFuture: () => Future[T],
       duration: Duration,
       ec: ExecutionContext
   ): Future[T] = {
-    future
+    startFuture()
   }
 
   // Scala Native does not support looking up annotations at runtime.
