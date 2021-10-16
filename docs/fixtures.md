@@ -120,9 +120,6 @@ class MySuite extends munit.FunSuite {
 }
 ```
 
-Next, extend `munitValueTransforms` to convert `Resource[T]` into `Future[T]`,
-see [declare async tests](tests.md#declare-async-test) for more details.
-
 ## Ad-hoc test-local fixtures
 
 Override `beforeEach()` and `afterEach()` to add custom logic that should run
@@ -198,7 +195,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class AsyncFilesSuite extends FunSuite {
 
-  // Test-local async fixture
   val file = new FutureFixture[Path]("files") {
     var file: Path = null
     def apply() = file
@@ -211,19 +207,7 @@ class AsyncFilesSuite extends FunSuite {
     }
   }
 
-  // Suite-local async fixture
-  val db = new FutureFixture[Connection]("database") {
-    private var connection: Connection = null
-    def apply() = connection
-    override def beforeAll(): Future[Unit] = Future {
-      connection = DriverManager.getConnection("jdbc:h2:mem:", "sa", null)
-    }
-    override def afterAll(): Future[Unit] = Future {
-      connection.close()
-    }
-  }
-
-  override def munitFixtures = List(file, db)
+  override def munitFixtures = List(file)
 
   test("exists") {
     // `file` is the temporary file that was created for this test case.
@@ -258,6 +242,9 @@ abstract class ResourceFixture[T](name: String) extends munit.AnyFixture[T](name
   override def afterAll(): Resource[Unit] = Resource.unit
 }
 ```
+
+Next, extend `munitValueTransforms` to convert `Resource[T]` into `Future[T]`,
+see [declare async tests](tests.md#declare-async-test) for more details.
 
 ## Avoid stateful operations in the class constructor
 

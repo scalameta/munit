@@ -17,14 +17,14 @@ class AsyncFixtureSuite extends BaseSuite {
         }
       )
     )
-  class ScheduledMessage() extends Fixture[String]("AsyncFixture") {
+  class ScheduledMessage() extends AnyFixture[String]("AsyncFixture") {
     val sh: ScheduledExecutorService =
       Executors.newSingleThreadScheduledExecutor()
     private var didBeforeAllEvaluateAsync = false
     private var promise = Promise[String]()
     private val timeout = 20
     def apply(): String = promise.future.value.get.get
-    override def beforeAll(): Unit = {
+    override def beforeAll(): PromiseWrapper = {
       val setBeforeAllBit = Promise[Unit]()
       sh.schedule[Unit](
         () => {
@@ -36,7 +36,7 @@ class AsyncFixtureSuite extends BaseSuite {
       )
       PromiseWrapper("beforeAll", setBeforeAllBit)
     }
-    override def beforeEach(context: BeforeEach): Unit = {
+    override def beforeEach(context: BeforeEach): PromiseWrapper = {
       assertEquals(
         promise.future.value,
         None,
@@ -53,7 +53,7 @@ class AsyncFixtureSuite extends BaseSuite {
       )
       PromiseWrapper("beforeEach", promise)
     }
-    override def afterEach(context: AfterEach): Unit = {
+    override def afterEach(context: AfterEach): PromiseWrapper = {
       val resetPromise = Promise[Unit]()
       sh.schedule[Unit](
         () => {
@@ -65,7 +65,7 @@ class AsyncFixtureSuite extends BaseSuite {
       )
       PromiseWrapper("afterEach", resetPromise)
     }
-    override def afterAll(): Unit = {
+    override def afterAll(): PromiseWrapper = {
       val shutdownPromise = Promise[Unit]()
       ExecutionContext.global.execute(() => {
         Thread.sleep(timeout)
@@ -88,7 +88,7 @@ class AsyncFixtureSuite extends BaseSuite {
     }
   }
 
-  override def munitFixtures: Seq[Fixture[_]] = List(message, latest)
+  override def munitFixtures: Seq[AnyFixture[_]] = List(message, latest)
 
   1.to(3).foreach { i =>
     test(s"test-$i") {
