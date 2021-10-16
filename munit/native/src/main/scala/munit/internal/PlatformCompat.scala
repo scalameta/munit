@@ -26,6 +26,12 @@ object PlatformCompat {
   ): Future[T] = {
     startFuture()
   }
+  def setTimeout(ms: Int)(body: => Unit): () => Unit = {
+    Thread.sleep(ms)
+    body
+
+    () => ()
+  }
 
   // Scala Native does not support looking up annotations at runtime.
   def isIgnoreSuite(cls: Class[_]): Boolean = false

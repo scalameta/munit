@@ -10,8 +10,7 @@ import sbt.testing.Logger
 import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext
-import scala.scalajs.js.timers.clearTimeout
-import scala.scalajs.js.timers.setTimeout
+import scala.scalajs.js.timers
 import java.util.concurrent.TimeoutException
 
 object PlatformCompat {
@@ -31,7 +30,7 @@ object PlatformCompat {
       ec: ExecutionContext
   ): Future[T] = {
     val onComplete = Promise[T]()
-    val timeoutHandle = setTimeout(duration.toMillis) {
+    val timeoutHandle = timers.setTimeout(duration.toMillis) {
       onComplete.tryFailure(
         new TimeoutException(s"test timed out after $duration")
       )
@@ -40,11 +39,17 @@ object PlatformCompat {
       def run(): Unit = {
         startFuture().onComplete { result =>
           onComplete.tryComplete(result)
-          clearTimeout(timeoutHandle)
+          timers.clearTimeout(timeoutHandle)
         }(ec)
       }
     })
     onComplete.future
+  }
+
+  def setTimeout(ms: Int)(body: => Unit): () => Unit = {
+    val timeoutHandle = timers.setTimeout(ms)(body)
+
+    () => timers.clearTimeout(timeoutHandle)
   }
 
   // Scala.js does not support looking up annotations at runtime.
