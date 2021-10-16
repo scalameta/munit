@@ -71,8 +71,8 @@ does not crash with an exception.</p>
 }
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="declare-async-test"></a><a href="#declare-async-test" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Declare async test</h2>
-<p>Async tests are declared the same way as basic tests. Test bodies that return
-<code>Future[T]</code> will automatically be awaited upon with <code>Await.result()</code>.</p>
+<p>Async tests are declared the same way as basic tests, except their test bodies
+return a value that can be converted into <code>Future[T]</code>.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.concurrent.<span class="hljs-type">Future</span>
 <span class="hljs-keyword">implicit</span> <span class="hljs-keyword">val</span> ec = scala.concurrent.<span class="hljs-type">ExecutionContext</span>.global
 test(<span class="hljs-string">"async"</span>) {
@@ -81,24 +81,6 @@ test(<span class="hljs-string">"async"</span>) {
   }
 }
 </code></pre>
-<p>The default timeout for async tests is 30 seconds.</p>
-<p>Override <code>munitTimeout</code> to customize the timeout for how long tests should
-await.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.concurrent.duration.<span class="hljs-type">Duration</span>
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomTimeoutSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
-  <span class="hljs-comment">// await one second instead of default</span>
-  <span class="hljs-keyword">override</span> <span class="hljs-keyword">val</span> munitTimeout = <span class="hljs-type">Duration</span>(<span class="hljs-number">1</span>, <span class="hljs-string">"s"</span>)
-  test(<span class="hljs-string">"slow-async"</span>) {
-    <span class="hljs-type">Future</span> {
-      <span class="hljs-type">Thread</span>.sleep(<span class="hljs-number">5000</span>)
-      <span class="hljs-comment">// Test times out before `println()` is evaluated.</span>
-      println(<span class="hljs-string">"pass"</span>)
-    }
-  }
-}
-</code></pre>
-<p>Note that <code>Await.result()</code> only works on the JVM. Scala.js and Scala Native
-tests that return uncompleted <code>Future[T]</code> values will fail.</p>
 <p>MUnit has special handling for <code>scala.concurrent.Future[T]</code> since it is
 available in the standard library. Override <code>munitValueTransforms</code> to add custom
 handling for other asynchronous types.</p>
@@ -119,9 +101,9 @@ test(<span class="hljs-string">"buggy-task"</span>) {
   }
 }
 </code></pre>
-<p>Since tasks are lazy, a test that returns <code>LazyFuture[T]</code> will always pass since
-you need to call <code>run()</code> to start the task execution. Override
-<code>munitValueTransforms</code> to make sure that <code>LazyFuture.run()</code> gets called.</p>
+<p>The <code>LazyFuture</code> class doesn't evaluate the body until the <code>run()</code> method is
+invoked. Override <code>munitValueTransforms</code> to make sure that <code>LazyFuture.run()</code>
+gets called.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.concurrent.<span class="hljs-type">ExecutionContext</span>.<span class="hljs-type">Implicits</span>.global
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaskSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitValueTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitValueTransforms ++ <span class="hljs-type">List</span>(
@@ -139,6 +121,33 @@ you need to call <code>run()</code> to start the task execution. Override
   }
 }
 </code></pre>
+<h2><a class="anchor" aria-hidden="true" id="customize-test-timeouts"></a><a href="#customize-test-timeouts" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Customize test timeouts</h2>
+<blockquote>
+<p>This feature is only available for the JVM and Scala.js. It's not available
+for Scala Native.</p>
+</blockquote>
+<p>The default timeout for async tests is 30 seconds.
+Tests that exceed this timeout fail with an error message.</p>
+<pre><code class="hljs">==&gt; X munit<span class="hljs-selector-class">.TimeoutSuite</span><span class="hljs-selector-class">.slow</span>  <span class="hljs-number">0.106s</span> java<span class="hljs-selector-class">.util</span><span class="hljs-selector-class">.concurrent</span><span class="hljs-selector-class">.TimeoutException</span>: test timed out after <span class="hljs-number">100</span> milliseconds
+</code></pre>
+<p>Override <code>munitTimeout</code> to customize the timeout for how long tests should
+await.</p>
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.concurrent.duration.<span class="hljs-type">Duration</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomTimeoutSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
+  <span class="hljs-comment">// await one second instead of default</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">val</span> munitTimeout = <span class="hljs-type">Duration</span>(<span class="hljs-number">1</span>, <span class="hljs-string">"s"</span>)
+  test(<span class="hljs-string">"slow-async"</span>) {
+    <span class="hljs-type">Future</span> {
+      <span class="hljs-type">Thread</span>.sleep(<span class="hljs-number">5000</span>)
+      <span class="hljs-comment">// Test times out before `println()` is evaluated.</span>
+      println(<span class="hljs-string">"pass"</span>)
+    }
+  }
+}
+</code></pre>
+<p>Note that old version for MUnit (v0.x series) the timeout only applied to async
+tests. Since the release of MUnit v1.0, the timeout applies to all tests
+including non-async tests.</p>
 <h2><a class="anchor" aria-hidden="true" id="run-tests-in-parallel"></a><a href="#run-tests-in-parallel" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Run tests in parallel</h2>
 <p>MUnit does not support running individual test cases in parallel. However, sbt
 automatically parallelizes the execution of multiple test suites. To disable
@@ -299,7 +308,7 @@ in your project.</p>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyFirstSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseSuite</span> </span>{ <span class="hljs-comment">/* ... */</span> }
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySecondSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseSuite</span> </span>{ <span class="hljs-comment">/* ... */</span> }
 </code></pre>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/getting-started.html"><span class="arrow-prev">← </span><span>Getting started</span></a><a class="docs-next button" href="/munit/docs/assertions.html"><span>Writing assertions</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#declare-basic-test">Declare basic test</a></li><li><a href="#declare-async-test">Declare async test</a></li><li><a href="#run-tests-in-parallel">Run tests in parallel</a></li><li><a href="#declare-tests-inside-a-helper-function">Declare tests inside a helper function</a></li><li><a href="#declare-test-that-should-always-fail">Declare test that should always fail</a></li><li><a href="#customize-evaluation-of-tests-with-tags">Customize evaluation of tests with tags</a></li><li><a href="#customize-test-name-based-on-a-dynamic-condition">Customize test name based on a dynamic condition</a></li><li><a href="#tag-flaky-tests">Tag flaky tests</a></li><li><a href="#run-logic-before-and-after-tests">Run logic before and after tests</a></li><li><a href="#share-configuration-between-test-suites">Share configuration between test suites</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2021 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/getting-started.html"><span class="arrow-prev">← </span><span>Getting started</span></a><a class="docs-next button" href="/munit/docs/assertions.html"><span>Writing assertions</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#declare-basic-test">Declare basic test</a></li><li><a href="#declare-async-test">Declare async test</a></li><li><a href="#customize-test-timeouts">Customize test timeouts</a></li><li><a href="#run-tests-in-parallel">Run tests in parallel</a></li><li><a href="#declare-tests-inside-a-helper-function">Declare tests inside a helper function</a></li><li><a href="#declare-test-that-should-always-fail">Declare test that should always fail</a></li><li><a href="#customize-evaluation-of-tests-with-tags">Customize evaluation of tests with tags</a></li><li><a href="#customize-test-name-based-on-a-dynamic-condition">Customize test name based on a dynamic condition</a></li><li><a href="#tag-flaky-tests">Tag flaky tests</a></li><li><a href="#run-logic-before-and-after-tests">Run logic before and after tests</a></li><li><a href="#share-configuration-between-test-suites">Share configuration between test suites</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2021 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
