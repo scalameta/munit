@@ -34,7 +34,7 @@ trait BaseFunSuite
         options.name,
         { () =>
           try {
-            waitForCompletion(munitValueTransform(body))
+            waitForCompletion(() => munitValueTransform(body))
           } catch {
             case NonFatal(e) =>
               Future.failed(e)
@@ -47,7 +47,7 @@ trait BaseFunSuite
   }
 
   def munitTimeout: Duration = new FiniteDuration(30, TimeUnit.SECONDS)
-  private final def waitForCompletion[T](f: Future[T]) =
+  private final def waitForCompletion[T](f: () => Future[T]) =
     PlatformCompat.waitAtMost(f, munitTimeout, munitExecutionContext)
 
 }

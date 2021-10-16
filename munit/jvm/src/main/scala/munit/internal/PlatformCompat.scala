@@ -26,33 +26,31 @@ object PlatformCompat {
       future: Future[T],
       duration: Duration
   ): Future[T] = {
-    waitAtMost(future, duration, ExecutionContext.global)
+    waitAtMost(() => future, duration, ExecutionContext.global)
   }
   def waitAtMost[T](
-      future: Future[T],
+      startFuture: () => Future[T],
       duration: Duration,
       ec: ExecutionContext
   ): Future[T] = {
-    if (future.value.isDefined) {
-      // Avoid heavy timeout overhead for non-async tests.
-      future
-    } else {
-      val onComplete = Promise[T]()
-      var onCancel: () => Unit = () => ()
-      future.onComplete { result =>
-        onComplete.tryComplete(result)
-      }(ec)
-      val timeout = sh.schedule[Unit](
-        () =>
-          onComplete.tryFailure(
-            new TimeoutException(s"test timed out after $duration")
-          ),
-        duration.toMillis,
-        TimeUnit.MILLISECONDS
-      )
-      onCancel = () => timeout.cancel(false)
-      onComplete.future
-    }
+    val onComplete = Promise[T]()
+    val timeout = sh.schedule[Unit](
+      () =>
+        onComplete.tryFailure(
+          new TimeoutException(s"test timed out after $duration")
+        ),
+      duration.toMillis,
+      TimeUnit.MILLISECONDS
+    )
+    ec.execute(new Runnable {
+      def run(): Unit = {
+        startFuture().onComplete { result =>
+          onComplete.tryComplete(result)
+          timeout.cancel(false)
+        }(ec)
+      }
+    })
+    onComplete.future
   }
 
   def isIgnoreSuite(cls: Class[_]): Boolean =

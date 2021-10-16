@@ -26,19 +26,21 @@ class TimeoutSuite extends munit.FunSuite {
   }
   test("infinite-loop".fail) {
     Future {
-      while (true) {
-        def fib(n: Int): Int = {
-          if (n < 1) 0
-          else if (n == 1) n
-          else fib(n - 1) + fib(n - 2)
-        }
-        // Some computationally intensive calculation
-        1.to(1000).foreach(i => fib(i))
-        println("Loop")
-      }
+      ThrottleCpu.run()
     }
   }
   test("fast-3") {
+    Future {
+      Thread.sleep(1)
+    }
+  }
+  test("slow-non-future".fail) {
+    ThrottleCpu.run()
+  }
+  test("slow-non-future-sleep".fail) {
+    Thread.sleep(1000)
+  }
+  test("fast-4") {
     Future {
       Thread.sleep(1)
     }
