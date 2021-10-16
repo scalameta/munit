@@ -51,15 +51,16 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     mutable.ArrayBuffer[Test](suite.munitTests(): _*)
   private val suiteFixture = new Fixture[Unit](cls.getName()) {
     def apply(): Unit = ()
-    override def beforeAll(): Any =
+    override def beforeAll(): Unit =
       suite.beforeAll()
-    override def beforeEach(context: BeforeEach): Any =
+    override def beforeEach(context: BeforeEach): Unit =
       suite.beforeEach(context)
-    override def afterEach(context: AfterEach): Any = suite.afterEach(context)
-    override def afterAll(): Any =
+    override def afterEach(context: AfterEach): Unit =
+      suite.afterEach(context)
+    override def afterAll(): Unit =
       suite.afterAll()
   }
-  private lazy val munitFixtures: List[Fixture[_]] =
+  private lazy val munitFixtures: List[AnyFixture[_]] =
     suiteFixture :: suite.munitFixtures.toList
 
   override def filter(filter: Filter): Unit = {
@@ -193,12 +194,12 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private[munit] class BeforeAllResult(
       val isSuccess: Boolean,
-      val loadedFixtures: List[Fixture[_]],
+      val loadedFixtures: List[AnyFixture[_]],
       val errors: List[Throwable]
   )
 
   private def runBeforeAll(notifier: RunNotifier): Future[BeforeAllResult] = {
-    val result: Future[List[Try[(Fixture[_], Boolean)]]] =
+    val result: Future[List[Try[(AnyFixture[_], Boolean)]]] =
       sequenceFutures(
         munitFixtures.iterator.map(f =>
           runHiddenTest(
@@ -235,14 +236,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private[munit] class BeforeEachResult(
       val error: Option[Throwable],
-      val loadedFixtures: List[Fixture[_]]
+      val loadedFixtures: List[AnyFixture[_]]
   )
 
   private def runBeforeEach(
       test: Test
   ): Future[BeforeAllResult] = {
     val context = new BeforeEach(test)
-    val fixtures = mutable.ListBuffer.empty[Fixture[_]]
+    val fixtures = mutable.ListBuffer.empty[AnyFixture[_]]
     sequenceFutures(
       munitFixtures.iterator.map(f =>
         valueTransform(() => f.beforeEach(context)).map(_ => f)
@@ -257,7 +258,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private def runAfterEach(
       test: Test,
-      fixtures: List[Fixture[_]]
+      fixtures: List[AnyFixture[_]]
   ): Future[Unit] = {
     val context = new AfterEach(test)
     sequenceFutures(

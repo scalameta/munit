@@ -21,8 +21,8 @@ abstract class Suite extends PlatformSuite {
   /** The base class for all test suites */
   def munitTests(): Seq[Test]
 
-  /** Functinonal fixtures that can be reused for individual test cases or entire suites. */
-  def munitFixtures: Seq[Fixture[_]] = Nil
+  /** Fixtures that can be reused for individual test cases or entire suites. */
+  def munitFixtures: Seq[AnyFixture[_]] = Nil
 
   private val parasiticExecutionContext = new ExecutionContext {
     def execute(runnable: Runnable): Unit = runnable.run()
