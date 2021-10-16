@@ -57,12 +57,12 @@ to reusable or ad-hoc fixtures when necessary.
 ## Reusable test-local fixtures
 
 Reusable test-local fixtures are more powerful than functional test-local
-fixtures because they can declare custom logic that gets evaluted before each
+fixtures because they can declare custom logic that gets evaluated before each
 local test case and get torn down after each test case. These increased
 capabilities come at the price of ergonomics of the API.
 
-Override the `beforeEach()` and `afterEach()` methods in the `Fixture[T]` trait
-to configure a reusable test-local fixture.
+Override the `beforeEach()`, `afterEach()` and `munitFixtures` methods in the
+`Fixture[T]` trait to configure a reusable test-local fixture.
 
 ```scala mdoc:reset
 import java.nio.file._
@@ -178,6 +178,73 @@ class MySuite extends munit.FunSuite {
   }
 }
 ```
+
+## Asynchronous fixtures with `FutureFixture`
+
+Extend `FutureFixture[T]` to return `Future[T]` values from the lifecycle
+methods `beforeAll`, `beforeEach`, `afterEach` and `afterAll`.
+
+```scala mdoc:reset
+import java.nio.file._
+import java.sql.Connection
+import java.sql.DriverManager
+import munit.FutureFixture
+import munit.FunSuite
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class AsyncFilesSuite extends FunSuite {
+
+  val file = new FutureFixture[Path]("files") {
+    var file: Path = null
+    def apply() = file
+    override def beforeEach(context: BeforeEach): Future[Unit] = Future {
+      file = Files.createTempFile("files", context.test.name)
+    }
+    override def afterEach(context: AfterEach): Future[Unit] = Future {
+      // Always gets called, even if test failed.
+      Files.deleteIfExists(file)
+    }
+  }
+
+  override def munitFixtures = List(file)
+
+  test("exists") {
+    // `file` is the temporary file that was created for this test case.
+    assert(Files.exists(file()))
+  }
+}
+```
+
+## Asynchronous fixtures with custom effect type
+
+First, create a new `EffectFixture[T]` class that extends `munit.AnyFixture[T]`
+and overrides all lifecycle methods to return values of type `Effect[Unit]`. For
+example:
+
+```scala mdoc:reset
+import munit.AfterEach
+import munit.BeforeEach
+
+// Hypothetical effect type called "Resource"
+sealed abstract class Resource[+T]
+object Resource {
+  def unit: Resource[Unit] = ???
+}
+
+abstract class ResourceFixture[T](name: String) extends munit.AnyFixture[T](name) {
+  // The main purpose of "ResourceFixture" is to help IDEs auto-complete
+  // the result type "Resource[Unit]" instead of "Any" when implementing the
+  // "ResourceFixture" class.
+  override def beforeAll(): Resource[Unit] = Resource.unit
+  override def beforeEach(context: BeforeEach): Resource[Unit] = Resource.unit
+  override def afterEach(context: AfterEach): Resource[Unit] = Resource.unit
+  override def afterAll(): Resource[Unit] = Resource.unit
+}
+```
+
+Next, extend `munitValueTransforms` to convert `Resource[T]` into `Future[T]`,
+see [declare async tests](tests.md#declare-async-test) for more details.
 
 ## Avoid stateful operations in the class constructor
 

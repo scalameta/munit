@@ -86,8 +86,8 @@ test("buggy-task") {
 ```
 
 Since tasks are lazy, a test that returns `LazyFuture[T]` will always pass since
-you need to call `run()` to start the task execution. Override `munitValueTransforms`
-to make sure that `LazyFuture.run()` gets called.
+you need to call `run()` to start the task execution. Override
+`munitValueTransforms` to make sure that `LazyFuture.run()` gets called.
 
 ```scala mdoc
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -118,9 +118,10 @@ parallel test suite execution in sbt, add the following setting to `build.sbt`.
 Test / parallelExecution := false
 ```
 
-In case you do not run your tests in parallel, you can also disable buffered logging, 
-which is on by default to prevent test results of multiple suites from appearing interleaved.
-Switching buffering off would give you immediate feedback on the console while a suite is running.
+In case you do not run your tests in parallel, you can also disable buffered
+logging, which is on by default to prevent test results of multiple suites from
+appearing interleaved. Switching buffering off would give you immediate feedback
+on the console while a suite is running.
 
 ```sh
 Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
@@ -199,9 +200,9 @@ bug report but don't have a solution to fix the issue yet.
 
 ## Customize evaluation of tests with tags
 
-Override `munitTestTransforms()` to extend the default behavior for how test bodies are
-evaluated. For example, use this feature to implement a `Rerun(N)` modifier to
-evaluate the body multiple times.
+Override `munitTestTransforms()` to extend the default behavior for how test
+bodies are evaluated. For example, use this feature to implement a `Rerun(N)`
+modifier to evaluate the body multiple times.
 
 ```scala mdoc
 case class Rerun(count: Int) extends munit.Tag("Rerun")
@@ -228,9 +229,9 @@ class MyRerunSuite extends munit.FunSuite {
 }
 ```
 
-The `munitTestTransforms()` method is similar to `munitValueTransforms()` but is different in
-that you also have access information about the test in `TestOptions` such as
-tags.
+The `munitTestTransforms()` method is similar to `munitValueTransforms()` but is
+different in that you also have access information about the test in
+`TestOptions` such as tags.
 
 ## Customize test name based on a dynamic condition
 
@@ -316,46 +317,3 @@ abstract class BaseSuite extends munit.FunSuite {
 class MyFirstSuite extends BaseSuite { /* ... */ }
 class MySecondSuite extends BaseSuite { /* ... */ }
 ```
-
-## Roll our own testing library with `munit.Suite`
-
-The `munit.FunSuite` class comes with a lot of built-in functionality such as
-assertions, fixtures, `munitTimeout()` helpers and more. These features may not
-be necessary or even desirable when writing tests. You may sometimes prefer a
-smaller API.
-
-Extend the base class `munit.Suite` to implement a minimal test suite that
-includes no optional MUnit features. At its core, MUnit operates on a data
-structure `GenericTest[TestValue]` where the type parameter `TestValue`
-represents the return value of test bodies. This type parameter can be
-customized per-suite. In `munit.FunSuite`, the type parameter `TestValue` is
-defined as `Any` and `type Test = GenericTest[Any]`.
-
-Below is an example custom test suite with `type TestValue = Future[String]`.
-
-```scala
-class MyCustomSuite extends munit.Suite {
-  override type TestValue = Future[String]
-  override def munitTests() = List(
-    new Test(
-      "name",
-      // compile error if it's not a Future[String]
-      body = () => Future.successful("Hello world!"),
-      tags = Set.empty[Tag],
-      location = implicitly[Location]
-    )
-  )
-}
-```
-
-Some use-cases where you may want to define a custom `munit.Suite`:
-
-- implement APIs that mimic testing libraries to simplify the migration to MUnit
-- design stricter APIs that don't use `Any`
-- design purely functional APIs with no publicly facing side-effects
-
-In application code, it's desirable to use strong types avoid mutable state.
-However, it's not clear that those best practices yield the same cost/benefit
-ratio when writing test code. MUnit intentionally exposes types such `Any` and
-side-effecting methods like `test("name") { ... }` because they subjectively
-make the testing API nice-to-use.

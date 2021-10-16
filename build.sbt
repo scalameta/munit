@@ -1,6 +1,4 @@
-import com.typesafe.tools.mima.core.DirectMissingMethodProblem
-import com.typesafe.tools.mima.core.ProblemFilters
-import com.typesafe.tools.mima.core.MissingTypesProblem
+import com.typesafe.tools.mima.core._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
@@ -85,6 +83,26 @@ lazy val mimaEnable: List[Def.Setting[_]] = List(
     ),
     ProblemFilters.exclude[DirectMissingMethodProblem](
       "munit.internal.junitinterface.JUnitComputer.this"
+    ),
+    // Known breaking changes for MUnit v1
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.FunSuite.munitTestTransform"
+    ),
+    ProblemFilters.exclude[MissingClassProblem]("munit.GenericAfterEach"),
+    ProblemFilters.exclude[MissingClassProblem]("munit.GenericBeforeEach"),
+    ProblemFilters.exclude[MissingClassProblem]("munit.GenericTest"),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.MUnitRunner.createTestDescription"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.Suite.beforeEach"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.Suite.afterEach"
+    ),
+    ProblemFilters.exclude[MissingClassProblem]("munit.Suite$Fixture"),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.TestTransforms#TestTransform.apply"
     )
   ),
   mimaPreviousArtifacts := {

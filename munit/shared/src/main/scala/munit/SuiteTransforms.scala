@@ -54,7 +54,7 @@ trait SuiteTransforms { this: FunSuite =>
           } else {
             onlySuite.map(t =>
               if (t.tags(Only)) {
-                t.withBody[TestValue](() =>
+                t.withBody(() =>
                   fail("'Only' tag is not allowed when `isCI=true`")(t.location)
                 )
               } else {
