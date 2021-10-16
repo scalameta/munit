@@ -114,38 +114,6 @@ testFrameworks += <span class="hljs-keyword">new</span> <span class="hljs-type">
 </code></pre>
 <p>Check out the
 <a href="https://scalameta.org/munit/docs/getting-started.html">getting started guide</a>.</p>
-<h2><a class="anchor" aria-hidden="true" id="tests-as-values"></a><a href="#tests-as-values" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Tests as values</h2>
-<p>If you know how to write normal Scala programs you should feel comfortable
-reasoning about how MUnit works.</p>
-<p>Internally, a core MUnit data structure is <code>GenericTest[T]</code>, which represents a
-single test case and is roughly defined like this.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GenericTest</span>[<span class="hljs-type">T</span>](<span class="hljs-params">
-  name: <span class="hljs-type">String</span>,
-  body: (</span>) <span class="hljs-title">=&gt;</span> <span class="hljs-title">T</span>,</span>
-  tags: <span class="hljs-type">Set</span>[<span class="hljs-type">Tag</span>],
-  location: <span class="hljs-type">Location</span>
-)
-<span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Suite</span> </span>{
-  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">TestValue</span></span>
-  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Test</span> </span>= <span class="hljs-type">GenericTest</span>[<span class="hljs-type">TestValue</span>]
-  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTests</span></span>(): <span class="hljs-type">Seq</span>[<span class="hljs-type">Test</span>]
-}
-</code></pre>
-<p>A test suite returns a <code>Seq[Test]</code>, which you as a user can generate and
-abstract over any way you like.</p>
-<p>Importantly, MUnit test cases are not discovered via runtime reflection like in
-JUnit and MUnit test cases are not generated via macros like in utest.</p>
-<p>MUnit provides a high-level API to write tests in a ScalaTest-inspired
-<code>FunSuite</code> syntax where the type parameter for <code>GenericTest[T]</code> is defined as
-<code>Future[Any]</code>.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FunSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Suite</span> </span>{
-  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">TestValue</span> </span>= <span class="hljs-type">Future</span>[<span class="hljs-type">Any</span>]
-}
-</code></pre>
-<p>For common usage of MUnit you are not expected to write raw
-<code>GenericTest[T](...)</code> expressions but knowing this underlying data model helps
-you implement features like test retries, disabling tests based on dynamic
-conditions, enforce stricter type safety and more.</p>
 <h2><a class="anchor" aria-hidden="true" id="rich-filtering-capabilities"></a><a href="#rich-filtering-capabilities" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Rich filtering capabilities</h2>
 <p>Using tags, MUnit provides a extensible way to disable/enable tests based on
 static and dynamic conditions.</p>
@@ -273,7 +241,7 @@ inspired by existing testing libraries including ScalaTest, utest, JUnit and ava
 provides the combination of all the features presented in this post in one
 solution and I hope that explains the motivation for why MUnit exists.</p>
 <p>Happy testing ✌️</p>
-</span></div></div><div class="blogSocialSection"></div></div><div class="blog-recent"><a class="button" href="/munit/blog">Recent Posts</a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#tldr">TL;DR</a></li><li><a href="#tests-as-values">Tests as values</a></li><li><a href="#rich-filtering-capabilities">Rich filtering capabilities</a></li><li><a href="#actionable-errors">Actionable errors</a></li><li><a href="#tooling-integrations">Tooling integrations</a></li><li><a href="#insightful-test-reports">Insightful test reports</a></li><li><a href="#credits">Credits</a></li><li><a href="#conclusion">Conclusion</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2021 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></div><div class="blogSocialSection"></div></div><div class="blog-recent"><a class="button" href="/munit/blog">Recent Posts</a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#tldr">TL;DR</a></li><li><a href="#rich-filtering-capabilities">Rich filtering capabilities</a></li><li><a href="#actionable-errors">Actionable errors</a></li><li><a href="#tooling-integrations">Tooling integrations</a></li><li><a href="#insightful-test-reports">Insightful test reports</a></li><li><a href="#credits">Credits</a></li><li><a href="#conclusion">Conclusion</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2021 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;

@@ -120,8 +120,8 @@ test(<span class="hljs-string">"buggy-task"</span>) {
 }
 </code></pre>
 <p>Since tasks are lazy, a test that returns <code>LazyFuture[T]</code> will always pass since
-you need to call <code>run()</code> to start the task execution. Override <code>munitValueTransforms</code>
-to make sure that <code>LazyFuture.run()</code> gets called.</p>
+you need to call <code>run()</code> to start the task execution. Override
+<code>munitValueTransforms</code> to make sure that <code>LazyFuture.run()</code> gets called.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> scala.concurrent.<span class="hljs-type">ExecutionContext</span>.<span class="hljs-type">Implicits</span>.global
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaskSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitValueTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitValueTransforms ++ <span class="hljs-type">List</span>(
@@ -145,9 +145,10 @@ automatically parallelizes the execution of multiple test suites. To disable
 parallel test suite execution in sbt, add the following setting to <code>build.sbt</code>.</p>
 <pre><code class="hljs css language-sh">Test / parallelExecution := <span class="hljs-literal">false</span>
 </code></pre>
-<p>In case you do not run your tests in parallel, you can also disable buffered logging,
-which is on by default to prevent test results of multiple suites from appearing interleaved.
-Switching buffering off would give you immediate feedback on the console while a suite is running.</p>
+<p>In case you do not run your tests in parallel, you can also disable buffered
+logging, which is on by default to prevent test results of multiple suites from
+appearing interleaved. Switching buffering off would give you immediate feedback
+on the console while a suite is running.</p>
 <pre><code class="hljs css language-sh">Test / testOptions += Tests.Argument(TestFrameworks.MUnit, <span class="hljs-string">"-b"</span>)
 </code></pre>
 <p>To learn more about sbt test execution, see
@@ -204,9 +205,9 @@ checkEager(<span class="hljs-string">"file"</span>, <span class="hljs-type">File
 the test fails. This feature is helpful if you want to for example reproduce a
 bug report but don't have a solution to fix the issue yet.</p>
 <h2><a class="anchor" aria-hidden="true" id="customize-evaluation-of-tests-with-tags"></a><a href="#customize-evaluation-of-tests-with-tags" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Customize evaluation of tests with tags</h2>
-<p>Override <code>munitTestTransforms()</code> to extend the default behavior for how test bodies are
-evaluated. For example, use this feature to implement a <code>Rerun(N)</code> modifier to
-evaluate the body multiple times.</p>
+<p>Override <code>munitTestTransforms()</code> to extend the default behavior for how test
+bodies are evaluated. For example, use this feature to implement a <code>Rerun(N)</code>
+modifier to evaluate the body multiple times.</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Rerun</span>(<span class="hljs-params">count: <span class="hljs-type">Int</span></span>) <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">Tag</span>(<span class="hljs-params">"<span class="hljs-type">Rerun</span>"</span>)</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyRerunSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">FunSuite</span> </span>{
   <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTestTransforms</span> </span>= <span class="hljs-keyword">super</span>.munitTestTransforms ++ <span class="hljs-type">List</span>(
@@ -230,9 +231,9 @@ evaluate the body multiple times.</p>
   }
 }
 </code></pre>
-<p>The <code>munitTestTransforms()</code> method is similar to <code>munitValueTransforms()</code> but is different in
-that you also have access information about the test in <code>TestOptions</code> such as
-tags.</p>
+<p>The <code>munitTestTransforms()</code> method is similar to <code>munitValueTransforms()</code> but is
+different in that you also have access information about the test in
+<code>TestOptions</code> such as tags.</p>
 <h2><a class="anchor" aria-hidden="true" id="customize-test-name-based-on-a-dynamic-condition"></a><a href="#customize-test-name-based-on-a-dynamic-condition" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Customize test name based on a dynamic condition</h2>
 <p>Override <code>munitNewTest</code> to customize how <code>Test</code> values are constructed. For
 example, use this feature to add a custom suffix to test names based on dynamic
@@ -298,43 +299,7 @@ in your project.</p>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyFirstSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseSuite</span> </span>{ <span class="hljs-comment">/* ... */</span> }
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MySecondSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseSuite</span> </span>{ <span class="hljs-comment">/* ... */</span> }
 </code></pre>
-<h2><a class="anchor" aria-hidden="true" id="roll-our-own-testing-library-with-munitsuite"></a><a href="#roll-our-own-testing-library-with-munitsuite" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Roll our own testing library with <code>munit.Suite</code></h2>
-<p>The <code>munit.FunSuite</code> class comes with a lot of built-in functionality such as
-assertions, fixtures, <code>munitTimeout()</code> helpers and more. These features may not
-be necessary or even desirable when writing tests. You may sometimes prefer a
-smaller API.</p>
-<p>Extend the base class <code>munit.Suite</code> to implement a minimal test suite that
-includes no optional MUnit features. At its core, MUnit operates on a data
-structure <code>GenericTest[TestValue]</code> where the type parameter <code>TestValue</code>
-represents the return value of test bodies. This type parameter can be
-customized per-suite. In <code>munit.FunSuite</code>, the type parameter <code>TestValue</code> is
-defined as <code>Any</code> and <code>type Test = GenericTest[Any]</code>.</p>
-<p>Below is an example custom test suite with <code>type TestValue = Future[String]</code>.</p>
-<pre><code class="hljs css language-scala"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyCustomSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">munit</span>.<span class="hljs-title">Suite</span> </span>{
-  <span class="hljs-keyword">override</span> <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">TestValue</span> </span>= <span class="hljs-type">Future</span>[<span class="hljs-type">String</span>]
-  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">munitTests</span></span>() = <span class="hljs-type">List</span>(
-    <span class="hljs-keyword">new</span> <span class="hljs-type">Test</span>(
-      <span class="hljs-string">"name"</span>,
-      <span class="hljs-comment">// compile error if it's not a Future[String]</span>
-      body = () =&gt; <span class="hljs-type">Future</span>.successful(<span class="hljs-string">"Hello world!"</span>),
-      tags = <span class="hljs-type">Set</span>.empty[<span class="hljs-type">Tag</span>],
-      location = implicitly[<span class="hljs-type">Location</span>]
-    )
-  )
-}
-</code></pre>
-<p>Some use-cases where you may want to define a custom <code>munit.Suite</code>:</p>
-<ul>
-<li>implement APIs that mimic testing libraries to simplify the migration to MUnit</li>
-<li>design stricter APIs that don't use <code>Any</code></li>
-<li>design purely functional APIs with no publicly facing side-effects</li>
-</ul>
-<p>In application code, it's desirable to use strong types avoid mutable state.
-However, it's not clear that those best practices yield the same cost/benefit
-ratio when writing test code. MUnit intentionally exposes types such <code>Any</code> and
-side-effecting methods like <code>test(&quot;name&quot;) { ... }</code> because they subjectively
-make the testing API nice-to-use.</p>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/getting-started.html"><span class="arrow-prev">← </span><span>Getting started</span></a><a class="docs-next button" href="/munit/docs/assertions.html"><span>Writing assertions</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#declare-basic-test">Declare basic test</a></li><li><a href="#declare-async-test">Declare async test</a></li><li><a href="#run-tests-in-parallel">Run tests in parallel</a></li><li><a href="#declare-tests-inside-a-helper-function">Declare tests inside a helper function</a></li><li><a href="#declare-test-that-should-always-fail">Declare test that should always fail</a></li><li><a href="#customize-evaluation-of-tests-with-tags">Customize evaluation of tests with tags</a></li><li><a href="#customize-test-name-based-on-a-dynamic-condition">Customize test name based on a dynamic condition</a></li><li><a href="#tag-flaky-tests">Tag flaky tests</a></li><li><a href="#run-logic-before-and-after-tests">Run logic before and after tests</a></li><li><a href="#share-configuration-between-test-suites">Share configuration between test suites</a></li><li><a href="#roll-our-own-testing-library-with-munitsuite">Roll our own testing library with <code>munit.Suite</code></a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2021 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/munit/docs/getting-started.html"><span class="arrow-prev">← </span><span>Getting started</span></a><a class="docs-next button" href="/munit/docs/assertions.html"><span>Writing assertions</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#declare-basic-test">Declare basic test</a></li><li><a href="#declare-async-test">Declare async test</a></li><li><a href="#run-tests-in-parallel">Run tests in parallel</a></li><li><a href="#declare-tests-inside-a-helper-function">Declare tests inside a helper function</a></li><li><a href="#declare-test-that-should-always-fail">Declare test that should always fail</a></li><li><a href="#customize-evaluation-of-tests-with-tags">Customize evaluation of tests with tags</a></li><li><a href="#customize-test-name-based-on-a-dynamic-condition">Customize test name based on a dynamic condition</a></li><li><a href="#tag-flaky-tests">Tag flaky tests</a></li><li><a href="#run-logic-before-and-after-tests">Run logic before and after tests</a></li><li><a href="#share-configuration-between-test-suites">Share configuration between test suites</a></li></ul></nav></div><footer class="nav-footer" id="footer" style="background-color:#045C4D"><section class="sitemap"><a href="/munit/" class="nav-home"><img src="/munit/img/scalameta-logo.png" alt="MUnit" width="66" height="58"/></a><div><h5>Overview</h5><a href="/munit/docs/getting-started.html">Getting started</a></div><div><h5>Social</h5><a href="https://github.com/scalameta/munit" target="_blank"><img src="https://img.shields.io/github/stars/scalameta/munit.svg?color=%23087e8b&amp;label=stars&amp;logo=github&amp;style=social"/></a><a href="https://discord.gg/RFpSVth" target="_blank"><img src="https://img.shields.io/discord/632642981228314653?logo=discord&amp;style=social"/></a><a href="https://gitter.im/scalameta/munit" target="_blank"><img src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&amp;style=social"/></a><a href="https://twitter.com/scalameta" target="_blank"><img src="https://img.shields.io/twitter/follow/scalameta.svg?logo=twitter&amp;style=social"/></a></div></section><section class="copyright">Copyright © 2021 Scalameta</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
