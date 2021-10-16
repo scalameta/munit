@@ -8,7 +8,9 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
 
-abstract class FunSuite
+abstract class FunSuite extends BaseFunSuite
+
+trait BaseFunSuite
     extends Suite
     with Assertions
     with FunFixtures

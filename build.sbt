@@ -103,6 +103,18 @@ lazy val mimaEnable: List[Def.Setting[_]] = List(
     ProblemFilters.exclude[MissingClassProblem]("munit.Suite$Fixture"),
     ProblemFilters.exclude[IncompatibleMethTypeProblem](
       "munit.TestTransforms#TestTransform.apply"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.FunFixtures#FunFixture.this"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.SuiteTransforms#SuiteTransform.this"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.TestTransforms#TestTransform.this"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.ValueTransforms#ValueTransform.this"
     )
   ),
   mimaPreviousArtifacts := {
