@@ -4,8 +4,6 @@ import scala.scalajs.js
 import java.{util => ju}
 import java.nio.charset.StandardCharsets
 
-import munit.internal.JSIO
-
 import scala.collection.JavaConverters._
 
 object Files {

@@ -1,7 +1,6 @@
 package munit.internal
 
 import java.net.URI
-import munit.internal.JSIO
 
 // obtained implementation by experimentation on the JDK.
 class File(path: String) {
