@@ -67,7 +67,7 @@ case class Path(filename: String) {
     else remaining.length
   }
   def toUri: URI = toFile.toURI
-  def getFileName: Path =
+  def getFileName(): Path =
     JSIO.path match {
       case Some(path) =>
         Path(path.basename(filename).asInstanceOf[String])

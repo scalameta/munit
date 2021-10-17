@@ -1,8 +1,8 @@
 package munit
 
 import java.lang.annotation.Annotation
-import java.io.File
 import scala.runtime.Statics
+import munit.internal.File
 import munit.internal.MacroCompat
 
 object Location extends MacroCompat.LocationMacro {
