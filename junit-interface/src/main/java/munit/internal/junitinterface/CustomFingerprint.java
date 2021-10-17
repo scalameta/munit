@@ -38,8 +38,6 @@ public class CustomFingerprint implements SubclassFingerprint {
 
   @Override
   public String toString() {
-    return "CustomFingerprint{" +
-        "suite='" + suite + '\'' +
-        '}';
+    return "CustomFingerprint{" + "suite='" + suite + '\'' + '}';
   }
 }

@@ -41,15 +41,24 @@ class RunSettings implements Settings {
   private final HashMap<String, String> sysprops;
   private final HashSet<String> ignoreRunners = new HashSet<String>();
 
-  RunSettings(boolean color, boolean decodeScalaNames,
-              boolean verbose, boolean useSbtLoggers, boolean useBufferedLoggers, boolean trimStackTraces,
-              Summary summary, boolean logAssert, String ignoreRunners,
-              boolean logExceptionClass,
-              HashMap<String, String> sysprops,
-              ArrayList<String> globPatterns,
-              Set<String> includeCategories, Set<String> excludeCategories,
-              Set<String> includeTags, Set<String> excludeTags,
-              String testFilter) {
+  RunSettings(
+      boolean color,
+      boolean decodeScalaNames,
+      boolean verbose,
+      boolean useSbtLoggers,
+      boolean useBufferedLoggers,
+      boolean trimStackTraces,
+      Summary summary,
+      boolean logAssert,
+      String ignoreRunners,
+      boolean logExceptionClass,
+      HashMap<String, String> sysprops,
+      ArrayList<String> globPatterns,
+      Set<String> includeCategories,
+      Set<String> excludeCategories,
+      Set<String> includeTags,
+      Set<String> excludeTags,
+      String testFilter) {
     this.color = color;
     this.decodeScalaNames = decodeScalaNames;
     this.verbose = verbose;
@@ -58,8 +67,7 @@ class RunSettings implements Settings {
     this.logExceptionClass = logExceptionClass;
     this.includeTags = includeTags;
     this.excludeTags = excludeTags;
-    for(String s : ignoreRunners.split(","))
-      this.ignoreRunners.add(s.trim());
+    for (String s : ignoreRunners.split(",")) this.ignoreRunners.add(s.trim());
     this.sysprops = sysprops;
     this.globPatterns = globPatterns;
     this.includeCategories = includeCategories;
@@ -78,11 +86,11 @@ class RunSettings implements Settings {
     try {
       Class<?> cl = Class.forName("scala.reflect.NameTransformer");
       Method m = cl.getMethod("decode", String.class);
-      String decoded = (String)m.invoke(null, name);
+      String decoded = (String) m.invoke(null, name);
       return decoded == null ? name : decoded;
-    } catch(Throwable t) {
-      //System.err.println("Error decoding Scala name:");
-      //t.printStackTrace(System.err);
+    } catch (Throwable t) {
+      // System.err.println("Error decoding Scala name:");
+      // t.printStackTrace(System.err);
       return name;
     }
   }
@@ -133,20 +141,20 @@ class RunSettings implements Settings {
 
   String buildTestResult(Status status) {
     switch (status) {
-        case Success:
-          return c("  + ", SUCCESS1);
-        case Ignored:
-          return c("==> i ", SKIPPED);
-        case Skipped:
-          return c("==> s ", SKIPPED);
-        default:
-          return c("==> X ", ERRMSG);
-      }
+      case Success:
+        return c("  + ", SUCCESS1);
+      case Ignored:
+        return c("==> i ", SKIPPED);
+      case Skipped:
+        return c("==> s ", SKIPPED);
+      default:
+        return c("==> X ", ERRMSG);
+    }
   }
 
   String buildColoredMessage(Throwable t, String c1) {
-    if(t == null) return "null";
-    if(!logExceptionClass || (!logAssert && (t instanceof AssertionError)))  return t.getMessage();
+    if (t == null) return "null";
+    if (!logExceptionClass || (!logAssert && (t instanceof AssertionError))) return t.getMessage();
     StringBuilder b = new StringBuilder();
     b.append(decodeName(t.getClass().getName()));
     b.append(": ").append(t.getMessage());
@@ -162,23 +170,25 @@ class RunSettings implements Settings {
     String cn = decodeName(desc.getClassName());
     b.append(c(cn, c1));
     String m = desc.getMethodName();
-    if(m != null) {
+    if (m != null) {
       b.append('.');
       b.append(c(decodeName(m), c2));
     }
     return b.toString();
   }
 
-  boolean ignoreRunner(String cln) { return ignoreRunners.contains(cln); }
+  boolean ignoreRunner(String cln) {
+    return ignoreRunners.contains(cln);
+  }
 
   Map<String, Object> overrideSystemProperties() {
     HashMap<String, Object> oldprops = new HashMap<String, Object>();
-    synchronized(System.getProperties()) {
-      for(Map.Entry<String, String> me : sysprops.entrySet()) {
+    synchronized (System.getProperties()) {
+      for (Map.Entry<String, String> me : sysprops.entrySet()) {
         String old = System.getProperty(me.getKey());
         oldprops.put(me.getKey(), old == null ? NULL : old);
       }
-      for(Map.Entry<String, String> me : sysprops.entrySet()) {
+      for (Map.Entry<String, String> me : sysprops.entrySet()) {
         System.setProperty(me.getKey(), me.getValue());
       }
     }
@@ -186,12 +196,12 @@ class RunSettings implements Settings {
   }
 
   void restoreSystemProperties(Map<String, Object> oldprops) {
-    synchronized(System.getProperties()) {
-      for(Map.Entry<String, Object> me : oldprops.entrySet()) {
-        if(me.getValue() == NULL) {
+    synchronized (System.getProperties()) {
+      for (Map.Entry<String, Object> me : oldprops.entrySet()) {
+        if (me.getValue() == NULL) {
           System.clearProperty(me.getKey());
         } else {
-          System.setProperty(me.getKey(), (String)me.getValue());
+          System.setProperty(me.getKey(), (String) me.getValue());
         }
       }
     }
@@ -203,6 +213,8 @@ class RunSettings implements Settings {
   }
 
   static enum Summary {
-    SBT, ONE_LINE, LIST_FAILED
+    SBT,
+    ONE_LINE,
+    LIST_FAILED
   }
 }

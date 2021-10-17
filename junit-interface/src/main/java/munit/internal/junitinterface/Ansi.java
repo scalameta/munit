@@ -22,25 +22,22 @@ public class Ansi {
   private static final String LIGHT_MAGENTA = "\u001B[95m";
   private static final String LIGHT_CYAN = "\u001B[96m";
 
-  public static String c(String s, String colorSequence)
-  {
-    if(colorSequence == null) return s;
+  public static String c(String s, String colorSequence) {
+    if (colorSequence == null) return s;
     else return colorSequence + s + NORMAL;
   }
 
-  public static String filterAnsi(String s)
-  {
-    if(s == null) return null;
+  public static String filterAnsi(String s) {
+    if (s == null) return null;
     int len = s.length();
     StringBuilder b = new StringBuilder(len);
-    for(int i=0; i<len; i++)
-    {
+    for (int i = 0; i < len; i++) {
       char c = s.charAt(i);
-      if(c == '\u001B')
-      {
-        do { i++; } while(s.charAt(i) != 'm');
-      }
-      else b.append(c);
+      if (c == '\u001B') {
+        do {
+          i++;
+        } while (s.charAt(i) != 'm');
+      } else b.append(c);
     }
     return b.toString();
   }

@@ -26,7 +26,8 @@ final class JUnitTask implements Task {
   private final TaskDef taskDef;
   private final JUnitComputer computer;
 
-  public JUnitTask(JUnitRunner runner, RunSettings settings, TaskDef taskDef, JUnitComputer computer) {
+  public JUnitTask(
+      JUnitRunner runner, RunSettings settings, TaskDef taskDef, JUnitComputer computer) {
     this.runner = runner;
     this.settings = settings;
     this.taskDef = taskDef;
@@ -35,11 +36,13 @@ final class JUnitTask implements Task {
 
   @Override
   public String[] tags() {
-    return new String[0];  // no tags yet
+    return new String[0]; // no tags yet
   }
 
   @Override
-  public TaskDef taskDef() { return taskDef; }
+  public TaskDef taskDef() {
+    return taskDef;
+  }
 
   @Override
   public Task[] execute(EventHandler eventHandler, Logger[] loggers) {
@@ -47,7 +50,9 @@ final class JUnitTask implements Task {
     String testClassName = taskDef.fullyQualifiedName();
     Description taskDescription = Description.createSuiteDescription(testClassName);
     RichLogger logger = new RichLogger(loggers, settings, testClassName, runner);
-    EventDispatcher ed = new EventDispatcher(logger, eventHandler, settings, fingerprint, taskDescription, runner.runStatistics);
+    EventDispatcher ed =
+        new EventDispatcher(
+            logger, eventHandler, settings, fingerprint, taskDescription, runner.runStatistics);
     JUnitCore ju = new JUnitCore();
     ju.addListener(ed);
     if (runner.runListener != null) ju.addListener(runner.runListener);
@@ -57,25 +62,33 @@ final class JUnitTask implements Task {
       try {
         Class<?> cl = runner.testClassLoader.loadClass(testClassName);
         boolean isRun = shouldRun(fingerprint, cl, settings);
-        if(isRun) {
+        if (isRun) {
           Request request = Request.classes(computer, cl);
-          if(settings.globPatterns.size() > 0) {
-            request = new SilentFilterRequest(request, new GlobFilter(settings, settings.globPatterns));
+          if (settings.globPatterns.size() > 0) {
+            request =
+                new SilentFilterRequest(request, new GlobFilter(settings, settings.globPatterns));
           }
-          if(settings.testFilter.length() > 0) {
+          if (settings.testFilter.length() > 0) {
             request = new SilentFilterRequest(request, new TestFilter(settings.testFilter, ed));
           }
-          if(!settings.includeCategories.isEmpty() || !settings.excludeCategories.isEmpty()) {
-            request = new SilentFilterRequest(request,
-                Categories.CategoryFilter.categoryFilter(true, loadClasses(runner.testClassLoader, settings.includeCategories), true,
-                    loadClasses(runner.testClassLoader, settings.excludeCategories)));
+          if (!settings.includeCategories.isEmpty() || !settings.excludeCategories.isEmpty()) {
+            request =
+                new SilentFilterRequest(
+                    request,
+                    Categories.CategoryFilter.categoryFilter(
+                        true,
+                        loadClasses(runner.testClassLoader, settings.includeCategories),
+                        true,
+                        loadClasses(runner.testClassLoader, settings.excludeCategories)));
           }
-          if(!settings.includeTags.isEmpty() || !settings.excludeTags.isEmpty()) {
-            request = new SilentFilterRequest(request, new TagFilter(settings.includeTags, settings.excludeTags));
+          if (!settings.includeTags.isEmpty() || !settings.excludeTags.isEmpty()) {
+            request =
+                new SilentFilterRequest(
+                    request, new TagFilter(settings.includeTags, settings.excludeTags));
           }
           ju.run(request);
         }
-      } catch(Exception ex) {
+      } catch (Exception ex) {
         ed.testExecutionFailed(testClassName, ex);
       }
     } finally {
@@ -85,29 +98,28 @@ final class JUnitTask implements Task {
     return new Task[0]; // junit tests do not nest
   }
 
-
   private boolean shouldRun(Fingerprint fingerprint, Class<?> clazz, RunSettings settings) {
-    if(JUNIT_FP.equals(fingerprint)) {
+    if (JUNIT_FP.equals(fingerprint)) {
       // Ignore classes which are matched by the other fingerprints
-      if(TestCase.class.isAssignableFrom(clazz)) {
+      if (TestCase.class.isAssignableFrom(clazz)) {
         return false;
       }
-      for(Annotation a : clazz.getDeclaredAnnotations()) {
-        if(a.annotationType().equals(RunWith.class)) return false;
+      for (Annotation a : clazz.getDeclaredAnnotations()) {
+        if (a.annotationType().equals(RunWith.class)) return false;
       }
       return true;
     } else {
       RunWith rw = clazz.getAnnotation(RunWith.class);
-      if(rw != null) {
+      if (rw != null) {
         return !settings.ignoreRunner(rw.value().getName());
-      }
-      else return true;
+      } else return true;
     }
   }
 
-  private static Set<Class<?>> loadClasses(ClassLoader classLoader, Set<String> classNames) throws ClassNotFoundException {
+  private static Set<Class<?>> loadClasses(ClassLoader classLoader, Set<String> classNames)
+      throws ClassNotFoundException {
     Set<Class<?>> classes = new HashSet<Class<?>>();
-    for(String className : classNames) {
+    for (String className : classNames) {
       classes.add(classLoader.loadClass(className));
     }
     return classes;

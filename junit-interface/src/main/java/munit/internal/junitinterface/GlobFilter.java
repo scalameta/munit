@@ -6,15 +6,13 @@ import java.util.regex.Pattern;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 
-public final class GlobFilter extends Filter
-{
+public final class GlobFilter extends Filter {
   private final ArrayList<Pattern> patterns = new ArrayList<Pattern>();
   private final RunSettings settings;
 
-  public GlobFilter(RunSettings settings, Iterable<String> globPatterns)
-  {
+  public GlobFilter(RunSettings settings, Iterable<String> globPatterns) {
     this.settings = settings;
-    for(String p : globPatterns) patterns.add(compileGlobPattern(p));
+    for (String p : globPatterns) patterns.add(compileGlobPattern(p));
   }
 
   @Override
@@ -23,13 +21,11 @@ public final class GlobFilter extends Filter
   }
 
   @Override
-  public boolean shouldRun(Description d)
-  {
-    if(d.isSuite()) return true;
+  public boolean shouldRun(Description d) {
+    if (d.isSuite()) return true;
     String plainName = settings.buildPlainName(d);
 
-    for(Pattern p : patterns)
-      if(p.matcher(plainName).matches()) return true;
+    for (Pattern p : patterns) if (p.matcher(plainName).matches()) return true;
 
     return false;
   }
@@ -37,10 +33,9 @@ public final class GlobFilter extends Filter
   private static Pattern compileGlobPattern(String expr) {
     String[] a = expr.split("\\*", -1);
     StringBuilder b = new StringBuilder();
-    for(int i=0; i<a.length; i++) {
-      if(i != 0) b.append(".*");
-      if(!a[i].isEmpty())
-        b.append(Pattern.quote(a[i].replaceAll("\n", "\\n")));
+    for (int i = 0; i < a.length; i++) {
+      if (i != 0) b.append(".*");
+      if (!a[i].isEmpty()) b.append(Pattern.quote(a[i].replaceAll("\n", "\\n")));
     }
     return Pattern.compile(b.toString());
   }

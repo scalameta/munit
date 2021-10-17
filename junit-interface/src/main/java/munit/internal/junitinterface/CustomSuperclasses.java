@@ -1,6 +1,5 @@
 package munit.internal.junitinterface;
 
-
 import java.util.Set;
 import sbt.testing.Fingerprint;
 import sbt.testing.SubclassFingerprint;

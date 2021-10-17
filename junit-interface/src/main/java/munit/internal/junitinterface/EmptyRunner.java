@@ -8,10 +8,14 @@ class EmptyRunner extends Runner {
 
   private final Description desc;
 
-  EmptyRunner(Description desc) { this.desc = desc; } 
+  EmptyRunner(Description desc) {
+    this.desc = desc;
+  }
 
   @Override
-  public Description getDescription() { return desc; }
+  public Description getDescription() {
+    return desc;
+  }
 
   @Override
   public void run(RunNotifier notifier) {}
