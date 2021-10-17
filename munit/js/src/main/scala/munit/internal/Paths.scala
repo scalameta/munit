@@ -1,9 +1,6 @@
-package java.nio.file
+package munit.internal
 
-import java.io.File
 import java.net.URI
-
-import munit.internal.NodeNIOPath
 
 object Paths {
   // NOTE: We can't use Scala-style varargs since those have a different jvm
@@ -14,7 +11,7 @@ object Paths {
     val path =
       if (more.isEmpty) first
       else first + File.separator + more.mkString(File.separator)
-    NodeNIOPath(path)
+    Path(path)
   }
 
   def get(uri: URI): Path = {
@@ -25,8 +22,8 @@ object Paths {
     val (leading, trailing) = parts.span(_ == "")
     trailing match {
       case drive :: path if (drive.length == 2 && drive(1) == ':') =>
-        NodeNIOPath(trailing.mkString("\\"))
-      case _ => NodeNIOPath(uripath)
+        Path(trailing.mkString("\\"))
+      case _ => Path(uripath)
     }
   }
 }

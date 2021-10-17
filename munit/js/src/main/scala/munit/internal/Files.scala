@@ -1,4 +1,4 @@
-package java.nio.file
+package munit.internal
 
 import scala.scalajs.js
 import java.{util => ju}
