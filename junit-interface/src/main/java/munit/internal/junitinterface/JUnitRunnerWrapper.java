@@ -8,24 +8,24 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 
 class JUnitRunnerWrapper extends Runner implements Filterable {
-    private final Runner delegate;
+  private final Runner delegate;
 
-    JUnitRunnerWrapper(Runner delegate) {
-      this.delegate = delegate;
-    }
-
-    @Override
-    public Description getDescription() {
-      return delegate.getDescription();
-    }
-
-    @Override
-    public void run(RunNotifier notifier) {
-      delegate.run(notifier);
-    }
-
-    @Override
-    public void filter(Filter filter) throws NoTestsRemainException {
-      filter.apply(delegate);
-    }
+  JUnitRunnerWrapper(Runner delegate) {
+    this.delegate = delegate;
   }
+
+  @Override
+  public Description getDescription() {
+    return delegate.getDescription();
+  }
+
+  @Override
+  public void run(RunNotifier notifier) {
+    delegate.run(notifier);
+  }
+
+  @Override
+  public void filter(Filter filter) throws NoTestsRemainException {
+    filter.apply(delegate);
+  }
+}

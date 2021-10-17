@@ -4,8 +4,7 @@ import sbt.testing.*;
 
 import static munit.internal.junitinterface.Ansi.*;
 
-abstract class AbstractEvent implements Event
-{
+abstract class AbstractEvent implements Event {
   protected final String ansiName;
   protected final String ansiMsg;
   protected final Status status;
@@ -13,8 +12,13 @@ abstract class AbstractEvent implements Event
   private final Fingerprint fingerprint;
   private final Long duration;
 
-  AbstractEvent(String ansiName, String ansiMsg, Status status, Fingerprint fingerprint, Long duration, Throwable error)
-  {
+  AbstractEvent(
+      String ansiName,
+      String ansiMsg,
+      Status status,
+      Fingerprint fingerprint,
+      Long duration,
+      Throwable error) {
     this.fingerprint = fingerprint;
     this.ansiName = ansiName;
     this.ansiMsg = ansiMsg;
@@ -47,7 +51,7 @@ abstract class AbstractEvent implements Event
 
   @Override
   public OptionalThrowable throwable() {
-    if( error == null ) {
+    if (error == null) {
       return new OptionalThrowable();
     } else {
       return new OptionalThrowable(error);

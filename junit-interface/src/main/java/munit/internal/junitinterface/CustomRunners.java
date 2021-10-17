@@ -19,14 +19,15 @@ public class CustomRunners {
     this.superclasses = new HashSet<>();
     runners.forEach(runner -> this.superclasses.add(runner.suite));
   }
+
   public boolean isEmpty() {
     return runners.isEmpty();
   }
 
   public Map<String, String> all() {
-      Map<String, String> result = new HashMap<>();
-      runners.forEach(runner -> result.put(runner.suite, runner.runner));
-      return result;
+    Map<String, String> result = new HashMap<>();
+    runners.forEach(runner -> result.put(runner.suite, runner.runner));
+    return result;
   }
 
   public boolean matchesFingerprint(Fingerprint fingerprint) {

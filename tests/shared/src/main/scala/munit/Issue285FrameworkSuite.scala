@@ -22,13 +22,13 @@ class Issue285FrameworkSuite extends FunSuite {
     }
   }
   override def munitFixtures: List[Fixture[Unit]] = List(hello)
-  override def munitTimeout: Duration = Duration(1, "ms")
+  override def munitTimeout: Duration = Duration(5, "ms")
   test("issue-285-ok") {
     ()
   }
   test("issue-285-fail") {
     val promise = Promise[Unit]()
-    PlatformCompat.setTimeout(3) {
+    PlatformCompat.setTimeout(20) {
       promise.trySuccess(())
     }
     promise.future
@@ -48,7 +48,7 @@ object Issue285FrameworkSuite
          |  + issue-285-ok <elapsed time>
          |beforeEach - issue-285-fail
          |afterEach - issue-285-fail
-         |==> X munit.Issue285FrameworkSuite.issue-285-fail  <elapsed time>java.util.concurrent.TimeoutException: test timed out after 1 millisecond
+         |==> X munit.Issue285FrameworkSuite.issue-285-fail  <elapsed time>java.util.concurrent.TimeoutException: test timed out after 5 milliseconds
          |beforeEach - issue-285-ok
          |afterEach - issue-285-ok
          |  + issue-285-ok-1 <elapsed time>

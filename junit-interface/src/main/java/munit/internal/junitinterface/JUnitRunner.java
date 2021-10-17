@@ -13,7 +13,6 @@ import sbt.testing.Runner;
 import sbt.testing.Task;
 import sbt.testing.TaskDef;
 
-
 final class JUnitRunner implements Runner {
   private final String[] args;
   private final String[] remoteArgs;
@@ -26,7 +25,11 @@ final class JUnitRunner implements Runner {
   final RunStatistics runStatistics;
   final CustomRunners customRunners;
 
-  JUnitRunner(String[] args, String[] remoteArgs, ClassLoader testClassLoader, CustomRunners customRunners) {
+  JUnitRunner(
+      String[] args,
+      String[] remoteArgs,
+      ClassLoader testClassLoader,
+      CustomRunners customRunners) {
 
     this.args = args;
     this.remoteArgs = remoteArgs;
@@ -34,8 +37,12 @@ final class JUnitRunner implements Runner {
     this.customRunners = customRunners;
     Settings defaults = Settings.defaults();
 
-    boolean nocolor = false, decodeScalaNames = false,
-        logAssert = true, logExceptionClass = true, useSbtLoggers = false, useBufferedLoggers = true;
+    boolean nocolor = false,
+        decodeScalaNames = false,
+        logAssert = true,
+        logExceptionClass = true,
+        useSbtLoggers = false,
+        useBufferedLoggers = true;
     boolean verbose = false;
     boolean trimStackTraces = defaults.trimStackTraces();
     RunSettings.Summary summary = RunSettings.Summary.SBT;
@@ -49,45 +56,64 @@ final class JUnitRunner implements Runner {
     String testFilter = "";
     String ignoreRunners = "org.junit.runners.Suite";
     String runListener = null;
-    for(String s : args) {
-      if("-v".equals(s) || "--verbose".equals(s)) verbose = true;
-      else if(s.startsWith("--summary=")) summary = RunSettings.Summary.values()[Integer.parseInt(s.substring(10))];
-      else if("-n".equals(s)) nocolor = true;
-      else if("-s".equals(s)) decodeScalaNames = true;
-      else if("-a".equals(s)) logAssert = true;
-      else if("-c".equals(s)) logExceptionClass = false;
-      else if("+l".equals(s)) useSbtLoggers = true;
-      else if("+b".equals(s)) useBufferedLoggers = true;
-      else if("-b".equals(s)) useBufferedLoggers = false;
-      else if("--logger=sbt".equals(s)) useSbtLoggers = true;
-      else if("--logger=buffered".equals(s)) useBufferedLoggers = true;
-      else if("-l".equals(s)) useSbtLoggers = false;
-      else if("-F".equals(s)) trimStackTraces = false;
-      else if("+F".equals(s)) trimStackTraces = true;
-      else if(s.startsWith("--tests=")) testFilter = s.substring(8);
-      else if(s.startsWith("--ignore-runners=")) ignoreRunners = s.substring(17);
-      else if(s.startsWith("--run-listener=")) runListener = s.substring(15);
-      else if(s.startsWith("--include-categories=")) includeCategories.addAll(Arrays.asList(s.substring(21).split(",")));
-      else if(s.startsWith("--exclude-categories=")) excludeCategories.addAll(Arrays.asList(s.substring(21).split(",")));
-      else if(s.startsWith("--include-tags=")) includeTags.addAll(Arrays.asList(s.substring("--include-tags=".length()).split(",")));
-      else if(s.startsWith("--exclude-tags=")) excludeTags.addAll(Arrays.asList(s.substring("--exclude-tags=".length()).split(",")));
-      else if(s.startsWith("-D") && s.contains("=")) {
+    for (String s : args) {
+      if ("-v".equals(s) || "--verbose".equals(s)) verbose = true;
+      else if (s.startsWith("--summary="))
+        summary = RunSettings.Summary.values()[Integer.parseInt(s.substring(10))];
+      else if ("-n".equals(s)) nocolor = true;
+      else if ("-s".equals(s)) decodeScalaNames = true;
+      else if ("-a".equals(s)) logAssert = true;
+      else if ("-c".equals(s)) logExceptionClass = false;
+      else if ("+l".equals(s)) useSbtLoggers = true;
+      else if ("+b".equals(s)) useBufferedLoggers = true;
+      else if ("-b".equals(s)) useBufferedLoggers = false;
+      else if ("--logger=sbt".equals(s)) useSbtLoggers = true;
+      else if ("--logger=buffered".equals(s)) useBufferedLoggers = true;
+      else if ("-l".equals(s)) useSbtLoggers = false;
+      else if ("-F".equals(s)) trimStackTraces = false;
+      else if ("+F".equals(s)) trimStackTraces = true;
+      else if (s.startsWith("--tests=")) testFilter = s.substring(8);
+      else if (s.startsWith("--ignore-runners=")) ignoreRunners = s.substring(17);
+      else if (s.startsWith("--run-listener=")) runListener = s.substring(15);
+      else if (s.startsWith("--include-categories="))
+        includeCategories.addAll(Arrays.asList(s.substring(21).split(",")));
+      else if (s.startsWith("--exclude-categories="))
+        excludeCategories.addAll(Arrays.asList(s.substring(21).split(",")));
+      else if (s.startsWith("--include-tags="))
+        includeTags.addAll(Arrays.asList(s.substring("--include-tags=".length()).split(",")));
+      else if (s.startsWith("--exclude-tags="))
+        excludeTags.addAll(Arrays.asList(s.substring("--exclude-tags=".length()).split(",")));
+      else if (s.startsWith("-D") && s.contains("=")) {
         int sep = s.indexOf('=');
-        sysprops.put(s.substring(2, sep), s.substring(sep+1));
-      }
-      else if(!s.startsWith("-") && !s.startsWith("+")) globPatterns.add(s);
+        sysprops.put(s.substring(2, sep), s.substring(sep + 1));
+      } else if (!s.startsWith("-") && !s.startsWith("+")) globPatterns.add(s);
     }
-    for(String s : args) {
-      if("+n".equals(s)) nocolor = false;
-      else if("+s".equals(s)) decodeScalaNames = false;
-      else if("+a".equals(s)) logAssert = false;
-      else if("+c".equals(s)) logExceptionClass = true;
-      else if("+l".equals(s)) useSbtLoggers = true;
+    for (String s : args) {
+      if ("+n".equals(s)) nocolor = false;
+      else if ("+s".equals(s)) decodeScalaNames = false;
+      else if ("+a".equals(s)) logAssert = false;
+      else if ("+c".equals(s)) logExceptionClass = true;
+      else if ("+l".equals(s)) useSbtLoggers = true;
     }
     this.settings =
-      new RunSettings(!nocolor, decodeScalaNames, verbose, useSbtLoggers, useBufferedLoggers, trimStackTraces, summary, logAssert, ignoreRunners, logExceptionClass,
-          sysprops, globPatterns, includeCategories, excludeCategories, includeTags, excludeTags,
-        testFilter);
+        new RunSettings(
+            !nocolor,
+            decodeScalaNames,
+            verbose,
+            useSbtLoggers,
+            useBufferedLoggers,
+            trimStackTraces,
+            summary,
+            logAssert,
+            ignoreRunners,
+            logExceptionClass,
+            sysprops,
+            globPatterns,
+            includeCategories,
+            excludeCategories,
+            includeTags,
+            excludeTags,
+            testFilter);
     this.runListener = createRunListener(runListener);
     this.runStatistics = new RunStatistics(settings);
   }
@@ -110,13 +136,15 @@ final class JUnitRunner implements Runner {
   private boolean shouldRun(JUnitComputer computer, TaskDef taskDef) {
     try {
       Class<?> cls = testClassLoader.loadClass(taskDef.fullyQualifiedName());
-      return !computer.customRunner(cls).isPresent() || customRunners.matchesFingerprint(taskDef.fingerprint());
+      return !computer.customRunner(cls).isPresent()
+          || customRunners.matchesFingerprint(taskDef.fingerprint());
     } catch (ClassNotFoundException e) {
       return false;
     }
   }
+
   private RunListener createRunListener(String runListenerClassName) {
-    if(runListenerClassName != null) {
+    if (runListenerClassName != null) {
       try {
         return (RunListener) testClassLoader.loadClass(runListenerClassName).newInstance();
       } catch (Exception e) {
@@ -128,9 +156,9 @@ final class JUnitRunner implements Runner {
   @Override
   public String done() {
     // Can't simply return the summary due to https://github.com/sbt/sbt/issues/3510
-    if(!used) return "";
+    if (!used) return "";
     String stats = runStatistics.createSummary();
-    if(stats.isEmpty()) return stats;
+    if (stats.isEmpty()) return stats;
     System.out.println(stats);
     return " ";
   }

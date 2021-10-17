@@ -21,20 +21,22 @@ public class JUnitComputer extends Computer {
   final Map<Class<?>, Class<?>> suiteRunners;
   final Settings settings;
 
-  public JUnitComputer(ClassLoader testClassLoader, CustomRunners customRunners, Settings settings) {
+  public JUnitComputer(
+      ClassLoader testClassLoader, CustomRunners customRunners, Settings settings) {
     this.settings = settings;
     suiteRunners = new HashMap<>();
-      customRunners.all().forEach((suite, runner) -> {
-        try {
-          suiteRunners.put(
-              testClassLoader.loadClass(suite),
-              testClassLoader.loadClass(runner)
-          );
-        } catch (ClassNotFoundException e) {
-          // ignore, since we'll fail to find at least one of the 2 `JUnitRunners`
-          // (it moved from `org.scalatest.junit` to `org.scalatestplus.junit` in 3.1)
-        }
-      });
+    customRunners
+        .all()
+        .forEach(
+            (suite, runner) -> {
+              try {
+                suiteRunners.put(
+                    testClassLoader.loadClass(suite), testClassLoader.loadClass(runner));
+              } catch (ClassNotFoundException e) {
+                // ignore, since we'll fail to find at least one of the 2 `JUnitRunners`
+                // (it moved from `org.scalatest.junit` to `org.scalatestplus.junit` in 3.1)
+              }
+            });
   }
 
   public Optional<Class<?>> customRunner(Class<?> clazz) {
@@ -45,7 +47,6 @@ public class JUnitComputer extends Computer {
     }
     return Optional.empty();
   }
-
 
   private class MySuite extends Suite implements Filterable {
     public MySuite(RunnerBuilder runnerBuilder, Class<?>[] classes) throws InitializationError {
@@ -62,12 +63,13 @@ public class JUnitComputer extends Computer {
 
   @Override
   public Runner getSuite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
-    RunnerBuilder runnerBuilder = new RunnerBuilder() {
-      @Override
-      public Runner runnerForClass(Class<?> testClass) throws Throwable {
-        return getRunner(builder, testClass);
-      }
-    };
+    RunnerBuilder runnerBuilder =
+        new RunnerBuilder() {
+          @Override
+          public Runner runnerForClass(Class<?> testClass) throws Throwable {
+            return getRunner(builder, testClass);
+          }
+        };
     return new MySuite(runnerBuilder, classes);
   }
 

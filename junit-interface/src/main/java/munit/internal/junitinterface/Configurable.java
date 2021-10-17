@@ -1,5 +1,5 @@
 package munit.internal.junitinterface;
 
 public interface Configurable {
-    public void configure(Settings settings);
+  public void configure(Settings settings);
 }

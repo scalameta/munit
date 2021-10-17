@@ -5,9 +5,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 
-/**
- * A filtered request which ignores NoTestsRemainExceptions.
- */
+/** A filtered request which ignores NoTestsRemainExceptions. */
 final class SilentFilterRequest extends Request {
   private final Request request;
   private final Filter filter;
@@ -17,7 +15,7 @@ final class SilentFilterRequest extends Request {
     this.filter = filter;
   }
 
-  @Override 
+  @Override
   public Runner getRunner() {
     Runner runner = request.getRunner();
     try {
