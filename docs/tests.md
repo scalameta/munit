@@ -115,9 +115,10 @@ class CustomTimeoutSuite extends munit.FunSuite {
 }
 ```
 
-Note that old version for MUnit (v0.x series) the timeout only applied to async
-tests. Since the release of MUnit v1.0, the timeout applies to all tests
-including non-async tests.
+> Note that `munitTimeout` is only respected for async tests in the stable
+> version version of MUnit (v0.x series). The setting is ignored by normal
+> non-async tests. However, starting with MUnit v1.0 (latest milestone release:
+> @VERSION@), the timeout applies to all tests including non-async tests.
 
 ## Run tests in parallel
 

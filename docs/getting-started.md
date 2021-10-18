@@ -24,7 +24,7 @@ MUnit is a Scala testing library with the following goals:
 **sbt:**
 
 ```scala
-libraryDependencies += "org.scalameta" %% "munit" % "@VERSION@" % Test
+libraryDependencies += "org.scalameta" %% "munit" % "@STABLE_VERSION@" % Test
 // Use %%% for non-JVM projects.
 ```
 
