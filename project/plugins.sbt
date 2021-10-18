@@ -10,4 +10,4 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.6.0")
 addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.0.1")
 addSbtPlugin("com.lightbend.sbt" % "sbt-java-formatter" % "0.6.1")
 
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.1.7"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.1.8"
