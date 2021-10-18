@@ -330,7 +330,8 @@ lazy val docs = project
       (ThisBuild / baseDirectory).value / "website" / "target" / "docs",
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
-      "VERSION" -> version.value.replaceFirst("\\+.*", "")
+      "VERSION" -> version.value.replaceFirst("\\+.*", ""),
+      "STABLE_VERSION" -> "0.7.29"
     ),
     fork := false
   )

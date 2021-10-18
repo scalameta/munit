@@ -12,7 +12,7 @@ ScalaCheck support is provided as a separate module. You can add it to your
 build via:
 
 ```scala
-libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "@VERSION@" % Test
+libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "@STABLE_VERSION@" % Test
 ```
 
 You can then extend `ScalaCheckSuite` and write ScalaCheck property tests:

@@ -181,6 +181,8 @@ class MySuite extends munit.FunSuite {
 
 ## Asynchronous fixtures with `FutureFixture`
 
+> This feature is only available in the latest unstable version @VERSION@
+
 Extend `FutureFixture[T]` to return `Future[T]` values from the lifecycle
 methods `beforeAll`, `beforeEach`, `afterEach` and `afterAll`.
 
@@ -217,6 +219,8 @@ class AsyncFilesSuite extends FunSuite {
 ```
 
 ## Asynchronous fixtures with custom effect type
+
+> This feature is only available in the latest unstable version @VERSION@
 
 First, create a new `EffectFixture[T]` class that extends `munit.AnyFixture[T]`
 and overrides all lifecycle methods to return values of type `Effect[Unit]`. For
