@@ -128,9 +128,9 @@ in the sbt shell for the best compiler performance.</p>
 <h3><a class="anchor" aria-hidden="true" id="run-tests-in-intellij"></a><a href="#run-tests-in-intellij" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Run tests in IntelliJ</h3>
 <p>MUnit test suites can be executed from in IntelliJ like normal test suites.</p>
 <p><img src="https://i.imgur.com/oAA2ZeQ.png" alt="Running MUnit from IntelliJ"></p>
-<p>It's normal that it's not possible to run individual test cases from IntelliJ
-since it does not yet understand the <code>test(&quot;name&quot;) {...}</code> syntax. As a
-workaround, use the <code>.only</code> marker to run only a single test from IntelliJ.</p>
+<p>It's possible to run individual test cases from IntelliJ by clicking on the
+green &quot;Play&quot; icon in the left gutter. Alternatively, you can also use the
+<code>.only</code> marker to run an individual test.</p>
 <pre><code class="hljs css language-diff"><span class="hljs-deletion">- test("name") {</span>
 <span class="hljs-addition">+ test("name".only) {</span>
     // ...
