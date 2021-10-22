@@ -89,9 +89,9 @@ MUnit test suites can be executed from in IntelliJ like normal test suites.
 
 ![Running MUnit from IntelliJ](https://i.imgur.com/oAA2ZeQ.png)
 
-It's normal that it's not possible to run individual test cases from IntelliJ
-since it does not yet understand the `test("name") {...}` syntax. As a
-workaround, use the `.only` marker to run only a single test from IntelliJ.
+It's possible to run individual test cases from IntelliJ by clicking on the
+green "Play" icon in the left gutter. Alternatively, you can also use the
+`.only` marker to run an individual test.
 
 ```diff
 - test("name") {
