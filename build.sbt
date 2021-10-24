@@ -115,6 +115,9 @@ lazy val mimaEnable: List[Def.Setting[_]] = List(
     ),
     ProblemFilters.exclude[IncompatibleMethTypeProblem](
       "munit.ValueTransforms#ValueTransform.this"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.ScalaCheckSuite.unitToProp"
     )
   ),
   mimaPreviousArtifacts := {
