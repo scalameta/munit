@@ -298,8 +298,8 @@ when it's OK for flaky tests to fail.
 In practice, flaky tests have a tendency to creep into your codebase as the
 complexity of your application grows. Flaky tests reduce developer's trust in
 your codebase and negatively impacts the productivity of your team so it's
-important that you a strategy for dealing with flaky test failures when then
-surface.
+important that you have a strategy for dealing with flaky test failures when
+they surface.
 
 One possible strategy for dealing with flaky test failures is to mark a flaky
 test with `.flaky` to keep the test case running but not fail the build when the
