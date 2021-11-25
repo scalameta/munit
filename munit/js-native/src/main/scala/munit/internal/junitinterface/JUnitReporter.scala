@@ -7,6 +7,7 @@ package munit.internal.junitinterface
 import munit.internal.console.AnsiColors
 import sbt.testing._
 import munit.internal.PlatformCompat
+import scala.annotation.nowarn
 
 final class JUnitReporter(
     eventHandler: EventHandler,
@@ -35,6 +36,7 @@ final class JUnitReporter(
     }
     emitEvent(method, Status.Ignored)
   }
+  @nowarn("msg=used")
   def reportAssumptionViolation(
       method: String,
       timeInSeconds: Double,
@@ -219,6 +221,7 @@ final class JUnitReporter(
       .map(_.getFileName)
       .orNull
 
+  @nowarn("msg=used")
   private def stackTraceElementToString(
       e: StackTraceElement,
       testFileName: String

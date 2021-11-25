@@ -26,7 +26,7 @@ trait ValueTransforms { this: BaseFunSuite =>
       val nested: Future[Future[Any]] = future.map { value =>
         val transformed = munitValueTransforms.iterator
           .map(fn => fn(value))
-          .collectFirst { case Some(future) => future }
+          .collectFirst { case Some(f) => f }
         transformed match {
           case Some(f) => flattenFuture(f)
           case None    => Future.successful(value)

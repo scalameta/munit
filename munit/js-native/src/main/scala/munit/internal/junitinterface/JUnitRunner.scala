@@ -6,7 +6,9 @@ package munit.internal.junitinterface
 
 import sbt.testing._
 import munit.internal.PlatformCompat
+import scala.annotation.nowarn
 
+@nowarn("msg=used")
 final class JUnitRunner(
     val args: Array[String],
     _remoteArgs: Array[String],

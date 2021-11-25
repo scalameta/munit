@@ -3,10 +3,11 @@ package munit.internal
 import scala.scalajs.reflect.Reflect
 import sbt.testing.TaskDef
 import munit.MUnitRunner
-import scala.concurrent.Future
 import sbt.testing.Task
 import sbt.testing.EventHandler
 import sbt.testing.Logger
+import scala.annotation.nowarn
+import scala.concurrent.Future
 import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await
@@ -36,7 +37,7 @@ object PlatformCompat {
       ec: ExecutionContext
   ): Future[T] = {
     val onComplete = Promise[T]()
-    val timeoutHandle = timers.setTimeout(duration.toMillis) {
+    val timeoutHandle = timers.setTimeout(duration.toMillis.toDouble) {
       onComplete.tryFailure(
         new TimeoutException(s"test timed out after $duration")
       )
@@ -65,6 +66,7 @@ object PlatformCompat {
   def isJS: Boolean = true
   def isNative: Boolean = false
 
+  @nowarn("msg=used")
   def newRunner(
       taskDef: TaskDef,
       classLoader: ClassLoader
