@@ -40,7 +40,7 @@ testFrameworks += new TestFramework("munit.Framework")
 object test extends Tests {
   def ivyDeps =
     Agg(
-      ivy"org.scalameta::munit::@VERSION@"
+      ivy"org.scalameta::munit::@STABLE_VERSION@"
     )
 
   def testFrameworks = Seq("munit.Framework")
