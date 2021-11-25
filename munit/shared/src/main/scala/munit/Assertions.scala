@@ -95,7 +95,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     StackTraces.dropInside {
       if (!compare.isEqual(obtained, expected)) {
         (obtained, expected) match {
-          case (a: Array[_], b: Array[_]) if a.sameElements(b) =>
+          case (a: Array[_], b: Array[_]) if a.sameElements[Any](b) =>
             // Special-case error message when comparing arrays. See
             // https://github.com/scalameta/munit/pull/393 and
             // https://github.com/scalameta/munit/issues/339 for a related

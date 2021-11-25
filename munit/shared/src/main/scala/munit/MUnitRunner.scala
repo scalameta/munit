@@ -33,7 +33,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     with Configurable {
 
   def this(cls: Class[_ <: Suite]) =
-    this(MUnitRunner.ensureEligibleConstructor(cls), () => cls.newInstance())
+    this(MUnitRunner.ensureEligibleConstructor(cls), () => cls.getDeclaredConstructor().newInstance())
 
   val suite: Suite = newInstance()
 
@@ -90,7 +90,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         val desc = Description.createTestDescription(
           cls,
           testName,
-          test.annotations: _*
+          test.annotations.toIndexedSeq: _*
         )
         desc
       }
@@ -243,7 +243,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       test: Test
   ): Future[BeforeAllResult] = {
     val context = new BeforeEach(test)
-    val fixtures = mutable.ListBuffer.empty[AnyFixture[_]]
     sequenceFutures(
       munitFixtures.iterator.map(f =>
         valueTransform(() => f.beforeEach(context)).map(_ => f)
@@ -369,7 +368,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private def foreachUnsafe(
       thunks: Iterable[() => Any]
   ): ForeachUnsafeResult = {
-    var errors = mutable.ListBuffer.empty[Throwable]
+    val errors = mutable.ListBuffer.empty[Throwable]
     val async = mutable.ListBuffer.empty[Future[Any]]
     thunks.foreach { thunk =>
       try {

@@ -7,7 +7,7 @@ object Diffs {
   def create(obtained: String, expected: String): Diff =
     new Diff(obtained, expected)
 
-  @deprecated("")
+  @deprecated("", since="")
   def assertNoDiff(
       obtained: String,
       expected: String,

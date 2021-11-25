@@ -30,7 +30,7 @@ object PlatformCompat {
       ec: ExecutionContext
   ): Future[T] = {
     val onComplete = Promise[T]()
-    val timeoutHandle = timers.setTimeout(duration.toMillis) {
+    val timeoutHandle = timers.setTimeout(duration.toMillis.toDouble) {
       onComplete.tryFailure(
         new TimeoutException(s"test timed out after $duration")
       )
