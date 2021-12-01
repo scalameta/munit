@@ -7,6 +7,7 @@ import scala.util.Success
 import scala.util.Failure
 
 trait FunFixtures { self: BaseFunSuite =>
+  override type MunitRes = Any
 
   class FunFixture[T] private (
       val setup: TestOptions => Future[T],
@@ -20,12 +21,12 @@ trait FunFixtures { self: BaseFunSuite =>
       )
 
     def test(name: String)(
-        body: T => Any
+        body: T => MunitRes
     )(implicit loc: Location): Unit = {
       fixture.test(TestOptions(name))(body)
     }
     def test(options: TestOptions)(
-        body: T => Any
+        body: T => MunitRes
     )(implicit loc: Location): Unit = {
       self.test(options) {
         implicit val ec = munitExecutionContext
@@ -53,7 +54,7 @@ trait FunFixtures { self: BaseFunSuite =>
   object FunFixture {
     def apply[T](
         setup: TestOptions => T,
-        teardown: T => Unit
+        teardown: T => MunitRes
     ): FunFixture[T] = {
       implicit val ec = munitExecutionContext
       async[T](

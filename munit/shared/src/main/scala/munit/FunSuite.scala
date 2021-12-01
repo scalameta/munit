@@ -8,7 +8,9 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
 
-abstract class FunSuite extends BaseFunSuite
+abstract class FunSuite extends BaseFunSuite {
+  override type MunitRes = Any
+}
 
 trait BaseFunSuite
     extends Suite
@@ -19,16 +21,18 @@ trait BaseFunSuite
     with SuiteTransforms
     with ValueTransforms { self =>
 
+  type MunitRes <: Any
+
   final val munitTestsBuffer: mutable.ListBuffer[Test] =
     mutable.ListBuffer.empty[Test]
   def munitTests(): Seq[Test] = {
     munitSuiteTransform(munitTestsBuffer.toList)
   }
 
-  def test(name: String)(body: => Any)(implicit loc: Location): Unit = {
+  def test(name: String)(body: => MunitRes)(implicit loc: Location): Unit = {
     test(new TestOptions(name))(body)
   }
-  def test(options: TestOptions)(body: => Any)(implicit loc: Location): Unit = {
+  def test(options: TestOptions)(body: => MunitRes)(implicit loc: Location): Unit = {
     munitTestsBuffer += munitTestTransform(
       new Test(
         options.name,
