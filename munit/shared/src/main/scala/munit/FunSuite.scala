@@ -21,6 +21,11 @@ trait BaseFunSuite
     with SuiteTransforms
     with ValueTransforms { self =>
 
+  /**
+   * Override type to constrain the types allowed to be returned by your tests.
+   *
+   * This is here mostly for library authors or util authors that wish to constrain users, at compile time, in order to prevent writing wrong tests.
+   */
   type MunitRes <: Any
 
   final val munitTestsBuffer: mutable.ListBuffer[Test] =
