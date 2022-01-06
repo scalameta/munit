@@ -29,7 +29,7 @@ trait ScalaCheckSuite extends FunSuite {
   implicit def unitToProp(unit: Unit): Prop = Prop.passed
 
   override def munitTestTransforms: List[TestTransform] =
-    super.munitTestTransforms :+ scalaCheckPropTransform
+    scalaCheckPropTransform +: super.munitTestTransforms
 
   protected def scalaCheckTestParameters = ScalaCheckTest.Parameters.default
 
