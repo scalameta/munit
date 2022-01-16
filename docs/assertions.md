@@ -130,7 +130,7 @@ assertEquals[Any, Any](right1, right2)
 
 ## `assertNotEquals()`
 
-Use `assertNotEqual()` to assert that two values are not the same.
+Use `assertNotEquals()` to assert that two values are not the same.
 
 ```scala mdoc:crash
 assertNotEquals(a, a)
