@@ -38,6 +38,13 @@ class ScalaCheckFrameworkSuite extends ScalaCheckSuite {
     }
   }
 
+  override def munitFlakyOK: Boolean = true
+  test("flaky test".flaky) {
+    forAll { (i: Int) =>
+      assertEquals(1, 0)
+    }
+  }
+
 }
 
 object ScalaCheckFrameworkSuite
@@ -78,5 +85,6 @@ object ScalaCheckFrameworkSuite
          |Falsified after 0 passed tests.
          |> ARG_0: -1
          |> ARG_0_ORIGINAL: 2147483647
+         |==> skipped munit.ScalaCheckFrameworkSuite.flaky test - ignoring flaky test failure
          |""".stripMargin
     )

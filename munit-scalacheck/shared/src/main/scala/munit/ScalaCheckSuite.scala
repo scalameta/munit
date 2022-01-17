@@ -10,7 +10,6 @@ import scala.util.Try
 import munit.internal.FutureCompat._
 
 trait ScalaCheckSuite extends FunSuite {
-
   def property(
       name: String
   )(body: => Prop)(implicit loc: Location): Unit = {
@@ -29,7 +28,7 @@ trait ScalaCheckSuite extends FunSuite {
   implicit def unitToProp(unit: Unit): Prop = Prop.passed
 
   override def munitTestTransforms: List[TestTransform] =
-    super.munitTestTransforms :+ scalaCheckPropTransform
+    scalaCheckPropTransform +: super.munitTestTransforms
 
   protected def scalaCheckTestParameters = ScalaCheckTest.Parameters.default
 
