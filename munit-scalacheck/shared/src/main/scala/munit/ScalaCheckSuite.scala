@@ -10,7 +10,6 @@ import scala.util.Try
 import munit.internal.FutureCompat._
 
 trait ScalaCheckSuite extends FunSuite {
-
   def property(
       name: String
   )(body: => Prop)(implicit loc: Location): Unit = {

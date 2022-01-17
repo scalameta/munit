@@ -9,7 +9,7 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   var ignored = 0
   var total = 0
   var startedTimestamp = 0L
-  val isFailed: mutable.Set[String] = mutable.Set.empty[String]
+  val isReported: mutable.Set[Description] = mutable.Set.empty[Description]
   override def fireTestSuiteStarted(description: Description): Unit = {
     reporter.reportTestSuiteStarted()
   }
@@ -23,11 +23,13 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   }
   override def fireTestIgnored(description: Description): Unit = {
     ignored += 1
+    isReported += description
     reporter.reportTestIgnored(description.getMethodName)
   }
   override def fireTestAssumptionFailed(
       failure: notification.Failure
   ): Unit = {
+    isReported += failure.description
     reporter.reportAssumptionViolation(
       failure.description.getMethodName,
       elapsedMillis(),
@@ -36,7 +38,7 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   }
   override def fireTestFailure(failure: notification.Failure): Unit = {
     val methodName = failure.description.getMethodName
-    isFailed += methodName
+    isReported += failure.description
     reporter.reportTestFailed(
       methodName,
       failure.ex,
@@ -46,7 +48,7 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   override def fireTestFinished(description: Description): Unit = {
     val methodName = description.getMethodName
     total += 1
-    if (!isFailed(methodName)) {
+    if (!isReported(description)) {
       reporter.reportTestPassed(
         methodName,
         elapsedMillis()
