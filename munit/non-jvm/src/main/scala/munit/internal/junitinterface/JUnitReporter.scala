@@ -91,7 +91,7 @@ final class JUnitReporter(
       throwable: OptionalThrowable = new OptionalThrowable
   ): Unit = {
     val testName =
-      taskDef.fullyQualifiedName + "." +
+      taskDef.fullyQualifiedName() + "." +
         settings.decodeName(method)
     val selector = new TestSelector(testName)
     eventHandler.handle(
@@ -215,7 +215,7 @@ final class JUnitReporter(
 
   private def findTestFileName(trace: Array[StackTraceElement]): String =
     trace
-      .find(_.getClassName == taskDef.fullyQualifiedName)
+      .find(_.getClassName == taskDef.fullyQualifiedName())
       .map(_.getFileName)
       .orNull
 
