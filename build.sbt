@@ -3,10 +3,10 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 def previousVersion = "0.7.0"
-def scala213 = "2.13.6"
+def scala213 = "2.13.8"
 def scala212 = "2.12.15"
 def scala211 = "2.11.12"
-def scala3 = "3.0.1"
+def scala3 = "3.1.1"
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.1.7"
 inThisBuild(
@@ -48,9 +48,7 @@ addCommandAlias(
   "; ++2.12.10 ;  scalafixEnable ; scalafix --check ; test:scalafix --check"
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
-val scala2Versions = List(scala213, scala212, scala211)
-val scala3Versions = List(scala3)
-val allScalaVersions = scala2Versions ++ scala3Versions
+val allScalaVersions = List(scala213, scala212, scala211, scala3)
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
 val isScala3Setting = Def.setting {
@@ -131,13 +129,13 @@ val sharedJVMSettings: List[Def.Setting[_]] = List(
 ) ++ mimaEnable
 val sharedJSSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0."))
+  crossScalaVersions := allScalaVersions
 )
 val sharedJSConfigure: Project => Project =
   _.disablePlugins(MimaPlugin)
 val sharedNativeSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := scala2Versions
+  crossScalaVersions := allScalaVersions
 )
 val sharedNativeConfigure: Project => Project =
   _.disablePlugins(ScalafixPlugin, MimaPlugin)
