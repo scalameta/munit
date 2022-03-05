@@ -7,7 +7,7 @@ class Slow extends Tag("Slow")
 @Category(Array(classOf[Slow]))
 class Issue497FrameworkSuite extends FunSuite {
   def println(msg: String): Unit = TestingConsole.out.println(msg)
-  val myFixture = new Fixture[Unit]("myFixture") {
+  val myFixture: Fixture[Unit] = new Fixture[Unit]("myFixture") {
     def apply(): Unit = println("### myFixture apply() ###")
 
     override def beforeAll(): Unit = {
@@ -18,7 +18,7 @@ class Issue497FrameworkSuite extends FunSuite {
       println("### afterAll is running ###")
     }
   }
-  override def munitFixtures = List(myFixture)
+  override def munitFixtures: List[Fixture[Unit]] = List(myFixture)
 
   test("test1") {
     myFixture()
