@@ -174,7 +174,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
 
   private def runAll(notifier: RunNotifier): Future[Unit] = {
-    if (PlatformCompat.isIgnoreSuite(cls)) {
+    if (PlatformCompat.isIgnoreSuite(cls) || munitTests.isEmpty) {
       val description = getDescription()
       notifier.fireTestIgnored(description)
       return Future.successful(())
