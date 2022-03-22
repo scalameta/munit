@@ -54,4 +54,27 @@ class ComparisonFailExceptionSuite extends BaseSuite {
     )
   }
 
+  test("assert-no-diff-obtained-empty") {
+    val e = intercept[ComparisonFailException] {
+      assertNoDiff(
+        "",
+        """|first line
+           |second line
+           |""".stripMargin
+      )
+    }
+    assertNoDiff(
+      e.getMessage(),
+      """|ComparisonFailExceptionSuite.scala:59
+         |58:    val e = intercept[ComparisonFailException] {
+         |59:      assertNoDiff(
+         |60:        "",
+         |Obtained empty output!
+         |=> Expected:
+         |first line
+         |second line
+         |""".stripMargin
+    )
+  }
+
 }
