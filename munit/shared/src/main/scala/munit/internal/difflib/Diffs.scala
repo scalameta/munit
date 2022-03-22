@@ -39,7 +39,7 @@ object Diffs {
       printObtainedAsStripMargin: Boolean
   )(implicit loc: Location): Boolean = {
     if (obtained.isEmpty && !expected.isEmpty) {
-      val msg = 
+      val msg =
         s"""|Obtained empty output!
             |=> Expected:
             |$expected""".stripMargin
