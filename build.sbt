@@ -273,7 +273,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     libraryDependencies += {
       val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
       if (isNotScala211(partialVersion))
-        "org.scalacheck" %%% "scalacheck" % "1.15.4"
+        "org.scalacheck" %%% "scalacheck" % "1.16.0"
       else
         "org.scalacheck" %%% "scalacheck" % "1.15.2"
     }
