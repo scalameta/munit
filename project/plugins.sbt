@@ -6,7 +6,7 @@ addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.31")
 addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.1.0")
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.1.0")
 addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.4.0")
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.10.0")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.6.0")
 addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "1.0.1")
 addSbtPlugin("com.lightbend.sbt" % "sbt-java-formatter" % "0.6.1")
 
