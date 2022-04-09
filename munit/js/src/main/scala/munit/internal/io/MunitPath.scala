@@ -7,14 +7,14 @@ import scala.collection.JavaConverters._
 
 // Rough implementation of java.nio.Path, should work similarly for the happy
 // path but has undefined behavior for error handling.
-case class Path(filename: String) {
+case class MunitPath(filename: String) {
   private[this] val escapedSeparator =
     java.util.regex.Pattern.quote(File.separator)
 
   private def adjustIndex(idx: Int): Int =
     if (isAbsolute) idx + 1 else idx
-  def subpath(beginIndex: Int, endIndex: Int): Path =
-    Path(
+  def subpath(beginIndex: Int, endIndex: Int): MunitPath =
+    MunitPath(
       filename
         .split(escapedSeparator)
         .slice(adjustIndex(beginIndex), adjustIndex(endIndex))
@@ -26,30 +26,30 @@ case class Path(filename: String) {
     case Some(path) => path.isAbsolute(filename).asInstanceOf[Boolean]
     case None       => filename.startsWith(File.separator)
   }
-  def getName(index: Int): Path =
-    Path(
+  def getName(index: Int): MunitPath =
+    MunitPath(
       filename
         .split(escapedSeparator)
         .lift(adjustIndex(index))
         .getOrElse(throw new IllegalArgumentException)
     )
-  def getParent: Path =
+  def getParent: MunitPath =
     JSIO.path match {
       case Some(path) =>
-        Path(path.dirname(filename).asInstanceOf[String])
+        MunitPath(path.dirname(filename).asInstanceOf[String])
       case None =>
         throw new UnsupportedOperationException(
           "Path.getParent() is only supported in Node.js"
         )
     }
 
-  def toAbsolutePath: Path =
+  def toAbsolutePath: MunitPath =
     if (isAbsolute) this
-    else Path.workingDirectory.resolve(this)
-  def relativize(other: Path): Path =
+    else MunitPath.workingDirectory.resolve(this)
+  def relativize(other: MunitPath): MunitPath =
     JSIO.path match {
       case Some(path) =>
-        Path(
+        MunitPath(
           path.relative(filename, other.toString()).asInstanceOf[String]
         )
       case None =>
@@ -67,43 +67,43 @@ case class Path(filename: String) {
     else remaining.length
   }
   def toUri: URI = toFile.toURI
-  def getFileName(): Path =
+  def getFileName(): MunitPath =
     JSIO.path match {
       case Some(path) =>
-        Path(path.basename(filename).asInstanceOf[String])
+        MunitPath(path.basename(filename).asInstanceOf[String])
       case None =>
         throw new UnsupportedOperationException(
           "Path.getFileName() is only supported in Node.js"
         )
     }
-  def getRoot: Path =
+  def getRoot: MunitPath =
     if (!isAbsolute) null
-    else Path(File.separator)
-  def normalize(): Path =
+    else MunitPath(File.separator)
+  def normalize(): MunitPath =
     JSIO.path match {
       case Some(path) =>
-        Path(path.normalize(filename).asInstanceOf[String])
+        MunitPath(path.normalize(filename).asInstanceOf[String])
       case None =>
         throw new UnsupportedOperationException(
           "Path.normalize() is only supported in Node.js"
         )
     }
-  def endsWith(other: Path): Boolean =
+  def endsWith(other: MunitPath): Boolean =
     endsWith(other.toString)
   def endsWith(other: String): Boolean =
     paths(filename).endsWith(paths(other))
   // JSPath.resolve(relpath, relpath) produces an absolute path from cwd.
   // This method turns the generated absolute path back into a relative path.
-  private def adjustResolvedPath(resolved: Path): Path =
+  private def adjustResolvedPath(resolved: MunitPath): MunitPath =
     if (isAbsolute) resolved
-    else Path.workingDirectory.relativize(resolved)
-  def resolveSibling(other: Path): Path =
+    else MunitPath.workingDirectory.relativize(resolved)
+  def resolveSibling(other: MunitPath): MunitPath =
     resolveSibling(other.toString)
-  def resolveSibling(other: String): Path =
+  def resolveSibling(other: String): MunitPath =
     JSIO.path match {
       case Some(path) =>
         adjustResolvedPath(
-          Path(
+          MunitPath(
             path
               .resolve(path.dirname(filename).asInstanceOf[String], other)
               .asInstanceOf[String]
@@ -114,20 +114,20 @@ case class Path(filename: String) {
           "Path.normalize() is only supported in Node.js"
         )
     }
-  def resolve(other: Path): Path =
+  def resolve(other: MunitPath): MunitPath =
     resolve(other.toString)
-  def resolve(other: String): Path =
+  def resolve(other: String): MunitPath =
     JSIO.path match {
       case Some(path) =>
         adjustResolvedPath(
-          Path(path.resolve(filename, other).asInstanceOf[String])
+          MunitPath(path.resolve(filename, other).asInstanceOf[String])
         )
       case None =>
         throw new UnsupportedOperationException(
           "Path.normalize() is only supported in Node.js"
         )
     }
-  def startsWith(other: Path): Boolean =
+  def startsWith(other: MunitPath): Boolean =
     startsWith(other.toString)
   def startsWith(other: String): Boolean =
     paths(filename).startsWith(paths(other))
@@ -135,15 +135,15 @@ case class Path(filename: String) {
     name.split(escapedSeparator)
   override def toString: String =
     filename
-  def iterator(): util.Iterator[Path] =
+  def iterator(): util.Iterator[MunitPath] =
     filename
       .split(File.separator)
       .iterator
-      .map(name => Path(name): Path)
+      .map(name => MunitPath(name): MunitPath)
       .asJava
 }
 
-object Path {
-  def workingDirectory: Path =
-    Path(PlatformPathIO.workingDirectoryString)
+object MunitPath {
+  def workingDirectory: MunitPath =
+    MunitPath(JSIO.cwd())
 }

@@ -16,8 +16,8 @@ class File(path: String) {
         uri.getPath
       }
     )
-  def toPath: Path =
-    Path(path)
+  def toPath: MunitPath =
+    MunitPath(path)
   def toURI: URI = {
     val file = getAbsoluteFile.toString
     val uripath =

@@ -1,6 +1,6 @@
-package munit.internal
+package munit.internal.io
 
-package object io {
+object PlatformIO {
   type File = java.io.File
   object File {
     def separatorChar = java.io.File.separatorChar
