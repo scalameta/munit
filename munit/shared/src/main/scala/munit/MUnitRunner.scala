@@ -1,9 +1,9 @@
 package munit
 
 import munit.internal.FutureCompat._
-import munit.internal.InvocationTargetException
+import munit.internal.PlatformCompat.InvocationTargetException
 import munit.internal.PlatformCompat
-import munit.internal.UndeclaredThrowableException
+import munit.internal.PlatformCompat.UndeclaredThrowableException
 import munit.internal.console.Printers
 import munit.internal.console.StackTraces
 import munit.internal.junitinterface.Configurable
