@@ -37,13 +37,11 @@ testFrameworks += new TestFramework("munit.Framework")
 **Mill**
 
 ```scala
-object test extends Tests {
+object test extends Tests with TestModule.Munit {
   def ivyDeps =
     Agg(
       ivy"org.scalameta::munit::@STABLE_VERSION@"
     )
-
-  def testFrameworks = Seq("munit.Framework")
 }
 ```
 

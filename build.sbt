@@ -8,7 +8,7 @@ def scala212 = "2.12.15"
 def scala211 = "2.11.12"
 def scala3 = "3.0.1"
 def junitVersion = "4.13.2"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "2.1.7"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "2.1.10"
 inThisBuild(
   List(
     version ~= { old =>
