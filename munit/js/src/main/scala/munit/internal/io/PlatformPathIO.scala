@@ -1,4 +1,4 @@
-package munit.internal
+package munit.internal.io
 
 object PlatformPathIO {
   def workingDirectoryString: String =

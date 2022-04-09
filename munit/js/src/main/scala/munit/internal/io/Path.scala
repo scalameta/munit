@@ -1,4 +1,4 @@
-package munit.internal
+package munit.internal.io
 
 import java.net.URI
 import java.util

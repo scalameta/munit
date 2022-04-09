@@ -1,6 +1,6 @@
 package munit.internal.console
 
-import munit.internal.{Files, Path, Paths}
+import munit.internal.io.{Files, Path, Paths}
 import munit.Location
 
 import scala.collection.JavaConverters._
