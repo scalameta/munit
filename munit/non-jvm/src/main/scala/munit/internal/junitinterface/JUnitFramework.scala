@@ -8,7 +8,7 @@ import sbt.testing._
 
 abstract class JUnitFramework extends Framework {
 
-  val name: String = "Scala.js JUnit test framework"
+  override def name(): String = "Scala.js JUnit test framework"
 
   def customRunners: CustomRunners
 

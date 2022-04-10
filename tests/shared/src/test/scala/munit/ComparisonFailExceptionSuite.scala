@@ -20,11 +20,11 @@ class ComparisonFailExceptionSuite extends BaseSuite {
     // console still uses `munitPrint()`, which would have displayed `List("1",
     // "2", "3")` instead of `List(1, 2, 3)`.
     assertNoDiff(
-      e.getActual,
+      e.getActual(),
       "List(1, 2, 3)"
     )
     assertNoDiff(
-      e.getExpected,
+      e.getExpected(),
       "List(1, 2)"
     )
     assertEquals(e.expected, List(1, 2))

@@ -9,23 +9,31 @@ import munit.internal.PlatformCompat
 
 final class JUnitRunner(
     val args: Array[String],
-    val remoteArgs: Array[String],
+    _remoteArgs: Array[String],
     runSettings: RunSettings,
     classLoader: ClassLoader,
     customRunners: CustomRunners
 ) extends Runner {
   PlatformCompat.setThisClassLoader(classLoader)
 
-  def tasks(taskDefs: Array[TaskDef]): Array[Task] =
+  override def remoteArgs(): Array[String] = _remoteArgs
+
+  override def tasks(taskDefs: Array[TaskDef]): Array[Task] =
     taskDefs.map(new JUnitTask(_, runSettings, classLoader))
 
-  def done(): String = ""
+  override def done(): String = ""
 
-  def serializeTask(task: Task, serializer: TaskDef => String): String =
-    serializer(task.taskDef)
+  override def serializeTask(
+      task: Task,
+      serializer: TaskDef => String
+  ): String =
+    serializer(task.taskDef())
 
-  def deserializeTask(task: String, deserializer: String => TaskDef): Task =
+  override def deserializeTask(
+      task: String,
+      deserializer: String => TaskDef
+  ): Task =
     new JUnitTask(deserializer(task), runSettings, classLoader)
 
-  def receiveMessage(msg: String): Option[String] = None
+  override def receiveMessage(msg: String): Option[String] = None
 }
