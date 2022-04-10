@@ -217,12 +217,18 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     }
   }
 
+  /**
+   * Evalutes the given expression and asserts that an exception of type T is thrown.
+   */
   def intercept[T <: Throwable](
       body: => Any
   )(implicit T: ClassTag[T], loc: Location): T = {
     runIntercept(None, body)
   }
 
+  /**
+   * Evalutes the given expression and asserts that an exception of type T with the expected message is thrown.
+   */
   def interceptMessage[T <: Throwable](expectedExceptionMessage: String)(
       body: => Any
   )(implicit T: ClassTag[T], loc: Location): T = {
@@ -270,6 +276,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     }
   }
 
+  /**
+   * Unconditionally fails this test with the given message and exception marked as the cause.
+   */
   def fail(message: String, cause: Throwable)(implicit
       loc: Location
   ): Nothing = {
@@ -281,6 +290,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     )
   }
 
+  /**
+   * Unconditionally fails this test with the given message and optional clues.
+   */
   def fail(
       message: String,
       clues: Clues = new Clues(Nil)
@@ -291,6 +303,13 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     )
   }
 
+  /**
+   * Unconditionally fails this test due to result of comparing two values.
+   *
+   * The only reason to use this method instead of `fail()` is if you want to
+   * allow comparing the two different values in the the IntelliJ GUI diff
+   * viewer.
+   */
   def failComparison(
       message: String,
       obtained: Any,
@@ -305,6 +324,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     )
   }
 
+  /**
+   * Unconditionally fail this test case and cancel all the subsequent tests in this suite.
+   */
   def failSuite(
       message: String,
       clues: Clues = new Clues(Nil)
