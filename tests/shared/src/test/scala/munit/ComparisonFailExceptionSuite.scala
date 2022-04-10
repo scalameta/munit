@@ -2,7 +2,7 @@ package munit
 
 import org.junit.ComparisonFailure
 import munit.internal.console.Lines
-import java.nio.file.Paths
+import munit.internal.io.PlatformIO.Paths
 
 class ComparisonFailExceptionSuite extends BaseSuite {
   override val munitLines: Lines = new Lines {
@@ -50,6 +50,23 @@ class ComparisonFailExceptionSuite extends BaseSuite {
          |+  1,
          |+  2
          | )
+         |""".stripMargin
+    )
+  }
+
+  test("assert-no-diff-obtained-empty") {
+    val e = intercept[ComparisonFailException] {
+      assertNoDiff("", "Lorem ipsum")
+    }
+    assertNoDiff(
+      e.getMessage(),
+      """|ComparisonFailExceptionSuite.scala:59
+         |58:    val e = intercept[ComparisonFailException] {
+         |59:      assertNoDiff("", "Lorem ipsum")
+         |60:    }
+         |Obtained empty output!
+         |=> Expected:
+         |Lorem ipsum
          |""".stripMargin
     )
   }

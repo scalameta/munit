@@ -28,7 +28,7 @@ class Issue285FrameworkSuite extends FunSuite {
   }
   test("issue-285-fail") {
     val promise = Promise[Unit]()
-    PlatformCompat.setTimeout(20) {
+    PlatformCompat.setTimeout(40) {
       promise.trySuccess(())
     }
     promise.future

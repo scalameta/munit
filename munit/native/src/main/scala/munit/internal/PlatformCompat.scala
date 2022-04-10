@@ -56,4 +56,8 @@ object PlatformCompat {
   private var myClassLoader: ClassLoader = _
   def setThisClassLoader(loader: ClassLoader): Unit = myClassLoader = loader
   def getThisClassLoader: ClassLoader = myClassLoader
+
+  type InvocationTargetException = java.lang.reflect.InvocationTargetException
+  type UndeclaredThrowableException =
+    java.lang.reflect.UndeclaredThrowableException
 }

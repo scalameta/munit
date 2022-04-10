@@ -11,7 +11,12 @@ import org.junit.runner.notification.RunListener;
 
 import sbt.testing.Runner;
 import sbt.testing.Task;
+import sbt.testing.Selector;
+import sbt.testing.TestSelector;
 import sbt.testing.TaskDef;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 final class JUnitRunner implements Runner {
   private final String[] args;
@@ -127,7 +132,8 @@ final class JUnitRunner implements Runner {
     for (int i = 0; i < length; i++) {
       TaskDef taskDef = taskDefs[i];
       if (shouldRun(computer, taskDef)) {
-        tasks.add(new JUnitTask(this, settings, taskDef, computer));
+        RunSettings alteredSettings = alterRunSettings(this.settings, taskDef.selectors());
+        tasks.add(new JUnitTask(this, alteredSettings, taskDef, computer));
       }
     }
     return tasks.toArray(new Task[0]);
@@ -151,6 +157,35 @@ final class JUnitRunner implements Runner {
         throw new RuntimeException(e);
       }
     } else return null;
+  }
+
+  /**
+   * Alter default RunSettings depending on the passed selectors. If selectors contains only
+   * elements of type TestSelector, then default settings are altered to include only test names
+   * from these selectors. This allows to run particular test cases within given test class.
+   * testFilter is treated as a regular expression, hence joining is done via '|'.
+   */
+  private RunSettings alterRunSettings(RunSettings defaultSettings, Selector[] selectors) {
+    List<TestSelector> testSelectors =
+        Arrays.stream(selectors)
+            .flatMap(
+                selector -> {
+                  return selector instanceof TestSelector
+                      ? Stream.of((TestSelector) selector)
+                      : Stream.empty();
+                })
+            .collect(Collectors.toList());
+    if (testSelectors.size() == selectors.length) {
+      String testFilter =
+          testSelectors.stream().map(TestSelector::testName).collect(Collectors.joining("|"));
+      // if already provided testFilter is not empty add to it | (regex or operator)
+      String currentFilter =
+          defaultSettings.testFilter.length() > 0 ? defaultSettings.testFilter + "|" : "";
+      String newFilter = currentFilter + testFilter;
+      return defaultSettings.withTestFilter(newFilter);
+    }
+
+    return defaultSettings;
   }
 
   @Override

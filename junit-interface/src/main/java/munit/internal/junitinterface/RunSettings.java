@@ -78,6 +78,28 @@ class RunSettings implements Settings {
     this.trimStackTraces = trimStackTraces;
   }
 
+  public RunSettings withTestFilter(String newTestFilter) {
+    String ignoreRunners = String.join(",", this.ignoreRunners);
+    return new RunSettings(
+        this.color,
+        this.decodeScalaNames,
+        this.verbose,
+        this.useSbtLoggers,
+        this.useBufferedLoggers,
+        this.trimStackTraces,
+        this.summary,
+        this.logAssert,
+        ignoreRunners,
+        this.logExceptionClass,
+        this.sysprops,
+        this.globPatterns,
+        this.includeCategories,
+        this.excludeCategories,
+        this.includeTags,
+        this.excludeTags,
+        newTestFilter);
+  }
+
   String decodeName(String name) {
     return decodeScalaNames ? decodeScalaName(name) : name;
   }

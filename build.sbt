@@ -8,7 +8,7 @@ def scala212 = "2.12.15"
 def scala211 = "2.11.12"
 def scala3 = "3.1.1"
 def junitVersion = "4.13.2"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "2.1.7"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "2.6.0"
 inThisBuild(
   List(
     version ~= { old =>
@@ -305,7 +305,7 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
       "sourceDirectory" ->
-        (ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main",
+        ((ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main").getAbsolutePath.toString,
       scalaVersion
     ),
     publish / skip := true

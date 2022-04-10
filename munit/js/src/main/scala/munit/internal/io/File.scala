@@ -1,9 +1,6 @@
-package java.io
+package munit.internal.io
 
 import java.net.URI
-import java.nio.file.Path
-import munit.internal.JSIO
-import munit.internal.NodeNIOPath
 
 // obtained implementation by experimentation on the JDK.
 class File(path: String) {
@@ -19,8 +16,8 @@ class File(path: String) {
         uri.getPath
       }
     )
-  def toPath: Path =
-    NodeNIOPath(path)
+  def toPath: MunitPath =
+    MunitPath(path)
   def toURI: URI = {
     val file = getAbsoluteFile.toString
     val uripath =
