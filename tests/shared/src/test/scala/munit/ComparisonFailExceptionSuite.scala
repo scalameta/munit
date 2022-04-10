@@ -2,7 +2,7 @@ package munit
 
 import org.junit.ComparisonFailure
 import munit.internal.console.Lines
-import java.nio.file.Paths
+import munit.internal.io.PlatformIO.Paths
 
 class ComparisonFailExceptionSuite extends BaseSuite {
   override val munitLines: Lines = new Lines {

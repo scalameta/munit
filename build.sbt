@@ -299,7 +299,7 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
       "sourceDirectory" ->
-        (ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main",
+        ((ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main").getAbsolutePath.toString,
       scalaVersion
     ),
     publish / skip := true

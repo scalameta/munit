@@ -1,3 +1,3 @@
-package java.lang.reflect
+package munit.internal
 
 class InvocationTargetException extends java.lang.RuntimeException
