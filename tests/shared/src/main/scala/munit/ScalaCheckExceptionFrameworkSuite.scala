@@ -52,12 +52,12 @@ class ScalaCheckExceptionFrameworkSuites
       tags = Set(OnlyJVM),
       onEvent = { event =>
         if (
-          event.throwable.isDefined &&
-          event.throwable().get.getCause() != null
+          event.throwable().isDefined() &&
+          event.throwable().get().getCause() != null
         ) {
           event
             .throwable()
-            .get
+            .get()
             .getCause
             .getStackTrace()
             .take(2)

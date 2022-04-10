@@ -1,7 +1,9 @@
 package munit
 
 import munit.internal.FutureCompat._
+import munit.internal.PlatformCompat.InvocationTargetException
 import munit.internal.PlatformCompat
+import munit.internal.PlatformCompat.UndeclaredThrowableException
 import munit.internal.console.Printers
 import munit.internal.console.StackTraces
 import munit.internal.junitinterface.Configurable
@@ -14,9 +16,7 @@ import org.junit.runner.manipulation.Filterable
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
 
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
-import java.lang.reflect.UndeclaredThrowableException
 import java.util.concurrent.ExecutionException
 import scala.collection.mutable
 import scala.concurrent.Await

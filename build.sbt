@@ -3,10 +3,10 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 def previousVersion = "0.7.0"
-def scala213 = "2.13.6"
+def scala213 = "2.13.8"
 def scala212 = "2.12.15"
 def scala211 = "2.11.12"
-def scala3 = "3.0.1"
+def scala3 = "3.1.1"
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.6.0"
 inThisBuild(
@@ -49,8 +49,10 @@ addCommandAlias(
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212, scala211)
+
 val scala3Versions = List(scala3)
 val allScalaVersions = scala2Versions ++ scala3Versions
+
 def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
 val isScala3Setting = Def.setting {
@@ -126,18 +128,21 @@ lazy val mimaEnable: List[Def.Setting[_]] = List(
     else Set("org.scalameta" % moduleName.value % previousVersion)
   }
 )
+
 val sharedJVMSettings: List[Def.Setting[_]] = List(
   crossScalaVersions := allScalaVersions
 ) ++ mimaEnable
+
 val sharedJSSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
   crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0."))
 )
 val sharedJSConfigure: Project => Project =
   _.disablePlugins(MimaPlugin)
+
 val sharedNativeSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := scala2Versions
+  crossScalaVersions := allScalaVersions
 )
 val sharedNativeConfigure: Project => Project =
   _.disablePlugins(ScalafixPlugin, MimaPlugin)
@@ -273,7 +278,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     libraryDependencies += {
       val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
       if (isNotScala211(partialVersion))
-        "org.scalacheck" %%% "scalacheck" % "1.15.4"
+        "org.scalacheck" %%% "scalacheck" % "1.16.0"
       else
         "org.scalacheck" %%% "scalacheck" % "1.15.2"
     }
@@ -287,6 +292,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
+
 lazy val munitScalacheckJVM = munitScalacheck.jvm
 lazy val munitScalacheckJS = munitScalacheck.js
 lazy val munitScalacheckNative = munitScalacheck.native
@@ -299,7 +305,7 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
       "sourceDirectory" ->
-        (ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main",
+        ((ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main").getAbsolutePath.toString,
       scalaVersion
     ),
     publish / skip := true
