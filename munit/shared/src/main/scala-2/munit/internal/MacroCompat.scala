@@ -15,17 +15,21 @@ object MacroCompat {
   def locationImpl(c: Context): c.Tree = MacroCompatScala2.locationImpl(c)
 
   trait ClueMacro {
-    implicit def generate[T](value: T): Clue[T] = macro MacroCompatScala2.clueImpl
+    implicit def generate[T](value: T): Clue[T] =
+      macro MacroCompatScala2.clueImpl
   }
 
   @deprecated("Use MacroCompatScala2.clueImpl instead", "2020-01-06")
-  def clueImpl(c: Context)(value: c.Tree): c.Tree = MacroCompatScala2.clueImpl(c)(value)
+  def clueImpl(c: Context)(value: c.Tree): c.Tree =
+    MacroCompatScala2.clueImpl(c)(value)
 
   trait CompileErrorMacro {
-    def compileErrors(code: String): String = macro MacroCompatScala2.compileErrorsImpl
+    def compileErrors(code: String): String =
+      macro MacroCompatScala2.compileErrorsImpl
   }
 
   @deprecated("Use MacroCompatScala2.compileErrorsImpl instead", "2020-01-06")
-  def compileErrorsImpl(c: Context)(value: c.Tree): c.Tree = MacroCompatScala2.compileErrorsImpl(c)(value)
+  def compileErrorsImpl(c: Context)(value: c.Tree): c.Tree =
+    MacroCompatScala2.compileErrorsImpl(c)(value)
 
 }
