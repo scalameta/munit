@@ -29,7 +29,7 @@ final class Location(
     obj.asInstanceOf[AnyRef].eq(this) || (obj match {
       case l: Location =>
         l.path == path &&
-          l.line == line
+        l.line == line
       case _ =>
         false
     })

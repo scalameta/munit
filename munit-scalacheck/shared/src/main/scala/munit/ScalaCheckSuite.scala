@@ -70,11 +70,12 @@ trait ScalaCheckSuite extends FunSuite {
       if (r.passed) {
         resultMessage
       } else {
-        val seedMessage = s"""|Failing seed: ${initialSeed.toBase64}
-                              |You can reproduce this failure by adding the following override to your suite:
-                              |
-                              |  override val scalaCheckInitialSeed = "${initialSeed.toBase64}"
-                              |""".stripMargin
+        val seedMessage =
+          s"""|Failing seed: ${initialSeed.toBase64}
+              |You can reproduce this failure by adding the following override to your suite:
+              |
+              |  override val scalaCheckInitialSeed = "${initialSeed.toBase64}"
+              |""".stripMargin
         seedMessage + "\n" + resultMessage
       }
     }
