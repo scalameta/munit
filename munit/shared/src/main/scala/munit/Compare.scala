@@ -80,11 +80,18 @@ trait Compare[A, B] {
     )(loc)
 
     // Attempt 3: string comparison is not working, unconditionally fail the test.
-    assertions.failComparison(
-      s"values are not equal even if they have the same `toString()`: $obtained",
-      obtained,
-      expected
-    )(loc)
+    if (obtained.toString() == expected.toString())
+      assertions.failComparison(
+        s"values are not equal even if they have the same `toString()`: $obtained",
+        obtained,
+        expected
+      )(loc)
+    else
+      assertions.failComparison(
+        s"values are not equal, even if their text representation only differs in leading/trailing whitespace and ANSI escape characters: $obtained",
+        obtained,
+        expected
+      )(loc)
   }
 
 }
