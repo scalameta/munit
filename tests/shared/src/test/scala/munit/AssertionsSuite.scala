@@ -67,11 +67,11 @@ class AssertionsSuite extends BaseSuite {
            |  Alternative 2: upcast either type into `Any` or a shared supertype.
            |I found:
            |
-           |    munit.Compare.compareSupertypeWithSubtype[A, B](
-           |      /* missing */summon[Vector[Int] <:< List[Int]]
+           |    munit.Compare.compareSubtypeWithSupertype[List[Int], Vector[Int]](
+           |      /* missing */summon[List[Int] <:< Vector[Int]]
            |    )
            |
-           |But no implicit values were found that match type Vector[Int] <:< List[Int].
+           |But no implicit values were found that match type List[Int] <:< Vector[Int].
            |
            |The following import might make progress towards fixing the problem:
            |
@@ -95,14 +95,16 @@ class AssertionsSuite extends BaseSuite {
   }
 
   test("unrelated") {
-    class A {
-      override def equals(x: Any): Boolean = true
-    }
-    class B {
-      override def equals(x: Any): Boolean = true
-    }
     assertNoDiff(
-      compileErrors("assertEquals(new A, new B)"),
+      compileErrors("""
+class A {
+  override def equals(x: Any): Boolean = true
+}
+class B {
+  override def equals(x: Any): Boolean = true
+}
+assertEquals(new A, new B)
+      """),
       if (isDotty)
         """|error:
            |Can't compare these two types:
@@ -113,9 +115,9 @@ class AssertionsSuite extends BaseSuite {
            |  Alternative 2: upcast either type into `Any` or a shared supertype.
            |I found:
            |
-           |    munit.Compare.compareSupertypeWithSubtype[A, B](/* missing */summon[B <:< A])
+           |    munit.Compare.compareSubtypeWithSupertype[A, B](/* missing */summon[A <:< B])
            |
-           |But no implicit values were found that match type B <:< A.
+           |But no implicit values were found that match type A <:< B.
            |
            |The following import might make progress towards fixing the problem:
            |
@@ -151,11 +153,11 @@ class AssertionsSuite extends BaseSuite {
            |  Alternative 2: upcast either type into `Any` or a shared supertype.
            |I found:
            |
-           |    munit.Compare.compareSupertypeWithSubtype[A, B](
-           |      /* missing */summon[Int <:< Char]
+           |    munit.Compare.compareSubtypeWithSupertype[Char, Int](
+           |      /* missing */summon[Char <:< Int]
            |    )
            |
-           |But no implicit values were found that match type Int <:< Char.
+           |But no implicit values were found that match type Char <:< Int.
            |
            |The following import might make progress towards fixing the problem:
            |
@@ -201,11 +203,11 @@ class AssertionsSuite extends BaseSuite {
            |  Alternative 2: upcast either type into `Any` or a shared supertype.
            |I found:
            |
-           |    munit.Compare.compareSupertypeWithSubtype[A, B](
-           |      /* missing */summon[Some[Int] <:< None.type]
+           |    munit.Compare.compareSubtypeWithSupertype[None.type, Some[Int]](
+           |      /* missing */summon[None.type <:< Some[Int]]
            |    )
            |
-           |But no implicit values were found that match type Some[Int] <:< None.type.
+           |But no implicit values were found that match type None.type <:< Some[Int].
            |
            |The following import might make progress towards fixing the problem:
            |
