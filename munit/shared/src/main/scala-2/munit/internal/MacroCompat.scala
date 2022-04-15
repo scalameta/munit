@@ -4,7 +4,6 @@ import munit.Clue
 import munit.Location
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox.Context
-import scala.collection.mutable
 
 object MacroCompat {
 
