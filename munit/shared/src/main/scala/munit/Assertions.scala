@@ -94,6 +94,26 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   )(implicit loc: Location, compare: Compare[A, B]): Unit = {
     StackTraces.dropInside {
       if (!compare.isEqual(obtained, expected)) {
+        (obtained, expected) match {
+          case (a: Array[_], b: Array[_]) if a.sameElements(b) =>
+            // Special-case error message when comparing arrays. See
+            // https://github.com/scalameta/munit/pull/393 and
+            // https://github.com/scalameta/munit/issues/339 for a related
+            // discussion on how MUnit should handle array comparisons.  Other
+            // testing frameworks have special cases for arrays so the
+            // comparison succeeds as long as `sameElements()` returns true.
+            // MUnit chooses instead to fail the test with a custom error
+            // message because arrays have reference equality, for better or
+            // worse, and we should not hide that fact from our users.
+            failComparison(
+              "arrays have the same elements but different reference equality. " +
+                "Convert the arrays to a non-Array collection if you intend to assert the two arrays have the same elements. " +
+                "For example, `assertEquals(a.toSeq, b.toSeq)",
+              obtained,
+              expected
+            )
+          case _ =>
+        }
         compare.failEqualsComparison(obtained, expected, clue, loc, this)
       }
     }
