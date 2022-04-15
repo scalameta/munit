@@ -87,6 +87,24 @@ lazy val mimaEnable: List[Def.Setting[_]] = List(
       "munit.internal.junitinterface.JUnitComputer.this"
     ),
     // Known breaking changes for MUnit v1
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.Assertions.assertNotEquals"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.Assertions.assertEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.Assertions.assertNotEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.Assertions.assertEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.FunSuite.assertNotEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.FunSuite.assertEquals"
+    ),
     ProblemFilters.exclude[IncompatibleMethTypeProblem](
       "munit.FunSuite.munitTestTransform"
     ),
