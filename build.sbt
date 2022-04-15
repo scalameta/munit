@@ -296,7 +296,7 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     ),
     Test / unmanagedSourceDirectories ++=
       crossBuildingDirectories("tests", "test").value,
-    publish / skip := true,
+    publish / skip := true
   )
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(sharedNativeSettings)
