@@ -87,6 +87,24 @@ lazy val mimaEnable: List[Def.Setting[_]] = List(
       "munit.internal.junitinterface.JUnitComputer.this"
     ),
     // Known breaking changes for MUnit v1
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.Assertions.assertNotEquals"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.Assertions.assertEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.Assertions.assertNotEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.Assertions.assertEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.FunSuite.assertNotEquals"
+    ),
+    ProblemFilters.exclude[IncompatibleMethTypeProblem](
+      "munit.FunSuite.assertEquals"
+    ),
     ProblemFilters.exclude[IncompatibleMethTypeProblem](
       "munit.FunSuite.munitTestTransform"
     ),
@@ -194,22 +212,8 @@ lazy val junit = project
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
-    Compile / unmanagedSourceDirectories ++= {
-      val root = (ThisBuild / baseDirectory).value / "munit"
-      val base = root / "shared" / "src" / "main"
-      val result = mutable.ListBuffer.empty[File]
-      val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
-      if (isPreScala213(partialVersion)) {
-        result += base / "scala-pre-2.13"
-      }
-      if (isNotScala211(partialVersion)) {
-        result += base / "scala-post-2.11"
-      }
-      if (isScala2(partialVersion)) {
-        result += base / "scala-2"
-      }
-      result.toList
-    },
+    Compile / unmanagedSourceDirectories ++=
+      crossBuildingDirectories("munit", "main").value,
     libraryDependencies ++= List(
       "org.scala-lang" % "scala-reflect" % {
         if (isScala3Setting.value) scala213
@@ -308,6 +312,8 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         ((ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main").getAbsolutePath.toString,
       scalaVersion
     ),
+    Test / unmanagedSourceDirectories ++=
+      crossBuildingDirectories("tests", "test").value,
     publish / skip := true
   )
   .nativeConfigure(sharedNativeConfigure)
@@ -348,3 +354,20 @@ lazy val docs = project
 Global / excludeLintKeys ++= Set(
   mimaPreviousArtifacts
 )
+def crossBuildingDirectories(name: String, config: String) =
+  Def.setting[Seq[File]] {
+    val root = (ThisBuild / baseDirectory).value / name
+    val base = root / "shared" / "src" / config
+    val result = mutable.ListBuffer.empty[File]
+    val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
+    if (isPreScala213(partialVersion)) {
+      result += base / "scala-pre-2.13"
+    }
+    if (isNotScala211(partialVersion)) {
+      result += base / "scala-post-2.11"
+    }
+    if (isScala2(partialVersion)) {
+      result += base / "scala-2"
+    }
+    result.toList
+  }
