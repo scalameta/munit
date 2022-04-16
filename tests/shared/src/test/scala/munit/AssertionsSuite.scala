@@ -140,7 +140,7 @@ assertEquals(new A, new B)
     )
   }
 
-  test("chat-int-nok") {
+  test("char-int-nok") {
     assertNoDiff(
       compileErrors("assertEquals('a', 'a'.toInt)"),
       if (isDotty)
