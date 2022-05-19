@@ -22,8 +22,8 @@ object MacroCompat {
 
   trait ClueMacro {
     inline implicit def generate[T](value: T): Clue[T] = ${ clueImpl('value) }
-    implicit def generate[T](value: T): Clue[T] =
-      macro MacroCompatScala2.clueImpl
+    implicit def generate[T](value: T): Clue[T] = macro
+      MacroCompatScala2.clueImpl
   }
 
   def clueImpl[T: Type](value: Expr[T])(using Quotes): Expr[Clue[T]] = {
@@ -50,8 +50,8 @@ object MacroCompat {
         }
         .mkString("\n")
     }
-    def compileErrors(code: String): String =
-      macro MacroCompatScala2.compileErrorsImpl
+    def compileErrors(code: String): String = macro
+      MacroCompatScala2.compileErrorsImpl
   }
 
 }
