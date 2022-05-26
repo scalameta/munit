@@ -179,6 +179,7 @@ assertEquals(new A, new B)
            |""".stripMargin
     )
   }
+
   test("array-sameElements") {
     val e = intercept[ComparisonFailException] {
       assertEquals(Array(1, 2), Array(1, 2))

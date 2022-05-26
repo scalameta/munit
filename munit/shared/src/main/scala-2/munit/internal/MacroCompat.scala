@@ -1,9 +1,9 @@
 package munit.internal
 
-import munit.Clue
-import munit.Location
+import munit.{Clue, Location}
+
 import scala.language.experimental.macros
-import scala.reflect.macros.blackbox.Context
+import scala.reflect.macros.blackbox
 
 object MacroCompat {
 
@@ -12,7 +12,8 @@ object MacroCompat {
   }
 
   @deprecated("Use MacroCompatScala2.locationImpl instead", "2020-01-06")
-  def locationImpl(c: Context): c.Tree = MacroCompatScala2.locationImpl(c)
+  def locationImpl(c: blackbox.Context): c.Tree =
+    MacroCompatScala2.locationImpl(c)
 
   trait ClueMacro {
     implicit def generate[T](value: T): Clue[T] =
@@ -20,7 +21,7 @@ object MacroCompat {
   }
 
   @deprecated("Use MacroCompatScala2.clueImpl instead", "2020-01-06")
-  def clueImpl(c: Context)(value: c.Tree): c.Tree =
+  def clueImpl(c: blackbox.Context)(value: c.Tree): c.Tree =
     MacroCompatScala2.clueImpl(c)(value)
 
   trait CompileErrorMacro {
@@ -29,7 +30,7 @@ object MacroCompat {
   }
 
   @deprecated("Use MacroCompatScala2.compileErrorsImpl instead", "2020-01-06")
-  def compileErrorsImpl(c: Context)(value: c.Tree): c.Tree =
-    MacroCompatScala2.compileErrorsImpl(c)(value)
+  def compileErrorsImpl(c: blackbox.Context)(value: c.Tree): c.Tree =
+    MacroCompatScala2.compileErrorsImpl(c)(c.Expr[String](value)).tree
 
 }
