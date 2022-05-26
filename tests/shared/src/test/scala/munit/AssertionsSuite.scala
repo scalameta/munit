@@ -231,4 +231,25 @@ assertEquals(new A, new B)
     )
   }
 
+  test("code compile") {
+    assertCompile("val a: Int = 10")
+  }
+
+  test("code doesn't compile") {
+    val e: FailException = intercept[FailException] {
+      assertCompile("val a: Int = \"10\"")
+    }
+    assert(
+      clue(e).getMessage.contains(
+        """
+          |code does not compile
+          |
+          |error:
+          |type mismatch;
+          | found   : String("10")
+          | required: Int
+          |val a: Int = "10"""".stripMargin
+      )
+    )
+  }
 }

@@ -27,6 +27,16 @@ object MacroCompat {
   trait CompileErrorMacro {
     def compileErrors(code: String): String =
       macro MacroCompatScala2.compileErrorsImpl
+
+    def assertCompile(code: String)(implicit
+        loc: Location
+    ): Unit =
+      macro MacroCompatScala2.assertCompileWithDefaultClueImpl
+
+    def assertCompile(code: String, clue: => Any)(implicit
+        loc: Location
+    ): Unit =
+      macro MacroCompatScala2.assertCompileImpl
   }
 
   @deprecated("Use MacroCompatScala2.compileErrorsImpl instead", "2020-01-06")

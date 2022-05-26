@@ -58,9 +58,41 @@ object MacroCompatScala2 {
     )
   }
 
-  def compileErrorsImpl(c: Context)(code: c.Tree): c.Tree = {
+  def assertCompileWithDefaultClueImpl(
+      c: blackbox.Context
+  )(code: c.Expr[String])(loc: c.Expr[Location]): c.Expr[Unit] =
+    assertCompileImpl(c)(
+      code = code,
+      clue = c.universe.reify("code does not compile")
+    )(loc)
+
+  def assertCompileImpl(
+      c: blackbox.Context
+  )(code: c.Expr[String], clue: c.Expr[Any])(
+      loc: c.Expr[Location]
+  ): c.Expr[Unit] = {
     import c.universe._
-    val toParse: String = code match {
+    compileErrorsImpl(c)(code).tree match {
+      case Literal(Constant(errors: String)) if errors.nonEmpty =>
+        c.Expr[Unit](
+          q"""
+              munit.internal.console.StackTraces.dropInside {
+                munit.Assertions.fail(
+                  munit.Assertions.munitPrint($clue) + "\n\n" + $errors
+                )($loc)
+              }
+           """
+        )
+      case _ => reify(())
+    }
+  }
+
+  def compileErrorsImpl(
+      c: blackbox.Context
+  )(code: c.Expr[String]): c.Expr[String] = {
+    import c.universe._
+
+    val toParse: String = code.tree match {
       case Literal(Constant(literal: String)) => literal
       case tree =>
         c.abort(
