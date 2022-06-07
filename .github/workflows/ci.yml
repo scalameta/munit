@@ -23,12 +23,22 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS_JSON:
             ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
   js:
-    strategy:
-      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: olafurpg/setup-scala@v13
+      - run: sbt +testsJS/test
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS:
+            ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS_JSON:
+            ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+  jsdom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: olafurpg/setup-scala@v13
+      - run: npm install
       - run: sbt +testsJS/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:

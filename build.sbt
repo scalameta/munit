@@ -319,7 +319,19 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeConfigure(sharedNativeConfigure)
   .nativeSettings(sharedNativeSettings)
   .jsConfigure(sharedJSConfigure)
-  .jsSettings(sharedJSSettings)
+  .jsSettings(
+    sharedJSSettings,
+    jsEnv := {
+      val log = sLog.value
+      if (Option(System.getenv("GITHUB_JOB")).contains("jsdom")) {
+        log.info("Testing in JSDOMNodeJSEnv")
+        new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
+      } else {
+        log.info("Testing in NodeJSEnv")
+        new org.scalajs.jsenv.nodejs.NodeJSEnv
+      }
+    }
+  )
   .jvmSettings(
     sharedJVMSettings,
     fork := true,
