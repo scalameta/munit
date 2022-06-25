@@ -458,7 +458,7 @@ object MUnitRunner {
 
   // NOTE(olafur): these exceptions appear when we await on futures. We unwrap
   // these exception in order to provide more helpful error messages.
-  private def rootCause(x: Throwable): Throwable = x match {
+  private[munit] def rootCause(x: Throwable): Throwable = x match {
     case _: ExceptionInInitializerError | _: ExecutionException
         if x.getCause != null =>
       rootCause(x.getCause)
