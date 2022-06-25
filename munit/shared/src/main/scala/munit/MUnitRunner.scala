@@ -16,6 +16,7 @@ import org.junit.runner.notification.RunNotifier
 
 import java.lang.reflect.Modifier
 import java.util.concurrent.ExecutionException
+import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
@@ -460,6 +461,7 @@ object MUnitRunner {
   // these exception in order to provide more helpful error messages.
   // NOTE(valencik): preserve binary compatibility as this util is used in
   // downstream integration libraries.
+  @tailrec
   private[munit] def rootCause(x: Throwable): Throwable = x match {
     case _: ExceptionInInitializerError | _: ExecutionException
         if x.getCause != null =>
