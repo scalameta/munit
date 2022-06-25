@@ -1,9 +1,7 @@
 package munit
 
 import munit.internal.FutureCompat._
-import munit.internal.PlatformCompat.InvocationTargetException
 import munit.internal.PlatformCompat
-import munit.internal.PlatformCompat.UndeclaredThrowableException
 import munit.internal.console.Printers
 import munit.internal.console.StackTraces
 import munit.internal.junitinterface.Configurable
@@ -318,8 +316,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   // NOTE(olafur): these exceptions appear when we await on futures. We unwrap
   // these exception in order to provide more helpful error messages.
   private def rootCause(x: Throwable): Throwable = x match {
-    case _: InvocationTargetException | _: ExceptionInInitializerError |
-        _: UndeclaredThrowableException | _: ExecutionException
+    case _: ExceptionInInitializerError | _: ExecutionException
         if x.getCause != null =>
       rootCause(x.getCause)
     case _ => x

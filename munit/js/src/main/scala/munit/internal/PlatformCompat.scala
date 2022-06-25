@@ -75,8 +75,4 @@ object PlatformCompat {
   private var myClassLoader: ClassLoader = _
   def setThisClassLoader(loader: ClassLoader): Unit = myClassLoader = loader
   def getThisClassLoader: ClassLoader = myClassLoader
-
-  type InvocationTargetException = munit.internal.InvocationTargetException
-  type UndeclaredThrowableException =
-    munit.internal.UndeclaredThrowableException
 }
