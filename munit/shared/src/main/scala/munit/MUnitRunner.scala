@@ -15,8 +15,6 @@ import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
 
 import java.lang.reflect.Modifier
-import java.util.concurrent.ExecutionException
-import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
@@ -292,7 +290,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         Future.successful(())
       case NonFatal(ex) =>
         trimStackTrace(ex)
-        val cause = MUnitRunner.rootCause(ex)
+        val cause = Exceptions.rootCause(ex)
         val failure = new Failure(description, cause)
         cause match {
           case _: AssumptionViolatedException =>
@@ -418,7 +416,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     notifier.fireTestStarted(description)
     trimStackTrace(ex)
     notifier.fireTestFailure(
-      new Failure(description, MUnitRunner.rootCause(ex))
+      new Failure(description, Exceptions.rootCause(ex))
     )
     notifier.fireTestFinished(description)
   }
@@ -455,17 +453,5 @@ object MUnitRunner {
     } catch {
       case nsme: NoSuchMethodException => false
     }
-  }
-
-  // NOTE(olafur): these exceptions appear when we await on futures. We unwrap
-  // these exception in order to provide more helpful error messages.
-  // NOTE(valencik): preserve binary compatibility as this util is used in
-  // downstream integration libraries.
-  @tailrec
-  private[munit] def rootCause(x: Throwable): Throwable = x match {
-    case _: ExceptionInInitializerError | _: ExecutionException
-        if x.getCause != null =>
-      rootCause(x.getCause)
-    case _ => x
   }
 }
