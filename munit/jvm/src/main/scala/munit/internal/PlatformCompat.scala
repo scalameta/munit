@@ -69,4 +69,8 @@ object PlatformCompat {
   def isJS: Boolean = false
   def isNative: Boolean = false
   def getThisClassLoader: ClassLoader = this.getClass().getClassLoader()
+
+  type InvocationTargetException = java.lang.reflect.InvocationTargetException
+  type UndeclaredThrowableException =
+    java.lang.reflect.UndeclaredThrowableException
 }
