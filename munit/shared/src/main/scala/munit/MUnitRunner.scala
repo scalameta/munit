@@ -1,9 +1,7 @@
 package munit
 
 import munit.internal.FutureCompat._
-import munit.internal.PlatformCompat.InvocationTargetException
 import munit.internal.PlatformCompat
-import munit.internal.PlatformCompat.UndeclaredThrowableException
 import munit.internal.console.Printers
 import munit.internal.console.StackTraces
 import munit.internal.junitinterface.Configurable
@@ -17,7 +15,6 @@ import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
 
 import java.lang.reflect.Modifier
-import java.util.concurrent.ExecutionException
 import scala.collection.mutable
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
@@ -293,7 +290,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         Future.successful(())
       case NonFatal(ex) =>
         trimStackTrace(ex)
-        val cause = rootCause(ex)
+        val cause = Exceptions.rootCause(ex)
         val failure = new Failure(description, cause)
         cause match {
           case _: AssumptionViolatedException =>
@@ -313,16 +310,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier.fireTestFinished(description)
       true
     }
-  }
-
-  // NOTE(olafur): these exceptions appear when we await on futures. We unwrap
-  // these exception in order to provide more helpful error messages.
-  private def rootCause(x: Throwable): Throwable = x match {
-    case _: InvocationTargetException | _: ExceptionInInitializerError |
-        _: UndeclaredThrowableException | _: ExecutionException
-        if x.getCause != null =>
-      rootCause(x.getCause)
-    case _ => x
   }
 
   private def futureFromAny(any: Any): Future[Any] = any match {
@@ -428,7 +415,9 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     val description = createTestDescription(test)
     notifier.fireTestStarted(description)
     trimStackTrace(ex)
-    notifier.fireTestFailure(new Failure(description, rootCause(ex)))
+    notifier.fireTestFailure(
+      new Failure(description, Exceptions.rootCause(ex))
+    )
     notifier.fireTestFinished(description)
   }
   private def trimStackTrace(ex: Throwable): Unit = {
