@@ -41,11 +41,11 @@ mimaPreviousArtifacts := Set.empty
 crossScalaVersions := List()
 addCommandAlias(
   "scalafixAll",
-  "; ++2.12.10 ; scalafixEnable ; all scalafix test:scalafix"
+  s"; ++$scala212 ; scalafixEnable ; all scalafix test:scalafix"
 )
 addCommandAlias(
   "scalafixCheckAll",
-  "; ++2.12.10 ;  scalafixEnable ; scalafix --check ; test:scalafix --check"
+  s"; ++$scala212 ;  scalafixEnable ; scalafix --check ; test:scalafix --check"
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212, scala211)
