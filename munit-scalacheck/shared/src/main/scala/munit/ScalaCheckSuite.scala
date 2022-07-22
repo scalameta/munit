@@ -74,7 +74,7 @@ trait ScalaCheckSuite extends FunSuite {
           s"""|Failing seed: ${initialSeed.toBase64}
               |You can reproduce this failure by adding the following override to your suite:
               |
-              |  override val scalaCheckInitialSeed = "${initialSeed.toBase64}"
+              |  override def scalaCheckInitialSeed = "${initialSeed.toBase64}"
               |""".stripMargin
         seedMessage + "\n" + resultMessage
       }
