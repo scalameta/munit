@@ -42,7 +42,7 @@ class ScalaCheckExceptionFrameworkSuites
          |==> failure munit.ScalaCheckExceptionFrameworkSuite.hide my stacks - Failing seed: 9WNU_CSZAQwiiPWDlHs4NWI-knIDEKCsgGqdhZgNKnB=
          |You can reproduce this failure by adding the following override to your suite:
          |
-         |  override val scalaCheckInitialSeed = "9WNU_CSZAQwiiPWDlHs4NWI-knIDEKCsgGqdhZgNKnB="
+         |  override def scalaCheckInitialSeed = "9WNU_CSZAQwiiPWDlHs4NWI-knIDEKCsgGqdhZgNKnB="
          |
          |Exception raised on property evaluation.
          |> ARG_0: 0
