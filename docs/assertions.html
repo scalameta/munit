@@ -84,9 +84,9 @@ example, assume we have two values:</p>
 <span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:29)</span>
 <span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:25)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$1.apply$mcV$sp(assertions.md:29)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$1.apply(assertions.md:29)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$1.apply(assertions.md:29)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$1.apply$mcV$sp(assertions.md:29)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$1.apply(assertions.md:29)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$1.apply(assertions.md:29)</span>
 </code></pre>
 <p>Include an optional message to explain why the assertion failed.</p>
 <pre><code class="hljs css language-scala">assert(a &gt; b, <span class="hljs-string">"a was smaller than b"</span>)
@@ -100,9 +100,9 @@ example, assume we have two values:</p>
 <span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:29)</span>
 <span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:25)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$2.apply$mcV$sp(assertions.md:39)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$2.apply(assertions.md:39)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$2.apply(assertions.md:39)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$2.apply$mcV$sp(assertions.md:39)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$2.apply(assertions.md:39)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$2.apply(assertions.md:39)</span>
 </code></pre>
 <p>Use <code>clue()</code> to include optional clues in the boolean condition based on values
 in the expression.</p>
@@ -121,9 +121,9 @@ in the expression.</p>
 <span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:29)</span>
 <span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:25)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$3.apply$mcV$sp(assertions.md:49)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$3.apply(assertions.md:49)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$3.apply(assertions.md:49)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$3.apply$mcV$sp(assertions.md:49)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$3.apply(assertions.md:49)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$3.apply(assertions.md:49)</span>
 </code></pre>
 <blockquote>
 <p>Note, the <code>-Yrangepos</code> compiler option is required for <code>clue()</code> to work
@@ -158,9 +158,9 @@ instead:</p>
 <span class="hljs-comment">//  at munit.Assertions.assert(Assertions.scala:29)</span>
 <span class="hljs-comment">//  at munit.Assertions.assert$(Assertions.scala:25)</span>
 <span class="hljs-comment">//  at munit.FunSuite.assert(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$4.apply$mcV$sp(assertions.md:59)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$4.apply(assertions.md:59)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$4.apply(assertions.md:59)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$4.apply$mcV$sp(assertions.md:59)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$4.apply(assertions.md:59)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$4.apply(assertions.md:59)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="assertequals"></a><a href="#assertequals" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>assertEquals()</code></h2>
 <p>Use <code>assertEquals()</code> to assert that two values are the same.</p>
@@ -334,8 +334,8 @@ test code (i.e. the test succeeds if the given exception is thrown).</p>
 <span class="hljs-comment">//  at munit.Assertions.intercept(Assertions.scala:176)</span>
 <span class="hljs-comment">//  at munit.Assertions.intercept$(Assertions.scala:173)</span>
 <span class="hljs-comment">//  at munit.FunSuite.intercept(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$14.apply(assertions.md:191)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$14.apply(assertions.md:191)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$14.apply(assertions.md:191)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$14.apply(assertions.md:191)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="interceptmessage"></a><a href="#interceptmessage" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>interceptMessage()</code></h2>
 <p>Like <code>intercept()</code> except additionally asserts that the thrown exception has a
@@ -351,8 +351,8 @@ specific error message.</p>
 <span class="hljs-comment">//  at munit.Assertions.interceptMessage(Assertions.scala:185)</span>
 <span class="hljs-comment">//  at munit.Assertions.interceptMessage$(Assertions.scala:182)</span>
 <span class="hljs-comment">//  at munit.FunSuite.interceptMessage(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$15.apply(assertions.md:203)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$15.apply(assertions.md:203)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$15.apply(assertions.md:203)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$15.apply(assertions.md:203)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="fail"></a><a href="#fail" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>fail()</code></h2>
 <p>Use <code>fail()</code> to make the test case fail immediately.</p>
@@ -361,8 +361,8 @@ specific error message.</p>
 <span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:252)</span>
 <span class="hljs-comment">//  at munit.Assertions.fail$(Assertions.scala:246)</span>
 <span class="hljs-comment">//  at munit.FunSuite.fail(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$16.apply(assertions.md:215)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$16.apply(assertions.md:215)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$16.apply(assertions.md:215)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$16.apply(assertions.md:215)</span>
 </code></pre>
 <p>Use <code>clues()</code> to include optional context why the test failed.</p>
 <pre><code class="hljs css language-scala">fail(<span class="hljs-string">"test failed"</span>, clues(a + b))
@@ -373,8 +373,8 @@ specific error message.</p>
 <span class="hljs-comment">//  at munit.Assertions.fail(Assertions.scala:252)</span>
 <span class="hljs-comment">//  at munit.Assertions.fail$(Assertions.scala:246)</span>
 <span class="hljs-comment">//  at munit.FunSuite.fail(FunSuite.scala:11)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$17.apply(assertions.md:225)</span>
-<span class="hljs-comment">//  at repl.MdocSession$App$$anonfun$17.apply(assertions.md:225)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$17.apply(assertions.md:225)</span>
+<span class="hljs-comment">//  at repl.MdocSession$MdocApp$$anonfun$17.apply(assertions.md:225)</span>
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="compileerrors"></a><a href="#compileerrors" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>compileErrors()</code></h2>
 <p>Use <code>compileErrors()</code> to assert that an example code snippet fails with a
