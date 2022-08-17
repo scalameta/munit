@@ -161,13 +161,13 @@ a suggestion on how to reproduce it:</p>
 <pre><code class="hljs">Failing seed: CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB=
 You can reproduce <span class="hljs-keyword">this</span> failure <span class="hljs-keyword">by</span> adding the following <span class="hljs-keyword">override</span> to your suite:
 
-  <span class="hljs-keyword">override</span> <span class="hljs-keyword">val</span> scalaCheckInitialSeed = <span class="hljs-string">"CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="</span>
+  <span class="hljs-keyword">override</span> def scalaCheckInitialSeed = <span class="hljs-string">"CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="</span>
 
 </code></pre>
 <p>To reproduce the failure you can follow the suggestion to fix the seed:</p>
 <pre><code class="hljs css language-diff"> class MySuite extends ScalaCheckSuite {
 
-<span class="hljs-addition">+  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="</span>
+<span class="hljs-addition">+  override def scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="</span>
 
    // ...
  }
