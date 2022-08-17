@@ -59,7 +59,7 @@ object ScalaCheckFrameworkSuite
          |Failing seed: CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB=
          |You can reproduce this failure by adding the following override to your suite:
          |
-         |  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
+         |  override def scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
          |
          |Falsified after 0 passed tests.
          |> ARG_0: -1
@@ -80,7 +80,7 @@ object ScalaCheckFrameworkSuite
          |Failing seed: CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB=
          |You can reproduce this failure by adding the following override to your suite:
          |
-         |  override val scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
+         |  override def scalaCheckInitialSeed = "CTH6hXj8ViScMmsO78-k4_RytXHPK_wSJYNH2h4dCpB="
          |
          |Falsified after 0 passed tests.
          |> ARG_0: -1
