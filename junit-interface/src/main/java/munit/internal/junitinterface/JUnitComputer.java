@@ -1,13 +1,8 @@
 package munit.internal.junitinterface;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-
 import org.junit.runner.Computer;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;

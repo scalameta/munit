@@ -1,8 +1,5 @@
 package munit.internal.junitinterface;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 import sbt.testing.Fingerprint;
 
 public class PantsFramework extends JUnitFramework {

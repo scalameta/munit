@@ -4,14 +4,12 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
+import junit.framework.TestCase;
 import org.junit.experimental.categories.Categories;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
-
-import junit.framework.TestCase;
 import sbt.testing.EventHandler;
 import sbt.testing.Fingerprint;
 import sbt.testing.Logger;

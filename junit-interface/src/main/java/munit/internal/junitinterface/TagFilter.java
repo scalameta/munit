@@ -1,10 +1,9 @@
 package munit.internal.junitinterface;
 
-import org.junit.runner.Description;
-import org.junit.runner.manipulation.Filter;
-
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import org.junit.runner.Description;
+import org.junit.runner.manipulation.Filter;
 
 public class TagFilter extends Filter {
   final Set<String> includeTags, excludeTags;

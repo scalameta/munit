@@ -1,11 +1,12 @@
 package munit.internal.junitinterface;
 
+import static munit.internal.junitinterface.Ansi.*;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -13,8 +14,6 @@ import org.junit.runner.notification.RunListener;
 import sbt.testing.EventHandler;
 import sbt.testing.Fingerprint;
 import sbt.testing.Status;
-
-import static munit.internal.junitinterface.Ansi.*;
 
 final class EventDispatcher extends RunListener {
   private final RichLogger logger;

@@ -1,12 +1,12 @@
 package munit.internal.junitinterface;
 
+import static munit.internal.junitinterface.Ansi.*;
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
-
 import sbt.testing.Logger;
-import static munit.internal.junitinterface.Ansi.*;
 
 final class RichLogger {
   private final Logger[] loggers;

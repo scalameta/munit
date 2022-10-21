@@ -4,7 +4,6 @@ package munit.internal.junitinterface;
 
 import java.util.HashSet;
 import java.util.regex.Pattern;
-
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 
