@@ -279,11 +279,12 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       return Future.successful(false)
     }
 
-    notifier.fireTestStarted(description)
     if (test.tags(Ignore)) {
       notifier.fireTestIgnored(description)
       return Future.successful(false)
     }
+
+    notifier.fireTestStarted(description)
     val onError: PartialFunction[Throwable, Future[Unit]] = {
       case ex: AssumptionViolatedException =>
         trimStackTrace(ex)
