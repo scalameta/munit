@@ -3,12 +3,15 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 def previousVersion = "0.7.0"
-def scala213 = "2.13.8"
+
+def scala213 = "2.13.10"
+
 def scala212 = "2.12.17"
+
 def scala211 = "2.11.12"
 def scala3 = "3.1.2"
 def junitVersion = "4.13.2"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "2.12.0"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "2.15.0"
 inThisBuild(
   List(
     version ~= { old =>
