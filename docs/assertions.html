@@ -399,7 +399,7 @@ compileErrors(<span class="hljs-string">s"/* code */ <span class="hljs-subst">$c
 <span class="hljs-comment">// error: cannot compile dynamic expressions, only constant literals.</span>
 <span class="hljs-comment">// To fix this problem, pass in a string literal in double quotes "..."</span>
 <span class="hljs-comment">// compileErrors(s"/* code */ $code")</span>
-<span class="hljs-comment">//               ^^^^^^^^^^^^^^^^^^</span>
+<span class="hljs-comment">//                             ^^^^</span>
 </code></pre>
 <p>Inline the <code>code</code> variable to fix the compile error.</p>
 <pre><code class="hljs css language-scala">compileErrors(<span class="hljs-string">"val x: String = 2"</span>)
