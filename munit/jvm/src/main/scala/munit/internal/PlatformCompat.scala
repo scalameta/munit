@@ -4,15 +4,30 @@ import scala.concurrent.Future
 import sbt.testing.Task
 import sbt.testing.EventHandler
 import sbt.testing.Logger
+
 import scala.concurrent.duration.Duration
-import java.util.concurrent.Executors
+import java.util.concurrent.{
+  Executors,
+  ThreadFactory,
+  TimeUnit,
+  TimeoutException
+}
 import scala.concurrent.Promise
 import scala.concurrent.ExecutionContext
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicInteger
 
 object PlatformCompat {
-  private val sh = Executors.newSingleThreadScheduledExecutor()
+  private val sh = Executors.newSingleThreadScheduledExecutor(
+    new ThreadFactory {
+      val counter = new AtomicInteger
+      def threadNumber() = counter.incrementAndGet()
+      def newThread(r: Runnable) =
+        new Thread(r, s"munit-scheduler-${threadNumber()}") {
+          setDaemon(true)
+          setPriority(Thread.NORM_PRIORITY)
+        }
+    }
+  )
   def executeAsync(
       task: Task,
       eventHandler: EventHandler,
