@@ -6,17 +6,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.junit.runner.notification.RunListener;
-
-import sbt.testing.Runner;
-import sbt.testing.Task;
-import sbt.testing.Selector;
-import sbt.testing.TestSelector;
-import sbt.testing.TaskDef;
-
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.runner.notification.RunListener;
+import sbt.testing.Runner;
+import sbt.testing.Selector;
+import sbt.testing.Task;
+import sbt.testing.TaskDef;
+import sbt.testing.TestSelector;
 
 final class JUnitRunner implements Runner {
   private final String[] args;

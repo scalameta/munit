@@ -2,7 +2,6 @@ package munit.internal.junitinterface;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 

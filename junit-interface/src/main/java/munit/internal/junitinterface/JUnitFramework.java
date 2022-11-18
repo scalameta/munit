@@ -1,7 +1,5 @@
 package munit.internal.junitinterface;
 
-import java.util.Arrays;
-
 import sbt.testing.Fingerprint;
 import sbt.testing.Framework;
 

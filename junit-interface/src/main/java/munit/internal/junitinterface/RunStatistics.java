@@ -1,9 +1,8 @@
 package munit.internal.junitinterface;
 
-import sbt.testing.Status;
-
 import java.util.ArrayList;
 import java.util.List;
+import sbt.testing.Status;
 
 class RunStatistics {
   private final RunSettings settings;

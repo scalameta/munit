@@ -16,9 +16,7 @@ import static munit.internal.junitinterface.Ansi.c;
 
 import java.lang.reflect.Method;
 import java.util.*;
-
 import org.junit.runner.Description;
-
 import sbt.testing.Status;
 
 class RunSettings implements Settings {

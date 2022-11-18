@@ -1,8 +1,8 @@
 package munit.internal.junitinterface;
 
-import sbt.testing.*;
-
 import static munit.internal.junitinterface.Ansi.*;
+
+import sbt.testing.*;
 
 abstract class AbstractEvent implements Event {
   protected final String ansiName;
