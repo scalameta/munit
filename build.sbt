@@ -163,7 +163,7 @@ val sharedJSConfigure: Project => Project =
 
 val sharedNativeSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := allScalaVersions
+  crossScalaVersions := allScalaVersions.filterNot(_ == scala211)
 )
 val sharedNativeConfigure: Project => Project =
   _.disablePlugins(ScalafixPlugin, MimaPlugin)
