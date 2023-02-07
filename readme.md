@@ -1,7 +1,7 @@
 # MUnit
 
 <a href="https://github.com/scalameta/munit/actions">
-<img src="https://img.shields.io/github/workflow/status/scalameta/munit/CI?style=flat-square" />
+<img src="https://img.shields.io/github/actions/workflow/status/scalameta/munit/ci.yml?branch=main&style=flat-square" />
 </a>
 <a href="https://gitter.im/scalameta/munit">
 <img alt="Join the chat on Gitter" src="https://img.shields.io/gitter/room/scalameta/munit.svg?logo=gitter&style=flat-square&color=F71263" />
