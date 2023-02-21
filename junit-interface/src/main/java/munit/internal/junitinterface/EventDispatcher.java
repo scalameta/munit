@@ -129,7 +129,7 @@ final class EventDispatcher extends RunListener {
   public void testIgnored(Description desc) {
     postIfFirst(
         desc,
-        new InfoEvent(desc, Status.Skipped) {
+        new InfoEvent(desc, Status.Ignored) {
           void logTo(RichLogger logger) {
             logger.warn(
                 settings.buildTestResult(Status.Ignored)

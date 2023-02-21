@@ -20,7 +20,7 @@ object SkippedFrameworkSuite
     extends FrameworkTest(
       classOf[SkippedFrameworkSuite],
       """|==> success munit.SkippedFrameworkSuite.pass
-         |==> skipped munit.SkippedFrameworkSuite.ignore
+         |==> ignored munit.SkippedFrameworkSuite.ignore
          |==> success munit.SkippedFrameworkSuite.assume(true)
          |==> skipped munit.SkippedFrameworkSuite.assume(false) - assume it fails
          |""".stripMargin
