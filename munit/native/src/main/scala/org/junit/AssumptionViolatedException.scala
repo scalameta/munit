@@ -1,3 +1,4 @@
 package org.junit
 
-class AssumptionViolatedException(message: String) extends RuntimeException
+class AssumptionViolatedException(message: String)
+    extends RuntimeException(message)
