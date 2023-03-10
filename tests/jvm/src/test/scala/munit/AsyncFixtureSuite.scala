@@ -88,7 +88,7 @@ class AsyncFixtureSuite extends BaseSuite {
     }
   }
 
-  override def munitFixtures: Seq[AnyFixture[_]] = List(message, latest)
+  override def munitFixtures: Seq[AnyFixture[_]] = List(latest, message)
 
   1.to(3).foreach { i =>
     test(s"test-$i") {

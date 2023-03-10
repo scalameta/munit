@@ -221,7 +221,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       beforeAll: BeforeAllResult
   ): Future[Unit] = {
     sequenceFutures[Boolean](
-      beforeAll.loadedFixtures.iterator.map(f =>
+      beforeAll.loadedFixtures.reverseIterator.map(f =>
         runHiddenTest(
           notifier,
           s"afterAll(${f.fixtureName})",
@@ -331,12 +331,12 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
             StackTraces
               .dropOutside(test.body())
               .transformWithCompat(result =>
-                runAfterEach(test, beforeEach.loadedFixtures)
+                runAfterEach(test, beforeEach.loadedFixtures.reverse)
                   .transformCompat(_ => result)
               )
           case error :: errors =>
             errors.foreach(err => error.addSuppressed(err))
-            try runAfterEach(test, beforeEach.loadedFixtures)
+            try runAfterEach(test, beforeEach.loadedFixtures.reverse)
             finally throw error
         }
       }

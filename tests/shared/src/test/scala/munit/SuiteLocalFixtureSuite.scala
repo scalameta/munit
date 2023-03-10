@@ -12,7 +12,7 @@ class SuiteLocalFixtureSuite extends FunSuite {
       n = 1
     }
     override def afterAll(): Unit = {
-      assertEquals(n, 17)
+      assertEquals(n, 16)
       n = -11
     }
   }
@@ -34,7 +34,7 @@ class SuiteLocalFixtureSuite extends FunSuite {
   }
 
   override def afterAll(): Unit = {
-    assertEquals(counter(), 17)
+    assertEquals(counter(), -10)
   }
 
   1.to(5).foreach { i =>
