@@ -20,42 +20,47 @@ trait Printer {
    *
    * Order is important : this printer will be tried first, then the other printer.
    * The new Printer's height will be the max of the two printers' heights.
-   * 
+   *
    * Comibining two printers can be useful if you want to customize Printer for
-   * some types somewhere, but want to add more specialized printers for some tests 
-   * 
+   * some types somewhere, but want to add more specialized printers for some tests
+   *
    * {{{
-   * trait MySuites extends FunSuite { 
-   *   override val printer = Printer { 
+   * trait MySuites extends FunSuite {
+   *   override val printer = Printer.apply {
    *     case long => s"${l}L"
    *   }
    * }
-   * 
+   *
    * trait SomeOtherSuites extends MySuites {
-   *   override val printer = Printer {
+   *   override val printer = Printer.apply {
    *     case m: SomeCaseClass => m.someCustomToString
    *   } orElse super.printer
    * }
-   * 
+   *
    * }}}
    */
-  def orElse(other: Printer): Printer =
+  def orElse(other: Printer): Printer = {
+    val h = this.height
+    val p: (Any, StringBuilder, Int) => Boolean = this.print
     new Printer {
       def print(value: Any, out: StringBuilder, indent: Int): Boolean =
-        this.print(value, out, indent) || other.print(
+        p.apply(value, out, indent) || other.print(
           value,
           out,
           indent
         )
-      override def height: Int = this.height.max(other.height)
+      override def height: Int = h.max(other.height)
     }
+  }
 
-  val a = Byte
 }
 
 object Printer {
 
-  def apply(h: Int)(partialPrint: PartialFunction[Any, String]): Printer =
+  def apply(
+      height: Int
+  )(partialPrint: PartialFunction[Any, String]): Printer = {
+    val h = height
     new Printer {
       def print(value: Any, out: StringBuilder, indent: Int): Boolean =
         value match {
@@ -68,6 +73,7 @@ object Printer {
 
       override def height: Int = h
     }
+  }
 
   /**
    * Utiliy constructor defining a printer for some types.
@@ -77,7 +83,7 @@ object Printer {
    *
    * {{{
    * type ByteArray = Array[Byte]
-   * val listPrinter = Printer {
+   * val listPrinter = Printer.apply {
    *   case ll: ByteArray => ll.map(String.format("%02x", b)).mkString(" ")
    * }
    * val bytes = Array[Byte](1, 5, 8, 24)
