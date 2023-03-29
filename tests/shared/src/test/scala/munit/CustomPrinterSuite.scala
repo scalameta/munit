@@ -95,9 +95,7 @@ class CustomPrinterSuite extends FunSuite with ScalaCheckSuite {
     forAll(genFooBar) { foobar =>
       val obtained = Printers
         .print(foobar, listPrinter.orElse(intPrinter))
-        .stripMargin
-        .stripLeading()
-        .stripTrailing()
+        .filterNot(_.isWhitespace)
       val expected =
         s"""|FooBar(
             |  foo = Foo(
@@ -107,7 +105,7 @@ class CustomPrinterSuite extends FunSuite with ScalaCheckSuite {
             |    l = ${foobar.bar.l.mkString("[", ",", "]")}
             |  )
             |)
-            |""".stripMargin.stripLeading().stripTrailing()
+            |""".stripMargin.filterNot(_.isWhitespace)
       assertEquals(obtained, expected)
     }
   }
