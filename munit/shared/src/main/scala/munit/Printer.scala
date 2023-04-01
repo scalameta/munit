@@ -11,7 +11,7 @@ trait Printer {
    * Returns true if this value has been printed, false if FunSuite should fallback to the default pretty-printer.
    */
   def print(value: Any, out: StringBuilder, indent: Int): Boolean
-  def height: Int = 100
+  def height: Int = Printer.defaultHeight
   def isMultiline(string: String): Boolean =
     string.contains('\n')
 
@@ -21,20 +21,25 @@ trait Printer {
    * Order is important : this printer will be tried first, then the other printer.
    * The new Printer's height will be the max of the two printers' heights.
    *
-   * Comibining two printers can be useful if you want to customize Printer for
-   * some types somewhere, but want to add more specialized printers for some tests
+   * Exampple use case :  define some default printers for some types for all tests,
+   * and override it for some tests only.
    *
    * {{{
+   *  
+   * case class Person(name: String, age: Int, mail: String)
+   *  
    * trait MySuites extends FunSuite {
    *   override val printer = Printer.apply {
-   *     case long => s"${l}L"
+   *     case Person(name, age, mail) => s"$name:$age:$mail"
+   *     case m: SomeOtherCaseClass => m.someCustomToString
    *   }
    * }
    *
-   * trait SomeOtherSuites extends MySuites {
-   *   override val printer = Printer.apply {
-   *     case m: SomeCaseClass => m.someCustomToString
-   *   } orElse super.printer
+   * trait CompareMailsOnly extends MySuites {
+   *   val mailOnlyPrinter = Printer.apply {
+   *     case Person(_, _, mail) => mail
+   *   }
+   *   override val printer =  mailOnlyPrinterPrinter orElse super.printer
    * }
    *
    * }}}
@@ -57,19 +62,21 @@ trait Printer {
 
 object Printer {
 
+  val defaultHeight = 100
+
   def apply(
       height: Int
   )(partialPrint: PartialFunction[Any, String]): Printer = {
     val h = height
     new Printer {
-      def print(value: Any, out: StringBuilder, indent: Int): Boolean =
-        value match {
-          case simpleValue =>
-            partialPrint.lift.apply(simpleValue).fold(false) { string =>
-              out.append(string)
-              true
-            }
+      def print(value: Any, out: StringBuilder, indent: Int): Boolean = {
+        partialPrint.lift.apply(value) match {
+          case Some(string) =>
+            out.append(string)
+            true
+          case None => false
         }
+      }
 
       override def height: Int = h
     }
@@ -78,7 +85,7 @@ object Printer {
   /**
    * Utiliy constructor defining a printer for some types.
    *
-   * This might be useful for some types which default pretty-printers
+   * Example use case is overriding the string repr for types which default pretty-printers
    * do not output helpful diffs.
    *
    * {{{
@@ -91,10 +98,11 @@ object Printer {
    * }}}
    */
   def apply(partialPrint: PartialFunction[Any, String]): Printer =
-    apply(100)(partialPrint)
+    apply(defaultHeight)(partialPrint)
 }
 
 /** Default printer that does not customize the pretty-printer */
 object EmptyPrinter extends Printer {
   def print(value: Any, out: StringBuilder, indent: Int): Boolean = false
 }
+  
