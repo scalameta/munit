@@ -303,10 +303,12 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   }
   def clues(clue: Clue[_]*): Clues = new Clues(clue.toList)
 
+  def printer: Printer = EmptyPrinter
+
   def munitPrint(clue: => Any): String = {
     clue match {
       case message: String => message
-      case value           => Printers.print(value)
+      case value           => Printers.print(value, printer)
     }
   }
 
