@@ -21,13 +21,13 @@ trait Printer {
    * Order is important : this printer will be tried first, then the other printer.
    * The new Printer's height will be the max of the two printers' heights.
    *
-   * Exampple use case :  define some default printers for some types for all tests,
+   * Example use case :  define some default printers for some types for all tests,
    * and override it for some tests only.
    *
    * {{{
-   *  
+   *
    * case class Person(name: String, age: Int, mail: String)
-   *  
+   *
    * trait MySuites extends FunSuite {
    *   override val printer = Printer.apply {
    *     case Person(name, age, mail) => s"$name:$age:$mail"
@@ -105,4 +105,3 @@ object Printer {
 object EmptyPrinter extends Printer {
   def print(value: Any, out: StringBuilder, indent: Int): Boolean = false
 }
-  
