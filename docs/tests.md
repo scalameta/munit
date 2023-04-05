@@ -134,7 +134,7 @@ import java.time.Instant
 import munit.FunSuite
 import munit.Printer
 
-class InstantTest extends FunSuite {
+class CompareDatesOnlyTest extends FunSuite {
   override val printer = Printer.apply {
     // take only the date part of the Instant
     case instant: Instant => instant.toString.takeWhile(_ != 'T')
@@ -154,12 +154,12 @@ or to customize the printed clue in case of a failure :
 import munit.FunSuite
 import munit.Printer
 
-class InstantTest extends munit.FunSuite {
+class CustomListOfCharPrinterTest extends FunSuite {
   override val printer = Printer.apply {
     case l: List[Char] => l.mkString
   }
 
-  test("dates only") {
+  test("lists of chars") {
     val expected = List('h', 'e', 'l', 'l', 'o')
     val actual = List('h', 'e', 'l', 'l', '0')
     assertEquals(actual, expected)
