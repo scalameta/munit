@@ -229,9 +229,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     sharedNativeSettings,
     libraryDependencies ++= List(
       "org.scala-native" %%% "test-interface" % nativeVersion
-    ),
-    Compile / unmanagedSourceDirectories +=
-      (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
+    )
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(
@@ -241,9 +239,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         .cross(CrossVersion.for3Use2_13),
       ("org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion)
         .cross(CrossVersion.for3Use2_13)
-    ),
-    Compile / unmanagedSourceDirectories +=
-      (ThisBuild / baseDirectory).value / "munit" / "non-jvm" / "src" / "main"
+    )
   )
   .jvmSettings(
     sharedJVMSettings,

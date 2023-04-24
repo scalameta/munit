@@ -285,25 +285,31 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
 
     notifier.fireTestStarted(description)
+    def handleNonFatalOrStackOverflow(ex: Throwable): Future[Unit] = {
+      trimStackTrace(ex)
+      val cause = Exceptions.rootCause(ex)
+      val failure = new Failure(description, cause)
+      cause match {
+        case _: AssumptionViolatedException =>
+          notifier.fireTestAssumptionFailed(failure)
+        case _: FailSuiteException =>
+          suiteAborted = true
+          notifier.fireTestFailure(failure)
+        case _ =>
+          notifier.fireTestFailure(failure)
+      }
+      Future.successful(())
+    }
+
     val onError: PartialFunction[Throwable, Future[Unit]] = {
       case ex: AssumptionViolatedException =>
         trimStackTrace(ex)
         notifier.fireTestAssumptionFailed(new Failure(description, ex))
         Future.successful(())
       case NonFatal(ex) =>
-        trimStackTrace(ex)
-        val cause = Exceptions.rootCause(ex)
-        val failure = new Failure(description, cause)
-        cause match {
-          case _: AssumptionViolatedException =>
-            notifier.fireTestAssumptionFailed(failure)
-          case _: FailSuiteException =>
-            suiteAborted = true
-            notifier.fireTestFailure(failure)
-          case _ =>
-            notifier.fireTestFailure(failure)
-        }
-        Future.successful(())
+        handleNonFatalOrStackOverflow(ex)
+      case ex: StackOverflowError =>
+        handleNonFatalOrStackOverflow(ex)
     }
     val result: Future[Unit] =
       try runTestBody(notifier, description, test).recoverWith(onError)
