@@ -120,6 +120,82 @@ class CustomTimeoutSuite extends munit.FunSuite {
 > non-async tests. However, starting with MUnit v1.0 (latest milestone release:
 > @VERSION@), the timeout applies to all tests including non-async tests.
 
+## Customize value printers
+
+MUnit uses its own `Printer`s to convert any value into a diff-ready string representation.
+The resulting string is the actual value being compared, and is also used to generate the clues in case of a failure.
+
+The default printing behaviour can be overriden for a given type by defining a custom `Printer` and overriding `printer`.
+
+Override `printer` to customize the comparison of two values :
+
+```scala mdoc
+import java.time.Instant
+import munit.FunSuite
+import munit.Printer
+
+class CompareDatesOnlyTest extends FunSuite {
+  override val printer = Printer.apply {
+    // take only the date part of the Instant
+    case instant: Instant => instant.toString.takeWhile(_ != 'T')
+  }
+
+  test("dates only") {
+    val expected = Instant.parse("2022-02-15T18:35:24.00Z")
+    val actual = Instant.parse("2022-02-15T18:36:01.00Z")
+    assertEquals(actual, expected) // true
+  }
+}
+```
+
+or to customize the printed clue in case of a failure :
+
+```scala mdoc
+import munit.FunSuite
+import munit.Printer
+
+class CustomListOfCharPrinterTest extends FunSuite {
+  override val printer = Printer.apply {
+    case l: List[Char] => l.mkString
+  }
+
+  test("lists of chars") {
+    val expected = List('h', 'e', 'l', 'l', 'o')
+    val actual = List('h', 'e', 'l', 'l', '0')
+    assertEquals(actual, expected)
+  }
+}
+```
+
+will yield
+
+```
+=> Obtained
+hell0
+=> Diff (- obtained, + expected)
+-hell0
++hello
+```
+
+instead of the default
+
+```
+...
+=> Obtained
+List(
+  'h',
+  'e',
+  'l',
+  'l',
+  '0'
+)
+=> Diff (- obtained, + expected)
+   'l',
+-  '0'
++  'o'
+...
+```
+
 ## Run tests in parallel
 
 MUnit does not support running individual test cases in parallel. However, sbt
@@ -140,7 +216,7 @@ Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
 ```
 
 To learn more about sbt test execution, see
-https://www.scala-sbt.org/1.x/docs/Testing.html.
+<https://www.scala-sbt.org/1.x/docs/Testing.html>.
 
 ## Declare tests inside a helper function
 
