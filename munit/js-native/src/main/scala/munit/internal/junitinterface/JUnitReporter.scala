@@ -229,38 +229,33 @@ final class JUnitReporter(
       e.getFileName().contains("file:/")
     }
     val canHighlight = !PlatformCompat.isNative
-    new StringBuilder()
-      .append(AnsiColors.Reset)
-      .append(
-        if (!canHighlight) ""
-        else if (highlight) AnsiColors.Bold
+    val style = {
+      val effect =
+        if (highlight) AnsiColors.Bold
         else AnsiColors.DarkGrey
-      )
-      .append("    at ")
-      .append(settings.decodeName(e.getClassName + '.' + e.getMethodName))
-      .append('(')
-      .append(
-        if (e.isNativeMethod()) {
-          "Native Method"
-        } else if (e.getFileName() == null) {
-          "Unknown Source"
+      AnsiColors.Reset + effect
+    }
+
+    val name = settings.decodeName(e.getClassName + '.' + e.getMethodName)
+    val source =
+      if (e.isNativeMethod()) "Native Method"
+      else if (e.getFileName() == null) "Unknown Source"
+      else {
+        val file = e.getFileName().indexOf("file:/")
+        val https =
+          if (file >= 0) file else e.getFileName().indexOf("https:/")
+        val filename =
+          if (https >= 0) e.getFileName().substring(https)
+          else e.getFileName()
+        if (e.getLineNumber() >= 0) {
+          s"${filename}:${e.getLineNumber()}"
         } else {
-          val file = e.getFileName().indexOf("file:/")
-          val https =
-            if (file >= 0) file else e.getFileName().indexOf("https:/")
-          val filename =
-            if (https >= 0) e.getFileName().substring(https)
-            else e.getFileName()
-          if (e.getLineNumber() >= 0) {
-            s"${filename}:${e.getLineNumber()}"
-          } else {
-            filename
-          }
+          filename
         }
-      )
-      .append(')')
-      .append(AnsiColors.Reset)
-      .toString()
+      }
+    val message = s"    at $name($source)"
+    if (canHighlight) AnsiColors.c(message, style)
+    else message
   }
   private def formatTime(elapsedMillis: Double): String =
     AnsiColors.c("%.2fs".format(elapsedMillis / 1000.0), AnsiColors.DarkGrey)

@@ -1,23 +1,28 @@
 package munit.internal.console
 
 object AnsiColors {
-  val LightRed = "\u001b[91m"
+  // Foreground colors
+  val BLUE = "\u001B[34m"
+  val CYAN = "\u001B[36m"
+  val DarkGrey = "\u001B[90m"
+  val GREEN = "\u001B[32m"
   val LightGreen = "\u001b[92m"
-  val Reset = "\u001b[0m"
-  val Reversed = "\u001b[7m"
-  val Bold = "\u001b[1m"
-  val Faint = "\u001b[2m"
+  val LightRed = "\u001b[91m"
+  val Magenta = "\u001B[35m"
   val RED = "\u001B[31m"
   val YELLOW = "\u001B[33m"
-  val BLUE = "\u001B[34m"
-  val Magenta = "\u001B[35m"
-  val CYAN = "\u001B[36m"
-  val GREEN = "\u001B[32m"
-  val DarkGrey = "\u001B[90m"
 
-  def c(s: String, colorSequence: String): String =
-    if (colorSequence == null) s
+  // Styles
+  val Bold = "\u001b[1m"
+  val Faint = "\u001b[2m"
+  val Reset = "\u001b[0m"
+  val Reversed = "\u001b[7m"
+
+  def c(s: String, colorSequence: String): String = {
+    val isNoColorEnvSet = System.getenv("NO_COLOR") == "1"
+    if (colorSequence == null || isNoColorEnvSet) s
     else colorSequence + s + Reset
+  }
 
   def filterAnsi(s: String): String = {
     if (s == null) {

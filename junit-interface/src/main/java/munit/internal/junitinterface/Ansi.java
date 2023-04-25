@@ -23,7 +23,9 @@ public class Ansi {
   private static final String LIGHT_CYAN = "\u001B[96m";
 
   public static String c(String s, String colorSequence) {
-    if (colorSequence == null) return s;
+    String no_color = System.getenv("NO_COLOR");
+    Boolean isNoColorEnvSet = no_color != null && no_color.equals("1");
+    if (colorSequence == null || isNoColorEnvSet) return s;
     else return colorSequence + s + NORMAL;
   }
 

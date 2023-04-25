@@ -43,9 +43,9 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
 
   private def appendDiffOnlyReport(sb: StringBuilder): Unit = {
     header("Diff", sb)
-    sb.append(
-      s" (${AnsiColors.LightRed}- obtained${AnsiColors.Reset}, ${AnsiColors.LightGreen}+ expected${AnsiColors.Reset})"
-    ).append("\n")
+    val obtained = AnsiColors.c("- obtained", AnsiColors.LightRed)
+    val expected = AnsiColors.c("+ expected", AnsiColors.LightGreen)
+    sb.append(s" ($obtained, $expected)").append("\n")
     sb.append(unifiedDiff)
   }
 
