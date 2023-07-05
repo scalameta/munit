@@ -244,7 +244,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .jvmSettings(
     sharedJVMSettings,
     libraryDependencies ++= List(
-      "junit" % "junit" % "4.13.1"
+      "junit" % "junit" % junitVersion
     )
   )
   .jvmConfigure(_.dependsOn(junit))
