@@ -310,6 +310,9 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         handleNonFatalOrStackOverflow(ex)
       case ex: StackOverflowError =>
         handleNonFatalOrStackOverflow(ex)
+      case ex =>
+        notifier.fireTestFailure(new Failure(description, ex))
+        Future.successful(())
     }
     val result: Future[Unit] =
       try runTestBody(notifier, description, test).recoverWith(onError)
