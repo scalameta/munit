@@ -311,6 +311,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       case ex: StackOverflowError =>
         handleNonFatalOrStackOverflow(ex)
       case ex =>
+        suiteAborted = true
         notifier.fireTestFailure(new Failure(description, ex))
         Future.successful(())
     }
