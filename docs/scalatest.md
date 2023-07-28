@@ -6,15 +6,7 @@ title: Coming from ScalaTest
 # Initiating the Conversion
 
 Begin by ensuring that you have
-[added a dependency](./getting-started.html#quick-start) on MUnit. If you are
-using SBT, don't neglect to explicitly add MUnit as a test framework:
-
-```diff
-+ testFrameworks += new TestFramework("munit.Framework")
-```
-
-even if you do not see this being done for ScalaTest (SBT has special support
-for ScalaTest).
+[added a dependency](./getting-started.html#quick-start) on MUnit.
 
 It is not important to immediately remove the ScalaTest bindings, because SBT
 can handle having both test frameworks registered at once, and can run both sets
