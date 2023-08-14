@@ -166,7 +166,7 @@ and `myproject/all:test` that run only slow tests and all tests, respectively.
   // build.sbt
   val MUnitFramework = new TestFramework("munit.Framework")
 + val Slow = config("slow").extend(Test)
-+ val All = config("slow").extend(Test)
++ val All = config("all").extend(Test)
   lazy val myproject = project
 +   .configs(Slow, All)
     .settings(
