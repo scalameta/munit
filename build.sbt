@@ -178,17 +178,28 @@ val sharedSettings = List(
           "-Ywarn-unused-import",
           "-target:jvm-1.8"
         )
-      case Some((major, _)) if major != 2 =>
+      case Some((2, 12)) =>
         List(
-          "-language:implicitConversions"
+          "-feature",
+          "-target:jvm-1.8",
+          "-Ywarn-unused-import",
+          "-Yrangepos"
+        )
+      case Some((2, _)) =>
+        List(
+          "-feature",
+          "-target:jvm-1.8",
+          "-Wconf:cat=deprecation&msg=JavaConverters:s",
+          raw"-Wconf:cat=deprecation&site=munit\.internal\.MacroCompatScala2\..*:s",
+          "-Wconf:cat=unused-privates&msg=never used:s",
+          "-Wconf:cat=unused-params&msg=never used:s",
+          //"-Werror",
+          "-Xlint",
+          "-Yrangepos"
         )
       case _ =>
         List(
-          "-target:jvm-1.8",
-          "-Yrangepos",
-          // -Xlint is unusable because of
-          // https://github.com/scala/bug/issues/10448
-          "-Ywarn-unused:imports"
+          "-language:implicitConversions"
         )
     }
   }

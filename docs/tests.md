@@ -237,7 +237,7 @@ def check[T](
 
 check("basic", List(1, 2), Some(1))
 check("empty", List(), Some(1))
-check("null", List(null, 2), Some(null))
+check("null", List(null, "more"), Some(null))
 ```
 
 When declaring tests in a helper function, it's useful to pass around an

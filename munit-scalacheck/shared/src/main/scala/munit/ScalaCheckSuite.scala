@@ -1,5 +1,7 @@
 package munit
 
+import language.implicitConversions
+
 import org.scalacheck.Prop
 import org.scalacheck.{Test => ScalaCheckTest}
 import org.scalacheck.util.Pretty

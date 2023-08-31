@@ -2,6 +2,7 @@ package munit.internal
 
 import munit.Clue
 import munit.Location
+import scala.language.implicitConversions
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox.Context
 
