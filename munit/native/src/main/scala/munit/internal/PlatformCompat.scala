@@ -24,7 +24,9 @@ object PlatformCompat {
       duration: Duration,
       ec: ExecutionContext
   ): Future[T] = {
-    startFuture()
+    val f = startFuture()
+    scala.scalanative.runtime.loop()
+    f
   }
   def setTimeout(ms: Int)(body: => Unit): () => Unit = {
     Thread.sleep(ms)
