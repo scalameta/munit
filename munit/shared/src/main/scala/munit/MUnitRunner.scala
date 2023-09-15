@@ -361,40 +361,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     }
   }
 
-  private[munit] class ForeachUnsafeResult(
-      val sync: Try[Unit],
-      val async: List[Future[Any]]
-  )
-  private def foreachUnsafe(
-      thunks: Iterable[() => Any]
-  ): ForeachUnsafeResult = {
-    var errors = mutable.ListBuffer.empty[Throwable]
-    val async = mutable.ListBuffer.empty[Future[Any]]
-    thunks.foreach { thunk =>
-      try {
-        thunk() match {
-          case f: Future[_] =>
-            async += f
-          case _ =>
-        }
-      } catch {
-        case ex if NonFatal(ex) =>
-          errors += ex
-      }
-    }
-    errors.toList match {
-      case head :: tail =>
-        tail.foreach { e =>
-          if (e ne head) {
-            head.addSuppressed(e)
-          }
-        }
-        new ForeachUnsafeResult(scala.util.Failure(head), Nil)
-      case _ =>
-        new ForeachUnsafeResult(scala.util.Success(()), Nil)
-    }
-  }
-
   private def runHiddenTest(
       notifier: RunNotifier,
       name: String,
