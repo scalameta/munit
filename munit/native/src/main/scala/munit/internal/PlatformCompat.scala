@@ -7,10 +7,17 @@ import scala.scalanative.reflect.Reflect
 import sbt.testing.Task
 import sbt.testing.EventHandler
 import sbt.testing.Logger
+import scala.concurrent.Await
+import scala.concurrent.Awaitable
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext
 
 object PlatformCompat {
+  def awaitResult[T](awaitable: Awaitable[T]): T = {
+    scalanative.runtime.loop()
+    Await.result(awaitable, Duration.Inf)
+  }
+
   def executeAsync(
       task: Task,
       eventHandler: EventHandler,

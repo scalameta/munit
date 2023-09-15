@@ -9,11 +9,17 @@ import sbt.testing.EventHandler
 import sbt.testing.Logger
 import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
+import scala.concurrent.Await
+import scala.concurrent.Awaitable
 import scala.concurrent.ExecutionContext
 import scala.scalajs.js.timers
 import java.util.concurrent.TimeoutException
 
 object PlatformCompat {
+  def awaitResult[T](awaitable: Awaitable[T]): T = {
+    Await.result(awaitable, Duration.Inf)
+  }
+
   def executeAsync(
       task: Task,
       eventHandler: EventHandler,
