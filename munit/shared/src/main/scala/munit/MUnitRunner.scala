@@ -16,7 +16,6 @@ import org.junit.runner.notification.RunNotifier
 
 import java.lang.reflect.Modifier
 import scala.collection.mutable
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
@@ -113,7 +112,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
 
   override def run(notifier: RunNotifier): Unit = {
-    Await.result(runAsync(notifier), Duration.Inf)
+    PlatformCompat.awaitResult(runAsync(notifier))
   }
   def runAsync(notifier: RunNotifier): Future[Unit] = {
     val description = getDescription()

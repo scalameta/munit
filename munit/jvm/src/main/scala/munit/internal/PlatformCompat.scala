@@ -12,6 +12,8 @@ import java.util.concurrent.{
   TimeUnit,
   TimeoutException
 }
+import scala.concurrent.Await
+import scala.concurrent.Awaitable
 import scala.concurrent.Promise
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.atomic.AtomicInteger
@@ -28,6 +30,11 @@ object PlatformCompat {
         }
     }
   )
+
+  def awaitResult[T](awaitable: Awaitable[T]): T = {
+    Await.result(awaitable, Duration.Inf)
+  }
+
   def executeAsync(
       task: Task,
       eventHandler: EventHandler,
