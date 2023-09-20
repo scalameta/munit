@@ -22,8 +22,15 @@ public class Ansi {
   private static final String LIGHT_MAGENTA = "\u001B[95m";
   private static final String LIGHT_CYAN = "\u001B[96m";
 
+  private static final boolean noColor = shouldDisableColor();
+
+  private static final boolean shouldDisableColor() {
+    String noColorEnv = System.getenv("NO_COLOR");
+    return noColorEnv != null && noColorEnv.length() > 0;
+  }
+
   public static String c(String s, String colorSequence) {
-    if (colorSequence == null) return s;
+    if (colorSequence == null || noColor) return s;
     else return colorSequence + s + NORMAL;
   }
 

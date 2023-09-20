@@ -44,10 +44,10 @@ class Lines extends Serializable {
           .append(format(location.line - 1))
           .append(slice(0))
           .append('\n')
-          .append(AnsiColors.Reversed)
+          .append(AnsiColors.use(AnsiColors.Reversed))
           .append(format(location.line))
           .append(slice(1))
-          .append(AnsiColors.Reset)
+          .append(AnsiColors.use(AnsiColors.Reset))
         if (slice.length >= 3)
           out
             .append('\n')
