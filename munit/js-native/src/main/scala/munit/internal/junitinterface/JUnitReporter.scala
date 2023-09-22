@@ -230,11 +230,11 @@ final class JUnitReporter(
     }
     val canHighlight = !PlatformCompat.isNative
     new StringBuilder()
-      .append(AnsiColors.Reset)
+      .append(AnsiColors.use(AnsiColors.Reset))
       .append(
         if (!canHighlight) ""
-        else if (highlight) AnsiColors.Bold
-        else AnsiColors.DarkGrey
+        else if (highlight) AnsiColors.use(AnsiColors.Bold)
+        else AnsiColors.use(AnsiColors.DarkGrey)
       )
       .append("    at ")
       .append(settings.decodeName(e.getClassName + '.' + e.getMethodName))
@@ -259,7 +259,7 @@ final class JUnitReporter(
         }
       )
       .append(')')
-      .append(AnsiColors.Reset)
+      .append(AnsiColors.use(AnsiColors.Reset))
       .toString()
   }
   private def formatTime(elapsedMillis: Double): String =

@@ -15,8 +15,14 @@ object AnsiColors {
   val GREEN = "\u001B[32m"
   val DarkGrey = "\u001B[90m"
 
+  val noColor: Boolean =
+    Option(System.getenv("NO_COLOR")).exists(_ != "")
+
+  def use(colorSequence: String): String =
+    if (noColor) "" else colorSequence
+
   def c(s: String, colorSequence: String): String =
-    if (colorSequence == null) s
+    if (colorSequence == null || noColor) s
     else colorSequence + s + Reset
 
   def filterAnsi(s: String): String = {
