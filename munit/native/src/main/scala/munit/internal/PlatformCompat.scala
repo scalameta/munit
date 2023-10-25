@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
 
 object PlatformCompat {
   def awaitResult[T](awaitable: Awaitable[T]): T = {
-    scalanative.runtime.loop()
+    scalanative.runtime.munit.drainExecutionContext()
     Await.result(awaitable, Duration.Inf)
   }
 
