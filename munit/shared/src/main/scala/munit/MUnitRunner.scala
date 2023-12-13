@@ -63,7 +63,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       suite.afterAll()
   }
   private lazy val munitFixtures: List[AnyFixture[_]] =
-    suiteFixtureBefore :: suite.munitFixtures.appended(suiteFixtureAfter).toList
+    suiteFixtureBefore :: (suite.munitFixtures.toList ::: suiteFixtureAfter :: Nil)
 
   override def filter(filter: Filter): Unit = {
     val newTests = munitTests.filter { t =>
