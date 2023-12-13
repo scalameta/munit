@@ -55,7 +55,6 @@ val scala2Versions = List(scala213, scala212)
 val scala3Versions = List(scala3)
 val allScalaVersions = scala2Versions ++ scala3Versions
 
-def isNotScala211(v: Option[(Long, Long)]): Boolean = !v.contains((2, 11))
 def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
 val isScala3Setting = Def.setting {
   isScala3(CrossVersion.partialVersion(scalaVersion.value))
@@ -278,11 +277,7 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     moduleName := "munit-scalacheck",
     sharedSettings,
     libraryDependencies += {
-      val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
-      if (isNotScala211(partialVersion))
-        "org.scalacheck" %%% "scalacheck" % "1.17.0"
-      else
-        "org.scalacheck" %%% "scalacheck" % "1.15.2"
+      "org.scalacheck" %%% "scalacheck" % "1.17.0"
     }
   )
   .jvmSettings(
@@ -372,9 +367,6 @@ def crossBuildingDirectories(name: String, config: String) =
     val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
     if (isPreScala213(partialVersion)) {
       result += base / "scala-pre-2.13"
-    }
-    if (isNotScala211(partialVersion)) {
-      result += base / "scala-post-2.11"
     }
     if (isScala2(partialVersion)) {
       result += base / "scala-2"
