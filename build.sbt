@@ -8,7 +8,6 @@ def scala213 = "2.13.12"
 
 def scala212 = "2.12.18"
 
-def scala211 = "2.11.12"
 def scala3 = "3.1.2"
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.26.1"
@@ -51,7 +50,7 @@ addCommandAlias(
   s"; ++$scala212 ;  scalafixEnable ; scalafix --check ; test:scalafix --check"
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
-val scala2Versions = List(scala213, scala212, scala211)
+val scala2Versions = List(scala213, scala212)
 
 val scala3Versions = List(scala3)
 val allScalaVersions = scala2Versions ++ scala3Versions
@@ -163,7 +162,7 @@ val sharedJSConfigure: Project => Project =
 
 val sharedNativeSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := allScalaVersions.filterNot(_ == scala211)
+  crossScalaVersions := allScalaVersions
 )
 val sharedNativeConfigure: Project => Project =
   _.disablePlugins(ScalafixPlugin, MimaPlugin)
