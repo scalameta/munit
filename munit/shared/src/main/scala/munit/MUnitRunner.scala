@@ -45,19 +45,25 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private lazy val munitTests: mutable.ArrayBuffer[Test] =
     mutable.ArrayBuffer[Test](suite.munitTests(): _*)
-  private val suiteFixture = new Fixture[Unit](cls.getName()) {
+
+  // Suite fixtures are implemented as regular fixtures
+  // We split up the before*/after* methods so we can order them explicitly
+  private val suiteFixtureBefore = new Fixture[Unit](cls.getName()) {
     def apply(): Unit = ()
     override def beforeAll(): Unit =
       suite.beforeAll()
     override def beforeEach(context: BeforeEach): Unit =
       suite.beforeEach(context)
+  }
+  private val suiteFixtureAfter = new Fixture[Unit](cls.getName()) {
+    def apply(): Unit = ()
     override def afterEach(context: AfterEach): Unit =
       suite.afterEach(context)
     override def afterAll(): Unit =
       suite.afterAll()
   }
   private lazy val munitFixtures: List[AnyFixture[_]] =
-    suiteFixture :: suite.munitFixtures.toList
+    suiteFixtureBefore :: suite.munitFixtures.appended(suiteFixtureAfter).toList
 
   override def filter(filter: Filter): Unit = {
     val newTests = munitTests.filter { t =>
