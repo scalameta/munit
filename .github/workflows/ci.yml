@@ -114,7 +114,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 8
+          java-version: 11
           cache: sbt
       - run: sbt scalafixCheckAll
       - run: sbt docs/docusaurusCreateSite
