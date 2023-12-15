@@ -1,0 +1,22 @@
+name: Release website
+on:
+  push:
+    branches: [main]
+    tags: ["*"]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: sbt
+      - run: git fetch --unshallow
+      - name: Publish website for ${{ github.ref }}
+        run: |
+          sbt docs/docusaurusPublishGhpages
+        env:
+          GIT_USER: munit@scalameta.org
+          GITHUB_DEPLOY_KEY: ${{ secrets.GITHUB_DEPLOY_KEY }}
