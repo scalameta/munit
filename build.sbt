@@ -343,6 +343,7 @@ lazy val docs = project
   .disablePlugins(MimaPlugin)
   .settings(
     sharedSettings,
+    publish / skip := true,
     moduleName := "munit-docs",
     crossScalaVersions := List(scala213, scala212),
     test := {},
