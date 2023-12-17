@@ -74,7 +74,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     StackTraces.dropInside {
       if (compare.isEqual(obtained, expected)) {
         failComparison(
-          s"${munitPrint(clue)} expected same: $expected was not: $obtained",
+          s"${munitPrint(clue)}, expected 2 different values: $expected is equal to $obtained",
           obtained,
           expected
         )
