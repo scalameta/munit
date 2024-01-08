@@ -267,7 +267,7 @@ instead:</p>
 </code></pre>
 <p>It's OK to compare two types as long as one argument is a subtype of the other
 type.</p>
-<pre><code class="hljs css language-scala">assertEquals(<span class="hljs-type">Option</span>(<span class="hljs-number">1</span>), <span class="hljs-type">Some</span>(<span class="hljs-number">1</span>)) <span class="hljs-comment">// OK // OK</span>
+<pre><code class="hljs css language-scala">assertEquals(<span class="hljs-type">Option</span>(<span class="hljs-number">1</span>), <span class="hljs-type">Some</span>(<span class="hljs-number">1</span>)) <span class="hljs-comment">// OK</span>
 assertEquals(<span class="hljs-type">Some</span>(<span class="hljs-number">1</span>), <span class="hljs-type">Option</span>(<span class="hljs-number">1</span>)) <span class="hljs-comment">// OK</span>
 </code></pre>
 <p>Use <code>assertEquals[Any, Any]</code> if you think it's OK to compare the two types at
