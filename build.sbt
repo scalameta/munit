@@ -6,7 +6,7 @@ def previousVersion = "0.7.0"
 
 def scala213 = "2.13.13"
 
-def scala212 = "2.12.18"
+def scala212 = "2.12.19"
 
 def scala3 = "3.1.2"
 def junitVersion = "4.13.2"
