@@ -189,14 +189,15 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       expectedExceptionMessage: Option[String],
       body: => Any
   )(implicit T: ClassTag[T], loc: Location): T = {
+    val expectedExceptionMsg =
+      s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully"
     try {
       body
-      fail(
-        s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully"
-      )
+      fail(expectedExceptionMsg)
     } catch {
       case e: FailExceptionLike[_]
-          if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
+          if !T.runtimeClass.isAssignableFrom(e.getClass()) ||
+            e.getMessage.contains(expectedExceptionMsg) =>
         throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
