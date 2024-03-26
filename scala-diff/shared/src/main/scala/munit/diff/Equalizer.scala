@@ -1,4 +1,4 @@
-package munit.internal.difflib
+package munit.diff
 
 trait Equalizer[T] {
   def equals(original: T, revised: T): Boolean

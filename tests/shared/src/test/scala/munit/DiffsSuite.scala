@@ -1,6 +1,6 @@
 package munit
 
-import munit.internal.difflib.Diffs
+import munit.diff.Diffs
 
 class DiffsSuite extends FunSuite { self =>
   test("ansi") {

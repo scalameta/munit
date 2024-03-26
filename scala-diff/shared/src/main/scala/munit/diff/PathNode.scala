@@ -1,4 +1,4 @@
-package munit.internal.difflib
+package munit.diff
 
 sealed abstract class PathNode(val i: Int, val j: Int, val prev: PathNode) {
 
