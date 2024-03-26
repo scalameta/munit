@@ -1,8 +1,8 @@
 package munit
 
 import munit.internal.console.{Lines, Printers, StackTraces}
-import munit.internal.difflib.ComparisonFailExceptionHandler
-import munit.internal.difflib.Diffs
+import munit.diff.ComparisonFailExceptionHandler
+import munit.diff.Diffs
 
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
@@ -54,7 +54,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       Diffs.assertNoDiff(
         obtained,
         expected,
-        ComparisonFailExceptionHandler.fromAssertions(this, Clues.empty),
+        exceptionHandlerFromAssertions(this, Clues.empty),
         munitPrint(clue),
         printObtainedAsStripMargin = true
       )
@@ -287,6 +287,21 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       loc
     )
   }
+
+  private def exceptionHandlerFromAssertions(
+      assertions: Assertions,
+      clues: => Clues
+  ): ComparisonFailExceptionHandler =
+    new ComparisonFailExceptionHandler {
+      def handle(
+          message: String,
+          obtained: String,
+          expected: String,
+          loc: Location
+      ): Nothing = {
+        assertions.failComparison(message, obtained, expected, clues)(loc)
+      }
+    }
 
   private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
     mutable.ListBuffer.empty
