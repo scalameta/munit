@@ -246,6 +246,8 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     )
   )
   .jvmConfigure(_.dependsOn(junit))
+  .dependsOn(munitDiff, munitCore)
+
 lazy val munitJVM = munit.jvm
 lazy val munitJS = munit.js
 lazy val munitNative = munit.native
@@ -289,6 +291,45 @@ lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
+
+lazy val munitCore = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .in(file("munit-core"))
+  .settings(
+    moduleName := "munit-core",
+    sharedSettings,
+    libraryDependencies ++= List(
+      "org.scala-lang" % "scala-reflect" % {
+        if (isScala3Setting.value) scala213
+        else scalaVersion.value
+      } % Provided
+    )
+  )
+  .jvmSettings(
+    sharedJVMSettings
+  )
+  .nativeConfigure(sharedNativeConfigure)
+  .nativeSettings(
+    sharedNativeSettings
+  )
+  .jsConfigure(sharedJSConfigure)
+  .jsSettings(sharedJSSettings)
+
+lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .in(file("scala-diff"))
+  .settings(
+    moduleName := "scala-diff",
+    sharedSettings
+  )
+  .jvmSettings(
+    sharedJVMSettings
+  )
+  .nativeConfigure(sharedNativeConfigure)
+  .nativeSettings(
+    sharedNativeSettings
+  )
+  .jsConfigure(sharedJSConfigure)
+  .jsSettings(sharedJSSettings)
+  .dependsOn(munitCore)
 
 lazy val munitScalacheckJVM = munitScalacheck.jvm
 lazy val munitScalacheckJS = munitScalacheck.js
