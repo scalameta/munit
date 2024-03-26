@@ -1,7 +1,7 @@
-package munit.internal.difflib
+package munit.diff
 
-import munit.internal.console.{AnsiColors, Printers}
-import munit.internal.difflib
+import munit.diff.console.Printers
+import munit.diff.console.AnsiColors
 
 import scala.collection.JavaConverters._
 
@@ -74,11 +74,11 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
       original: Seq[String],
       revised: Seq[String]
   ): String = {
-    val diff = difflib.DiffUtils.diff(original.asJava, revised.asJava)
+    val diff = DiffUtils.diff(original.asJava, revised.asJava)
     val result =
       if (diff.getDeltas.isEmpty) ""
       else {
-        difflib.DiffUtils
+        DiffUtils
           .generateUnifiedDiff(
             "obtained",
             "expected",

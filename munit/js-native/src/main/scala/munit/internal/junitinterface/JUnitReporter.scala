@@ -4,7 +4,7 @@
 
 package munit.internal.junitinterface
 
-import munit.internal.console.AnsiColors
+import munit.diff.console.AnsiColors
 import sbt.testing._
 import munit.internal.PlatformCompat
 

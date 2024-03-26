@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets
 import sbt.testing.Logger
 import scala.util.control.NonFatal
 import java.util.regex.Pattern
-import munit.internal.console.AnsiColors
+import munit.diff.console.AnsiColors
 import munit.internal.PlatformCompat
 import scala.concurrent.Future
 

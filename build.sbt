@@ -214,7 +214,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
     Compile / unmanagedSourceDirectories ++=
-      crossBuildingDirectories("munit", "main").value,
+      crossBuildingDirectories("scala-diff", "main").value,
     libraryDependencies ++= List(
       "org.scala-lang" % "scala-reflect" % {
         if (isScala3Setting.value) scala213
@@ -246,6 +246,8 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     )
   )
   .jvmConfigure(_.dependsOn(junit))
+  .dependsOn(munitDiff)
+
 lazy val munitJVM = munit.jvm
 lazy val munitJS = munit.js
 lazy val munitNative = munit.native
@@ -269,6 +271,28 @@ lazy val plugin = project
     )
   )
   .disablePlugins(MimaPlugin)
+
+lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .in(file("scala-diff"))
+  .settings(
+    moduleName := "scala-diff",
+    sharedSettings,
+    libraryDependencies ++= List(
+      "org.scala-lang" % "scala-reflect" % {
+        if (isScala3Setting.value) scala213
+        else scalaVersion.value
+      } % Provided
+    )
+  )
+  .jvmSettings(
+    sharedJVMSettings
+  )
+  .nativeConfigure(sharedNativeConfigure)
+  .nativeSettings(
+    sharedNativeSettings
+  )
+  .jsConfigure(sharedJSConfigure)
+  .jsSettings(sharedJSSettings)
 
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .dependsOn(munit)

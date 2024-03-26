@@ -1,4 +1,4 @@
-package munit.internal.difflib
+package munit.diff
 
 import java.util
 import java.util.{Collections, Comparator}

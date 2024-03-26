@@ -44,10 +44,16 @@ class Lines extends Serializable {
           .append(format(location.line - 1))
           .append(slice(0))
           .append('\n')
-          .append(AnsiColors.use(AnsiColors.Reversed))
+          .append(
+            munit.diff.console.AnsiColors
+              .use(munit.diff.console.AnsiColors.Reversed)
+          )
           .append(format(location.line))
           .append(slice(1))
-          .append(AnsiColors.use(AnsiColors.Reset))
+          .append(
+            munit.diff.console.AnsiColors
+              .use(munit.diff.console.AnsiColors.Reset)
+          )
         if (slice.length >= 3)
           out
             .append('\n')

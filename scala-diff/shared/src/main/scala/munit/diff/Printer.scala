@@ -1,4 +1,4 @@
-package munit
+package munit.diff
 
 /**
  * Implement this trait to customize the default printer

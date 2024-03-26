@@ -1,7 +1,5 @@
 package munit
 
-import munit.internal.difflib.Diffs
-import munit.internal.difflib.ComparisonFailExceptionHandler
 import scala.annotation.implicitNotFound
 
 /**
@@ -61,7 +59,7 @@ trait Compare[A, B] {
     }
     // Attempt 1: custom pretty-printer that produces multiline output, which is
     // optimized for line-by-line diffing.
-    Diffs.assertNoDiff(
+    DiffsAssetion.assertNoDiff(
       assertions.munitPrint(obtained),
       assertions.munitPrint(expected),
       diffHandler,
@@ -71,7 +69,7 @@ trait Compare[A, B] {
 
     // Attempt 2: try with `.toString` in case `munitPrint()` produces identical
     // formatting for both values.
-    Diffs.assertNoDiff(
+    DiffsAssetion.assertNoDiff(
       obtained.toString(),
       expected.toString(),
       diffHandler,

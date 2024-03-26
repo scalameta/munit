@@ -1,13 +1,16 @@
 package munit
 
-import munit.internal.console.{Lines, Printers, StackTraces}
-import munit.internal.difflib.ComparisonFailExceptionHandler
-import munit.internal.difflib.Diffs
+import munit.internal.console.{Lines, StackTraces}
+import munit.internal.console.Printers
+import munit.diff.Printer
+import munit.Clue
+import munit.Clues
+import munit.diff.EmptyPrinter
 
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 import scala.collection.mutable
-import munit.internal.console.AnsiColors
+import munit.diff.console.AnsiColors
 import org.junit.AssumptionViolatedException
 import munit.internal.MacroCompat
 
@@ -51,10 +54,10 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       clue: => Any = "diff assertion failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
-      Diffs.assertNoDiff(
+      DiffsAssetion.assertNoDiff(
         obtained,
         expected,
-        ComparisonFailExceptionHandler.fromAssertions(this, Clues.empty),
+        exceptionHandlerFromAssertions(this, Clues.empty),
         munitPrint(clue),
         printObtainedAsStripMargin = true
       )
@@ -290,6 +293,21 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       loc
     )
   }
+
+  private def exceptionHandlerFromAssertions(
+      assertions: Assertions,
+      clues: => Clues
+  ): ComparisonFailExceptionHandler =
+    new ComparisonFailExceptionHandler {
+      def handle(
+          message: String,
+          obtained: String,
+          expected: String,
+          loc: Location
+      ): Nothing = {
+        assertions.failComparison(message, obtained, expected, clues)(loc)
+      }
+    }
 
   private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
     mutable.ListBuffer.empty
