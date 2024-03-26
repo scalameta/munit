@@ -1,3 +1,0 @@
-package munit
-
-trait PlatformSuite
