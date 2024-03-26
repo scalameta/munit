@@ -213,8 +213,6 @@ lazy val junit = project
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     sharedSettings,
-    Compile / unmanagedSourceDirectories ++=
-      crossBuildingDirectories("munit", "main").value,
     libraryDependencies ++= List(
       "org.scala-lang" % "scala-reflect" % {
         if (isScala3Setting.value) scala213
@@ -297,6 +295,8 @@ lazy val munitCore = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     moduleName := "munit-core",
     sharedSettings,
+    Compile / unmanagedSourceDirectories ++=
+      crossBuildingDirectories("munit-core", "main").value,
     libraryDependencies ++= List(
       "org.scala-lang" % "scala-reflect" % {
         if (isScala3Setting.value) scala213
