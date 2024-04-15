@@ -34,7 +34,7 @@ object MacroCompat {
   }
 
   trait CompileErrorMacro {
-    inline def compileErrors(inline code: String): String = {
+    transparent inline def compileErrors(inline code: String): String = {
       val errors = scala.compiletime.testing.typeCheckErrors(code)
       errors
         .map { error =>
