@@ -196,8 +196,10 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       fail(expectedExceptionMsg)
     } catch {
       case e: FailExceptionLike[_]
-          if !T.runtimeClass.isAssignableFrom(e.getClass()) ||
-            e.getMessage.contains(expectedExceptionMsg) =>
+          if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
+        throw e
+      case e: FailExceptionLike[_]
+          if e.getMessage.contains(expectedExceptionMsg) =>
         throw e
       case NonFatal(e) =>
         if (T.runtimeClass.isAssignableFrom(e.getClass())) {
