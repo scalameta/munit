@@ -8,7 +8,7 @@ class FailExceptionSuite extends BaseSuite {
     assert(clue(e).isInstanceOf[Serializable])
   }
 
-test("assertion-error-no-exception") {
+  test("assertion-error-no-exception") {
     try {
       intercept[AssertionError] {
         println("throwing no exception!")
