@@ -15,6 +15,7 @@ import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
 
 import java.lang.reflect.Modifier
+import scala.annotation.nowarn
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -29,7 +30,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     with Configurable {
 
   def this(cls: Class[_ <: Suite]) =
-    this(MUnitRunner.ensureEligibleConstructor(cls), () => cls.newInstance())
+    this(MUnitRunner.ensureEligibleConstructor(cls), () => cls.getDeclaredConstructor().newInstance())
 
   val suite: Suite = newInstance()
 
@@ -92,7 +93,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         val desc = Description.createTestDescription(
           cls,
           testName,
-          test.annotations: _*
+          test.annotations.toIndexedSeq: _*
         )
         desc
       }
@@ -168,6 +169,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     loop(futures, mutable.ListBuffer.empty)
   }
 
+  @nowarn
   private def munitTimeout(): Option[Duration] = {
     suite match {
       case funSuite: FunSuite => Some(funSuite.munitTimeout)
@@ -245,7 +247,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       test: Test
   ): Future[BeforeAllResult] = {
     val context = new BeforeEach(test)
-    val fixtures = mutable.ListBuffer.empty[AnyFixture[_]]
     sequenceFutures(
       munitFixtures.iterator.map(f =>
         valueTransform(() => f.beforeEach(context)).map(_ => f)

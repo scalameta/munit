@@ -63,7 +63,7 @@ class PrintersSuite extends FunSuite { self =>
 
   check(
     "list",
-    List(1, 2, 3, List(4, 5, List(6, 7))),
+    List[Any](1, 2, 3, List[Any](4, 5, List(6, 7))),
     """|List(
        |  1,
        |  2,

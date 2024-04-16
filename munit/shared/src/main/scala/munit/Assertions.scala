@@ -4,9 +4,10 @@ import munit.internal.console.{Lines, Printers, StackTraces}
 import munit.internal.difflib.ComparisonFailExceptionHandler
 import munit.internal.difflib.Diffs
 
+import scala.annotation.nowarn
+import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
-import scala.collection.mutable
 import munit.internal.console.AnsiColors
 import org.junit.AssumptionViolatedException
 import munit.internal.MacroCompat
@@ -37,7 +38,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   def assume(
       cond: Boolean,
       clue: => Any = "assumption failed"
-  )(implicit loc: Location): Unit = {
+  )(implicit @nowarn loc: Location): Unit = {
     StackTraces.dropInside {
       if (!cond) {
         throw new AssumptionViolatedException(munitPrint(clue))
@@ -95,7 +96,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     StackTraces.dropInside {
       if (!compare.isEqual(obtained, expected)) {
         (obtained, expected) match {
-          case (a: Array[_], b: Array[_]) if a.sameElements(b) =>
+          case (a: Array[_], b: Array[_]) if a.sameElements[Any](b) =>
             // Special-case error message when comparing arrays. See
             // https://github.com/scalameta/munit/pull/393 and
             // https://github.com/scalameta/munit/issues/339 for a related

@@ -1,9 +1,12 @@
 package munit
 
+import language.implicitConversions
+
 import org.scalacheck.Prop
 import org.scalacheck.{Test => ScalaCheckTest}
 import org.scalacheck.util.Pretty
 import org.scalacheck.rng.Seed
+import scala.annotation.nowarn
 import scala.util.Success
 import scala.util.Failure
 import scala.util.Try
@@ -25,6 +28,7 @@ trait ScalaCheckSuite extends FunSuite {
   // Allow property bodies of type Unit
   // This is done to support using MUnit assertions in property bodies
   // instead of returning a Boolean.
+  @nowarn("msg=used")
   implicit def unitToProp(unit: Unit): Prop = Prop.passed
 
   override def munitTestTransforms: List[TestTransform] =

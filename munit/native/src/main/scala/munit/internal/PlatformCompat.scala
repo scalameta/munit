@@ -7,6 +7,7 @@ import scala.scalanative.reflect.Reflect
 import sbt.testing.Task
 import sbt.testing.EventHandler
 import sbt.testing.Logger
+import scala.annotation.nowarn
 import scala.concurrent.Await
 import scala.concurrent.Awaitable
 import scala.concurrent.duration.Duration
@@ -26,6 +27,7 @@ object PlatformCompat {
     task.execute(eventHandler, loggers)
     Future.successful(())
   }
+  @nowarn("msg=used")
   def waitAtMost[T](
       startFuture: () => Future[T],
       duration: Duration,
@@ -47,6 +49,7 @@ object PlatformCompat {
   def isJS: Boolean = false
   def isNative: Boolean = true
 
+  @nowarn("msg=used")
   def newRunner(
       taskDef: TaskDef,
       classLoader: ClassLoader

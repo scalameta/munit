@@ -7,7 +7,6 @@ package munit.internal.junitinterface
 import munit.internal.PlatformCompat
 import org.junit.runner.notification.RunNotifier
 import sbt.testing._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /* Implementation note: In JUnitTask we use Future[Try[Unit]] instead of simply
  * Future[Unit]. This is to prevent Scala's Future implementation to box/wrap

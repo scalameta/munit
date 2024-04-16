@@ -4,6 +4,7 @@ import munit.Clue
 import munit.Location
 import scala.quoted._
 import scala.language.experimental.macros
+import scala.language.implicitConversions
 
 object MacroCompat {
 
@@ -15,7 +16,7 @@ object MacroCompat {
   def locationImpl()(using Quotes): Expr[Location] = {
     import quotes.reflect._
     val pos = Position.ofMacroExpansion
-    val path = pos.sourceFile.jpath.toString
+    val path = pos.sourceFile.path
     val startLine = pos.startLine + 1
     '{ new Location(${ Expr(path) }, ${ Expr(startLine) }) }
   }

@@ -8,7 +8,7 @@ def scala213 = "2.13.13"
 
 def scala212 = "2.12.19"
 
-def scala3 = "3.1.2"
+def scala3 = "3.3.3"
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.32.1"
 inThisBuild(
@@ -154,7 +154,16 @@ val sharedJVMSettings: List[Def.Setting[_]] = List(
 
 val sharedJSSettings: List[Def.Setting[_]] = List(
   skipIdeaSettings,
-  crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0."))
+  crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0.")),
+  scalacOptions ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, _)) =>
+        List(
+          "-P:scalajs:nowarnGlobalExecutionContext",
+        )
+      case _ => Nil
+    }
+  }
 )
 val sharedJSConfigure: Project => Project =
   _.disablePlugins(MimaPlugin)
@@ -176,17 +185,40 @@ val sharedSettings = List(
           "-Ywarn-unused-import",
           "-target:jvm-1.8"
         )
-      case Some((major, _)) if major != 2 =>
+      case Some((2, 12)) =>
         List(
-          "-language:implicitConversions"
+          "-feature",
+          "-target:jvm-1.8",
+          "-Ywarn-unused-import",
+          "-Yrangepos"
+        )
+      case Some((2, _)) =>
+        List(
+          "-deprecation", // enable deprecation first because it sets -Wconf:cat=deprecation:w
+          "-feature",
+          "--release:8",
+          "-unchecked",
+          "-Wconf:cat=deprecation&origin=scala.collection.JavaConverters:s",
+          "-Wconf:cat=deprecation&origin=scala.reflect.api.Trees.New:s", // no quasiquotes
+          "-Wconf:cat=deprecation&origin=scala.reflect.api.Position.lineContent:s", // use it anyway
+          "-Wconf:msg=parameter:s", // quash other messages about unused parameters
+          "-Wunused:params",
+          //"-Wconf:cat=unused-privates&msg=never used:s",
+          //"-Wconf:cat=unused-params&msg=never used:s",
+          //"-Werror",
+          "-Xlint:-deprecation,_",
+          "-Yrangepos", // default
         )
       case _ =>
         List(
-          "-target:jvm-1.8",
-          "-Yrangepos",
-          // -Xlint is unusable because of
-          // https://github.com/scala/bug/issues/10448
-          "-Ywarn-unused:imports"
+          "-deprecation",
+          "-feature",
+          "-java-output-version:8",
+          "-Wconf:cat=deprecation&msg=Converters:s",
+          "-Wconf:cat=deprecation&msg=New:s", // no quasiquotes
+          "-Wconf:cat=deprecation&msg=Position:s",
+          //"-Wunused:all",
+          //"-language:implicitConversions"
         )
     }
   }

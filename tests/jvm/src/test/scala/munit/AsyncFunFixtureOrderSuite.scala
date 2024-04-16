@@ -4,7 +4,7 @@ import scala.concurrent.Future
 import scala.concurrent.Promise
 
 class AsyncFunFixtureOrderSuite extends FunSuite {
-  val latch: Promise[Unit] = Promise[Unit]
+  val latch: Promise[Unit] = Promise[Unit]()
   var completedFromTest: Option[Boolean] = None
   var completedFromTeardown: Option[Boolean] = None
 
