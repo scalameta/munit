@@ -270,32 +270,8 @@ lazy val plugin = project
   )
   .disablePlugins(MimaPlugin)
 
-lazy val munitScalacheck = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .in(file("munit-scalacheck"))
-  .dependsOn(munit)
-  .settings(
-    moduleName := "munit-scalacheck",
-    sharedSettings,
-    libraryDependencies += {
-      "org.scalacheck" %%% "scalacheck" % "1.18.0"
-    }
-  )
-  .jvmSettings(
-    sharedJVMSettings
-  )
-  .nativeConfigure(sharedNativeConfigure)
-  .nativeSettings(
-    sharedNativeSettings
-  )
-  .jsConfigure(sharedJSConfigure)
-  .jsSettings(sharedJSSettings)
-
-lazy val munitScalacheckJVM = munitScalacheck.jvm
-lazy val munitScalacheckJS = munitScalacheck.js
-lazy val munitScalacheckNative = munitScalacheck.native
-
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .dependsOn(munit, munitScalacheck)
+  .dependsOn(munit)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     sharedSettings,
@@ -338,13 +314,14 @@ lazy val testsNative = tests.native
 
 lazy val docs = project
   .in(file("munit-docs"))
-  .dependsOn(munitJVM, munitScalacheckJVM)
+  .dependsOn(munitJVM)
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .disablePlugins(MimaPlugin)
   .settings(
     sharedSettings,
     publish / skip := true,
     moduleName := "munit-docs",
+    libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.0.0-M11",
     crossScalaVersions := List(scala213, scala212),
     test := {},
     mdocOut :=
