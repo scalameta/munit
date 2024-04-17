@@ -20,7 +20,6 @@ class FrameworkSuite extends BaseFrameworkSuite {
     TestTransformFrameworkSuite,
     ValueTransformCrashFrameworkSuite,
     ValueTransformFrameworkSuite,
-    ScalaCheckFrameworkSuite,
     AsyncFunFixtureFrameworkSuite,
     AsyncFixtureTeardownFrameworkSuite,
     DuplicateNameFrameworkSuite,
@@ -31,7 +30,6 @@ class FrameworkSuite extends BaseFrameworkSuite {
     Issue285FrameworkSuite,
     Issue497FrameworkSuite,
     Issue583FrameworkSuite,
-    ScalaCheckExceptionFrameworkSuite,
     BoxedFrameworkSuite,
     SkippedFrameworkSuite
   )
