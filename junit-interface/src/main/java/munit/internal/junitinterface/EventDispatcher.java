@@ -75,9 +75,11 @@ final class EventDispatcher extends RunListener {
         failure.getDescription(),
         new ErrorEvent(failure, Status.Skipped) {
           void logTo(RichLogger logger) {
-            if (settings.verbose) {
-              logger.info(Ansi.c("==> i " + failure.getDescription().getMethodName(), WARNMSG));
-            }
+            logger.warn(
+                    settings.buildTestResult(Status.Skipped)
+                            + ansiName
+                            + Ansi.c(" skipped", SKIPPED)
+                            + durationSuffix());
           }
         });
   }
@@ -134,7 +136,7 @@ final class EventDispatcher extends RunListener {
             logger.warn(
                 settings.buildTestResult(Status.Ignored)
                     + ansiName
-                    + " ignored"
+                    + Ansi.c(" ignored", SKIPPED)
                     + durationSuffix());
           }
         });
@@ -163,7 +165,7 @@ final class EventDispatcher extends RunListener {
   private Long elapsedTime(Description description) {
     Long startTime = startTimes.get(description.getMethodName());
     if (startTime == null) {
-      return 0l;
+      return 0L;
     } else {
       return System.currentTimeMillis() - startTime;
     }

@@ -20,6 +20,8 @@ class BaseSuite extends FunSuite {
             test.tag(Ignore)
           } else if (test.tags(OnlyJVM) && !PlatformCompat.isJVM) {
             test.tag(Ignore)
+          } else if (test.tags(NoJVM) && PlatformCompat.isJVM) {
+            test.tag(Ignore)
           } else if (test.tags(NoNative) && PlatformCompat.isNative) {
             test.tag(Ignore)
           } else {
