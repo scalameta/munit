@@ -30,9 +30,7 @@ final class JUnitReporter(
   }
 
   def reportTestIgnored(method: String): Unit = {
-    if (settings.verbose) {
-      log(Info, AnsiColors.c(s"==> i $method ignored", AnsiColors.YELLOW))
-    }
+    log(Info, AnsiColors.c(s"==> i $method ignored", AnsiColors.YELLOW))
     emitEvent(method, Status.Ignored)
   }
   def reportAssumptionViolation(
@@ -40,9 +38,7 @@ final class JUnitReporter(
       timeInSeconds: Double,
       e: Throwable
   ): Unit = {
-    if (settings.verbose) {
-      log(Info, AnsiColors.c(s"==> s $method skipped", AnsiColors.YELLOW))
-    }
+    log(Info, AnsiColors.c(s"==> s $method skipped", AnsiColors.YELLOW))
     emitEvent(method, Status.Skipped, new OptionalThrowable(e))
   }
   def reportTestPassed(method: String, elapsedMillis: Double): Unit = {

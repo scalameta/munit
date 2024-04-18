@@ -27,33 +27,35 @@ object SkippedFrameworkSuite
       format = SbtFormat
     )
 
-object SkippedFrameworkStdoutOtherSuite
+object SkippedFrameworkStdoutJsNativeSuite
     extends FrameworkTest(
       classOf[SkippedFrameworkSuite],
       """|munit.SkippedFrameworkSuite:
          |  + pass <elapsed time>
+         |==> i ignore ignored
          |  + assume(true) <elapsed time>
+         |==> s assume(false) skipped
          |""".stripMargin,
       format = StdoutFormat,
       tags = Set(NoJVM)
     )
 
-object SkippedFrameworkStdoutOtherVerboseSuite
-  extends FrameworkTest(
-    classOf[SkippedFrameworkSuite],
-    """|munit.SkippedFrameworkSuite:
-       |pass started
-       |  + pass <elapsed time>
-       |==> i ignore ignored
-       |assume(true) started
-       |  + assume(true) <elapsed time>
-       |assume(false) started
-       |==> s assume(false) skipped
-       |""".stripMargin,
-    format = StdoutFormat,
-    tags = Set(NoJVM),
-    arguments = Array("-v")
-  )
+object SkippedFrameworkStdoutJsNativeVerboseSuite
+    extends FrameworkTest(
+      classOf[SkippedFrameworkSuite],
+      """|munit.SkippedFrameworkSuite:
+         |pass started
+         |  + pass <elapsed time>
+         |==> i ignore ignored
+         |assume(true) started
+         |  + assume(true) <elapsed time>
+         |assume(false) started
+         |==> s assume(false) skipped
+         |""".stripMargin,
+      format = StdoutFormat,
+      tags = Set(NoJVM),
+      arguments = Array("-v")
+    )
 
 object SkippedFrameworkStdoutJVMSuite
     extends FrameworkTest(
@@ -62,6 +64,7 @@ object SkippedFrameworkStdoutJVMSuite
          |  + pass <elapsed time>
          |==> i munit.SkippedFrameworkSuite.ignore ignored <elapsed time>
          |  + assume(true) <elapsed time>
+         |==> s munit.SkippedFrameworkSuite.assume(false) skipped <elapsed time>
          |""".stripMargin,
       format = StdoutFormat,
       tags = Set(OnlyJVM)
@@ -78,7 +81,7 @@ object SkippedFrameworkStdoutJVMVerboseSuite
          |munit.SkippedFrameworkSuite.assume(true) started
          |  + assume(true) <elapsed time>
          |munit.SkippedFrameworkSuite.assume(false) started
-         |==> i assume(false)
+         |==> s munit.SkippedFrameworkSuite.assume(false) skipped <elapsed time>
          |Test run munit.SkippedFrameworkSuite finished: 0 failed, 1 ignored, 3 total, <elapsed time>
          |""".stripMargin,
       format = StdoutFormat,
