@@ -9,6 +9,7 @@ Feel free to add your project to this list by submitting a pull request
 - [discipline-munit](https://github.com/typelevel/discipline-munit): MUnit binding for Typelevel Discipline
 - [http4s-munit](https://github.com/alejandrohdezma/http4s-munit): Integration library between MUnit and http4s
 - [munit-cats-effect](https://github.com/typelevel/munit-cats-effect): Integration library for MUnit & cats-effect
+- [munit-scalacheck](https://github.com/scalameta/munit-scalacheck): Scalacheck integration for MUnit
 - [munit-snapshot](https://github.com/lolgab/munit-snapshot): Snapshot testing for MUnit
 - [munit-zio](https://github.com/poslegm/munit-zio): MUnit and ZIO integration
 - [pact4s](https://github.com/jbwheatley/pact4s): Consumer driven contract testing

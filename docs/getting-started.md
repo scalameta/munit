@@ -45,12 +45,26 @@ object test extends Tests with TestModule.Munit {
 }
 ```
 
-| Scala Version | JVM | Scala.js (0.6.x) | Scala.js (1.x) | Native (0.4.x) |
-| ------------- | :-: | :--------------: | :------------: | :------------: |
-| 2.11.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
-| 2.12.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
-| 2.13.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |
-| 3.0.x         | ✅  |       n/a        |       ✅       |      n/a       |
+**Maven**
+
+```xml
+<dependency>
+  <groupId>org.scalameta</groupId>
+  <artifactId>munit_3</artifactId>
+  <version>@STABLE_VERSION@</version>
+  <scope>test</scope>
+</dependency>
+```
+The complete setup can be seen in a Maven g8 template [scalameta/maven-scala-seed.g8](https://github.com/scalameta/maven-scala-seed.g8)
+
+### Supported Platforms
+
+| Scala Version | JVM | Scala.js (0.6.x) | Scala.js (1.x) | Native (0.4.x) | Native (0.5.x) |
+|---------------| :-: | :--------------: | :------------: | :------------: | :------------: |
+| 2.11.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |      n/a       |
+| 2.12.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |       ✅       |
+| 2.13.x        | ✅  | ✅ until 0.7.16  |       ✅       |       ✅       |       ✅       |
+| 3.x           | ✅  |       n/a        |       ✅       |      n/a       |       ✅       |
 
 Next, write a test suite.
 
@@ -84,6 +98,7 @@ Use `testOnly` to run only a single test suite in the sbt shell.
 ### Run tests in IntelliJ
 
 MUnit test suites can be executed from in IntelliJ like normal test suites.
+Please ensure that the JUnit plugin is enabled.
 
 ![Running MUnit from IntelliJ](https://i.imgur.com/oAA2ZeQ.png)
 
