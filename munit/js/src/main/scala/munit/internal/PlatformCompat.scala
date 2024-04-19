@@ -36,16 +36,20 @@ object PlatformCompat {
       ec: ExecutionContext
   ): Future[T] = {
     val onComplete = Promise[T]()
-    val timeoutHandle = timers.setTimeout(duration.toMillis) {
-      onComplete.tryFailure(
-        new TimeoutException(s"test timed out after $duration")
-      )
-    }
+    val timeoutHandle =
+      if (duration.isFinite)
+        Some(timers.setTimeout(duration.toMillis) {
+          onComplete.tryFailure(
+            new TimeoutException(s"test timed out after $duration")
+          )
+        })
+      else
+        None
     ec.execute(new Runnable {
       def run(): Unit = {
         startFuture().onComplete { result =>
           onComplete.tryComplete(result)
-          timers.clearTimeout(timeoutHandle)
+          timeoutHandle.foreach(timers.clearTimeout(_))
         }(ec)
       }
     })
