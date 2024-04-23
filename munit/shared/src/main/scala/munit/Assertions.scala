@@ -54,7 +54,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       clue: => Any = "diff assertion failed"
   )(implicit loc: Location): Unit = {
     StackTraces.dropInside {
-      DiffsAssetion.assertNoDiff(
+      Diffs.assertNoDiff(
         obtained,
         expected,
         exceptionHandlerFromAssertions(this, Clues.empty),

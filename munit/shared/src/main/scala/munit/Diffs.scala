@@ -2,7 +2,7 @@ package munit
 
 import munit.diff.Diff
 
-object DiffsAssetion {
+object Diffs {
 
   def assertNoDiff(
       obtained: String,

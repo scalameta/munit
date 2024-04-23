@@ -59,7 +59,7 @@ trait Compare[A, B] {
     }
     // Attempt 1: custom pretty-printer that produces multiline output, which is
     // optimized for line-by-line diffing.
-    DiffsAssetion.assertNoDiff(
+    Diffs.assertNoDiff(
       assertions.munitPrint(obtained),
       assertions.munitPrint(expected),
       diffHandler,
@@ -69,7 +69,7 @@ trait Compare[A, B] {
 
     // Attempt 2: try with `.toString` in case `munitPrint()` produces identical
     // formatting for both values.
-    DiffsAssetion.assertNoDiff(
+    Diffs.assertNoDiff(
       obtained.toString(),
       expected.toString(),
       diffHandler,
