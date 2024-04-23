@@ -3,8 +3,6 @@ package munit
 import munit.internal.console.{Lines, StackTraces}
 import munit.internal.console.Printers
 import munit.diff.Printer
-import munit.Clue
-import munit.Clues
 import munit.diff.EmptyPrinter
 
 import scala.reflect.ClassTag
