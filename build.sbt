@@ -1,4 +1,3 @@
-import com.typesafe.tools.mima.core._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
@@ -66,81 +65,7 @@ def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
 lazy val skipIdeaSettings =
   SettingKey[Boolean]("ide-skip-project").withRank(KeyRanks.Invisible) := true
 lazy val mimaEnable: List[Def.Setting[_]] = List(
-  mimaBinaryIssueFilters ++= List(
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.MUnitRunner.descriptions"
-    ),
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.MUnitRunner.testNames"
-    ),
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.MUnitRunner.munitTests"
-    ),
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.ValueTransforms.munitTimeout"
-    ),
-    ProblemFilters.exclude[MissingTypesProblem]("munit.FailException"),
-    ProblemFilters.exclude[MissingTypesProblem]("munit.FailSuiteException"),
-    ProblemFilters.exclude[MissingTypesProblem](
-      "munit.TestValues$FlakyFailure"
-    ),
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.internal.junitinterface.JUnitComputer.this"
-    ),
-    // Known breaking changes for MUnit v1
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.Assertions.assertNotEquals"
-    ),
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.Assertions.assertEquals"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.Assertions.assertNotEquals"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.Assertions.assertEquals"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.FunSuite.assertNotEquals"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.FunSuite.assertEquals"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.FunSuite.munitTestTransform"
-    ),
-    ProblemFilters.exclude[MissingClassProblem]("munit.GenericAfterEach"),
-    ProblemFilters.exclude[MissingClassProblem]("munit.GenericBeforeEach"),
-    ProblemFilters.exclude[MissingClassProblem]("munit.GenericTest"),
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.MUnitRunner.createTestDescription"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.Suite.beforeEach"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.Suite.afterEach"
-    ),
-    ProblemFilters.exclude[MissingClassProblem]("munit.Suite$Fixture"),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.TestTransforms#TestTransform.apply"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.FunFixtures#FunFixture.this"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.SuiteTransforms#SuiteTransform.this"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.TestTransforms#TestTransform.this"
-    ),
-    ProblemFilters.exclude[IncompatibleMethTypeProblem](
-      "munit.ValueTransforms#ValueTransform.this"
-    ),
-    ProblemFilters.exclude[DirectMissingMethodProblem](
-      "munit.ScalaCheckSuite.unitToProp"
-    )
-  ),
+  mimaBinaryIssueFilters ++= MimaExclusions.list,
   mimaPreviousArtifacts := {
     if (crossPaths.value)
       Set("org.scalameta" %% moduleName.value % previousVersion)
@@ -293,6 +218,8 @@ lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
+  // TODO Reenable on 1.0.0
+  .disablePlugins(MimaPlugin)
 
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .dependsOn(munit)
