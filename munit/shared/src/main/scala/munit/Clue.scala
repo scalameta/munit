@@ -12,5 +12,6 @@ class Clue[+T](
 object Clue extends MacroCompat.ClueMacro {
   @deprecated("use fromValue instead", "1.0.0")
   def empty[T](value: T): Clue[T] = fromValue(value)
-  def fromValue[T](value: T): Clue[T] = new Clue("", value, "")
+  def fromValue[T](value: T): Clue[T] =
+    new Clue("", value, "")
 }

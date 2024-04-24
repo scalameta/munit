@@ -1,29 +1,29 @@
-package munit.internal.difflib
+package munit.diff
 
 import java.util
 
 class MyersDiff[T](equalizer: Equalizer[T])
-    extends munit.internal.difflib.DiffAlgorithm[T] {
+    extends munit.diff.DiffAlgorithm[T] {
   def this() = this(Equalizer.default[T])
   override def diff(
       original: util.List[T],
       revised: util.List[T]
-  ): munit.internal.difflib.Patch[T] = {
+  ): munit.diff.Patch[T] = {
     try {
       buildRevision(buildPath(original, revised), original, revised)
     } catch {
       case e: DifferentiationFailedException =>
         e.printStackTrace()
-        new munit.internal.difflib.Patch[T]()
+        new munit.diff.Patch[T]()
     }
   }
   private def buildRevision(
       _path: PathNode,
       orig: util.List[T],
       rev: util.List[T]
-  ): munit.internal.difflib.Patch[T] = {
+  ): munit.diff.Patch[T] = {
     var path = _path
-    val patch = new munit.internal.difflib.Patch[T]
+    val patch = new munit.diff.Patch[T]
     if (path.isSnake) path = path.prev
     while (
       path != null &&
@@ -40,22 +40,22 @@ class MyersDiff[T](equalizer: Equalizer[T])
       val ianchor = path.i
       val janchor = path.j
       val original =
-        new munit.internal.difflib.Chunk[T](
+        new munit.diff.Chunk[T](
           ianchor,
           copyOfRange(orig, ianchor, i)
         )
       val revised =
-        new munit.internal.difflib.Chunk[T](
+        new munit.diff.Chunk[T](
           janchor,
           copyOfRange(rev, janchor, j)
         )
-      val delta: munit.internal.difflib.Delta[T] =
+      val delta: munit.diff.Delta[T] =
         if (original.size == 0 && revised.size != 0) {
-          new munit.internal.difflib.InsertDelta[T](original, revised)
+          new munit.diff.InsertDelta[T](original, revised)
         } else if (original.size > 0 && revised.size == 0) {
-          new munit.internal.difflib.DeleteDelta[T](original, revised)
+          new munit.diff.DeleteDelta[T](original, revised)
         } else {
-          new munit.internal.difflib.ChangeDelta[T](original, revised)
+          new munit.diff.ChangeDelta[T](original, revised)
         }
       patch.addDelta(delta)
       if (path.isSnake) {

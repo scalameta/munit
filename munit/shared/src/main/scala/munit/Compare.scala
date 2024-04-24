@@ -1,7 +1,5 @@
 package munit
 
-import munit.internal.difflib.Diffs
-import munit.internal.difflib.ComparisonFailExceptionHandler
 import scala.annotation.implicitNotFound
 
 /**

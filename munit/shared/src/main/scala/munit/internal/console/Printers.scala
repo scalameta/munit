@@ -1,13 +1,18 @@
 // Adaptation of https://github.com/lihaoyi/PPrint/blob/e6a918c259ed7ae1998bbf58c360334a3f0157ca/pprint/src/pprint/Walker.scala
 package munit.internal.console
 
-import munit.internal.Compat
-import munit.{EmptyPrinter, Location, Printable, Printer}
-
-import scala.annotation.switch
+import munit.Location
+import munit.diff.Printer
+import munit.diff.EmptyPrinter
+import munit.diff.console.{Printers => DiffPrinters}
 import munit.Clues
+import munit.Printable
+import munit.internal.Compat
 
 object Printers {
+
+  import DiffPrinters._
+
   def log(any: Any, printer: Printer = EmptyPrinter)(implicit
       loc: Location
   ): Unit = {
@@ -123,7 +128,7 @@ object Printers {
       }
     }
     loop(any, indent = 0)
-    AnsiColors.filterAnsi(out.toString())
+    munit.diff.console.AnsiColors.filterAnsi(out.toString())
   }
 
   private def printApply[T](
@@ -163,31 +168,6 @@ object Printers {
     }
   }
 
-  private def printString(
-      string: String,
-      out: StringBuilder,
-      printer: Printer
-  ): Unit = {
-    val isMultiline = printer.isMultiline(string)
-    if (isMultiline) {
-      out.append('"')
-      out.append('"')
-      out.append('"')
-      out.append(string)
-      out.append('"')
-      out.append('"')
-      out.append('"')
-    } else {
-      out.append('"')
-      var i = 0
-      while (i < string.length()) {
-        printChar(string.charAt(i), out)
-        i += 1
-      }
-      out.append('"')
-    }
-  }
-
   /**
    * Pretty-prints this string with non-visible characters escaped.
    *
@@ -215,25 +195,5 @@ object Printers {
     }
     out.toString()
   }
-
-  private def printChar(
-      c: Char,
-      sb: StringBuilder,
-      isEscapeUnicode: Boolean = true
-  ): Unit =
-    (c: @switch) match {
-      case '"'  => sb.append("\\\"")
-      case '\\' => sb.append("\\\\")
-      case '\b' => sb.append("\\b")
-      case '\f' => sb.append("\\f")
-      case '\n' => sb.append("\\n")
-      case '\r' => sb.append("\\r")
-      case '\t' => sb.append("\\t")
-      case c =>
-        val isNonReadableAscii = c < ' ' || (c > '~' && isEscapeUnicode)
-        if (isNonReadableAscii && !Character.isLetter(c))
-          sb.append("\\u%04x".format(c.toInt))
-        else sb.append(c)
-    }
 
 }

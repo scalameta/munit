@@ -1,4 +1,4 @@
-package munit.internal.console
+package munit.diff.console
 
 object AnsiColors {
   val LightRed = "\u001b[91m"
