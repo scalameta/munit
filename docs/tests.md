@@ -132,7 +132,7 @@ Override `printer` to customize the comparison of two values :
 ```scala mdoc
 import java.time.Instant
 import munit.FunSuite
-import munit.Printer
+import munit.diff.Printer
 
 class CompareDatesOnlyTest extends FunSuite {
   override val printer = Printer.apply {
@@ -152,7 +152,7 @@ or to customize the printed clue in case of a failure :
 
 ```scala mdoc
 import munit.FunSuite
-import munit.Printer
+import munit.diff.Printer
 
 class CustomListOfCharPrinterTest extends FunSuite {
   override val printer = Printer.apply {

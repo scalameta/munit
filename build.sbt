@@ -273,9 +273,9 @@ lazy val plugin = project
   .disablePlugins(MimaPlugin)
 
 lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .in(file("scala-diff"))
+  .in(file("munit-diff"))
   .settings(
-    moduleName := "scala-diff",
+    moduleName := "munit-diff",
     sharedSettings,
     libraryDependencies ++= List(
       "org.scala-lang" % "scala-reflect" % {
