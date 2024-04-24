@@ -12,12 +12,6 @@ trait FunFixtures { self: BaseFunSuite =>
       val setup: TestOptions => Future[T],
       val teardown: T => Future[Unit]
   )(implicit dummy: DummyImplicit) { fixture =>
-    @deprecated("Use `FunFixture(...)` without `new` instead", "0.7.2")
-    def this(setup: TestOptions => T, teardown: T => Unit) =
-      this(
-        (options: TestOptions) => Future(setup(options))(munitExecutionContext),
-        (argument: T) => Future(teardown(argument))(munitExecutionContext)
-      )
 
     def test(name: String)(
         body: T => Any
