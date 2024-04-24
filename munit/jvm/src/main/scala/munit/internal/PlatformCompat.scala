@@ -43,13 +43,7 @@ object PlatformCompat {
     task.execute(eventHandler, loggers)
     Future.successful(())
   }
-  @deprecated("use the overload with an explicit ExecutionContext", "1.0.0")
-  def waitAtMost[T](
-      future: Future[T],
-      duration: Duration
-  ): Future[T] = {
-    waitAtMost(() => future, duration, ExecutionContext.global)
-  }
+
   def waitAtMost[T](
       startFuture: () => Future[T],
       duration: Duration,

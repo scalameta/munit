@@ -3,6 +3,35 @@ import com.typesafe.tools.mima.core._
 object MimaExclusions {
 
   val list = List(
+    ProblemFilters.exclude[DirectMissingMethodProblem]("munit.Clue.empty"),
+    ProblemFilters.exclude[DirectMissingMethodProblem]("munit.Clue.empty"),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.FunFixtures#FunFixture.this"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.MacroCompat.compileErrorsImpl"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.MacroCompat.clueImpl"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.MacroCompat.locationImpl"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.MacroCompat.locationImpl"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.MacroCompat.clueImpl"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.MacroCompat.compileErrorsImpl"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.PlatformCompat.waitAtMost"
+    ),
+    ProblemFilters.exclude[DirectMissingMethodProblem](
+      "munit.internal.PlatformCompat.waitAtMost"
+    ),
     ProblemFilters.exclude[MissingClassProblem]("munit.EmptyPrinter"),
     ProblemFilters.exclude[MissingClassProblem]("munit.EmptyPrinter$"),
     ProblemFilters.exclude[MissingClassProblem]("munit.Printer"),
