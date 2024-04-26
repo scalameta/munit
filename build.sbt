@@ -7,7 +7,7 @@ def scala213 = "2.13.13"
 
 def scala212 = "2.12.19"
 
-def scala3 = "3.3.3"
+def scala3 = "3.4.2-RC1"
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.36.1"
 inThisBuild(
