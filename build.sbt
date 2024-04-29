@@ -272,7 +272,7 @@ lazy val docs = project
     sharedSettings,
     publish / skip := true,
     moduleName := "munit-docs",
-    libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.0.0-M12",
+    libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.0.0-RC1",
     crossScalaVersions := List(scala213, scala212),
     test := {},
     mdocOut :=
