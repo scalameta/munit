@@ -122,15 +122,20 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
   def runAsync(notifier: RunNotifier): Future[Unit] = {
     val description = getDescription()
-    notifier.fireTestSuiteStarted(description)
-    runAll(notifier)
-      .transformCompat[Unit](result => {
-        result.failed.foreach(ex =>
-          fireFailedHiddenTest(notifier, "unexpected error running tests", ex)
-        )
-        notifier.fireTestSuiteFinished(description)
-        util.Success(())
-      })
+    if (PlatformCompat.isIgnoreSuite(cls) || munitTests.isEmpty) {
+      notifier.fireTestIgnored(description)
+      Future.successful(())
+    } else {
+      notifier.fireTestSuiteStarted(description)
+      runAll(notifier)
+        .transformCompat[Unit](result => {
+          result.failed.foreach(ex =>
+            fireFailedHiddenTest(notifier, "unexpected error running tests", ex)
+          )
+          notifier.fireTestSuiteFinished(description)
+          util.Success(())
+        })
+    }
   }
 
   private def runTests(
@@ -176,11 +181,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   }
 
   private def runAll(notifier: RunNotifier): Future[Unit] = {
-    if (PlatformCompat.isIgnoreSuite(cls) || munitTests.isEmpty) {
-      val description = getDescription()
-      notifier.fireTestIgnored(description)
-      return Future.successful(())
-    }
     for {
       beforeAll <- runBeforeAll(notifier)
       _ <- {
