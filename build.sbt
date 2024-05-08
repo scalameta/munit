@@ -1,7 +1,7 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
-def previousVersion = "0.7.0"
+def previousVersion = "1.0.0-RC1"
 
 def scala213 = "2.13.14"
 
@@ -65,7 +65,7 @@ def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
 lazy val skipIdeaSettings =
   SettingKey[Boolean]("ide-skip-project").withRank(KeyRanks.Invisible) := true
 lazy val mimaEnable: List[Def.Setting[_]] = List(
-  mimaBinaryIssueFilters ++= MimaExclusions.list,
+  mimaBinaryIssueFilters ++= List.empty,
   mimaPreviousArtifacts := {
     if (crossPaths.value)
       Set("org.scalameta" %% moduleName.value % previousVersion)
@@ -218,8 +218,6 @@ lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
-  // TODO Reenable on 1.0.0
-  .disablePlugins(MimaPlugin)
 
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .dependsOn(munit)
