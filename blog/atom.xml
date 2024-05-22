@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://scalameta.org/munit/munit/blog</id>
     <title>MUnit Blog</title>
-    <updated>2024-05-15T06:00:00.000Z</updated>
+    <updated>2024-05-22T06:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://scalameta.org/munit/munit/blog"/>
     <subtitle>The best place to stay up-to-date with the latest MUnit news and events.</subtitle>
@@ -10,9 +10,9 @@
     <rights>Copyright © 2024 Scalameta</rights>
     <entry>
         <title type="html"><![CDATA[Finally 1.0.0 release of munit]]></title>
-        <id>http://scalameta.org/munit/munit/blog/2024/05/15/release-1.0.0.html</id>
-        <link href="http://scalameta.org/munit/munit/blog/2024/05/15/release-1.0.0.html"/>
-        <updated>2024-05-15T06:00:00.000Z</updated>
+        <id>http://scalameta.org/munit/munit/blog/2024/05/22/release-1.0.0.html</id>
+        <link href="http://scalameta.org/munit/munit/blog/2024/05/22/release-1.0.0.html"/>
+        <updated>2024-05-22T06:00:00.000Z</updated>
         <summary type="html"><![CDATA[<p>Thanks to great work from a lot of contributors we are finally releasing version 1.0.0 of munit. This was long time coming and finally we are out of milestones and ready for a new chapter of munit.</p> <h2><a class="anchor" aria-hidden="true" id="important-changes"></a><a href="#important-changes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Important changes</h2> <h3><a class="anchor" aria-hidden="true" id="async-support-for-fixtures"></a><a href="#async-support-for-fixtures" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Async support for fixtures</h3> <p>Previou...</p>]]></summary>
         <author>
             <name>Tomasz Godzik</name>
