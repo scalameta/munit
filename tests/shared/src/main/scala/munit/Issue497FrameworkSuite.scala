@@ -34,8 +34,7 @@ class Issue497FrameworkSuite extends FunSuite {
 object Issue497FrameworkSuite
     extends FrameworkTest(
       classOf[Issue497FrameworkSuite],
-      """|munit.Issue497FrameworkSuite:
-         |""".stripMargin,
+      "",
       arguments = Array("--exclude-categories=munit.Slow"),
       tags = Set(
         OnlyJVM
