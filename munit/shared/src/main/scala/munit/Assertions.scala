@@ -57,6 +57,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
         expected,
         exceptionHandlerFromAssertions(this, Clues.empty),
         munitPrint(clue),
+        contextSize,
         printObtainedAsStripMargin = true
       )
     }
@@ -115,7 +116,14 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
             )
           case _ =>
         }
-        compare.failEqualsComparison(obtained, expected, clue, loc, this)
+        compare.failEqualsComparison(
+          obtained,
+          expected,
+          clue,
+          contextSize,
+          loc,
+          this
+        )
       }
     }
   }
@@ -323,6 +331,13 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   def clues(clue: Clue[_]*): Clues = new Clues(clue.toList)
 
   def printer: Printer = EmptyPrinter
+
+  /**
+   * Lines of context that should be printer around the diff to locate it better
+   *
+   * By default is set 1. High values might slow down the results reporting.
+   */
+  def contextSize: Int = 1
 
   def munitPrint(clue: => Any): String = {
     clue match {
