@@ -239,8 +239,6 @@ instead:</p>
 <span class="hljs-comment">//   Alternative 1: provide an implicit instance for Compare[Option[String], String]</span>
 <span class="hljs-comment">//   Alternative 2: upcast either type into `Any` or a shared supertype</span>
 <span class="hljs-comment">// Error occurred in an application involving default arguments.</span>
-<span class="hljs-comment">// assertEquals(Option("message"), "message")</span>
-<span class="hljs-comment">// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
 </code></pre>
 <p>It's a compile error even if the comparison is true at runtime.</p>
 <pre><code class="hljs css language-scala">assertEquals(<span class="hljs-type">List</span>(<span class="hljs-number">1</span>), <span class="hljs-type">Vector</span>(<span class="hljs-number">1</span>))
@@ -251,8 +249,6 @@ instead:</p>
 <span class="hljs-comment">//   Alternative 1: provide an implicit instance for Compare[List[Int], scala.collection.immutable.Vector[Int]]</span>
 <span class="hljs-comment">//   Alternative 2: upcast either type into `Any` or a shared supertype</span>
 <span class="hljs-comment">// Error occurred in an application involving default arguments.</span>
-<span class="hljs-comment">// assertEquals(Option("message"), "message")</span>
-<span class="hljs-comment">// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
 </code></pre>
 <pre><code class="hljs css language-scala">assertEquals('a', 'a'.toInt)
 <span class="hljs-comment">// error: Can't compare these two types:</span>
@@ -262,8 +258,6 @@ instead:</p>
 <span class="hljs-comment">//   Alternative 1: provide an implicit instance for Compare[Char, Int]</span>
 <span class="hljs-comment">//   Alternative 2: upcast either type into `Any` or a shared supertype</span>
 <span class="hljs-comment">// Error occurred in an application involving default arguments.</span>
-<span class="hljs-comment">// assertEquals(Option("message"), "message")</span>
-<span class="hljs-comment">// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
 </code></pre>
 <p>It's OK to compare two types as long as one argument is a subtype of the other
 type.</p>
