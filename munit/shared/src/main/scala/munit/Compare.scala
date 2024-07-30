@@ -41,6 +41,7 @@ trait Compare[A, B] {
       obtained: A,
       expected: B,
       title: Any,
+      contextSize: Int,
       loc: Location,
       assertions: Assertions
   ): Nothing = {
@@ -64,6 +65,7 @@ trait Compare[A, B] {
       assertions.munitPrint(expected),
       diffHandler,
       title = assertions.munitPrint(title),
+      contextSize = contextSize,
       printObtainedAsStripMargin = false
     )(loc)
 
@@ -74,6 +76,7 @@ trait Compare[A, B] {
       expected.toString(),
       diffHandler,
       title = assertions.munitPrint(title),
+      contextSize = contextSize,
       printObtainedAsStripMargin = false
     )(loc)
 
