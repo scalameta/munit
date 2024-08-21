@@ -37,8 +37,8 @@ testFrameworks += new TestFramework("munit.Framework")
 **Mill**
 
 ```scala
-object test extends Tests with TestModule.Munit {
-  def ivyDeps =
+object test extends ScalaTests with TestModule.Munit {
+  override def ivyDeps =
     Agg(
       ivy"org.scalameta::munit::@STABLE_VERSION@"
     )
