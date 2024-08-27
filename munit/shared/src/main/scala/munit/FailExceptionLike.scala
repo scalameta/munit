@@ -16,6 +16,7 @@ package munit
 trait FailExceptionLike[T <: AssertionError] extends Serializable {
   self: AssertionError =>
   def withMessage(message: String): T
+  def updateMessage(f: String => String): T = withMessage(f(getMessage))
   def location: Location
   def isStackTracesEnabled: Boolean
 }

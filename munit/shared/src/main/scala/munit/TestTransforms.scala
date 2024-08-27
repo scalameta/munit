@@ -78,4 +78,37 @@ trait TestTransforms { this: BaseFunSuite =>
       }
     )
 
+  /**
+   * Optionally augment a failure with additional information.
+   *
+   * Failures that are not `FailExceptionLike` subclasses will be wrapped, if needed.
+   */
+  def munitAppendToFailureMessage(buildSuffix: Test => Option[String]): TestTransform =
+    new TestTransform(
+      "failureSuffix",
+      { t =>
+        t.withBodyMap(
+          _.transformCompat {
+            case s @ Success(_) => s
+            case f @ Failure(exception) =>
+              buildSuffix(t).fold(f) { suffix =>
+                def append(existing: String): String =
+                  if (existing.endsWith("\n")) s"$existing$suffix\n"
+                  else s"$existing\n$suffix"
+
+                Failure(Exceptions.rootCause(exception) match {
+                  case fel: FailExceptionLike[_] => fel.updateMessage(append)
+                  case e =>
+                    new FailException(
+                      message = append(e.getMessage),
+                      cause = e,
+                      isStackTracesEnabled = false,
+                      location = t.location
+                    )
+                })
+              }
+          }(munitExecutionContext)
+        )
+      }
+    )
 }
