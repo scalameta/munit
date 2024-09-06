@@ -83,7 +83,9 @@ trait TestTransforms { this: BaseFunSuite =>
    *
    * Failures that are not `FailExceptionLike` subclasses will be wrapped, if needed.
    */
-  def munitAppendToFailureMessage(buildSuffix: Test => Option[String]): TestTransform =
+  def munitAppendToFailureMessage(
+      buildSuffix: Test => Option[String]
+  ): TestTransform =
     new TestTransform(
       "failureSuffix",
       { t =>

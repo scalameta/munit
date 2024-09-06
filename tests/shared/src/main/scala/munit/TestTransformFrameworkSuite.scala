@@ -2,8 +2,14 @@ package munit
 
 class TestTransformFrameworkSuite extends munit.FunSuite {
   override val munitTestTransforms: List[TestTransform] = List(
-    new TestTransform("ok", test => if (test.name == "hello") test.withName(test.name + "-ok") else test),
-    munitAppendToFailureMessage(t => if (t.name.startsWith("suffix")) Some("==> extra info") else None)
+    new TestTransform(
+      "ok",
+      test =>
+        if (test.name == "hello") test.withName(test.name + "-ok") else test
+    ),
+    munitAppendToFailureMessage(t =>
+      if (t.name.startsWith("suffix")) Some("==> extra info") else None
+    )
   )
 
   test("hello") {}
