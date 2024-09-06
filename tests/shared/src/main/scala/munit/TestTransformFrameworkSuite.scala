@@ -27,7 +27,7 @@ object TestTransformFrameworkSuite
          |14:  }
          |==> extra info
          |==> failure munit.TestTransformFrameworkSuite.suffix-assertEquals - /scala/munit/TestTransformFrameworkSuite.scala:16
-         |15:  test("suffix-comparison") {
+         |15:  test("suffix-assertEquals") {
          |16:    assertEquals(0, 1)
          |17:  }
          |values are not the same
