@@ -20,7 +20,7 @@ class BoxedFrameworkSuite extends FunSuite {
 object BoxedFrameworkSuite
     extends FrameworkTest(
       classOf[BoxedFrameworkSuite],
-      """|==> failure munit.BoxedFrameworkSuite.exist issue - /scala/munit/BoxedFrameworkSuite.scala:15 assertion failed
+      """|==> failure munit.BoxedFrameworkSuite.exist issue - tests/shared/src/main/scala/munit/BoxedFrameworkSuite.scala:15 assertion failed
          |14:    )
          |15:    assert(values.exists(outer => outer.data.exists(inner => inner.value > 90)))
          |16:  }

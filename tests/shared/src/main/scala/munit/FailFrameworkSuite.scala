@@ -12,7 +12,7 @@ class FailFrameworkSuite extends FunSuite {
 object FailFrameworkSuite
     extends FrameworkTest(
       classOf[FailFrameworkSuite],
-      """|==> failure munit.FailFrameworkSuite.pass - /scala/munit/FailFrameworkSuite.scala:4 expected failure but test passed
+      """|==> failure munit.FailFrameworkSuite.pass - tests/shared/src/main/scala/munit/FailFrameworkSuite.scala:4 expected failure but test passed
          |3:class FailFrameworkSuite extends FunSuite {
          |4:  test("pass".fail) {
          |5:    // println("pass")

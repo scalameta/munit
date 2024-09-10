@@ -13,7 +13,7 @@ class CiOnlyFrameworkSuite extends FunSuite {
 object CiOnlyFrameworkSuite
     extends FrameworkTest(
       classOf[CiOnlyFrameworkSuite],
-      """|==> failure munit.CiOnlyFrameworkSuite.only - /scala/munit/CiOnlyFrameworkSuite.scala:5 'Only' tag is not allowed when `isCI=true`
+      """|==> failure munit.CiOnlyFrameworkSuite.only - tests/shared/src/main/scala/munit/CiOnlyFrameworkSuite.scala:5 'Only' tag is not allowed when `isCI=true`
          |4:  override def isCI: Boolean = true
          |5:  test("only".only) {
          |6:    println("pass")

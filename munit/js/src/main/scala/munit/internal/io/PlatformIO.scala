@@ -9,8 +9,11 @@ object PlatformIO {
   object Files {
     def readAllLines(path: Path): java.util.List[String] =
       munit.internal.io.Files.readAllLines(path)
+    def exists(path: Path): Boolean =
+      munit.internal.io.Files.exists(path)
   }
 
   type Path = MunitPath
+  val Path = MunitPath
   val Paths = munit.internal.io.Paths
 }

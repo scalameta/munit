@@ -10,8 +10,13 @@ object MacroCompatScala2 {
 
   def locationImpl(c: Context): c.Tree = {
     import c.universe._
+    val workingDirectory: String = sys.props("user.dir") + java.io.File.separator
     val line = Literal(Constant(c.enclosingPosition.line))
-    val path = Literal(Constant(c.enclosingPosition.source.path))
+    val path0 = c.enclosingPosition.source.path
+    val relativePath =
+      if (path0.startsWith(workingDirectory)) path0.drop(workingDirectory.length)
+      else path0
+    val path = Literal(Constant(relativePath))
     New(c.mirror.staticClass(classOf[Location].getName()), path, line)
   }
 

@@ -7,7 +7,7 @@ class LinesSuite extends FunSuite {
     "hello",
     Location.generate,
     // comment
-    """|LinesSuite.scala:8 hello
+    """|tests/shared/src/test/scala/munit/LinesSuite.scala:8 hello
        |7:    "hello",
        |8:    Location.generate,
        |9:    // comment
@@ -19,7 +19,7 @@ class LinesSuite extends FunSuite {
     "hello\nworld!",
     Location.generate,
     // comment
-    """|LinesSuite.scala:20
+    """|tests/shared/src/test/scala/munit/LinesSuite.scala:20
        |19:    "hello\nworld!",
        |20:    Location.generate,
        |21:    // comment
@@ -39,14 +39,13 @@ class LinesSuite extends FunSuite {
     test(options) {
       val obtained = munitLines
         .formatLine(location, message)
-        .replace(location.path, location.filename)
       assertNoDiff(obtained, expected)
     }
   }
 
   val line: Int = Location.generate.line + 7
   val endOfFileExpected: String =
-    s"""|LinesSuite.scala:${line} issue-211
+    s"""|tests/shared/src/test/scala/munit/LinesSuite.scala:${line} issue-211
         |${line - 1}:  // hello!
         |${line}:  check("end-of-file", "issue-211", Location.generate, endOfFileExpected ) }
         |""".stripMargin
