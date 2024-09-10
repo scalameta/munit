@@ -23,7 +23,10 @@ class Lines extends Serializable {
       val somePath1 =
         if (somePath.endsWith(sep)) somePath.dropRight(sep.length)
         else somePath
-      somePath1.split(sep).dropRight(1).mkString(sep)
+      val sep1 =
+        if (sep == "\\") "\\\\"
+        else sep
+      somePath1.split(sep1).dropRight(1).mkString(sep)
     }
     if (Files.exists(p)) p
     else if (max < 1) sys.error(s"$path was not found")

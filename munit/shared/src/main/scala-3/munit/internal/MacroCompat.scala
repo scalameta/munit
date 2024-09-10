@@ -6,8 +6,12 @@ import scala.quoted._
 import scala.language.experimental.macros
 
 object MacroCompat {
-  private val workingDirectory: String =
-    sys.props("user.dir") + java.io.File.separator
+  private val workingDirectory: String = {
+    val sep = java.io.File.separator
+    val cwd = sys.props("user.dir")
+    if (cwd.endsWith(sep)) cwd
+    else cwd + sep
+  }
 
   trait LocationMacro {
     inline implicit def generate: Location = ${ locationImpl() }
