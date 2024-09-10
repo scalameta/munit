@@ -39,6 +39,7 @@ class LinesSuite extends FunSuite {
     test(options) {
       val obtained = munitLines
         .formatLine(location, message)
+        .replace(raw"""tests\shared\src\test\scala\munit\""", "tests/shared/src/test/scala/munit/") // for Windows
       assertNoDiff(obtained, expected)
     }
   }

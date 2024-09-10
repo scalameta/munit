@@ -19,11 +19,17 @@ class Lines extends Serializable {
 
   def findPath(cwd: String, path: String, max: Int): Path = {
     val p = Paths.get(cwd).resolve(path)
+    def getParentPath(somePath: String, sep: String): String = {
+      val somePath1 =
+        if (somePath.endsWith(sep)) somePath.dropRight(sep.length)
+        else somePath
+      somePath1.split(sep).dropRight(1).mkString(sep)
+    }
     if (Files.exists(p)) p
     else if (max < 1) sys.error(s"$path was not found")
     else if (cwd.contains("\\"))
-      findPath(cwd.split("\\").dropRight(1).mkString("\\"), path, max - 1)
-    else findPath(cwd.split("/").dropRight(1).mkString("/"), path, max - 1)
+      findPath(getParentPath(cwd, "\\"), path, max - 1)
+    else findPath(getParentPath(cwd, "/"), path, max - 1)
   }
 
   def formatLine(location: Location, message: String, clues: Clues): String = {
