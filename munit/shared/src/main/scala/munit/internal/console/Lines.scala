@@ -21,7 +21,8 @@ class Lines extends Serializable {
     val p = Paths.get(cwd).resolve(path)
     if (Files.exists(p)) p
     else if (max < 1) sys.error(s"$path was not found")
-    else if (cwd.contains("\\")) findPath(cwd.split("\\").dropRight(1).mkString("\\"), path, max - 1)
+    else if (cwd.contains("\\"))
+      findPath(cwd.split("\\").dropRight(1).mkString("\\"), path, max - 1)
     else findPath(cwd.split("/").dropRight(1).mkString("/"), path, max - 1)
   }
 

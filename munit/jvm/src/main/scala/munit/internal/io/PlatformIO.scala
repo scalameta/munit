@@ -15,7 +15,7 @@ object PlatformIO {
 
   type Path = java.nio.file.Path
   object Path {
-    def workingDirectory = Paths.get(sys.props("user.dir"))
+    def workingDirectory: Path = Paths.get(sys.props("user.dir"))
   }
   object Paths {
     def get(path: String): Path = java.nio.file.Paths.get(path)
