@@ -6,7 +6,8 @@ import scala.quoted._
 import scala.language.experimental.macros
 
 object MacroCompat {
-  private val workingDirectory: String = sys.props("user.dir") + java.io.File.separator
+  private val workingDirectory: String =
+    sys.props("user.dir") + java.io.File.separator
 
   trait LocationMacro {
     inline implicit def generate: Location = ${ locationImpl() }
@@ -20,7 +21,8 @@ object MacroCompat {
       .map(_.toString())
       .getOrElse(pos.sourceFile.path)
     val relativePath =
-      if (path0.startsWith(workingDirectory)) path0.drop(workingDirectory.length)
+      if (path0.startsWith(workingDirectory))
+        path0.drop(workingDirectory.length)
       else path0
     val startLine = pos.startLine + 1
     '{ new Location(${ Expr(relativePath) }, ${ Expr(startLine) }) }
