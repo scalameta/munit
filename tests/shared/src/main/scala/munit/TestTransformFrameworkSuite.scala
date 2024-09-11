@@ -27,12 +27,12 @@ object TestTransformFrameworkSuite
       classOf[TestTransformFrameworkSuite],
       """|==> success munit.TestTransformFrameworkSuite.hello-ok
          |==> success munit.TestTransformFrameworkSuite.suffix-success
-         |==> failure munit.TestTransformFrameworkSuite.suffix-fail - /scala/munit/TestTransformFrameworkSuite.scala:19 boom
+         |==> failure munit.TestTransformFrameworkSuite.suffix-fail - tests/shared/src/main/scala/munit/TestTransformFrameworkSuite.scala:19 boom
          |18:  test("suffix-fail") {
          |19:    fail("boom")
          |20:  }
          |==> extra info
-         |==> failure munit.TestTransformFrameworkSuite.suffix-assertEquals - /scala/munit/TestTransformFrameworkSuite.scala:22
+         |==> failure munit.TestTransformFrameworkSuite.suffix-assertEquals - tests/shared/src/main/scala/munit/TestTransformFrameworkSuite.scala:22
          |21:  test("suffix-assertEquals") {
          |22:    assertEquals(0, 1)
          |23:  }
