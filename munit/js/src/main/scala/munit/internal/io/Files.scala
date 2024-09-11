@@ -27,4 +27,6 @@ object Files {
     }
     result
   }
+  def exists(path: MunitPath): Boolean =
+    JSIO.exists(path.toString)
 }

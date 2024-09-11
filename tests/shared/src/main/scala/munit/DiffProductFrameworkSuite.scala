@@ -14,7 +14,7 @@ class DiffProductFrameworkSuite extends FunSuite {
 object DiffProductFrameworkSuite
     extends FrameworkTest(
       classOf[DiffProductFrameworkSuite],
-      """|==> failure munit.DiffProductFrameworkSuite.pass - /scala/munit/DiffProductFrameworkSuite.scala:9
+      """|==> failure munit.DiffProductFrameworkSuite.pass - tests/shared/src/main/scala/munit/DiffProductFrameworkSuite.scala:9
          |8:     val john2 = User("John", 43, 2.to(2).toList)
          |9:     assertEquals(john2, john)
          |10:  }

@@ -16,7 +16,7 @@ object FailSuiteFrameworkSuite
     extends FrameworkTest(
       classOf[FailSuiteFrameworkSuite],
       """|==> success munit.FailSuiteFrameworkSuite.pass
-         |==> failure munit.FailSuiteFrameworkSuite.fail - /scala/munit/FailSuiteFrameworkSuite.scala:8 Oops, can not do anything.
+         |==> failure munit.FailSuiteFrameworkSuite.fail - tests/shared/src/main/scala/munit/FailSuiteFrameworkSuite.scala:8 Oops, can not do anything.
          |7:  test("fail") {
          |8:    failSuite("Oops, can not do anything.")
          |9:  }

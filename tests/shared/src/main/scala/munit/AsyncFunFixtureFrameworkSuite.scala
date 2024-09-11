@@ -54,7 +54,7 @@ object AsyncFunFixtureFrameworkSuite
       classOf[AsyncFunFixtureFrameworkSuite],
       """|==> failure munit.AsyncFunFixtureFrameworkSuite.fail when setup fails - failure in setup
          |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when teardown fails - failure in teardown
-         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when test and teardown fail - /scala/munit/AsyncFunFixtureFrameworkSuite.scala:28 failure in test
+         |==> failure munit.AsyncFunFixtureFrameworkSuite.fail when test and teardown fail - tests/shared/src/main/scala/munit/AsyncFunFixtureFrameworkSuite.scala:28 failure in test
          |27:  failingTeardown.test("fail when test and teardown fail") { _ =>
          |28:    fail("failure in test")
          |29:  }

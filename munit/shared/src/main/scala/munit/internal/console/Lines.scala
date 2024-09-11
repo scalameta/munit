@@ -16,9 +16,28 @@ class Lines extends Serializable {
   }
   def formatPath(location: Location): String =
     location.path
+
+  def findPath(cwd: String, path: String, max: Int): Path = {
+    val p = Paths.get(cwd).resolve(path)
+    def getParentPath(somePath: String, sep: String): String = {
+      val somePath1 =
+        if (somePath.endsWith(sep)) somePath.dropRight(sep.length)
+        else somePath
+      val sep1 =
+        if (sep == "\\") "\\\\"
+        else sep
+      somePath1.split(sep1).dropRight(1).mkString(sep)
+    }
+    if (Files.exists(p)) p
+    else if (max < 1) sys.error(s"$path was not found")
+    else if (cwd.contains("\\"))
+      findPath(getParentPath(cwd, "\\"), path, max - 1)
+    else findPath(getParentPath(cwd, "/"), path, max - 1)
+  }
+
   def formatLine(location: Location, message: String, clues: Clues): String = {
     try {
-      val path = Paths.get(location.path)
+      val path = findPath(Path.workingDirectory.toString, location.path, 3)
       val lines = filecache.getOrElseUpdate(
         path, {
           Files.readAllLines(path).asScala.toArray
