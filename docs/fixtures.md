@@ -156,7 +156,7 @@ class MySuite extends munit.FunSuite {
 ## Ad-hoc suite-local fixtures
 
 Override `beforeAll()` and `afterAll()` to add custom logic that should run
-before all test cases start runniing and after all tests cases have finished
+before all test cases start running and after all tests cases have finished
 running. For example, use this feature to establish a database connection that
 should be reused between test cases.
 
