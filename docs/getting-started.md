@@ -151,12 +151,6 @@ The default JUnit testing syntax is based on annotations and does not feel
 idiomatic when used from Scala. MUnit tries to fill in the gap by providing a
 small Scala API on top of JUnit.
 
-## Stability
-
-MUnit is a new library with no stability guarantees. While this project is
-versioned at v0.x, it's expected that new releases, including patch releases,
-will have binary and source breaking changes.
-
 ## Inspirations
 
 MUnit is inspired by several existing testing libraries:
