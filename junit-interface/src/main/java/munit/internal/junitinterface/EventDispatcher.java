@@ -2,6 +2,7 @@ package munit.internal.junitinterface;
 
 import static munit.internal.junitinterface.Ansi.*;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -133,10 +134,29 @@ final class EventDispatcher extends RunListener {
         desc,
         new InfoEvent(desc, Status.Ignored) {
           void logTo(RichLogger logger) {
+            StringBuilder builder = new StringBuilder(1024);
+            boolean isPending = false;
+            for (Annotation annotation : desc.getAnnotations()) {
+              if (annotation instanceof Tag) {
+                Tag tag = (Tag) annotation;
+                String kind = tag.getClass().getName();
+                if (kind.equals("munit.Tag") && tag.value().equals("Pending")) {
+                  isPending = true;
+                }
+                else if (kind.equals("munit.package$PendingComment")) {
+                  builder.append(" ");
+                  builder.append(tag.value());
+                }
+              }
+            }
+            if (isPending) {
+              builder.insert(0, " PENDING");
+            }
+            builder.append(" ignored");
             logger.warn(
                 settings.buildTestResult(Status.Ignored)
                     + ansiName
-                    + Ansi.c(" ignored", SKIPPED)
+                    + Ansi.c(builder.toString(), SKIPPED)
                     + durationSuffix());
           }
         });

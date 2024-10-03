@@ -25,6 +25,9 @@ final class TestOptions(
   def fail: TestOptions = tag(Fail)
   def flaky: TestOptions = tag(Flaky)
   def ignore: TestOptions = tag(Ignore)
+  def pending: TestOptions = tag(Pending)
+  def pending(comment: String): TestOptions =
+    pending.tag(PendingComment(comment))
   def only: TestOptions = tag(Only)
   def tag(t: Tag): TestOptions = copy(tags = tags + t)
   private[this] def copy(

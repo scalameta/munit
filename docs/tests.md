@@ -356,6 +356,55 @@ what Scala version caused the tests to fail.
 + munit.ScalaVersionFrameworkSuite.foo-2.13.1
 ```
 
+## Tag pending tests
+
+Use `.pending` to annotate a work-in-progress test case with known-incomplete coverage.
+Any assertions in the pending case must pass, but will be reported as Ignored instead of Success.
+Any failures will be reported as Failures (this differs from `.ignore` which skips the test case entirely).
+This tag is useful for documenting:
+
+- **Empty placeholders** that lack any assertions (unless tagged pending, these are reported as success).
+- **Incomplete placeholders** with too few assertions (unless tagged pending, these are reported as success).
+- **Accurate placeholders** whose stable assertions must pass (regressions are not ignored).
+- **Searchability** of your codebase for known-incomplete test cases.
+- **Cross-references** between your codebase and issue trackers.
+
+You can (optionally) include a comment for your pending test case, such as a job ticket ID:
+
+```scala
+  // Empty placeholder, without logged comments:
+  test("time travel".pending) {
+    // Test case to be written yesterday
+  }
+
+  // Empty placeholder, with logged comments:
+  test("time travel".pending("requirements from product owner")) {
+    // Is this funded yet??
+  }
+
+  // Empty placeholder, tracked for action:
+  test("time travel".pending("INTERN-101")) {
+    // Test case to be written by an intern
+  }
+
+  // Incomplete (WIP) placeholder, tracked for action:
+  test("time travel".pending("QA-404")) {
+    assert(LocalDate.now.isAfter(yesterday))
+    // QA team to provide specific examples for regression-test coverage
+  }
+```
+
+If you want to mark a failed regression test as pending-until-fixed,
+you combine `.ignore` before or after `.pending`, for example:
+
+```scala
+  test("this test worked yesterday".ignore.pending("platform investigation")) {
+    assert(LocalDate.now.equals(yesterday))
+  }
+```
+
+This allows pending comments, reasons, or cross-references to be logged for ignored tests.
+
 ## Tag flaky tests
 
 Use `.flaky` to mark a test case that has a tendency to non-deterministically

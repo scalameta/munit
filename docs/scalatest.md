@@ -41,6 +41,11 @@ If you only use basic ScalaTest features, you should be able to replace usage of
 + test("ignored".ignore) {
     // unchanged
   }
+
+- test("pending") (pending)
++ test("pending".pending) {
++   // zero or more assertions
++ }
 ```
 
 If you are coming from `WordSpec` style tests, make sure to flatten them, or your tests
