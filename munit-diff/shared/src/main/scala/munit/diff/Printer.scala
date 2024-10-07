@@ -30,7 +30,7 @@ trait Printer {
    *
    * trait MySuites extends FunSuite {
    *   override val printer = Printer.apply {
-   *     case Person(name, age, mail) => s"$name:$age:$mail"
+   *     case Person(name, age, mail) => s"\$name:\$age:\$mail"
    *     case m: SomeOtherCaseClass => m.someCustomToString
    *   }
    * }

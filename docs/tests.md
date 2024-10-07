@@ -125,7 +125,7 @@ class CustomTimeoutSuite extends munit.FunSuite {
 MUnit uses its own `Printer`s to convert any value into a diff-ready string representation.
 The resulting string is the actual value being compared, and is also used to generate the clues in case of a failure.
 
-The default printing behaviour can be overriden for a given type by defining a custom `Printer` and overriding `printer`.
+The default printing behaviour can be overridden for a given type by defining a custom `Printer` and overriding `printer`.
 
 Override `printer` to customize the comparison of two values :
 
