@@ -1,5 +1,7 @@
 package munit
 
+import munit.internal.io.PlatformIO.File
+
 class SkippedFrameworkSuite extends FunSuite {
   test("pass") {
     // println("pass")
@@ -59,14 +61,14 @@ object SkippedFrameworkSuite
          |==> ignored munit.SkippedFrameworkSuite.pending.empty.ignored.comment
          |==> ignored munit.SkippedFrameworkSuite.pending.successful.ignored
          |==> ignored munit.SkippedFrameworkSuite.pending.successful.ignored.comment
-         |==> failure munit.SkippedFrameworkSuite.pending.failed.not-ignored - tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:36 assertion failed
-         |35:  test("pending.failed.not-ignored".pending) {
-         |36:    assert(false)
-         |37:  }
-         |==> failure munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment - tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:39 assertion failed
-         |38:  test("pending.failed.not-ignored.comment".pending("comment")) {
-         |39:    assert(false)
-         |40:  }
+         |==> failure munit.SkippedFrameworkSuite.pending.failed.not-ignored - tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:38 assertion failed
+         |37:  test("pending.failed.not-ignored".pending) {
+         |38:    assert(false)
+         |39:  }
+         |==> failure munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment - tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:41 assertion failed
+         |40:  test("pending.failed.not-ignored.comment".pending("comment")) {
+         |41:    assert(false)
+         |42:  }
          |==> ignored munit.SkippedFrameworkSuite.pending.failed.ignored
          |==> ignored munit.SkippedFrameworkSuite.pending.failed.ignored.comment
          |""".stripMargin,
@@ -87,17 +89,17 @@ object SkippedFrameworkStdoutJsNativeSuite
          |==> i pending.empty.ignored.comment PENDING comment ignored <elapsed time>
          |==> i pending.successful.ignored PENDING ignored <elapsed time>
          |==> i pending.successful.ignored.comment PENDING comment ignored <elapsed time>
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:36 assertion failed
-         |35:  test("pending.failed.not-ignored".pending) {
-         |36:    assert(false)
-         |37:  }
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:39 assertion failed
-         |38:  test("pending.failed.not-ignored.comment".pending("comment")) {
-         |39:    assert(false)
-         |40:  }
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:38 assertion failed
+         |37:  test("pending.failed.not-ignored".pending) {
+         |38:    assert(false)
+         |39:  }
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:41 assertion failed
+         |40:  test("pending.failed.not-ignored.comment".pending("comment")) {
+         |41:    assert(false)
+         |42:  }
          |==> i pending.failed.ignored PENDING ignored <elapsed time>
          |==> i pending.failed.ignored.comment PENDING comment ignored <elapsed time>
-         |""".stripMargin,
+         |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,
       tags = Set(NoJVM)
     )
@@ -124,18 +126,18 @@ object SkippedFrameworkStdoutJsNativeVerboseSuite
          |pending.successful.ignored.comment started
          |==> i pending.successful.ignored.comment PENDING comment ignored <elapsed time>
          |pending.failed.not-ignored started
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:36 assertion failed
-         |35:  test("pending.failed.not-ignored".pending) {
-         |36:    assert(false)
-         |37:  }
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:38 assertion failed
+         |37:  test("pending.failed.not-ignored".pending) {
+         |38:    assert(false)
+         |39:  }
          |pending.failed.not-ignored.comment started
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:39 assertion failed
-         |38:  test("pending.failed.not-ignored.comment".pending("comment")) {
-         |39:    assert(false)
-         |40:  }
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:41 assertion failed
+         |40:  test("pending.failed.not-ignored.comment".pending("comment")) {
+         |41:    assert(false)
+         |42:  }
          |==> i pending.failed.ignored PENDING ignored <elapsed time>
          |==> i pending.failed.ignored.comment PENDING comment ignored <elapsed time>
-         |""".stripMargin,
+         |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,
       tags = Set(NoJVM),
       arguments = Array("-v")
@@ -155,21 +157,21 @@ object SkippedFrameworkStdoutJVMSuite
          |==> i munit.SkippedFrameworkSuite.pending.empty.ignored.comment PENDING comment ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.successful.ignored PENDING ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.successful.ignored.comment PENDING comment ignored <elapsed time>
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:36 assertion failed
-         |35:  test("pending.failed.not-ignored".pending) {
-         |36:    assert(false)
-         |37:  }
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:38 assertion failed
+         |37:  test("pending.failed.not-ignored".pending) {
+         |38:    assert(false)
+         |39:  }
          |    at munit.FunSuite.assert(FunSuite.scala:11)
-         |    at munit.SkippedFrameworkSuite.$anonfun$new$21(SkippedFrameworkSuite.scala:36)
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:39 assertion failed
-         |38:  test("pending.failed.not-ignored.comment".pending("comment")) {
-         |39:    assert(false)
-         |40:  }
+         |    at munit.SkippedFrameworkSuite.$anonfun$new$21(SkippedFrameworkSuite.scala:38)
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:41 assertion failed
+         |40:  test("pending.failed.not-ignored.comment".pending("comment")) {
+         |41:    assert(false)
+         |42:  }
          |    at munit.FunSuite.assert(FunSuite.scala:11)
-         |    at munit.SkippedFrameworkSuite.$anonfun$new$24(SkippedFrameworkSuite.scala:39)
+         |    at munit.SkippedFrameworkSuite.$anonfun$new$24(SkippedFrameworkSuite.scala:41)
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored PENDING ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored.comment PENDING comment ignored <elapsed time>
-         |""".stripMargin,
+         |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,
       tags = Set(OnlyJVM)
     )
@@ -197,23 +199,23 @@ object SkippedFrameworkStdoutJVMVerboseSuite
          |munit.SkippedFrameworkSuite.pending.successful.ignored.comment started
          |==> i munit.SkippedFrameworkSuite.pending.successful.ignored.comment PENDING comment ignored <elapsed time>
          |munit.SkippedFrameworkSuite.pending.failed.not-ignored started
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:36 assertion failed
-         |35:  test("pending.failed.not-ignored".pending) {
-         |36:    assert(false)
-         |37:  }
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:38 assertion failed
+         |37:  test("pending.failed.not-ignored".pending) {
+         |38:    assert(false)
+         |39:  }
          |    at munit.FunSuite.assert(FunSuite.scala:11)
-         |    at munit.SkippedFrameworkSuite.$anonfun$new$21(SkippedFrameworkSuite.scala:36)
+         |    at munit.SkippedFrameworkSuite.$anonfun$new$21(SkippedFrameworkSuite.scala:38)
          |munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment started
-         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:39 assertion failed
-         |38:  test("pending.failed.not-ignored.comment".pending("comment")) {
-         |39:    assert(false)
-         |40:  }
+         |==> X munit.SkippedFrameworkSuite.pending.failed.not-ignored.comment  <elapsed time>munit.FailException: tests/shared/src/main/scala/munit/SkippedFrameworkSuite.scala:41 assertion failed
+         |40:  test("pending.failed.not-ignored.comment".pending("comment")) {
+         |41:    assert(false)
+         |42:  }
          |    at munit.FunSuite.assert(FunSuite.scala:11)
-         |    at munit.SkippedFrameworkSuite.$anonfun$new$24(SkippedFrameworkSuite.scala:39)
+         |    at munit.SkippedFrameworkSuite.$anonfun$new$24(SkippedFrameworkSuite.scala:41)
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored PENDING ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored.comment PENDING comment ignored <elapsed time>
          |Test run munit.SkippedFrameworkSuite finished: 2 failed, 9 ignored, 9 total, <elapsed time>
-         |""".stripMargin,
+         |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,
       tags = Set(OnlyJVM),
       arguments = Array("-v")
