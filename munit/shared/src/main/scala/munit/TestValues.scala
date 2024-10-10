@@ -17,6 +17,6 @@ object TestValues {
       with NoStackTrace
       with Serializable
 
-  /** The test case was ignored. */
+  /** The test case was ignored (skipped). */
   val Ignore = munit.Ignore
 }

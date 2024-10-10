@@ -29,8 +29,17 @@ final class JUnitReporter(
     }
   }
 
-  def reportTestIgnored(method: String): Unit = {
-    log(Info, AnsiColors.c(s"==> i $method ignored", AnsiColors.YELLOW))
+  def reportTestIgnored(
+      method: String,
+      elapsedMillis: Double,
+      suffix: String
+  ): Unit = {
+    val suffixed = if (suffix.isEmpty) "" else s" ${suffix}"
+    log(
+      Info,
+      AnsiColors.c(s"==> i $method$suffixed ignored", AnsiColors.YELLOW) + " " +
+        formatTime(elapsedMillis)
+    )
     emitEvent(method, Status.Ignored)
   }
   def reportAssumptionViolation(

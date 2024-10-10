@@ -124,12 +124,13 @@ MUnit test suites can be executed from VS Code like normal test suites.
 Test results are formatted in a specific way to make it easy to search for them
 in a large log file.
 
-| Test    | Prefix  |
-| ------- | ------- |
-| Success | `+`     |
-| Failed  | `==> X` |
-| Ignored | `==> i` |
-| Skipped | `==> s` |
+| Test    | Prefix  | Comment   | See Also                              |
+| ------- | ------- | --------- | ------------------------------------- |
+| Success | `+`     |           |                                       |
+| Failed  | `==> X` |           | [Writing assertions](assertions.html) |
+| Ignored | `==> i` | `ignored` | [Filtering tests](filtering.html)     |
+| Pending | `==> i` | `PENDING` | [Declaring tests](tests.html)         |
+| Skipped | `==> s` |           | [Filtering tests](filtering.html)     |
 
 Knowing these prefixes may come in handy for example when browsing test logs in
 a browser. Search for `==> X` to quickly navigate to the failed tests.

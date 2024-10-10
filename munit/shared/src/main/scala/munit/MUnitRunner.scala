@@ -325,7 +325,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       catch onError
     result.map { _ =>
       notifier.fireTestFinished(description)
-      true
+      !test.tags(Pending)
     }
   }
 
@@ -360,6 +360,8 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         trimStackTrace(f)
         notifier.fireTestAssumptionFailed(new Failure(description, f))
       case TestValues.Ignore =>
+        notifier.fireTestIgnored(description)
+      case _ if test.tags(Pending) =>
         notifier.fireTestIgnored(description)
       case _ =>
         ()

@@ -24,7 +24,21 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   override def fireTestIgnored(description: Description): Unit = {
     ignored += 1
     isReported += description
-    reporter.reportTestIgnored(description.getMethodName)
+    val pendingSuffixes = {
+      val annotations = description.getAnnotations
+      val isPending = annotations.collect { case munit.Pending =>
+        "PENDING"
+      }.distinct
+      val pendingComments = annotations.collect {
+        case tag: munit.PendingComment => tag.value
+      }
+      isPending ++ pendingComments
+    }
+    reporter.reportTestIgnored(
+      description.getMethodName,
+      elapsedMillis(),
+      pendingSuffixes.mkString(" ")
+    )
   }
   override def fireTestAssumptionFailed(
       failure: notification.Failure
