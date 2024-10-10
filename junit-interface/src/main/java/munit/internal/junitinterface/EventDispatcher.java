@@ -139,11 +139,10 @@ final class EventDispatcher extends RunListener {
             for (Annotation annotation : desc.getAnnotations()) {
               if (annotation instanceof Tag) {
                 Tag tag = (Tag) annotation;
-                String kind = tag.getClass().getName();
-                if (kind.equals("munit.Tag") && tag.value().equals("Pending")) {
+                if (tag instanceof PendingTag) {
                   isPending = true;
                 }
-                else if (kind.equals("munit.package$PendingComment")) {
+                else if (tag instanceof PendingCommentTag) {
                   builder.append(" ");
                   builder.append(tag.value());
                 }
