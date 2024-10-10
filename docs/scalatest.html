@@ -92,6 +92,11 @@ your tests to ensure you are green.</p>
 <span class="hljs-addition">+ test("ignored".ignore) {</span>
     // unchanged
   }
+
+<span class="hljs-deletion">- test("pending") (pending)</span>
+<span class="hljs-addition">+ test("pending".pending) {</span>
+<span class="hljs-addition">+   // zero or more assertions</span>
+<span class="hljs-addition">+ }</span>
 </code></pre>
 <p>If you are coming from <code>WordSpec</code> style tests, make sure to flatten them, or your tests
 will not run: Only the outer test will be selected to run, and the inner tests will do
