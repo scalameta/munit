@@ -5,12 +5,14 @@ import munit.diff.console.AnsiColors
 
 import scala.collection.JavaConverters._
 
-class Diff(val obtained: String, val expected: String) extends Serializable {
+class Diff(val obtained: String, val expected: String, val contextSize: Int)
+    extends Serializable {
   val obtainedClean: String = AnsiColors.filterAnsi(obtained)
   val expectedClean: String = AnsiColors.filterAnsi(expected)
   val obtainedLines: Seq[String] = splitIntoLines(obtainedClean)
   val expectedLines: Seq[String] = splitIntoLines(expectedClean)
-  val unifiedDiff: String = createUnifiedDiff(obtainedLines, expectedLines)
+  val unifiedDiff: String =
+    createUnifiedDiff(obtainedLines, expectedLines, contextSize)
   def isEmpty: Boolean = unifiedDiff.isEmpty()
 
   def createReport(
@@ -72,7 +74,8 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
 
   private def createUnifiedDiff(
       original: Seq[String],
-      revised: Seq[String]
+      revised: Seq[String],
+      contextSize: Int
   ): String = {
     val diff = DiffUtils.diff(original.asJava, revised.asJava)
     val result =
@@ -84,7 +87,7 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
             "expected",
             original.asJava,
             diff,
-            1
+            contextSize
           )
           .asScala
           .iterator
