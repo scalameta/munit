@@ -275,7 +275,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained,
       expected,
       loc,
-      isStackTracesEnabled = false
+      isStackTracesEnabled = true
     )
   }
 
