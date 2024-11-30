@@ -9,6 +9,7 @@ object Diffs {
       expected: String,
       handler: ComparisonFailExceptionHandler,
       title: String,
+      contextSize: Int,
       printObtainedAsStripMargin: Boolean
   )(implicit loc: Location): Boolean = {
     if (obtained.isEmpty && !expected.isEmpty) {
@@ -18,7 +19,7 @@ object Diffs {
             |$expected""".stripMargin
       handler.handle(msg, obtained, expected, loc)
     }
-    val diff = new Diff(obtained, expected)
+    val diff = new Diff(obtained, expected, contextSize)
     if (diff.isEmpty) true
     else {
       handler.handle(
