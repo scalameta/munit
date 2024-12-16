@@ -196,6 +196,83 @@ List(
 ...
 ```
 
+## Enlarging the diff context
+
+When a test fails Munit shows a rich difference, to easily spot the difference between the test result and the obtained value.
+Understanding where the reported value actually is can sometimes be difficult, specifically with repeated values, as by default Munit shows the diff surrounding it just with a single line of context.
+
+The context shown in the diff can be enlarged in a specific testing suite by overriding `contextSize`.
+
+```scala mdoc
+import munit.FunSuite
+
+class CustomContextSizeTest extends FunSuite {
+  override def contextSize: Int = 10
+
+  test("contextSize") {
+    val a = List("a", "a", "a", "a", "a", "a", "a", "a", "a")
+    val b = List("a", "a", "a", "a", "b", "a", "a", "a", "a")
+    assertEquals(a,b)
+  }
+}
+```
+
+will yield
+
+```
+values are not the same
+=> Obtained
+List(
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a"
+)
+=> Diff (- obtained, + expected)
+ List(
+   "a",
+   "a",
+   "a",
+   "a",
++  "b",
+   "a",
+   "a",
+   "a",
+-  "a",
+   "a"
+ )
+```
+
+while by default the "Diff" sections shows a more scoped diff:
+
+```
+values are not the same
+=> Obtained
+List(
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a",
+  "a"
+)
+=> Diff (- obtained, + expected)
+   "a",
++  "b",
+   "a",
+   "a",
+-  "a",
+   "a"
+```
+
 ## Run tests in parallel
 
 MUnit does not support running individual test cases in parallel. However, sbt
