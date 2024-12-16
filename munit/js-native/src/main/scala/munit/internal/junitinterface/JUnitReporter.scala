@@ -80,7 +80,6 @@ final class JUnitReporter(
         .append(ex.getMessage())
         .toString()
     )
-    trace(ex)
     emitEvent(method, Status.Failure, new OptionalThrowable(ex))
   }
 
@@ -268,7 +267,7 @@ final class JUnitReporter(
       .toString()
   }
   private def formatTime(elapsedMillis: Double): String =
-    AnsiColors.c("%.2fs".format(elapsedMillis / 1000.0), AnsiColors.DarkGrey)
+    AnsiColors.c("%.3fs".format(elapsedMillis / 1000.0), AnsiColors.DarkGrey)
   private val Trace = 0
   private val Debug = 1
   private val Info = 2

@@ -48,18 +48,11 @@ object Issue285FrameworkSuite
          |  + issue-285-ok <elapsed time>
          |beforeEach - issue-285-fail
          |afterEach - issue-285-fail
-         |==> X munit.Issue285FrameworkSuite.issue-285-fail  <elapsed time>java.util.concurrent.TimeoutException: test timed out after 5 milliseconds
+         |==> X munit.Issue285FrameworkSuite.issue-285-fail <elapsed time>java.util.concurrent.TimeoutException: test timed out after 5 milliseconds
          |beforeEach - issue-285-ok
          |afterEach - issue-285-ok
          |  + issue-285-ok-1 <elapsed time>
          |afterAll
          |""".stripMargin,
-      tags = Set(
-        // Skipped on JS/Native because we don't support
-        // `PlatformCompat.setTimeout` on Native and the test has stack traces
-        // on JS which fails the assertion (even if the behavior works as
-        // expected)
-        OnlyJVM
-      ),
       format = StdoutFormat
     )
