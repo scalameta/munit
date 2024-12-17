@@ -12,7 +12,12 @@ import scala.concurrent.Awaitable
 import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext
-import java.util.concurrent.{Executors, ThreadFactory, TimeoutException, TimeUnit}
+import java.util.concurrent.{
+  Executors,
+  ThreadFactory,
+  TimeoutException,
+  TimeUnit
+}
 import java.util.concurrent.atomic.AtomicInteger
 import scala.scalanative.meta.LinktimeInfo.isMultithreadingEnabled
 
@@ -34,7 +39,7 @@ private object LazyMultithreadingSupport {
 }
 object PlatformCompat {
   import LazyMultithreadingSupport._
-  
+
   def awaitResult[T](awaitable: Awaitable[T]): T = {
     if (!isMultithreadingEnabled)
       Thread.`yield`() // invokes SN 0.4 scalanative.runtime.loop()
