@@ -278,7 +278,7 @@ lazy val docs = project
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
       "VERSION" -> version.value.replaceFirst("\\+.*", ""),
-      "STABLE_VERSION" -> "0.7.29"
+      "STABLE_VERSION" -> "1.0.3"
     ),
     fork := false
   )
