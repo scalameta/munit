@@ -92,6 +92,7 @@ val sharedNativeConfigure: Project => Project =
   _.disablePlugins(ScalafixPlugin, MimaPlugin)
 
 val sharedSettings = List(
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
   scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 11)) =>
