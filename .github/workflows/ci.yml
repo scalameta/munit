@@ -18,6 +18,7 @@ jobs:
           distribution: temurin
           java-version: "${{ matrix.java }}"
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: sbt +testsJVM/test plugin/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -33,6 +34,7 @@ jobs:
           distribution: temurin
           java-version: 8
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: sbt +testsJS/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -48,6 +50,7 @@ jobs:
           distribution: temurin
           java-version: 8
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: npm install
       - run: sbt +testsJS/test
         env:
@@ -64,6 +67,7 @@ jobs:
           distribution: temurin
           java-version: 8
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: sbt +testsNative/test
         env:
           GOOGLE_APPLICATION_CREDENTIALS:
@@ -79,6 +83,7 @@ jobs:
           distribution: temurin
           java-version: 8
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: sbt +testsJVM/test
         shell: bash
         env:
@@ -95,6 +100,7 @@ jobs:
           distribution: temurin
           java-version: 8
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: sbt mimaReportBinaryIssues
   scalafmt:
     runs-on: ubuntu-latest
@@ -105,6 +111,7 @@ jobs:
           distribution: temurin
           java-version: 8
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: ./bin/scalafmt --check
   docs:
     name: Scalafix and Docs
@@ -116,6 +123,7 @@ jobs:
           distribution: temurin
           java-version: 11
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: sbt scalafixCheckAll
       - run: sbt docs/docusaurusCreateSite
         env:

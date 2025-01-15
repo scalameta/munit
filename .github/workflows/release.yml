@@ -13,6 +13,7 @@ jobs:
           distribution: temurin
           java-version: 8
           cache: sbt
+      - uses: sbt/setup-sbt@v1
       - run: git fetch --unshallow
       - name: Publish ${{ github.ref }}
         run: |
