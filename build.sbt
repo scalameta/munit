@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import scala.collection.mutable
 def previousVersion = "1.0.0-RC1"
 
-def scala213 = "2.13.15"
+def scala213 = "2.13.16"
 
 def scala212 = "2.12.20"
 
