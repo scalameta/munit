@@ -3,14 +3,11 @@ package munit.diff
 sealed abstract class PathNode(val i: Int, val j: Int, val prev: PathNode) {
 
   def isSnake: Boolean
-  final def isBootstrap: Boolean = {
-    i < 0 || j < 0
-  }
-  final def previousSnake: PathNode = {
+  final def isBootstrap: Boolean = i < 0 || j < 0
+  final def previousSnake: PathNode =
     if (isBootstrap) null
     else if (!isSnake && prev != null) prev.previousSnake
     else this
-  }
 
   override def toString: String = {
     val buf = new StringBuffer("[")

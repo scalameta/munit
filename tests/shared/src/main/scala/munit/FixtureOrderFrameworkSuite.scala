@@ -4,42 +4,24 @@ class FixtureOrderFrameworkSuite extends FunSuite {
   def println(msg: String): Unit = TestingConsole.out.println(msg)
   private def fixture(name: String) = new Fixture[Int](name) {
     def apply(): Int = 1
-    override def beforeAll(): Unit = {
-      println(s"beforeAll($name)")
-    }
-    override def beforeEach(context: BeforeEach): Unit = {
+    override def beforeAll(): Unit = println(s"beforeAll($name)")
+    override def beforeEach(context: BeforeEach): Unit =
       println(s"beforeEach($name, ${context.test.name})")
-    }
-    override def afterEach(context: AfterEach): Unit = {
+    override def afterEach(context: AfterEach): Unit =
       println(s"afterEach($name, ${context.test.name})")
-    }
-    override def afterAll(): Unit = {
-      println(s"afterAll($name)")
-    }
+    override def afterAll(): Unit = println(s"afterAll($name)")
   }
   private val a = fixture("a")
   private val b = fixture("b")
   private val adhoc = fixture("ad-hoc")
   override val munitFixtures: List[Fixture[Int]] = List(a, b)
 
-  override def beforeAll(): Unit = {
-    adhoc.beforeAll()
-  }
-  override def beforeEach(context: BeforeEach): Unit = {
-    adhoc.beforeEach(context)
-  }
-  override def afterEach(context: AfterEach): Unit = {
-    adhoc.afterEach(context)
-  }
-  override def afterAll(): Unit = {
-    adhoc.afterAll()
-  }
+  override def beforeAll(): Unit = adhoc.beforeAll()
+  override def beforeEach(context: BeforeEach): Unit = adhoc.beforeEach(context)
+  override def afterEach(context: AfterEach): Unit = adhoc.afterEach(context)
+  override def afterAll(): Unit = adhoc.afterAll()
 
-  1.to(3).foreach { i =>
-    test(i.toString()) {
-      println(s"test($i)")
-    }
-  }
+  1.to(3).foreach(i => test(i.toString())(println(s"test($i)")))
 }
 
 object FixtureOrderFrameworkSuite
@@ -77,5 +59,5 @@ object FixtureOrderFrameworkSuite
          |afterAll(b)
          |afterAll(ad-hoc)
          |""".stripMargin,
-      format = StdoutFormat
+      format = StdoutFormat,
     )

@@ -34,5 +34,5 @@ object DiffProductFrameworkSuite
          |   friends = List(
          |+    1,
          |     2
-         |""".stripMargin
+         |""".stripMargin,
     )

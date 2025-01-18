@@ -9,11 +9,7 @@ object TestValues {
 
   /** The test failed with the given exception but was ignored but its marked as flaky */
   class FlakyFailure(error: Throwable)
-      extends FailException(
-        "ignoring flaky test failure",
-        error,
-        Location.empty
-      )
+      extends FailException("ignoring flaky test failure", error, Location.empty)
       with NoStackTrace
       with Serializable
 

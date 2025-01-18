@@ -1,12 +1,12 @@
 // Adaptation of https://github.com/lihaoyi/PPrint/blob/e6a918c259ed7ae1998bbf58c360334a3f0157ca/pprint/src/pprint/Walker.scala
 package munit.internal.console
 
-import munit.Location
-import munit.diff.Printer
-import munit.diff.EmptyPrinter
-import munit.diff.console.{Printers => DiffPrinters}
 import munit.Clues
+import munit.Location
 import munit.Printable
+import munit.diff.EmptyPrinter
+import munit.diff.Printer
+import munit.diff.console.{Printers => DiffPrinters}
 import munit.internal.Compat
 
 object Printers {
@@ -33,98 +33,77 @@ object Printers {
       }
       val nextIndent = indent + indentStep
       val isDone = printer.print(a, out, indent)
-      if (!isDone) {
-        a match {
-          case null         => out.append("null")
-          case x: Printable => x.print(out, indent)
-          case x: Char =>
-            out.append('\'')
-            if (x == '\'') out.append("\\'")
-            else printChar(x, out)
-            out.append('\'')
-          case x: Byte   => out.append(x.toString())
-          case x: Short  => out.append(x.toString())
-          case x: Int    => out.append(x.toString())
-          case x: Long   => out.append(x.toString())
-          case x: Float  => out.append(x.toString())
-          case x: Double => out.append(x.toString())
-          case x: String => printString(x, out, printer)
-          case x: Clues =>
-            printApply(
-              "Clues",
-              x.values.iterator,
-              out,
-              indent,
-              nextIndent,
-              open = " {",
-              close = "}",
-              comma = ""
-            ) { clue =>
-              if (clue.source.nonEmpty) {
-                out.append(clue.source)
-              }
-              if (clue.valueType.nonEmpty) {
-                out.append(": ").append(clue.valueType)
-              }
-              out.append(" = ")
-              loop(clue.value, nextIndent)
-            }
-          case None =>
-            out.append("None")
-          case Nil =>
-            out.append("Nil")
-          case x: Map[_, _] =>
-            printApply(
-              Compat.collectionClassName(x),
-              x.iterator,
-              out,
-              indent,
-              nextIndent
-            ) { case (key, value) =>
-              loop(key, nextIndent)
-              out.append(" -> ")
-              loop(value, nextIndent)
-            }
-          case x: Iterable[_] =>
-            printApply(
-              Compat.collectionClassName(x),
-              x.iterator,
-              out,
-              indent,
-              nextIndent
-            ) { value => loop(value, nextIndent) }
-          case x: Array[_] =>
-            printApply(
-              "Array",
-              x.iterator,
-              out,
-              indent,
-              nextIndent
-            ) { value => loop(value, nextIndent) }
-          case it: Iterator[_] =>
-            if (it.isEmpty) out.append("empty iterator")
-            else out.append("non-empty iterator")
-          case p: Product =>
-            val elementNames = Compat.productElementNames(p)
-            val infiniteElementNames = Iterator.continually {
-              if (elementNames.hasNext) elementNames.next()
-              else ""
-            }
-            printApply(
-              p.productPrefix,
-              p.productIterator.zip(infiniteElementNames),
-              out,
-              indent,
-              nextIndent
-            ) { case (value, key) =>
-              if (key.nonEmpty) {
-                out.append(key).append(" = ")
-              }
-              loop(value, nextIndent)
-            }
-          case _ =>
-            out.append(a.toString())
-        }
+      if (!isDone) a match {
+        case null => out.append("null")
+        case x: Printable => x.print(out, indent)
+        case x: Char =>
+          out.append('\'')
+          if (x == '\'') out.append("\\'") else printChar(x, out)
+          out.append('\'')
+        case x: Byte => out.append(x.toString())
+        case x: Short => out.append(x.toString())
+        case x: Int => out.append(x.toString())
+        case x: Long => out.append(x.toString())
+        case x: Float => out.append(x.toString())
+        case x: Double => out.append(x.toString())
+        case x: String => printString(x, out, printer)
+        case x: Clues => printApply(
+            "Clues",
+            x.values.iterator,
+            out,
+            indent,
+            nextIndent,
+            open = " {",
+            close = "}",
+            comma = "",
+          ) { clue =>
+            if (clue.source.nonEmpty) out.append(clue.source)
+            if (clue.valueType.nonEmpty) out.append(": ").append(clue.valueType)
+            out.append(" = ")
+            loop(clue.value, nextIndent)
+          }
+        case None => out.append("None")
+        case Nil => out.append("Nil")
+        case x: Map[_, _] => printApply(
+            Compat.collectionClassName(x),
+            x.iterator,
+            out,
+            indent,
+            nextIndent,
+          ) { case (key, value) =>
+            loop(key, nextIndent)
+            out.append(" -> ")
+            loop(value, nextIndent)
+          }
+        case x: Iterable[_] => printApply(
+            Compat.collectionClassName(x),
+            x.iterator,
+            out,
+            indent,
+            nextIndent,
+          )(value => loop(value, nextIndent))
+        case x: Array[_] =>
+          printApply("Array", x.iterator, out, indent, nextIndent)(value =>
+            loop(value, nextIndent)
+          )
+        case it: Iterator[_] =>
+          if (it.isEmpty) out.append("empty iterator")
+          else out.append("non-empty iterator")
+        case p: Product =>
+          val elementNames = Compat.productElementNames(p)
+          val infiniteElementNames = Iterator
+            .continually(if (elementNames.hasNext) elementNames.next() else "")
+          printApply(
+            p.productPrefix,
+            p.productIterator.zip(infiniteElementNames),
+            out,
+            indent,
+            nextIndent,
+          ) { case (value, key) =>
+            if (key.nonEmpty) out.append(key).append(" = ")
+            loop(value, nextIndent)
+          }
+        case _ => out.append(a.toString())
       }
     }
     loop(any, indent = 0)
@@ -139,7 +118,7 @@ object Printers {
       nextIndent: Int,
       open: String = "(",
       close: String = ")",
-      comma: String = ","
+      comma: String = ",",
   )(fn: T => Unit): Unit = {
     out.append(prefix)
     out.append(open)
@@ -151,9 +130,7 @@ object Printers {
         if (it.hasNext) {
           out.append(comma)
           printNewline(out, nextIndent)
-        } else {
-          printNewline(out, indent)
-        }
+        } else printNewline(out, indent)
       }
     }
     out.append(close)
@@ -189,7 +166,7 @@ object Printers {
       val ch = string.charAt(i)
       ch match {
         case '"' | '\'' => out.append(ch)
-        case _          => printChar(ch, out, isEscapeUnicode = false)
+        case _ => printChar(ch, out, isEscapeUnicode = false)
       }
       i += 1
     }

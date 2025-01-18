@@ -1,6 +1,7 @@
 package munit
 
-class DiffsSuite extends FunSuite { self =>
+class DiffsSuite extends FunSuite {
+  self =>
   test("ansi") {
     val diff1 = munit.diff.Diffs.unifiedDiff("a", "b")
     val diff2 = munit.diff.Diffs.unifiedDiff("a", "c")
@@ -12,20 +13,15 @@ class DiffsSuite extends FunSuite { self =>
       """|-a
          |-+b
          |++c
-         |""".stripMargin
+         |""".stripMargin,
     )
   }
 
-  def check(
-      name: String,
-      a: String,
-      b: String,
-      expected: String
-  )(implicit loc: Location): Unit = {
-    test(name) {
-      val obtained = munit.diff.Diffs.unifiedDiff(a, b)
-      assertNoDiff(obtained, expected)
-    }
+  def check(name: String, a: String, b: String, expected: String)(implicit
+      loc: Location
+  ): Unit = test(name) {
+    val obtained = munit.diff.Diffs.unifiedDiff(a, b)
+    assertNoDiff(obtained, expected)
   }
 
   check(
@@ -35,14 +31,9 @@ class DiffsSuite extends FunSuite { self =>
     """|-a
        |+a ∙
        | b
-       |""".stripMargin
+       |""".stripMargin,
   )
 
-  check(
-    "windows-crlf",
-    "a\r\nb",
-    "a\nb",
-    ""
-  )
+  check("windows-crlf", "a\r\nb", "a\nb", "")
 
 }

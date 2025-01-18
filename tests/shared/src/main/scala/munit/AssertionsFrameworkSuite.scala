@@ -35,9 +35,9 @@ class AssertionsFrameworkSuite extends FunSuite {
     assertEquals[Any, Any](a.A(), b.A())
   }
 
-  test("toString-has-different-whitespace") {
+  test("toString-has-different-whitespace")(
     assertEquals[Any, Any]("foo", "foo  ")
-  }
+  )
 }
 
 object AssertionsFrameworkSuite
@@ -62,8 +62,8 @@ object AssertionsFrameworkSuite
          |-a.A()
          |+b.B()
          |==> failure munit.AssertionsFrameworkSuite.toString-has-different-whitespace - tests/shared/src/main/scala/munit/AssertionsFrameworkSuite.scala:39 values are not equal, even if their text representation only differs in leading/trailing whitespace and ANSI escape characters: foo
-         |38:  test("toString-has-different-whitespace") {
+         |38:  test("toString-has-different-whitespace")(
          |39:    assertEquals[Any, Any]("foo", "foo  ")
-         |40:  }
-         |""".stripMargin
+         |40:  )
+         |""".stripMargin,
     )

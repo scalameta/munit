@@ -3,11 +3,7 @@ package munit
 class ClueSuite extends BaseSuite {
   def check[T](options: TestOptions, clue: Clue[T], expected: String)(implicit
       loc: Location
-  ): Unit = {
-    test(options) {
-      assertEquals(clue.source, expected)
-    }
-  }
+  ): Unit = test(options)(assertEquals(clue.source, expected))
 
   val a: List[Int] = List(1)
 
@@ -16,11 +12,7 @@ class ClueSuite extends BaseSuite {
   check("comment", a /*comment*/ .head, "a /*comment*/ .head")
 
   // Disabled on Dotty because the starting position doesn't include opening "("
-  check(
-    "lambda",
-    { (y: String) => y.head },
-    "(y: String) => y.head"
-  )
+  check("lambda", (y: String) => y.head, "(y: String) => y.head")
 
   checkPrint(
     "string-message",
@@ -28,7 +20,7 @@ class ClueSuite extends BaseSuite {
     """|Clues {
        |  "message": String = "message"
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   val x = 42
@@ -38,7 +30,7 @@ class ClueSuite extends BaseSuite {
     """|Clues {
        |  x: Int = 42
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   val y = 32
@@ -49,7 +41,7 @@ class ClueSuite extends BaseSuite {
        |  x: Int = 42
        |  y: Int = 32
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   val z: List[Int] = List(1)
@@ -61,7 +53,7 @@ class ClueSuite extends BaseSuite {
        |    1
        |  )
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   case class User(name: String, age: Int)
@@ -75,18 +67,14 @@ class ClueSuite extends BaseSuite {
        |    age = 34
        |  )
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
-  def checkPrint(
-      options: TestOptions,
-      clues: Clues,
-      expected: String
-  )(implicit loc: Location): Unit = {
-    test(options) {
-      val obtained = munitPrint(clues)
-      assertNoDiff(obtained, expected)
-    }
+  def checkPrint(options: TestOptions, clues: Clues, expected: String)(implicit
+      loc: Location
+  ): Unit = test(options) {
+    val obtained = munitPrint(clues)
+    assertNoDiff(obtained, expected)
   }
 
 }

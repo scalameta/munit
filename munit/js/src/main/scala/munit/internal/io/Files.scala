@@ -1,10 +1,10 @@
 package munit.internal.io
 
-import scala.scalajs.js
-import java.{util => ju}
 import java.nio.charset.StandardCharsets
+import java.{util => ju}
 
 import scala.collection.JavaConverters._
+import scala.scalajs.js
 
 object Files {
   def readAllLines(path: MunitPath): ju.List[String] = {
@@ -14,8 +14,7 @@ object Files {
   }
   def readAllBytes(path: MunitPath): Array[Byte] = {
     val jsArray = JSIO.fs match {
-      case Some(fs) =>
-        fs.readFileSync(path.toString).asInstanceOf[js.Array[Int]]
+      case Some(fs) => fs.readFileSync(path.toString).asInstanceOf[js.Array[Int]]
       case None => new js.Array[Int](0)
     }
     val len = jsArray.length
@@ -27,6 +26,5 @@ object Files {
     }
     result
   }
-  def exists(path: MunitPath): Boolean =
-    JSIO.exists(path.toString)
+  def exists(path: MunitPath): Boolean = JSIO.exists(path.toString)
 }

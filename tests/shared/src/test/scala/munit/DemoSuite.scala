@@ -27,14 +27,10 @@ abstract class DemoSuite extends FunSuite {
 
     assert(clue(a) < clue(b))
   }
-  test("stack-traces".flaky) {
-    List(List(1, 2, 3).iterator).iterator.flatten.foreach { i =>
-      require(i < 2, i)
-    }
-  }
+  test("stack-traces".flaky)(
+    List(List(1, 2, 3).iterator).iterator.flatten.foreach(i => require(i < 2, i))
+  )
 
-  test("flaky".flaky) {
-    ???
-  }
+  test("flaky".flaky)(???)
 
 }

@@ -18,12 +18,8 @@ import scala.concurrent.Future
  * `beforeAll()` or `afterAll()` fail.
  */
 abstract class FutureFixture[T](name: String) extends AnyFixture[T](name) {
-  override def beforeAll(): Future[Unit] =
-    Future.successful(())
-  override def beforeEach(context: BeforeEach): Future[Unit] =
-    Future.successful(())
-  override def afterEach(context: AfterEach): Future[Unit] =
-    Future.successful(())
-  override def afterAll(): Future[Unit] =
-    Future.successful(())
+  override def beforeAll(): Future[Unit] = Future.successful(())
+  override def beforeEach(context: BeforeEach): Future[Unit] = Future.successful(())
+  override def afterEach(context: AfterEach): Future[Unit] = Future.successful(())
+  override def afterAll(): Future[Unit] = Future.successful(())
 }

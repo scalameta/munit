@@ -10,15 +10,13 @@ package munit
 final class TestOptions(
     val name: String,
     val tags: Set[Tag],
-    val location: Location
+    val location: Location,
 ) extends Serializable {
   def this(name: String)(implicit loc: munit.Location) =
     this(name, Set.empty, loc)
 
-  def withName(newName: String): TestOptions =
-    copy(name = newName)
-  def withTags(newTags: Set[Tag]): TestOptions =
-    copy(tags = newTags)
+  def withName(newName: String): TestOptions = copy(name = newName)
+  def withTags(newTags: Set[Tag]): TestOptions = copy(tags = newTags)
   def withLocation(newLocation: Location): TestOptions =
     copy(location = newLocation)
 
@@ -26,20 +24,16 @@ final class TestOptions(
   def flaky: TestOptions = tag(Flaky)
   def ignore: TestOptions = tag(Ignore)
   def pending: TestOptions = tag(Pending)
-  def pending(comment: String): TestOptions =
-    pending.tag(PendingComment(comment))
+  def pending(comment: String): TestOptions = pending.tag(PendingComment(comment))
   def only: TestOptions = tag(Only)
   def tag(t: Tag): TestOptions = copy(tags = tags + t)
   private[this] def copy(
       name: String = this.name,
       tags: Set[Tag] = this.tags,
-      location: Location = this.location
-  ): TestOptions = {
-    new TestOptions(name, tags, location)
-  }
+      location: Location = this.location,
+  ): TestOptions = new TestOptions(name, tags, location)
 
-  override def toString: String =
-    s"TestOptions($name, $tags, $location)"
+  override def toString: String = s"TestOptions($name, $tags, $location)"
 }
 
 object TestOptions extends TestOptionsConversions {
@@ -53,8 +47,7 @@ trait TestOptionsConversions {
    * Implicitly create a TestOptions given a test name.
    * This allows writing `test("name") { ... }` even if `test` accepts a `TestOptions`
    */
-  implicit def testOptionsFromString(
-      name: String
-  )(implicit loc: Location): TestOptions =
-    new TestOptions(name, Set.empty, loc)
+  implicit def testOptionsFromString(name: String)(implicit
+      loc: Location
+  ): TestOptions = new TestOptions(name, Set.empty, loc)
 }

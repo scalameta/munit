@@ -3,15 +3,12 @@ package munit
 import munit.internal.console.Printers
 
 class AssertionsSuite extends BaseSuite {
-  def check(
-      name: TestOptions,
-      cond: => Boolean,
-      expected: String
-  )(implicit loc: Location): Unit =
-    test(name) {
-      val (_, clues) = munitCaptureClues(cond)
-      assertNoDiff(Printers.print(clues), expected)
-    }
+  def check(name: TestOptions, cond: => Boolean, expected: String)(implicit
+      loc: Location
+  ): Unit = test(name) {
+    val (_, clues) = munitCaptureClues(cond)
+    assertNoDiff(Printers.print(clues), expected)
+  }
 
   val a = 42
   val b = 43L
@@ -23,7 +20,7 @@ class AssertionsSuite extends BaseSuite {
        |  a: Int = 42
        |  b: Long = 43
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   check(
@@ -33,7 +30,7 @@ class AssertionsSuite extends BaseSuite {
        |  a: Int = 42
        |  c.head: Int = 41
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   check(
@@ -45,7 +42,7 @@ class AssertionsSuite extends BaseSuite {
        |    41
        |  )
        |}
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   test("subtype".tag(NoDotty)) {
@@ -85,7 +82,7 @@ class AssertionsSuite extends BaseSuite {
            |  Alternative 2: upcast either type into `Any` or a shared supertype
            |assertEquals(List(1), Vector(1))
            |            ^
-           |""".stripMargin
+           |""".stripMargin,
     )
   }
 
@@ -127,7 +124,7 @@ assertEquals(new A, new B)
            |  Alternative 2: upcast either type into `Any` or a shared supertype
            |assertEquals(new A, new B)
            |            ^
-           |""".stripMargin
+           |""".stripMargin,
     )
   }
 
@@ -162,19 +159,14 @@ assertEquals(new A, new B)
            |  Alternative 2: upcast either type into `Any` or a shared supertype
            |assertEquals('a', 'a'.toInt)
            |            ^
-           |""".stripMargin
+           |""".stripMargin,
     )
   }
 
   test("array-sameElements") {
-    val e = intercept[ComparisonFailException] {
-      assertEquals(Array(1, 2), Array(1, 2))
-    }
-    assert(
-      clue(e).getMessage.contains(
-        "arrays have the same elements but different reference equality. Convert the arrays to a non-Array collection if you intend to assert the two arrays have the same elements. For example, `assertEquals(a.toSeq, b.toSeq)"
-      )
-    )
+    val e =
+      intercept[ComparisonFailException](assertEquals(Array(1, 2), Array(1, 2)))
+    assert(clue(e).getMessage.contains("arrays have the same elements but different reference equality. Convert the arrays to a non-Array collection if you intend to assert the two arrays have the same elements. For example, `assertEquals(a.toSeq, b.toSeq)"))
   }
 
   test("some-none-nokj") {
@@ -208,7 +200,7 @@ assertEquals(new A, new B)
            |  Alternative 2: upcast either type into `Any` or a shared supertype
            |assertEquals(None, Some(1))
            |            ^
-           |""".stripMargin
+           |""".stripMargin,
     )
   }
 

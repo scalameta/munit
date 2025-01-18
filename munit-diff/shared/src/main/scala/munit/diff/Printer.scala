@@ -12,8 +12,7 @@ trait Printer {
    */
   def print(value: Any, out: StringBuilder, indent: Int): Boolean
   def height: Int = Printer.defaultHeight
-  def isMultiline(string: String): Boolean =
-    string.contains('\n')
+  def isMultiline(string: String): Boolean = string.contains('\n')
 
   /**
    * Combine two printers into a single printer.
@@ -48,12 +47,8 @@ trait Printer {
     val h = this.height
     val p: (Any, StringBuilder, Int) => Boolean = this.print
     new Printer {
-      def print(value: Any, out: StringBuilder, indent: Int): Boolean =
-        p.apply(value, out, indent) || other.print(
-          value,
-          out,
-          indent
-        )
+      def print(value: Any, out: StringBuilder, indent: Int): Boolean = p
+        .apply(value, out, indent) || other.print(value, out, indent)
       override def height: Int = h.max(other.height)
     }
   }
@@ -69,14 +64,13 @@ object Printer {
   )(partialPrint: PartialFunction[Any, String]): Printer = {
     val h = height
     new Printer {
-      def print(value: Any, out: StringBuilder, indent: Int): Boolean = {
+      def print(value: Any, out: StringBuilder, indent: Int): Boolean =
         partialPrint.lift.apply(value) match {
           case Some(string) =>
             out.append(string)
             true
           case None => false
         }
-      }
 
       override def height: Int = h
     }

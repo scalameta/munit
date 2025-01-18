@@ -1,18 +1,18 @@
 package munit.internal.junitinterface
 
-import org.junit.runner.{Description, notification}
-import org.junit.runner.notification.RunNotifier
-
 import scala.collection.mutable
+
+import org.junit.runner.Description
+import org.junit.runner.notification
+import org.junit.runner.notification.RunNotifier
 
 class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   var ignored = 0
   var total = 0
   var startedTimestamp = 0L
   val isReported: mutable.Set[Description] = mutable.Set.empty[Description]
-  override def fireTestSuiteStarted(description: Description): Unit = {
+  override def fireTestSuiteStarted(description: Description): Unit =
     reporter.reportTestSuiteStarted()
-  }
   override def fireTestStarted(description: Description): Unit = {
     startedTimestamp = System.nanoTime()
     reporter.reportTestStarted(description.getMethodName)
@@ -26,48 +26,36 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
     isReported += description
     val pendingSuffixes = {
       val annotations = description.getAnnotations
-      val isPending = annotations.collect { case munit.Pending =>
-        "PENDING"
-      }.distinct
-      val pendingComments = annotations.collect {
-        case tag: munit.PendingComment => tag.value
-      }
+      val isPending = annotations.collect { case munit.Pending => "PENDING" }
+        .distinct
+      val pendingComments = annotations
+        .collect { case tag: munit.PendingComment => tag.value }
       isPending ++ pendingComments
     }
     reporter.reportTestIgnored(
       description.getMethodName,
       elapsedMillis(),
-      pendingSuffixes.mkString(" ")
+      pendingSuffixes.mkString(" "),
     )
   }
-  override def fireTestAssumptionFailed(
-      failure: notification.Failure
-  ): Unit = {
+  override def fireTestAssumptionFailed(failure: notification.Failure): Unit = {
     isReported += failure.description
     reporter.reportAssumptionViolation(
       failure.description.getMethodName,
       elapsedMillis(),
-      failure.ex
+      failure.ex,
     )
   }
   override def fireTestFailure(failure: notification.Failure): Unit = {
     val methodName = failure.description.getMethodName
     isReported += failure.description
-    reporter.reportTestFailed(
-      methodName,
-      failure.ex,
-      elapsedMillis()
-    )
+    reporter.reportTestFailed(methodName, failure.ex, elapsedMillis())
   }
   override def fireTestFinished(description: Description): Unit = {
     val methodName = description.getMethodName
     total += 1
-    if (!isReported(description)) {
-      reporter.reportTestPassed(
-        methodName,
-        elapsedMillis()
-      )
-    }
+    if (!isReported(description)) reporter
+      .reportTestPassed(methodName, elapsedMillis())
   }
   override def fireTestSuiteFinished(description: Description): Unit = {}
 }

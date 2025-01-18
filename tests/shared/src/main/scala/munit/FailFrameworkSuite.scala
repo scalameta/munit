@@ -4,9 +4,7 @@ class FailFrameworkSuite extends FunSuite {
   test("pass".fail) {
     // println("pass")
   }
-  test("fail".fail) {
-    ???
-  }
+  test("fail".fail)(???)
 }
 
 object FailFrameworkSuite
@@ -17,5 +15,5 @@ object FailFrameworkSuite
          |4:  test("pass".fail) {
          |5:    // println("pass")
          |==> success munit.FailFrameworkSuite.fail
-         |""".stripMargin
+         |""".stripMargin,
     )

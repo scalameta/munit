@@ -9,25 +9,22 @@ object Diffs {
       expected: String,
       handler: ComparisonFailExceptionHandler,
       title: String,
-      printObtainedAsStripMargin: Boolean
+      printObtainedAsStripMargin: Boolean,
   )(implicit loc: Location): Boolean = {
     if (obtained.isEmpty && !expected.isEmpty) {
-      val msg =
-        s"""|Obtained empty output!
-            |=> Expected:
-            |$expected""".stripMargin
+      val msg = s"""|Obtained empty output!
+                    |=> Expected:
+                    |$expected""".stripMargin
       handler.handle(msg, obtained, expected, loc)
     }
     val diff = new Diff(obtained, expected)
     if (diff.isEmpty) true
-    else {
-      handler.handle(
-        diff.createReport(title, printObtainedAsStripMargin),
-        obtained,
-        expected,
-        loc
-      )
-    }
+    else handler.handle(
+      diff.createReport(title, printObtainedAsStripMargin),
+      obtained,
+      expected,
+      loc,
+    )
   }
 
 }

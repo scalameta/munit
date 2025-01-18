@@ -10,13 +10,9 @@ class Issue497FrameworkSuite extends FunSuite {
   val myFixture: Fixture[Unit] = new Fixture[Unit]("myFixture") {
     def apply(): Unit = println("### myFixture apply() ###")
 
-    override def beforeAll(): Unit = {
-      println("### beforeAll is running ###")
-    }
+    override def beforeAll(): Unit = println("### beforeAll is running ###")
 
-    override def afterAll(): Unit = {
-      println("### afterAll is running ###")
-    }
+    override def afterAll(): Unit = println("### afterAll is running ###")
   }
   override def munitFixtures: List[Fixture[Unit]] = List(myFixture)
 
@@ -36,8 +32,6 @@ object Issue497FrameworkSuite
       classOf[Issue497FrameworkSuite],
       "",
       arguments = Array("--exclude-categories=munit.Slow"),
-      tags = Set(
-        OnlyJVM
-      ),
-      format = StdoutFormat
+      tags = Set(OnlyJVM),
+      format = StdoutFormat,
     )

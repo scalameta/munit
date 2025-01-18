@@ -26,5 +26,5 @@ object TestNameFrameworkSuite
           |==> success munit.TestNameFrameworkSuite.substitute\\u001az
           |==> success munit.TestNameFrameworkSuite.emoji😆
           |==> success munit.TestNameFrameworkSuite.red\\u001b[31m
-          |""".stripMargin
+          |""".stripMargin,
     )

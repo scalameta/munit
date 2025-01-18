@@ -1,22 +1,19 @@
 package munit
 
-import scala.concurrent.Promise
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import scala.concurrent.ExecutionContext
 import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
+
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Promise
 
 class AsyncFixtureSuite extends BaseSuite {
   case class PromiseWrapper(name: String, promise: Promise[_])
   override def munitValueTransforms: List[ValueTransform] =
-    super.munitValueTransforms ++ List(
-      new ValueTransform(
-        "PromiseWrapper",
-        { case p: PromiseWrapper =>
-          p.promise.future
-        }
-      )
-    )
+    super.munitValueTransforms ++ List(new ValueTransform(
+      "PromiseWrapper",
+      { case p: PromiseWrapper => p.promise.future },
+    ))
   class ScheduledMessage() extends AnyFixture[String]("AsyncFixture") {
     val sh: ScheduledExecutorService =
       Executors.newSingleThreadScheduledExecutor()
@@ -32,7 +29,7 @@ class AsyncFixtureSuite extends BaseSuite {
           setBeforeAllBit.success(())
         },
         timeout,
-        TimeUnit.MILLISECONDS
+        TimeUnit.MILLISECONDS,
       )
       PromiseWrapper("beforeAll", setBeforeAllBit)
     }
@@ -40,16 +37,13 @@ class AsyncFixtureSuite extends BaseSuite {
       assertEquals(
         promise.future.value,
         None,
-        "promise did not get reset from afterEach"
+        "promise did not get reset from afterEach",
       )
-      assert(
-        didBeforeAllEvaluateAsync,
-        "beforeAll promise did not complete yet"
-      )
+      assert(didBeforeAllEvaluateAsync, "beforeAll promise did not complete yet")
       sh.schedule[Unit](
         () => promise.success(s"beforeEach-${context.test.name}"),
         timeout,
-        TimeUnit.MILLISECONDS
+        TimeUnit.MILLISECONDS,
       )
       PromiseWrapper("beforeEach", promise)
     }
@@ -61,38 +55,33 @@ class AsyncFixtureSuite extends BaseSuite {
           resetPromise.success(())
         },
         timeout,
-        TimeUnit.MILLISECONDS
+        TimeUnit.MILLISECONDS,
       )
       PromiseWrapper("afterEach", resetPromise)
     }
     override def afterAll(): PromiseWrapper = {
       val shutdownPromise = Promise[Unit]()
-      ExecutionContext.global.execute(() => {
+      ExecutionContext.global.execute { () =>
         Thread.sleep(timeout)
         val runningJobs = sh.shutdownNow()
         assert(runningJobs.isEmpty(), runningJobs)
         shutdownPromise.success(())
-      })
+      }
       PromiseWrapper("afterAll", shutdownPromise)
     }
   }
   val message = new ScheduledMessage()
   val latest: Fixture[Unit] = new Fixture[Unit]("latest") {
     def apply(): Unit = ()
-    override def afterAll(): Unit = {
-      assert(
-        message.sh.isShutdown(),
-        "message.afterAll did not complete yet. " +
-          "We may want to remove this assertion in the future if we allow fixtures to load in parallel."
-      )
-    }
+    override def afterAll(): Unit = assert(
+      message.sh.isShutdown(),
+      "message.afterAll did not complete yet. " +
+        "We may want to remove this assertion in the future if we allow fixtures to load in parallel.",
+    )
   }
 
   override def munitFixtures: Seq[AnyFixture[_]] = List(message, latest)
 
-  1.to(3).foreach { i =>
-    test(s"test-$i") {
-      assertEquals(message(), s"beforeEach-test-$i")
-    }
-  }
+  1.to(3)
+    .foreach(i => test(s"test-$i")(assertEquals(message(), s"beforeEach-test-$i")))
 }

@@ -1,16 +1,18 @@
 package munit
 
-import munit.internal.console.{Lines, StackTraces}
-import munit.internal.console.Printers
-import munit.diff.Printer
 import munit.diff.EmptyPrinter
+import munit.diff.Printer
+import munit.diff.console.AnsiColors
+import munit.internal.MacroCompat
+import munit.internal.console.Lines
+import munit.internal.console.Printers
+import munit.internal.console.StackTraces
 
+import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
-import scala.collection.mutable
-import munit.diff.console.AnsiColors
+
 import org.junit.AssumptionViolatedException
-import munit.internal.MacroCompat
 
 object Assertions extends Assertions
 trait Assertions extends MacroCompat.CompileErrorMacro {
@@ -20,47 +22,31 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   def munitAnsiColors: Boolean = true
 
   private def munitFilterAnsi(message: String): String =
-    if (munitAnsiColors) message
-    else AnsiColors.filterAnsi(message)
+    if (munitAnsiColors) message else AnsiColors.filterAnsi(message)
 
-  def assert(
-      cond: => Boolean,
-      clue: => Any = "assertion failed"
-  )(implicit loc: Location): Unit = {
-    StackTraces.dropInside {
-      val (isTrue, clues) = munitCaptureClues(cond)
-      if (!isTrue) {
-        fail(munitPrint(clue), clues)
-      }
-    }
+  def assert(cond: => Boolean, clue: => Any = "assertion failed")(implicit
+      loc: Location
+  ): Unit = StackTraces.dropInside {
+    val (isTrue, clues) = munitCaptureClues(cond)
+    if (!isTrue) fail(munitPrint(clue), clues)
   }
 
-  def assume(
-      cond: Boolean,
-      clue: => Any = "assumption failed"
-  )(implicit loc: Location): Unit = {
-    StackTraces.dropInside {
-      if (!cond) {
-        throw new AssumptionViolatedException(munitPrint(clue))
-      }
-    }
-  }
+  def assume(cond: Boolean, clue: => Any = "assumption failed")(implicit
+      loc: Location
+  ): Unit = StackTraces
+    .dropInside(if (!cond) throw new AssumptionViolatedException(munitPrint(clue)))
 
   def assertNoDiff(
       obtained: String,
       expected: String,
-      clue: => Any = "diff assertion failed"
-  )(implicit loc: Location): Unit = {
-    StackTraces.dropInside {
-      Diffs.assertNoDiff(
-        obtained,
-        expected,
-        exceptionHandlerFromAssertions(this, Clues.empty),
-        munitPrint(clue),
-        printObtainedAsStripMargin = true
-      )
-    }
-  }
+      clue: => Any = "diff assertion failed",
+  )(implicit loc: Location): Unit = StackTraces.dropInside(Diffs.assertNoDiff(
+    obtained,
+    expected,
+    exceptionHandlerFromAssertions(this, Clues.empty),
+    munitPrint(clue),
+    printObtainedAsStripMargin = true,
+  ))
 
   /**
    * Asserts that two elements are not equal according to the `Compare[A, B]` type-class.
@@ -70,18 +56,14 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   def assertNotEquals[A, B](
       obtained: A,
       expected: B,
-      clue: => Any = "values are the same"
-  )(implicit loc: Location, compare: Compare[A, B]): Unit = {
-    StackTraces.dropInside {
-      if (compare.isEqual(obtained, expected)) {
-        failComparison(
-          s"${munitPrint(clue)}, expected 2 different values: $expected is equal to $obtained",
-          obtained,
-          expected
-        )
-      }
-    }
-  }
+      clue: => Any = "values are the same",
+  )(implicit loc: Location, compare: Compare[A, B]): Unit = StackTraces.dropInside(
+    if (compare.isEqual(obtained, expected)) failComparison(
+      s"${munitPrint(clue)}, expected 2 different values: $expected is equal to $obtained",
+      obtained,
+      expected,
+    )
+  )
 
   /**
    * Asserts that two elements are equal according to the `Compare[A, B]` type-class.
@@ -91,9 +73,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   def assertEquals[A, B](
       obtained: A,
       expected: B,
-      clue: => Any = "values are not the same"
-  )(implicit loc: Location, compare: Compare[A, B]): Unit = {
-    StackTraces.dropInside {
+      clue: => Any = "values are not the same",
+  )(implicit loc: Location, compare: Compare[A, B]): Unit = StackTraces
+    .dropInside {
       if (!compare.isEqual(obtained, expected)) {
         (obtained, expected) match {
           case (a: Array[_], b: Array[_]) if a.sameElements(b) =>
@@ -111,14 +93,13 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
                 "Convert the arrays to a non-Array collection if you intend to assert the two arrays have the same elements. " +
                 "For example, `assertEquals(a.toSeq, b.toSeq)",
               obtained,
-              expected
+              expected,
             )
           case _ =>
         }
         compare.failEqualsComparison(obtained, expected, clue, loc, this)
       }
     }
-  }
 
   /**
    * Asserts that two doubles are equal to within a positive delta.
@@ -129,19 +110,15 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: Double,
       expected: Double,
       delta: Double,
-      clue: => Any = "values are not the same"
-  )(implicit loc: Location): Unit = {
-    StackTraces.dropInside {
-      val exactlyTheSame = java.lang.Double.compare(expected, obtained) == 0
-      val almostTheSame = Math.abs(expected - obtained) <= delta
-      if (!exactlyTheSame && !almostTheSame) {
-        failComparison(
-          s"${munitPrint(clue)} expected: $expected but was: $obtained",
-          obtained,
-          expected
-        )
-      }
-    }
+      clue: => Any = "values are not the same",
+  )(implicit loc: Location): Unit = StackTraces.dropInside {
+    val exactlyTheSame = java.lang.Double.compare(expected, obtained) == 0
+    val almostTheSame = Math.abs(expected - obtained) <= delta
+    if (!exactlyTheSame && !almostTheSame) failComparison(
+      s"${munitPrint(clue)} expected: $expected but was: $obtained",
+      obtained,
+      expected,
+    )
   }
 
   /**
@@ -153,19 +130,15 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: Float,
       expected: Float,
       delta: Float,
-      clue: => Any = "values are not the same"
-  )(implicit loc: Location): Unit = {
-    StackTraces.dropInside {
-      val exactlyTheSame = java.lang.Float.compare(expected, obtained) == 0
-      val almostTheSame = Math.abs(expected - obtained) <= delta
-      if (!exactlyTheSame && !almostTheSame) {
-        failComparison(
-          s"${munitPrint(clue)} expected: $expected but was: $obtained",
-          obtained,
-          expected
-        )
-      }
-    }
+      clue: => Any = "values are not the same",
+  )(implicit loc: Location): Unit = StackTraces.dropInside {
+    val exactlyTheSame = java.lang.Float.compare(expected, obtained) == 0
+    val almostTheSame = Math.abs(expected - obtained) <= delta
+    if (!exactlyTheSame && !almostTheSame) failComparison(
+      s"${munitPrint(clue)} expected: $expected but was: $obtained",
+      obtained,
+      expected,
+    )
   }
 
   /**
@@ -173,22 +146,19 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
    */
   def intercept[T <: Throwable](
       body: => Any
-  )(implicit T: ClassTag[T], loc: Location): T = {
-    runIntercept(None, body)
-  }
+  )(implicit T: ClassTag[T], loc: Location): T = runIntercept(None, body)
 
   /**
    * Evalutes the given expression and asserts that an exception of type T with the expected message is thrown.
    */
-  def interceptMessage[T <: Throwable](expectedExceptionMessage: String)(
-      body: => Any
-  )(implicit T: ClassTag[T], loc: Location): T = {
+  def interceptMessage[T <: Throwable](
+      expectedExceptionMessage: String
+  )(body: => Any)(implicit T: ClassTag[T], loc: Location): T =
     runIntercept(Some(expectedExceptionMessage), body)
-  }
 
   private def runIntercept[T <: Throwable](
       expectedExceptionMessage: Option[String],
-      body: => Any
+      body: => Any,
   )(implicit T: ClassTag[T], loc: Location): T = {
     val expectedExceptionMsg =
       s"expected exception of type '${T.runtimeClass.getName()}' but body evaluated successfully"
@@ -197,34 +167,32 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       fail(expectedExceptionMsg)
     } catch {
       case e: FailExceptionLike[_]
-          if !T.runtimeClass.isAssignableFrom(e.getClass()) =>
-        throw e
+          if !T.runtimeClass.isAssignableFrom(e.getClass()) => throw e
       case e: FailExceptionLike[_]
-          if e.getMessage.contains(expectedExceptionMsg) =>
-        throw e
+          if e.getMessage.contains(expectedExceptionMsg) => throw e
       case NonFatal(e) =>
-        if (T.runtimeClass.isAssignableFrom(e.getClass())) {
+        if (T.runtimeClass.isAssignableFrom(e.getClass()))
           if (
-            expectedExceptionMessage.isEmpty || e.getMessage == expectedExceptionMessage.get
-          )
-            e.asInstanceOf[T]
+            expectedExceptionMessage.isEmpty ||
+            e.getMessage == expectedExceptionMessage.get
+          ) e.asInstanceOf[T]
           else {
             val obtained = e.getClass().getName()
             throw new FailException(
               s"intercept failed, exception '$obtained' had message '${e.getMessage}', which was different from expected message '${expectedExceptionMessage.get}'",
               cause = e,
               isStackTracesEnabled = false,
-              location = loc
+              location = loc,
             )
           }
-        } else {
+        else {
           val obtained = e.getClass().getName()
           val expected = T.runtimeClass.getName()
           throw new FailException(
             s"intercept failed, exception '$obtained' is not a subtype of '$expected",
             cause = e,
             isStackTracesEnabled = false,
-            location = loc
+            location = loc,
           )
         }
     }
@@ -233,29 +201,23 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   /**
    * Unconditionally fails this test with the given message and exception marked as the cause.
    */
-  def fail(message: String, cause: Throwable)(implicit
-      loc: Location
-  ): Nothing = {
+  def fail(message: String, cause: Throwable)(implicit loc: Location): Nothing =
     throw new FailException(
       munitFilterAnsi(munitLines.formatLine(loc, message)),
       cause,
       isStackTracesEnabled = true,
-      location = loc
+      location = loc,
     )
-  }
 
   /**
    * Unconditionally fails this test with the given message and optional clues.
    */
-  def fail(
-      message: String,
-      clues: Clues = new Clues(Nil)
-  )(implicit loc: Location): Nothing = {
-    throw new FailException(
-      munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
-      loc
-    )
-  }
+  def fail(message: String, clues: Clues = new Clues(Nil))(implicit
+      loc: Location
+  ): Nothing = throw new FailException(
+    munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+    loc,
+  )
 
   /**
    * Unconditionally fails this test due to result of comparing two values.
@@ -268,53 +230,45 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       message: String,
       obtained: Any,
       expected: Any,
-      clues: Clues = new Clues(Nil)
-  )(implicit loc: Location): Nothing = {
-    throw new ComparisonFailException(
-      munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
-      obtained,
-      expected,
-      loc,
-      isStackTracesEnabled = true
-    )
-  }
+      clues: Clues = new Clues(Nil),
+  )(implicit loc: Location): Nothing = throw new ComparisonFailException(
+    munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+    obtained,
+    expected,
+    loc,
+    isStackTracesEnabled = true,
+  )
 
   /**
    * Unconditionally fail this test case and cancel all the subsequent tests in this suite.
    */
-  def failSuite(
-      message: String,
-      clues: Clues = new Clues(Nil)
-  )(implicit loc: Location): Nothing = {
-    throw new FailSuiteException(
-      munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
-      loc
-    )
-  }
+  def failSuite(message: String, clues: Clues = new Clues(Nil))(implicit
+      loc: Location
+  ): Nothing = throw new FailSuiteException(
+    munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+    loc,
+  )
 
   private def exceptionHandlerFromAssertions(
       assertions: Assertions,
-      clues: => Clues
-  ): ComparisonFailExceptionHandler =
-    new ComparisonFailExceptionHandler {
-      def handle(
-          message: String,
-          obtained: String,
-          expected: String,
-          loc: Location
-      ): Nothing = {
-        assertions.failComparison(message, obtained, expected, clues)(loc)
-      }
-    }
+      clues: => Clues,
+  ): ComparisonFailExceptionHandler = new ComparisonFailExceptionHandler {
+    def handle(
+        message: String,
+        obtained: String,
+        expected: String,
+        loc: Location,
+    ): Nothing = assertions
+      .failComparison(message, obtained, expected, clues)(loc)
+  }
 
   private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
     mutable.ListBuffer.empty
-  def munitCaptureClues[T](thunk: => T): (T, Clues) =
-    synchronized {
-      munitCapturedClues.clear()
-      val result = thunk
-      (result, new Clues(munitCapturedClues.toList))
-    }
+  def munitCaptureClues[T](thunk: => T): (T, Clues) = synchronized {
+    munitCapturedClues.clear()
+    val result = thunk
+    (result, new Clues(munitCapturedClues.toList))
+  }
 
   def clue[T](c: Clue[T]): T = synchronized {
     munitCapturedClues += c
@@ -324,11 +278,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
 
   def printer: Printer = EmptyPrinter
 
-  def munitPrint(clue: => Any): String = {
-    clue match {
-      case message: String => message
-      case value           => Printers.print(value, printer)
-    }
+  def munitPrint(clue: => Any): String = clue match {
+    case message: String => message
+    case value => Printers.print(value, printer)
   }
 
 }

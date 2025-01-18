@@ -4,30 +4,21 @@ import munit.internal.PlatformCompat
 
 class BaseSuite extends FunSuite {
 
-  def isDotty: Boolean =
-    !BuildInfo.scalaVersion.startsWith("2.")
-  def is213: Boolean =
-    BuildInfo.scalaVersion.startsWith("2.13") || isDotty
+  def isDotty: Boolean = !BuildInfo.scalaVersion.startsWith("2.")
+  def is213: Boolean = BuildInfo.scalaVersion.startsWith("2.13") || isDotty
 
-  override def munitTestTransforms: List[TestTransform] =
-    super.munitTestTransforms ++ List(
-      new TestTransform(
-        "BaseSuite",
-        { test =>
-          if (test.tags(NoDotty) && isDotty) {
-            test.tag(Ignore)
-          } else if (test.tags(Only213) && !is213) {
-            test.tag(Ignore)
-          } else if (test.tags(OnlyJVM) && !PlatformCompat.isJVM) {
-            test.tag(Ignore)
-          } else if (test.tags(NoJVM) && PlatformCompat.isJVM) {
-            test.tag(Ignore)
-          } else if (test.tags(NoNative) && PlatformCompat.isNative) {
-            test.tag(Ignore)
-          } else {
-            test
-          }
-        }
-      )
+  override def munitTestTransforms
+      : List[TestTransform] = super.munitTestTransforms ++ List(
+    new TestTransform(
+      "BaseSuite",
+      { test =>
+        if (test.tags(NoDotty) && isDotty) test.tag(Ignore)
+        else if (test.tags(Only213) && !is213) test.tag(Ignore)
+        else if (test.tags(OnlyJVM) && !PlatformCompat.isJVM) test.tag(Ignore)
+        else if (test.tags(NoJVM) && PlatformCompat.isJVM) test.tag(Ignore)
+        else if (test.tags(NoNative) && PlatformCompat.isNative) test.tag(Ignore)
+        else test
+      },
     )
+  )
 }

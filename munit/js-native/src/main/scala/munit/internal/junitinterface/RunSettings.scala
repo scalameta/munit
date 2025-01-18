@@ -14,11 +14,10 @@ final class RunSettings(
     val notLogExceptionClass: Boolean,
     val useSbtLoggers: Boolean,
     val trimStackTraces: Boolean,
-    val tags: TagsFilter
+    val tags: TagsFilter,
 ) extends Settings {
-  def decodeName(name: String): String = {
-    if (decodeScalaNames)
-      Try(scala.reflect.NameTransformer.decode(name)).getOrElse(name)
+  def decodeName(name: String): String =
+    if (decodeScalaNames) Try(scala.reflect.NameTransformer.decode(name))
+      .getOrElse(name)
     else name
-  }
 }

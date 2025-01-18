@@ -5,6 +5,6 @@ trait ComparisonFailExceptionHandler {
       message: String,
       obtained: String,
       expected: String,
-      location: Location
+      location: Location,
   ): Nothing
 }

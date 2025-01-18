@@ -1,29 +1,31 @@
 package munit.internal
 
-import scala.scalajs.reflect.Reflect
-import sbt.testing.TaskDef
 import munit.MUnitRunner
-import scala.concurrent.Future
-import sbt.testing.Task
+
 import sbt.testing.EventHandler
 import sbt.testing.Logger
-import scala.concurrent.Promise
-import scala.concurrent.duration.Duration
+import sbt.testing.Task
+import sbt.testing.TaskDef
+
+import java.util.concurrent.TimeoutException
+
 import scala.concurrent.Await
 import scala.concurrent.Awaitable
 import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.Promise
+import scala.concurrent.duration.Duration
 import scala.scalajs.js.timers
-import java.util.concurrent.TimeoutException
+import scala.scalajs.reflect.Reflect
 
 object PlatformCompat {
-  def awaitResult[T](awaitable: Awaitable[T]): T = {
-    Await.result(awaitable, Duration.Inf)
-  }
+  def awaitResult[T](awaitable: Awaitable[T]): T = Await
+    .result(awaitable, Duration.Inf)
 
   def executeAsync(
       task: Task,
       eventHandler: EventHandler,
-      loggers: Array[Logger]
+      loggers: Array[Logger],
   ): Future[Unit] = {
     val p = Promise[Unit]()
     task.execute(eventHandler, loggers, _ => p.success(()))
@@ -33,25 +35,20 @@ object PlatformCompat {
   def waitAtMost[T](
       startFuture: () => Future[T],
       duration: Duration,
-      ec: ExecutionContext
+      ec: ExecutionContext,
   ): Future[T] = {
     val onComplete = Promise[T]()
     val timeoutHandle =
-      if (duration.isFinite)
-        Some(timers.setTimeout(duration.toMillis) {
-          onComplete.tryFailure(
-            new TimeoutException(s"test timed out after $duration")
-          )
-        })
-      else
-        None
+      if (duration.isFinite) Some(timers.setTimeout(duration.toMillis)(
+        onComplete
+          .tryFailure(new TimeoutException(s"test timed out after $duration"))
+      ))
+      else None
     ec.execute(new Runnable {
-      def run(): Unit = {
-        startFuture().onComplete { result =>
-          onComplete.tryComplete(result)
-          timeoutHandle.foreach(timers.clearTimeout(_))
-        }(ec)
-      }
+      def run(): Unit = startFuture().onComplete { result =>
+        onComplete.tryComplete(result)
+        timeoutHandle.foreach(timers.clearTimeout(_))
+      }(ec)
     })
     onComplete.future
   }
@@ -71,17 +68,14 @@ object PlatformCompat {
 
   def newRunner(
       taskDef: TaskDef,
-      classLoader: ClassLoader
-  ): Option[MUnitRunner] = {
-    Reflect
-      .lookupInstantiatableClass(taskDef.fullyQualifiedName())
-      .map(cls =>
-        new MUnitRunner(
-          cls.runtimeClass.asInstanceOf[Class[_ <: munit.Suite]],
-          () => cls.newInstance().asInstanceOf[munit.Suite]
-        )
+      classLoader: ClassLoader,
+  ): Option[MUnitRunner] = Reflect
+    .lookupInstantiatableClass(taskDef.fullyQualifiedName()).map(cls =>
+      new MUnitRunner(
+        cls.runtimeClass.asInstanceOf[Class[_ <: munit.Suite]],
+        () => cls.newInstance().asInstanceOf[munit.Suite],
       )
-  }
+    )
   private var myClassLoader: ClassLoader = _
   def setThisClassLoader(loader: ClassLoader): Unit = myClassLoader = loader
   def getThisClassLoader: ClassLoader = myClassLoader

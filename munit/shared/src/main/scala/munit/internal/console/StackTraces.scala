@@ -12,17 +12,12 @@ object StackTraces {
   def dropOutside[T](t: => T): T = t
 
   def trimStackTrace(ex: Throwable): ex.type = {
-    val isVisited = ju.Collections.newSetFromMap(
-      new ju.IdentityHashMap[Throwable, java.lang.Boolean]()
-    )
-    def loop(e: Throwable): Unit = {
-      if (e != null && isVisited.add(e)) {
-        val stack = e.getStackTrace()
-        if (stack != null) {
-          e.setStackTrace(filterCallStack(stack))
-        }
-        loop(e.getCause())
-      }
+    val isVisited = ju.Collections
+      .newSetFromMap(new ju.IdentityHashMap[Throwable, java.lang.Boolean]())
+    def loop(e: Throwable): Unit = if (e != null && isVisited.add(e)) {
+      val stack = e.getStackTrace()
+      if (stack != null) e.setStackTrace(filterCallStack(stack))
+      loop(e.getCause())
     }
     loop(ex)
     ex
@@ -32,30 +27,27 @@ object StackTraces {
       stack: Array[StackTraceElement]
   ): Array[StackTraceElement] = {
     val droppedInside = stack.lastIndexWhere(x =>
-      x.getClassName == className &&
-        x.getMethodName == "dropInside"
+      x.getClassName == className && x.getMethodName == "dropInside"
     )
 
     val droppedOutside = stack.indexWhere(x =>
-      x.getClassName == className &&
-        x.getMethodName == "dropOutside"
+      x.getClassName == className && x.getMethodName == "dropOutside"
     )
 
     val stack1 = stack.slice(
       droppedInside match {
         case -1 => 0
-        case n  => n + 3
+        case n => n + 3
       },
       droppedOutside match {
         case -1 => stack.length
-        case n  => n
-      }
+        case n => n
+      },
     )
 
-    val lastNonLMFIndex =
-      stack1.lastIndexWhere(x => !x.getClassName.contains("$$Lambda$"))
+    val lastNonLMFIndex = stack1
+      .lastIndexWhere(x => !x.getClassName.contains("$$Lambda$"))
 
-    if (lastNonLMFIndex < 0) stack1
-    else stack1.take(lastNonLMFIndex + 1)
+    if (lastNonLMFIndex < 0) stack1 else stack1.take(lastNonLMFIndex + 1)
   }
 }

@@ -12,28 +12,16 @@ class LazyFutureSuite extends FunSuite {
   }
 
   override def munitValueTransforms: List[ValueTransform] =
-    super.munitValueTransforms ++ List(
-      new ValueTransform(
-        "LazyFuture",
-        { case LazyFuture(run) =>
-          run()
-        }
-      )
-    )
+    super.munitValueTransforms ++
+      List(new ValueTransform("LazyFuture", { case LazyFuture(run) => run() }))
 
-  test("ok-task".fail) {
-    LazyFuture {
-      // Test will fail because  LazyFuture.run()` is automatically called
-      throw new RuntimeException("BOOM!")
-    }
-  }
+  test("ok-task".fail)(LazyFuture(
+    // Test will fail because  LazyFuture.run()` is automatically called
+    throw new RuntimeException("BOOM!")
+  ))
 
-  test("nested".fail) {
-    LazyFuture {
-      LazyFuture {
-        // Test will fail because  LazyFuture.run()` is automatically called
-        throw new RuntimeException("BOOM!")
-      }
-    }
-  }
+  test("nested".fail)(LazyFuture(LazyFuture(
+    // Test will fail because  LazyFuture.run()` is automatically called
+    throw new RuntimeException("BOOM!")
+  )))
 }

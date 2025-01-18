@@ -1,8 +1,9 @@
 package munit
 
-import org.junit.runner.RunWith
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+
+import org.junit.runner.RunWith
 
 /**
  * The base class for all test suites.
