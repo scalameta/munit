@@ -2,52 +2,27 @@ package munit
 
 import munit.internal.console.Printers
 
-class PrintersSuite extends FunSuite { self =>
+class PrintersSuite extends FunSuite {
+  self =>
   val isScala213: Boolean = BuildInfo.scalaVersion.startsWith("2.13")
   def check(
       options: TestOptions,
       original: Any,
       expected: String,
-      isEnabled: Boolean = true
-  ): Unit = {
-    test(options) {
-      assume(isEnabled, "disabled test")
-      val obtained = Printers.print(original)
-      assertNoDiff(obtained, expected)
-    }
+      isEnabled: Boolean = true,
+  ): Unit = test(options) {
+    assume(isEnabled, "disabled test")
+    val obtained = Printers.print(original)
+    assertNoDiff(obtained, expected)
   }
 
-  check(
-    "basic",
-    "a",
-    "\"a\""
-  )
+  check("basic", "a", "\"a\"")
 
-  check(
-    "multiline",
-    "a\n",
-    "\"\"\"a\n\"\"\""
-  )
-  check(
-    "single-quote",
-    '\'',
-    "'\\''"
-  )
-  check(
-    "newline",
-    '\n',
-    "'\\n'"
-  )
-  check(
-    "char-single-quote",
-    '\'',
-    "'\\''"
-  )
-  check(
-    "string-single-quote",
-    "'a'",
-    "\"'a'\""
-  )
+  check("multiline", "a\n", "\"\"\"a\n\"\"\"")
+  check("single-quote", '\'', "'\\''")
+  check("newline", '\n', "'\\n'")
+  check("char-single-quote", '\'', "'\\''")
+  check("string-single-quote", "'a'", "\"'a'\"")
   check(
     "map",
     Map(1 -> 2, 3 -> 4, 5 -> Map(6 -> 7)),
@@ -58,7 +33,7 @@ class PrintersSuite extends FunSuite { self =>
        |    6 -> 7
        |  )
        |)
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   check(
@@ -77,7 +52,7 @@ class PrintersSuite extends FunSuite { self =>
        |    )
        |  )
        |)
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   check(
@@ -96,14 +71,14 @@ class PrintersSuite extends FunSuite { self =>
        |    )
        |  )
        |)
-       |""".stripMargin
+       |""".stripMargin,
   )
 
   case class User(
       name: String,
       age: Int,
       awesome: Boolean,
-      friends: List[User] = Nil
+      friends: List[User] = Nil,
   )
   check(
     "user1",
@@ -115,7 +90,7 @@ class PrintersSuite extends FunSuite { self =>
        |  friends = Nil
        |)
        |""".stripMargin,
-    isScala213
+    isScala213,
   )
 
   check(
@@ -135,6 +110,6 @@ class PrintersSuite extends FunSuite { self =>
        |  )
        |)
        |""".stripMargin,
-    isScala213
+    isScala213,
   )
 }

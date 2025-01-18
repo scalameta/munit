@@ -12,7 +12,7 @@ final class JUnitEvent(
     _status: Status,
     _selector: Selector,
     _throwable: OptionalThrowable = new OptionalThrowable,
-    _duration: Long = -1L
+    _duration: Long = -1L,
 ) extends Event {
   override def status(): Status = _status
   override def selector(): Selector = _selector

@@ -42,20 +42,15 @@ trait Compare[A, B] {
       expected: B,
       title: Any,
       loc: Location,
-      assertions: Assertions
+      assertions: Assertions,
   ): Nothing = {
     val diffHandler = new ComparisonFailExceptionHandler {
       override def handle(
           message: String,
           _obtained: String,
           _expected: String,
-          loc: Location
-      ): Nothing =
-        assertions.failComparison(
-          message,
-          obtained,
-          expected
-        )(loc)
+          loc: Location,
+      ): Nothing = assertions.failComparison(message, obtained, expected)(loc)
     }
     // Attempt 1: custom pretty-printer that produces multiline output, which is
     // optimized for line-by-line diffing.
@@ -64,7 +59,7 @@ trait Compare[A, B] {
       assertions.munitPrint(expected),
       diffHandler,
       title = assertions.munitPrint(title),
-      printObtainedAsStripMargin = false
+      printObtainedAsStripMargin = false,
     )(loc)
 
     // Attempt 2: try with `.toString` in case `munitPrint()` produces identical
@@ -74,30 +69,28 @@ trait Compare[A, B] {
       expected.toString(),
       diffHandler,
       title = assertions.munitPrint(title),
-      printObtainedAsStripMargin = false
+      printObtainedAsStripMargin = false,
     )(loc)
 
     // Attempt 3: string comparison is not working, unconditionally fail the test.
-    if (obtained.toString() == expected.toString())
-      assertions.failComparison(
-        s"values are not equal even if they have the same `toString()`: $obtained",
-        obtained,
-        expected
-      )(loc)
-    else
-      assertions.failComparison(
-        s"values are not equal, even if their text representation only differs in leading/trailing whitespace and ANSI escape characters: $obtained",
-        obtained,
-        expected
-      )(loc)
+    if (obtained.toString() == expected.toString()) assertions.failComparison(
+      s"values are not equal even if they have the same `toString()`: $obtained",
+      obtained,
+      expected,
+    )(loc)
+    else assertions.failComparison(
+      s"values are not equal, even if their text representation only differs in leading/trailing whitespace and ANSI escape characters: $obtained",
+      obtained,
+      expected,
+    )(loc)
   }
 
 }
 
 object Compare extends ComparePriority1 {
   private val anyEquality: Compare[Any, Any] = _ == _
-  def defaultCompare[A, B]: Compare[A, B] =
-    anyEquality.asInstanceOf[Compare[A, B]]
+  def defaultCompare[A, B]: Compare[A, B] = anyEquality
+    .asInstanceOf[Compare[A, B]]
 }
 
 /** Allows comparison between A and B when A is a subtype of B */

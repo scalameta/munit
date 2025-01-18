@@ -5,9 +5,12 @@
 package munit.internal.junitinterface
 
 import munit.internal.PlatformCompat
-import org.junit.runner.notification.RunNotifier
+
 import sbt.testing._
+
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import org.junit.runner.notification.RunNotifier
 
 /* Implementation note: In JUnitTask we use Future[Try[Unit]] instead of simply
  * Future[Unit]. This is to prevent Scala's Future implementation to box/wrap
@@ -18,16 +21,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 final class JUnitTask(
     _taskDef: TaskDef,
     runSettings: RunSettings,
-    classLoader: ClassLoader
+    classLoader: ClassLoader,
 ) extends Task {
 
   override def taskDef(): TaskDef = _taskDef
   override def tags(): Array[String] = Array.empty
 
-  def execute(
-      eventHandler: EventHandler,
-      loggers: Array[Logger]
-  ): Array[Task] = {
+  def execute(eventHandler: EventHandler, loggers: Array[Logger]): Array[Task] = {
     execute(eventHandler, loggers, _ => ())
     Array()
   }
@@ -35,17 +35,15 @@ final class JUnitTask(
   def execute(
       eventHandler: EventHandler,
       loggers: Array[Logger],
-      continuation: Array[Task] => Unit
-  ): Unit = {
-    PlatformCompat.newRunner(taskDef(), classLoader) match {
-      case None =>
-      case Some(runner) =>
-        runner.filter(runSettings.tags)
-        val reporter =
-          new JUnitReporter(eventHandler, loggers, runSettings, taskDef())
-        val notifier: RunNotifier = new MUnitRunNotifier(reporter)
-        runner.runAsync(notifier).foreach(_ => continuation(Array()))
-    }
+      continuation: Array[Task] => Unit,
+  ): Unit = PlatformCompat.newRunner(taskDef(), classLoader) match {
+    case None =>
+    case Some(runner) =>
+      runner.filter(runSettings.tags)
+      val reporter =
+        new JUnitReporter(eventHandler, loggers, runSettings, taskDef())
+      val notifier: RunNotifier = new MUnitRunNotifier(reporter)
+      runner.runAsync(notifier).foreach(_ => continuation(Array()))
   }
 
 }

@@ -1,9 +1,9 @@
-import munit.internal.junitinterface.{PendingCommentTag, PendingTag}
+import munit.internal.junitinterface.PendingCommentTag
+import munit.internal.junitinterface.PendingTag
 
 package object munit {
   case class PendingComment(override val value: String)
-      extends Tag(value)
-      with PendingCommentTag
+      extends Tag(value) with PendingCommentTag
 
   val Ignore = new Tag("Ignore")
   val Only = new Tag("Only")

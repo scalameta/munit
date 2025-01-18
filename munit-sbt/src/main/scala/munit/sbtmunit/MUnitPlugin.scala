@@ -1,40 +1,33 @@
 package munit.sbtmunit
 
-import sbt._
 import sbt.Keys._
+import sbt._
 import sbt.plugins._
-import java.nio.file.Paths
+
 import java.nio.file.Files
-import java.{util => ju}
-import java.time.format.DateTimeFormatter
+import java.nio.file.Paths
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.{util => ju}
 
 object MUnitPlugin extends AutoPlugin {
   override def trigger = allRequirements
   override def requires = JvmPlugin
   object autoImport {
-    val munitBucketName: SettingKey[Option[String]] =
-      settingKey[Option[String]](
-        "The Google Cloud Storage bucket name, defaults to 'munit-test-reports'."
-      )
-    val munitRepository: SettingKey[Option[String]] =
-      settingKey[Option[String]](
-        "The repository of this project, for example GitHub URL."
-      )
+    val munitBucketName: SettingKey[Option[String]] = settingKey[Option[String]](
+      "The Google Cloud Storage bucket name, defaults to 'munit-test-reports'."
+    )
+    val munitRepository: SettingKey[Option[String]] = settingKey[Option[String]](
+      "The repository of this project, for example GitHub URL."
+    )
     val munitRef: SettingKey[Option[String]] =
-      settingKey[Option[String]](
-        "The git branch or tag reference from where this report was created, for example 'refs/heads/master'."
-      )
+      settingKey[Option[String]]("The git branch or tag reference from where this report was created, for example 'refs/heads/master'.")
     val munitSha: SettingKey[Option[String]] =
-      settingKey[Option[String]](
-        "The git commit SHA from where this report was created, for example 'f32a4ab1cf8685f47837f07bb52f515b48fd4ecb'."
-      )
+      settingKey[Option[String]]("The git commit SHA from where this report was created, for example 'f32a4ab1cf8685f47837f07bb52f515b48fd4ecb'.")
     val munitReportName: SettingKey[Option[String]] =
       settingKey[Option[String]]("The filename for this test report.")
     val munitReportListener: SettingKey[Option[MUnitReportListener]] =
-      settingKey[Option[MUnitReportListener]](
-        "The listener to handle reports."
-      )
+      settingKey[Option[MUnitReportListener]]("The listener to handle reports.")
   }
   import autoImport._
 
@@ -42,7 +35,7 @@ object MUnitPlugin extends AutoPlugin {
     munitBucketName := Some("munit-test-reports"),
     munitRepository := Option(System.getenv("GITHUB_REPOSITORY")),
     munitRef := Option(System.getenv("GITHUB_REF")),
-    munitSha := Option(System.getenv("GITHUB_SHA"))
+    munitSha := Option(System.getenv("GITHUB_SHA")),
   )
 
   override val projectSettings: Seq[Def.Setting[_]] = List(
@@ -58,8 +51,7 @@ object MUnitPlugin extends AutoPlugin {
               Files.createDirectories(path.getParent())
               Files.write(path, json)
               true
-            case _ =>
-              false
+            case _ => false
           }
         }
         bucketName <- munitBucketName.value
@@ -74,7 +66,7 @@ object MUnitPlugin extends AutoPlugin {
         project = thisProject.value.id
         scala = scalaVersion.value
         jvm = System.getProperty("java.version", "unknown")
-      } yield s"${date}/$ref/$sha/$project/$scala/$jvm"
+      } yield s"$date/$ref/$sha/$project/$scala/$jvm"
     },
     testListeners ++= {
       for {
@@ -90,8 +82,8 @@ object MUnitPlugin extends AutoPlugin {
         ref,
         sha,
         scalaVersion.value,
-        thisProject.value.id
+        thisProject.value.id,
       )
-    }
+    },
   )
 }

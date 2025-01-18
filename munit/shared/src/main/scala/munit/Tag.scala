@@ -1,6 +1,7 @@
 package munit
 
 import java.lang.annotation.Annotation
+
 import scala.runtime.Statics
 
 class Tag(val value: String)
@@ -10,7 +11,7 @@ class Tag(val value: String)
   // Not a case class so that it possible to override these.
   override def equals(obj: Any): Boolean = obj match {
     case t: Tag => t.value == value
-    case _      => false
+    case _ => false
   }
   override def hashCode(): Int = {
     var acc = -889275714

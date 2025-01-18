@@ -14,7 +14,7 @@ object TagsIncludeFramweworkSuite
       """|==> success munit.TagsFrameworkSuite.a
          |==> success munit.TagsFrameworkSuite.c
          |""".stripMargin,
-      arguments = Array("--include-tags=include")
+      arguments = Array("--include-tags=include"),
     )
 
 object TagsIncludeExcludeFramweworkSuite
@@ -22,7 +22,7 @@ object TagsIncludeExcludeFramweworkSuite
       classOf[TagsFrameworkSuite],
       """|==> success munit.TagsFrameworkSuite.a
          |""".stripMargin,
-      arguments = Array("--include-tags=include", "--exclude-tags=exclude")
+      arguments = Array("--include-tags=include", "--exclude-tags=exclude"),
     )
 
 object TagsExcludeFramweworkSuite
@@ -31,5 +31,5 @@ object TagsExcludeFramweworkSuite
       """|==> success munit.TagsFrameworkSuite.a
          |==> success munit.TagsFrameworkSuite.d
          |""".stripMargin,
-      arguments = Array("--exclude-tags=exclude")
+      arguments = Array("--exclude-tags=exclude"),
     )

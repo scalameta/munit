@@ -15,20 +15,16 @@ object AnsiColors {
   val GREEN = "\u001B[32m"
   val DarkGrey = "\u001B[90m"
 
-  val noColor: Boolean =
-    Option(System.getenv("NO_COLOR")).exists(_ != "")
+  val noColor: Boolean = Option(System.getenv("NO_COLOR")).exists(_ != "")
 
-  def use(colorSequence: String): String =
-    if (noColor) "" else colorSequence
+  def use(colorSequence: String): String = if (noColor) "" else colorSequence
 
   def c(s: String, colorSequence: String): String =
-    if (colorSequence == null || noColor) s
-    else colorSequence + s + Reset
+    if (colorSequence == null || noColor) s else colorSequence + s + Reset
 
-  def filterAnsi(s: String): String = {
-    if (s == null) {
-      null
-    } else {
+  def filterAnsi(s: String): String =
+    if (s == null) null
+    else {
       val len = s.length
       val r = new java.lang.StringBuilder(len)
       var i = 0
@@ -37,13 +33,10 @@ object AnsiColors {
         if (c == '\u001B') {
           i += 1
           while (i < len && s.charAt(i) != 'm') i += 1
-        } else {
-          r.append(c)
-        }
+        } else r.append(c)
         i += 1
       }
       r.toString()
     }
-  }
 
 }

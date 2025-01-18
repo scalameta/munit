@@ -7,60 +7,42 @@ class MyersDiff[T](equalizer: Equalizer[T])
   def this() = this(Equalizer.default[T])
   override def diff(
       original: util.List[T],
-      revised: util.List[T]
-  ): munit.diff.Patch[T] = {
-    try {
-      buildRevision(buildPath(original, revised), original, revised)
-    } catch {
+      revised: util.List[T],
+  ): munit.diff.Patch[T] =
+    try buildRevision(buildPath(original, revised), original, revised)
+    catch {
       case e: DifferentiationFailedException =>
         e.printStackTrace()
         new munit.diff.Patch[T]()
     }
-  }
   private def buildRevision(
       _path: PathNode,
       orig: util.List[T],
-      rev: util.List[T]
+      rev: util.List[T],
   ): munit.diff.Patch[T] = {
     var path = _path
     val patch = new munit.diff.Patch[T]
     if (path.isSnake) path = path.prev
-    while (
-      path != null &&
-      path.prev != null &&
-      path.prev.j >= 0
-    ) {
-      if (path.isSnake)
-        throw new IllegalStateException(
-          "bad diffpath: found snake when looking for diff"
-        )
+    while (path != null && path.prev != null && path.prev.j >= 0) {
+      if (path.isSnake) throw new IllegalStateException(
+        "bad diffpath: found snake when looking for diff"
+      )
       val i = path.i
       val j = path.j
       path = path.prev
       val ianchor = path.i
       val janchor = path.j
       val original =
-        new munit.diff.Chunk[T](
-          ianchor,
-          copyOfRange(orig, ianchor, i)
-        )
-      val revised =
-        new munit.diff.Chunk[T](
-          janchor,
-          copyOfRange(rev, janchor, j)
-        )
+        new munit.diff.Chunk[T](ianchor, copyOfRange(orig, ianchor, i))
+      val revised = new munit.diff.Chunk[T](janchor, copyOfRange(rev, janchor, j))
       val delta: munit.diff.Delta[T] =
-        if (original.size == 0 && revised.size != 0) {
+        if (original.size == 0 && revised.size != 0)
           new munit.diff.InsertDelta[T](original, revised)
-        } else if (original.size > 0 && revised.size == 0) {
+        else if (original.size > 0 && revised.size == 0)
           new munit.diff.DeleteDelta[T](original, revised)
-        } else {
-          new munit.diff.ChangeDelta[T](original, revised)
-        }
+        else new munit.diff.ChangeDelta[T](original, revised)
       patch.addDelta(delta)
-      if (path.isSnake) {
-        path = path.prev
-      }
+      if (path.isSnake) path = path.prev
     }
     patch
   }
@@ -68,10 +50,7 @@ class MyersDiff[T](equalizer: Equalizer[T])
   private def copyOfRange(original: util.List[T], fromIndex: Int, to: Int) =
     new util.ArrayList[T](original.subList(fromIndex, to))
 
-  def buildPath(
-      orig: util.List[T],
-      rev: util.List[T]
-  ): PathNode = {
+  def buildPath(orig: util.List[T], rev: util.List[T]): PathNode = {
 
     val N = orig.size()
     val M = rev.size()
@@ -91,7 +70,7 @@ class MyersDiff[T](equalizer: Equalizer[T])
         val kminus = kmiddle - 1
         var prev: PathNode = null
         var i = 0
-        if ((k == -d) || (k != d && diagonal(kminus).i < diagonal(kplus).i)) {
+        if (k == -d || k != d && diagonal(kminus).i < diagonal(kplus).i) {
           i = diagonal(kplus).i
           prev = diagonal(kplus)
         } else {
@@ -105,21 +84,13 @@ class MyersDiff[T](equalizer: Equalizer[T])
         // orig and rev are zero-based
         // but the algorithm is one-based
         // that's why there's no +1 when indexing the sequences
-        while (
-          i < N &&
-          j < M &&
-          equalizer.equals(orig.get(i), rev.get(j))
-        ) {
+        while (i < N && j < M && equalizer.equals(orig.get(i), rev.get(j))) {
           i += 1
           j += 1
         }
-        if (i > node.i) {
-          node = new Snake(i, j, node)
-        }
+        if (i > node.i) node = new Snake(i, j, node)
         diagonal(kmiddle) = node
-        if (i >= N && j >= M) {
-          return diagonal(kmiddle)
-        }
+        if (i >= N && j >= M) return diagonal(kmiddle)
 
         k += 2
       }

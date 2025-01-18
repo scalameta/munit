@@ -9,7 +9,7 @@ class FrameworkTest(
     val tags: Set[Tag] = Set.empty,
     val format: FrameworkTestFormat = SbtFormat,
     val arguments: Array[String] = Array(),
-    val onEvent: Event => String = _ => ""
+    val onEvent: Event => String = _ => "",
 )(implicit val location: Location)
 
 sealed abstract class FrameworkTestFormat

@@ -10,13 +10,9 @@ object MUnitTestReport {
       projectName: String,
       javaVersion: String,
       os: String,
-      groups: Array[Group]
+      groups: Array[Group],
   )
-  case class Group(
-      name: String,
-      result: String,
-      events: Array[TestEvent]
-  )
+  case class Group(name: String, result: String, events: Array[TestEvent])
   case class TestEvent(
       status: String,
       name: String,
@@ -24,12 +20,12 @@ object MUnitTestReport {
       // but then all numbers get formatted as `2.0` with a redundant `.0`
       // suffix.
       duration: Long,
-      exception: TestException
+      exception: TestException,
   )
   case class TestException(
       className: String,
       message: String,
       stack: Array[String],
-      cause: TestException
+      cause: TestException,
   )
 }

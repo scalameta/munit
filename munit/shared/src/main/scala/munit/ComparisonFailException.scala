@@ -25,7 +25,7 @@ class ComparisonFailException(
     val expected: Any,
     val expectedString: String,
     val location: Location,
-    val isStackTracesEnabled: Boolean
+    val isStackTracesEnabled: Boolean,
 ) extends ComparisonFailure(message, expectedString, obtainedString)
     with FailExceptionLike[ComparisonFailException] {
   def this(
@@ -33,7 +33,7 @@ class ComparisonFailException(
       obtained: Any,
       expected: Any,
       location: Location,
-      isStackTracesEnabled: Boolean
+      isStackTracesEnabled: Boolean,
   ) = this(
     message,
     obtained,
@@ -41,7 +41,7 @@ class ComparisonFailException(
     expected,
     s"$expected",
     location,
-    isStackTracesEnabled
+    isStackTracesEnabled,
   )
   override def getMessage: String = message
   def withMessage(newMessage: String): ComparisonFailException =
@@ -52,13 +52,12 @@ class ComparisonFailException(
       expected,
       expectedString,
       location,
-      isStackTracesEnabled
+      isStackTracesEnabled,
     )
   override def fillInStackTrace(): Throwable = {
     val result = super.fillInStackTrace()
-    if (!isStackTracesEnabled) {
-      result.setStackTrace(result.getStackTrace().slice(0, 1))
-    }
+    if (!isStackTracesEnabled) result
+      .setStackTrace(result.getStackTrace().slice(0, 1))
     result
   }
 }

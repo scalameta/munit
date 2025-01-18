@@ -7,10 +7,9 @@ object PlatformIO {
   }
 
   object Files {
-    def readAllLines(path: Path): java.util.List[String] =
-      java.nio.file.Files.readAllLines(path)
-    def exists(path: Path): Boolean =
-      java.nio.file.Files.exists(path)
+    def readAllLines(path: Path): java.util.List[String] = java.nio.file.Files
+      .readAllLines(path)
+    def exists(path: Path): Boolean = java.nio.file.Files.exists(path)
   }
 
   type Path = java.nio.file.Path

@@ -1,6 +1,7 @@
 package munit.diff.console
 
-import munit.diff.{EmptyPrinter, Printer}
+import munit.diff.EmptyPrinter
+import munit.diff.Printer
 
 import scala.annotation.switch
 
@@ -15,7 +16,7 @@ object Printers {
   def printString(
       string: String,
       out: StringBuilder,
-      printer: Printer
+      printer: Printer,
   ): Unit = {
     val isMultiline = printer.isMultiline(string)
     if (isMultiline) {
@@ -40,20 +41,19 @@ object Printers {
   def printChar(
       c: Char,
       sb: StringBuilder,
-      isEscapeUnicode: Boolean = true
-  ): Unit =
-    (c: @switch) match {
-      case '"'  => sb.append("\\\"")
-      case '\\' => sb.append("\\\\")
-      case '\b' => sb.append("\\b")
-      case '\f' => sb.append("\\f")
-      case '\n' => sb.append("\\n")
-      case '\r' => sb.append("\\r")
-      case '\t' => sb.append("\\t")
-      case c =>
-        val isNonReadableAscii = c < ' ' || (c > '~' && isEscapeUnicode)
-        if (isNonReadableAscii && !Character.isLetter(c))
-          sb.append("\\u%04x".format(c.toInt))
-        else sb.append(c)
-    }
+      isEscapeUnicode: Boolean = true,
+  ): Unit = (c: @switch) match {
+    case '"' => sb.append("\\\"")
+    case '\\' => sb.append("\\\\")
+    case '\b' => sb.append("\\b")
+    case '\f' => sb.append("\\f")
+    case '\n' => sb.append("\\n")
+    case '\r' => sb.append("\\r")
+    case '\t' => sb.append("\\t")
+    case c =>
+      val isNonReadableAscii = c < ' ' || c > '~' && isEscapeUnicode
+      if (isNonReadableAscii && !Character.isLetter(c)) sb
+        .append("\\u%04x".format(c.toInt))
+      else sb.append(c)
+  }
 }

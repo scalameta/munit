@@ -1,17 +1,13 @@
 package munit
 
 class Issue583FrameworkSuite extends FunSuite {
-  test("simple test") {
-    ()
-  }
+  test("simple test")(())
   test("infinite loop test") {
     def loop(x: Int): Int = loop(x) + loop(x)
 
     loop(0)
   }
-  test("another test") {
-    ()
-  }
+  test("another test")(())
 }
 
 object Issue583FrameworkSuite
@@ -21,5 +17,5 @@ object Issue583FrameworkSuite
          |==> failure munit.Issue583FrameworkSuite.infinite loop test - null
          |==> success munit.Issue583FrameworkSuite.another test
          |""".stripMargin,
-      tags = Set(OnlyJVM)
+      tags = Set(OnlyJVM),
     )

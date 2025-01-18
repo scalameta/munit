@@ -1,6 +1,7 @@
 package munit.internal.junitinterface
 
-import sbt.testing.{Fingerprint, SubclassFingerprint}
+import sbt.testing.Fingerprint
+import sbt.testing.SubclassFingerprint
 
 class CustomRunners(val runners: List[CustomFingerprint]) {
   private val superclasses = runners.iterator.map(_.suite).toSet
@@ -8,7 +9,7 @@ class CustomRunners(val runners: List[CustomFingerprint]) {
   def matchesFingerprint(fingerprint: Fingerprint): Boolean =
     fingerprint match {
       case s: SubclassFingerprint => superclasses.contains(s.superclassName())
-      case _                      => false
+      case _ => false
     }
 
 }

@@ -2,10 +2,7 @@ package munit
 
 class SuiteTransformFrameworkSuite extends munit.FunSuite {
   override val munitSuiteTransforms: List[SuiteTransform] = List(
-    new SuiteTransform(
-      "hello",
-      tests => tests.filter(_.name.startsWith("hello"))
-    )
+    new SuiteTransform("hello", tests => tests.filter(_.name.startsWith("hello")))
   )
 
   test("hello") {}
@@ -18,5 +15,5 @@ object SuiteTransformFrameworkSuite
       classOf[SuiteTransformFrameworkSuite],
       """|==> success munit.SuiteTransformFrameworkSuite.hello
          |==> success munit.SuiteTransformFrameworkSuite.hello-yes
-         |""".stripMargin
+         |""".stripMargin,
     )

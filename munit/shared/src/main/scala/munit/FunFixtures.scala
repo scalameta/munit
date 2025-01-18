@@ -3,56 +3,50 @@ package munit
 import munit.internal.FutureCompat._
 
 import scala.concurrent.Future
-import scala.util.Success
 import scala.util.Failure
+import scala.util.Success
 
-trait FunFixtures { self: BaseFunSuite =>
+trait FunFixtures {
+  self: BaseFunSuite =>
 
   class FunFixture[T] private (
       val setup: TestOptions => Future[T],
-      val teardown: T => Future[Unit]
-  )(implicit dummy: DummyImplicit) { fixture =>
+      val teardown: T => Future[Unit],
+  )(implicit dummy: DummyImplicit) {
+    fixture =>
 
-    def test(name: String)(
-        body: T => Any
-    )(implicit loc: Location): Unit = {
+    def test(name: String)(body: T => Any)(implicit loc: Location): Unit =
       fixture.test(TestOptions(name))(body)
-    }
-    def test(options: TestOptions)(
-        body: T => Any
-    )(implicit loc: Location): Unit = {
-      self.test(options) {
-        implicit val ec = munitExecutionContext
-        // the setup, test and teardown need to keep the happens-before execution order
-        setup(options).flatMap { argument =>
-          munitValueTransform(body(argument))
-            .transformWithCompat(testValue =>
-              teardown(argument).transformCompat {
-                case Success(_) => testValue
-                case teardownFailure @ Failure(teardownException) =>
-                  testValue match {
-                    case testFailure @ Failure(testException) =>
-                      testException.addSuppressed(teardownException)
-                      testFailure
-                    case _ =>
-                      teardownFailure
-                  }
+    def test(
+        options: TestOptions
+    )(body: T => Any)(implicit loc: Location): Unit = self.test(options) {
+      implicit val ec = munitExecutionContext
+      // the setup, test and teardown need to keep the happens-before execution order
+      setup(options).flatMap(argument =>
+        munitValueTransform(body(argument)).transformWithCompat(testValue =>
+          teardown(argument).transformCompat {
+            case Success(_) => testValue
+            case teardownFailure @ Failure(teardownException) => testValue match {
+                case testFailure @ Failure(testException) =>
+                  testException.addSuppressed(teardownException)
+                  testFailure
+                case _ => teardownFailure
               }
-            )
-        }
-      }(loc)
-    }
+          }
+        )
+      )
+    }(loc)
   }
 
   object FunFixture {
     def apply[T](
         setup: TestOptions => T,
-        teardown: T => Unit
+        teardown: T => Unit,
     ): FunFixture[T] = {
       implicit val ec = munitExecutionContext
       async[T](
-        options => Future { setup(options) },
-        argument => Future { teardown(argument) }
+        options => Future(setup(options)),
+        argument => Future(teardown(argument)),
       )
     }
     def async[T](setup: TestOptions => Future[T], teardown: T => Future[Unit]) =
@@ -71,41 +65,35 @@ trait FunFixtures { self: BaseFunSuite =>
         },
         teardown = { case (argumentA, argumentB) =>
           implicit val ec = munitExecutionContext
-          Future
-            .sequence(List(a.teardown(argumentA), b.teardown(argumentB)))
+          Future.sequence(List(a.teardown(argumentA), b.teardown(argumentB)))
             .map(_ => ())
-        }
+        },
       )
     def map3[A, B, C](
         a: FunFixture[A],
         b: FunFixture[B],
-        c: FunFixture[C]
-    ): FunFixture[(A, B, C)] =
-      FunFixture.async[(A, B, C)](
-        setup = { options =>
-          implicit val ec = munitExecutionContext
-          val setupA = a.setup(options)
-          val setupB = b.setup(options)
-          val setupC = c.setup(options)
-          for {
-            argumentA <- setupA
-            argumentB <- setupB
-            argumentC <- setupC
-          } yield (argumentA, argumentB, argumentC)
-        },
-        teardown = { case (argumentA, argumentB, argumentC) =>
-          implicit val ec = munitExecutionContext
-          Future
-            .sequence(
-              List(
-                a.teardown(argumentA),
-                b.teardown(argumentB),
-                c.teardown(argumentC)
-              )
-            )
-            .map(_ => ())
-        }
-      )
+        c: FunFixture[C],
+    ): FunFixture[(A, B, C)] = FunFixture.async[(A, B, C)](
+      setup = { options =>
+        implicit val ec = munitExecutionContext
+        val setupA = a.setup(options)
+        val setupB = b.setup(options)
+        val setupC = c.setup(options)
+        for {
+          argumentA <- setupA
+          argumentB <- setupB
+          argumentC <- setupC
+        } yield (argumentA, argumentB, argumentC)
+      },
+      teardown = { case (argumentA, argumentB, argumentC) =>
+        implicit val ec = munitExecutionContext
+        Future.sequence(List(
+          a.teardown(argumentA),
+          b.teardown(argumentB),
+          c.teardown(argumentC),
+        )).map(_ => ())
+      },
+    )
   }
 
 }

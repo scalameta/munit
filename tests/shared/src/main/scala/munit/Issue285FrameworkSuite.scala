@@ -1,41 +1,30 @@
 package munit
 
-import scala.concurrent.duration.Duration
 import munit.internal.PlatformCompat
+
 import scala.concurrent.Promise
+import scala.concurrent.duration.Duration
 
 class Issue285FrameworkSuite extends FunSuite {
   def println(msg: String): Unit = TestingConsole.out.println(msg)
   val hello: Fixture[Unit] = new Fixture[Unit]("hello") {
     def apply(): Unit = ()
-    override def beforeAll(): Unit = {
-      println("beforeAll")
-    }
-    override def beforeEach(context: BeforeEach): Unit = {
+    override def beforeAll(): Unit = println("beforeAll")
+    override def beforeEach(context: BeforeEach): Unit =
       println("beforeEach - " + context.test.name)
-    }
-    override def afterEach(context: AfterEach): Unit = {
+    override def afterEach(context: AfterEach): Unit =
       println("afterEach - " + context.test.name)
-    }
-    override def afterAll(): Unit = {
-      println("afterAll")
-    }
+    override def afterAll(): Unit = println("afterAll")
   }
   override def munitFixtures: List[Fixture[Unit]] = List(hello)
   override def munitTimeout: Duration = Duration(5, "ms")
-  test("issue-285-ok") {
-    ()
-  }
+  test("issue-285-ok")(())
   test("issue-285-fail") {
     val promise = Promise[Unit]()
-    PlatformCompat.setTimeout(40) {
-      promise.trySuccess(())
-    }
+    PlatformCompat.setTimeout(40)(promise.trySuccess(()))
     promise.future
   }
-  test("issue-285-ok") {
-    ()
-  }
+  test("issue-285-ok")(())
 }
 
 object Issue285FrameworkSuite
@@ -54,5 +43,5 @@ object Issue285FrameworkSuite
          |  + issue-285-ok-1 <elapsed time>
          |afterAll
          |""".stripMargin,
-      format = StdoutFormat
+      format = StdoutFormat,
     )

@@ -19,9 +19,7 @@ class SuiteLocalFixtureSuite extends FunSuite {
 
   override def munitFixtures: Seq[Fixture[_]] = List(counter)
 
-  override def beforeAll(): Unit = {
-    assertEquals(counter(), 0)
-  }
+  override def beforeAll(): Unit = assertEquals(counter(), 0)
 
   override def beforeEach(context: BeforeEach): Unit = {
     val n = context.test.name.toInt
@@ -33,13 +31,7 @@ class SuiteLocalFixtureSuite extends FunSuite {
     assertEquals(counter(), n * 3 + 1)
   }
 
-  override def afterAll(): Unit = {
-    assertEquals(counter(), -10)
-  }
+  override def afterAll(): Unit = assertEquals(counter(), -10)
 
-  1.to(5).foreach { i =>
-    test(i.toString()) {
-      assertEquals(counter(), 3 * i)
-    }
-  }
+  1.to(5).foreach(i => test(i.toString())(assertEquals(counter(), 3 * i)))
 }
