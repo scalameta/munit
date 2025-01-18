@@ -6,12 +6,14 @@ import munit.diff.console.Printers
 import scala.collection.JavaConverters._
 
 class Diff(val obtained: String, val expected: String) extends Serializable {
+  import Diff._
+
   val obtainedClean: String = AnsiColors.filterAnsi(obtained)
   val expectedClean: String = AnsiColors.filterAnsi(expected)
   val obtainedLines: Seq[String] = splitIntoLines(obtainedClean)
   val expectedLines: Seq[String] = splitIntoLines(expectedClean)
   val unifiedDiff: String = createUnifiedDiff(obtainedLines, expectedLines)
-  def isEmpty: Boolean = unifiedDiff.isEmpty()
+  def isEmpty: Boolean = unifiedDiff.isEmpty
 
   def createReport(
       title: String,
@@ -45,6 +47,10 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
     sb.append(unifiedDiff)
   }
 
+}
+
+object Diff {
+
   private def asStripMargin(obtained: String): String =
     if (!obtained.contains("\n")) Printers.print(obtained)
     else {
@@ -69,19 +75,19 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
       if (diff.getDeltas.isEmpty) ""
       else DiffUtils
         .generateUnifiedDiff("obtained", "expected", original.asJava, diff, 1)
-        .asScala.iterator.drop(2).filterNot(_.startsWith("@@")).map(line =>
-          if (line.isEmpty()) line
-          else if (line.last == ' ') line + "∙"
-          else line
-        ).map(line =>
-          if (line.startsWith("-")) AnsiColors.c(line, AnsiColors.LightRed)
-          else if (line.startsWith("+")) AnsiColors
-            .c(line, AnsiColors.LightGreen)
-          else line
+        .asScala.iterator.drop(2).filterNot(_.startsWith("@@"))
+        .map(line => if (line.lastOption.contains(' ')) line + "∙" else line)
+        .map(line =>
+          line.headOption match {
+            case Some('-') => AnsiColors.c(line, AnsiColors.LightRed)
+            case Some('+') => AnsiColors.c(line, AnsiColors.LightGreen)
+            case _ => line
+          }
         ).mkString("\n")
     result
   }
 
   private def splitIntoLines(string: String): Seq[String] = string.trim()
     .replace("\r\n", "\n").split("\n").toIndexedSeq
+
 }
