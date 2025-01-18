@@ -1,5 +1,6 @@
 package munit
 
+import munit.diff.DiffOptions
 import munit.diff.EmptyPrinter
 import munit.diff.Printer
 import munit.diff.console.AnsiColors
@@ -36,17 +37,29 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   ): Unit = StackTraces
     .dropInside(if (!cond) throw new AssumptionViolatedException(munitPrint(clue)))
 
+  // for MIMA compatibility
+  @deprecated("Use version with implicit DiffOptions", "1.0.4")
+  protected def assertNoDiff(
+      obtained: String,
+      expected: String,
+      clue: => Any,
+      loc: Location,
+  ): Unit = {
+    implicit val _loc: Location = loc
+    assertNoDiff(obtained, expected, clue)
+  }
+
   def assertNoDiff(
       obtained: String,
       expected: String,
       clue: => Any = "diff assertion failed",
-  )(implicit loc: Location): Unit = StackTraces.dropInside(Diffs.assertNoDiff(
-    obtained,
-    expected,
-    exceptionHandlerFromAssertions(this, Clues.empty),
-    munitPrint(clue),
-    printObtainedAsStripMargin = true,
-  ))
+  )(implicit loc: Location, diffOptions: DiffOptions): Unit = StackTraces
+    .dropInside(Diffs.assertNoDiff(
+      obtained,
+      expected,
+      exceptionHandlerFromAssertions(this, Clues.empty),
+      munitPrint(clue),
+    ))
 
   /**
    * Asserts that two elements are not equal according to the `Compare[A, B]` type-class.
@@ -65,6 +78,20 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     )
   )
 
+  // for MIMA compatibility
+  @deprecated("Use version with implicit DiffOptions", "1.0.4")
+  protected def assertEquals[A, B](
+      obtained: A,
+      expected: B,
+      clue: => Any,
+      loc: Location,
+      compare: Compare[A, B],
+  ): Unit = {
+    implicit val _loc: Location = loc
+    implicit val _cmp: Compare[A, B] = compare
+    assertEquals(obtained, expected, clue)
+  }
+
   /**
    * Asserts that two elements are equal according to the `Compare[A, B]` type-class.
    *
@@ -74,32 +101,35 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: A,
       expected: B,
       clue: => Any = "values are not the same",
-  )(implicit loc: Location, compare: Compare[A, B]): Unit = StackTraces
-    .dropInside {
-      if (!compare.isEqual(obtained, expected)) {
-        (obtained, expected) match {
-          case (a: Array[_], b: Array[_]) if a.sameElements(b) =>
-            // Special-case error message when comparing arrays. See
-            // https://github.com/scalameta/munit/pull/393 and
-            // https://github.com/scalameta/munit/issues/339 for a related
-            // discussion on how MUnit should handle array comparisons.  Other
-            // testing frameworks have special cases for arrays so the
-            // comparison succeeds as long as `sameElements()` returns true.
-            // MUnit chooses instead to fail the test with a custom error
-            // message because arrays have reference equality, for better or
-            // worse, and we should not hide that fact from our users.
-            failComparison(
-              "arrays have the same elements but different reference equality. " +
-                "Convert the arrays to a non-Array collection if you intend to assert the two arrays have the same elements. " +
-                "For example, `assertEquals(a.toSeq, b.toSeq)",
-              obtained,
-              expected,
-            )
-          case _ =>
-        }
-        compare.failEqualsComparison(obtained, expected, clue, this)
+  )(implicit
+      loc: Location,
+      compare: Compare[A, B],
+      diffOptions: DiffOptions,
+  ): Unit = StackTraces.dropInside {
+    if (!compare.isEqual(obtained, expected)) {
+      (obtained, expected) match {
+        case (a: Array[_], b: Array[_]) if a.sameElements(b) =>
+          // Special-case error message when comparing arrays. See
+          // https://github.com/scalameta/munit/pull/393 and
+          // https://github.com/scalameta/munit/issues/339 for a related
+          // discussion on how MUnit should handle array comparisons.  Other
+          // testing frameworks have special cases for arrays so the
+          // comparison succeeds as long as `sameElements()` returns true.
+          // MUnit chooses instead to fail the test with a custom error
+          // message because arrays have reference equality, for better or
+          // worse, and we should not hide that fact from our users.
+          failComparison(
+            "arrays have the same elements but different reference equality. " +
+              "Convert the arrays to a non-Array collection if you intend to assert the two arrays have the same elements. " +
+              "For example, `assertEquals(a.toSeq, b.toSeq)",
+            obtained,
+            expected,
+          )
+        case _ =>
       }
+      compare.failEqualsComparison(obtained, expected, clue, this)
     }
+  }
 
   /**
    * Asserts that two doubles are equal to within a positive delta.

@@ -196,6 +196,67 @@ List(
 ...
 ```
 
+## Customizing the diff output
+
+When a test fails, Munit shows a rich unified diff, to easily spot the difference
+between the test result and the expected value.
+
+However, identifying where the reported discrepancy actually is can sometimes be
+difficult, especially with values found in multiple locations.
+
+To customize what's being displayed, one can define an `implicit` instance of the
+`munit.diff.DiffOptions` class which contains the following methods:
+- `withContextSize(Int)`: number of lines of context to show around the
+  modified lines (default: 1)
+- `withShowLines(Boolean)`: shows the usual unified diff patch preamble
+  `@@ -aa,bb +cc,dd @@` (default: false)
+- `withObtainedAsStripMargin(Boolean)`: displays the value obtained as
+  triple-quoted string with margins (default: false)
+
+```scala mdoc
+import munit.FunSuite
+
+class CustomContextSizeTest extends FunSuite {
+  private implicit val diffOptions = munit.diff.DiffOptions.withContextSize(10)
+
+  test("contextSize") {
+    val a = List("a", "a", "a", "a", "a", "a", "a", "a", "a")
+    val b = List("a", "a", "a", "a", "b", "a", "a", "a", "a")
+    assertEquals(a,b)
+  }
+}
+```
+
+will include
+
+```
+=> Diff (- expected, + obtained)
+ List(
+   "a",
+   "a",
+   "a",
+   "a",
+-  "b",
+   "a",
+   "a",
+   "a",
++  "a",
+   "a"
+ )
+```
+
+while the default output is more compact:
+
+```
+=> Diff (- expected, + obtained)
+   "a",
+-  "b",
+   "a",
+   "a",
++  "a",
+   "a"
+```
+
 ## Run tests in parallel
 
 MUnit does not support running individual test cases in parallel. However, sbt

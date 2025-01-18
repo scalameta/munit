@@ -1,5 +1,6 @@
 package munit.diff
 
+@deprecated("Please use Diff instead", "1.0.4")
 object Diffs {
 
   def create(obtained: String, expected: String): Diff =

@@ -13,8 +13,8 @@ object Issue179FrameworkSuite
          |5:}
          |diff assertion failed
          |=> Obtained
-         |    '''|
-         |       |'''.stripMargin
+         |
+         |
          |=> Diff (- expected, + obtained)
          |-A
          |+
