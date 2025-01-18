@@ -15,8 +15,8 @@ object Issue179FrameworkSuite
          |=> Obtained
          |    '''|
          |       |'''.stripMargin
-         |=> Diff (- obtained, + expected)
-         |-
-         |+A
+         |=> Diff (- expected, + obtained)
+         |-A
+         |+
          |""".stripMargin,
     )

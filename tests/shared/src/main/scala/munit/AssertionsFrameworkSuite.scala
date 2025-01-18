@@ -58,9 +58,9 @@ object AssertionsFrameworkSuite
          |values are not the same
          |=> Obtained
          |a.A()
-         |=> Diff (- obtained, + expected)
-         |-a.A()
-         |+b.B()
+         |=> Diff (- expected, + obtained)
+         |-b.B()
+         |+a.A()
          |==> failure munit.AssertionsFrameworkSuite.toString-has-different-whitespace - tests/shared/src/main/scala/munit/AssertionsFrameworkSuite.scala:39 values are not equal, even if their text representation only differs in leading/trailing whitespace and ANSI escape characters: foo
          |38:  test("toString-has-different-whitespace")(
          |39:    assertEquals[Any, Any]("foo", "foo  ")

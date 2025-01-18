@@ -12,7 +12,7 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
   val expectedClean: String = AnsiColors.filterAnsi(expected)
   val obtainedLines: Seq[String] = splitIntoLines(obtainedClean)
   val expectedLines: Seq[String] = splitIntoLines(expectedClean)
-  val unifiedDiff: String = createUnifiedDiff(obtainedLines, expectedLines)
+  val unifiedDiff: String = createUnifiedDiff(expectedLines, obtainedLines)
   def isEmpty: Boolean = unifiedDiff.isEmpty
 
   def createReport(
@@ -42,7 +42,7 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
     val red = AnsiColors.use(AnsiColors.LightRed)
     val reset = AnsiColors.use(AnsiColors.Reset)
     val green = AnsiColors.use(AnsiColors.LightGreen)
-    sb.append(s" ($red- obtained$reset, $green+ expected$reset)")
+    sb.append(s" ($red- expected$reset, $green+ obtained$reset)")
     sb.append("\n")
     sb.append(unifiedDiff)
   }
@@ -74,7 +74,7 @@ object Diff {
     val result =
       if (diff.getDeltas.isEmpty) ""
       else DiffUtils
-        .generateUnifiedDiff("obtained", "expected", original.asJava, diff, 1)
+        .generateUnifiedDiff("expected", "obtained", original.asJava, diff, 1)
         .asScala.iterator.drop(2).filterNot(_.startsWith("@@"))
         .map(line => if (line.lastOption.contains(' ')) line + "∙" else line)
         .map(line =>

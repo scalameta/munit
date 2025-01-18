@@ -37,13 +37,13 @@ class ComparisonFailExceptionSuite extends BaseSuite {
          |  "2",
          |  "3"
          |)
-         |=> Diff (- obtained, + expected)
+         |=> Diff (- expected, + obtained)
          | List(
-         |-  "1",
-         |-  "2",
-         |-  "3"
-         |+  1,
-         |+  2
+         |-  1,
+         |-  2
+         |+  "1",
+         |+  "2",
+         |+  "3"
          | )
          |""".stripMargin,
     )

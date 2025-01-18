@@ -27,12 +27,12 @@ object DiffProductFrameworkSuite
          |    2
          |  )
          |)
-         |=> Diff (- obtained, + expected)
+         |=> Diff (- expected, + obtained)
          |   name = "John",
-         |-  age = 43,
-         |+  age = 42,
+         |-  age = 42,
+         |+  age = 43,
          |   friends = List(
-         |+    1,
+         |-    1,
          |     2
          |""".stripMargin,
     )
