@@ -35,9 +35,9 @@ object TestTransformFrameworkSuite
          |values are not the same
          |=> Obtained
          |0
-         |=> Diff (- obtained, + expected)
-         |-0
-         |+1
+         |=> Diff (- expected, + obtained)
+         |-1
+         |+0
          |==> extra info
          |""".stripMargin,
     )

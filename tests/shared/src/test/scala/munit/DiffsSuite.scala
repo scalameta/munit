@@ -10,9 +10,9 @@ class DiffsSuite extends FunSuite {
     // intuitive results.
     assertNoDiff(
       obtained,
-      """|-a
-         |-+b
-         |++c
+      """|--c
+         |+-b
+         | +a
          |""".stripMargin,
     )
   }
@@ -28,8 +28,8 @@ class DiffsSuite extends FunSuite {
     "trailing-whitespace",
     "a\nb",
     "a \nb",
-    """|-a
-       |+a ∙
+    """|-a ∙
+       |+a
        | b
        |""".stripMargin,
   )
