@@ -5,8 +5,14 @@ import munit.diff.console.Printers
 
 import scala.collection.JavaConverters._
 
-class Diff(val obtained: String, val expected: String) extends Serializable {
+class Diff(val obtained: String, val expected: String, val options: DiffOptions)
+    extends Serializable {
   import Diff._
+
+  def this(obtained: String, expected: String) =
+    this(obtained, expected, implicitly[DiffOptions])
+
+  private implicit def diffOptions: DiffOptions = options
 
   val obtainedClean: String = AnsiColors.filterAnsi(obtained)
   val expectedClean: String = AnsiColors.filterAnsi(expected)
@@ -31,6 +37,9 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
     sb.toString()
   }
 
+  def createReport(title: String): String =
+    createReport(title, options.obtainedAsStripMargin)
+
   def createDiffOnlyReport(): String = {
     val out = new StringBuilder
     appendDiffOnlyReport(out)
@@ -51,6 +60,22 @@ class Diff(val obtained: String, val expected: String) extends Serializable {
 
 object Diff {
 
+  def apply(obtained: String, expected: String)(implicit
+      options: DiffOptions
+  ): Diff = new Diff(obtained, expected, options)
+
+  def createDiffOnlyReport(obtained: String, expected: String)(implicit
+      options: DiffOptions
+  ): String = apply(obtained, expected).createDiffOnlyReport()
+
+  def createReport(obtained: String, expected: String, title: String)(implicit
+      options: DiffOptions
+  ): String = apply(obtained, expected).createReport(title)
+
+  def unifiedDiff(obtained: String, expected: String)(implicit
+      options: DiffOptions
+  ): String = apply(obtained, expected).unifiedDiff
+
   private def asStripMargin(obtained: String): String =
     if (!obtained.contains("\n")) Printers.print(obtained)
     else {
@@ -66,16 +91,19 @@ object Diff {
   private def header(t: String, sb: StringBuilder): StringBuilder = sb
     .append(AnsiColors.c(s"=> $t", AnsiColors.Bold))
 
-  private def createUnifiedDiff(
-      original: Seq[String],
-      revised: Seq[String],
+  private def createUnifiedDiff(original: Seq[String], revised: Seq[String])(
+      implicit options: DiffOptions
   ): String = {
     val diff = DiffUtils.diff(original.asJava, revised.asJava)
-    val result =
-      if (diff.getDeltas.isEmpty) ""
-      else DiffUtils
-        .generateUnifiedDiff("expected", "obtained", original.asJava, diff, 1)
-        .asScala.iterator.drop(2).filterNot(_.startsWith("@@"))
+    if (diff.getDeltas.isEmpty) ""
+    else {
+      val cs = options.contextSize
+      val lines = DiffUtils
+        .generateUnifiedDiff("expected", "obtained", original.asJava, diff, cs)
+        .asScala.iterator.drop(2)
+      val filteredLines =
+        if (options.showLines) lines else lines.filterNot(_.startsWith("@@"))
+      filteredLines
         .map(line => if (line.lastOption.contains(' ')) line + "∙" else line)
         .map(line =>
           line.headOption match {
@@ -84,7 +112,7 @@ object Diff {
             case _ => line
           }
         ).mkString("\n")
-    result
+    }
   }
 
   private def splitIntoLines(string: String): Seq[String] = string.trim()

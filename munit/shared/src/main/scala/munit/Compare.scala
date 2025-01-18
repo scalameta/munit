@@ -1,5 +1,7 @@
 package munit
 
+import munit.diff.DiffOptions
+
 import scala.annotation.implicitNotFound
 
 /**
@@ -55,7 +57,7 @@ trait Compare[A, B] {
       expected: B,
       title: Any,
       assertions: Assertions,
-  )(implicit loc: Location): Nothing = {
+  )(implicit loc: Location, options: DiffOptions): Nothing = {
     val diffHandler: ComparisonFailExceptionHandler = {
       (message: String, _obtained: String, _expected: String, _loc: Location) =>
         implicit val loc: Location = _loc
@@ -68,7 +70,6 @@ trait Compare[A, B] {
       assertions.munitPrint(expected),
       diffHandler,
       title = assertions.munitPrint(title),
-      printObtainedAsStripMargin = false,
     )
 
     // Attempt 2: try with `.toString` in case `munitPrint()` produces identical
@@ -80,7 +81,6 @@ trait Compare[A, B] {
       expectedStr,
       diffHandler,
       title = assertions.munitPrint(title),
-      printObtainedAsStripMargin = false,
     )
 
     // Attempt 3: string comparison is not working, unconditionally fail the test.

@@ -32,7 +32,7 @@ object FullStackTraceFrameworkSuite
          |5:}
          |diff assertion failed
          |=> Obtained
-         |"a"
+         |a
          |=> Diff (- expected, + obtained)
          |-b
          |+a
@@ -51,7 +51,7 @@ object SmallStackTraceFrameworkSuite
          |5:}
          |diff assertion failed
          |=> Obtained
-         |"a"
+         |a
          |=> Diff (- expected, + obtained)
          |-b
          |+a
