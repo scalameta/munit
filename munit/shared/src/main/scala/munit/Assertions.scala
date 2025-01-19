@@ -252,15 +252,8 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   private def exceptionHandlerFromAssertions(
       assertions: Assertions,
       clues: => Clues,
-  ): ComparisonFailExceptionHandler = new ComparisonFailExceptionHandler {
-    def handle(
-        message: String,
-        obtained: String,
-        expected: String,
-        loc: Location,
-    ): Nothing = assertions
-      .failComparison(message, obtained, expected, clues)(loc)
-  }
+  ): ComparisonFailExceptionHandler =
+    assertions.failComparison(_, _, _, clues)(_)
 
   private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
     mutable.ListBuffer.empty

@@ -56,16 +56,10 @@ trait Compare[A, B] {
       title: Any,
       assertions: Assertions,
   )(implicit loc: Location): Nothing = {
-    val diffHandler = new ComparisonFailExceptionHandler {
-      override def handle(
-          message: String,
-          _obtained: String,
-          _expected: String,
-          _loc: Location,
-      ): Nothing = {
+    val diffHandler: ComparisonFailExceptionHandler = {
+      (message: String, _obtained: String, _expected: String, _loc: Location) =>
         implicit val loc: Location = _loc
         assertions.failComparison(message, obtained, expected)
-      }
     }
     // Attempt 1: custom pretty-printer that produces multiline output, which is
     // optimized for line-by-line diffing.
