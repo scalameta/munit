@@ -8,11 +8,11 @@ import scala.annotation.implicitNotFound
  * By default, uses == and allows comparison between any two types as long
  * they have a supertype/subtype relationship. For example:
  *
- * - Compare[T, T] OK
- * - Compare[Some[Int], Option[Int]] OK, subtype
- * - Compare[Option[Int], Some[Int]] OK, supertype
- * - Compare[List[Int], collection.Seq[Int]] OK, subtype
- * - Compare[List[Int], Vector[Int]] Error, requires upcast to `Seq[Int]`
+ * - `Compare[T, T]` OK
+ * - `Compare[Some[Int], Option[Int]]` OK, subtype
+ * - `Compare[Option[Int], Some[Int]]` OK, supertype
+ * - `Compare[List[Int], collection.Seq[Int]]` OK, subtype
+ * - `Compare[List[Int], Vector[Int]]` Error, requires upcast to Seq[Int]`
  */
 @implicitNotFound(
   // NOTE: Dotty ignores this message if the string is formatted as a multiline string """..."""
@@ -64,22 +64,24 @@ trait Compare[A, B] {
 
     // Attempt 2: try with `.toString` in case `munitPrint()` produces identical
     // formatting for both values.
+    val obtainedStr = obtained.toString
+    val expectedStr = expected.toString
     Diffs.assertNoDiff(
-      obtained.toString(),
-      expected.toString(),
+      obtainedStr,
+      expectedStr,
       diffHandler,
       title = assertions.munitPrint(title),
       printObtainedAsStripMargin = false,
     )(loc)
 
     // Attempt 3: string comparison is not working, unconditionally fail the test.
-    if (obtained.toString() == expected.toString()) assertions.failComparison(
-      s"values are not equal even if they have the same `toString()`: $obtained",
-      obtained,
-      expected,
-    )(loc)
-    else assertions.failComparison(
-      s"values are not equal, even if their text representation only differs in leading/trailing whitespace and ANSI escape characters: $obtained",
+    val why =
+      if (obtainedStr == expectedStr) "they have the same `toString()`"
+      else
+        "their text representation only differs in leading/trailing whitespace and ANSI escape characters"
+
+    assertions.failComparison(
+      s"values are not equal, even if $why: $obtained",
       obtained,
       expected,
     )(loc)
