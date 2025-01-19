@@ -43,11 +43,11 @@ class AssertionsFrameworkSuite extends FunSuite {
 object AssertionsFrameworkSuite
     extends FrameworkTest(
       classOf[AssertionsFrameworkSuite],
-      """|==> failure munit.AssertionsFrameworkSuite.equal-tostring - tests/shared/src/main/scala/munit/AssertionsFrameworkSuite.scala:11 values are not equal even if they have the same `toString()`: C
+      """|==> failure munit.AssertionsFrameworkSuite.equal-tostring - tests/shared/src/main/scala/munit/AssertionsFrameworkSuite.scala:11 values are not equal, even if they have the same `toString()`: C
          |10:    }
          |11:    assertEquals[Any, Any](new A(), new B())
          |12:  }
-         |==> failure munit.AssertionsFrameworkSuite.case-class-productPrefix - tests/shared/src/main/scala/munit/AssertionsFrameworkSuite.scala:21 values are not equal even if they have the same `toString()`: A()
+         |==> failure munit.AssertionsFrameworkSuite.case-class-productPrefix - tests/shared/src/main/scala/munit/AssertionsFrameworkSuite.scala:21 values are not equal, even if they have the same `toString()`: A()
          |20:    }
          |21:    assertEquals[Any, Any](a.A(), b.A())
          |22:  }
