@@ -14,7 +14,7 @@ class TypeCheckSuite extends FunSuite {
     val expected = compat.get(BuildInfo.scalaVersion)
       .orElse(compat.get(binaryVersion)).orElse(compat.get(majorVersion))
       .getOrElse(compat(BuildInfo.scalaVersion))
-    assertNoDiff(obtained, expected)(loc)
+    assertNoDiff(obtained, expected)
   }
 
   val msg = "Hello"
