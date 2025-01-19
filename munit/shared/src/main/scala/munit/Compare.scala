@@ -37,6 +37,8 @@ trait Compare[A, B] {
    * @return should ideally throw a org.junit.ComparisonFailException in order
    *         to support the IntelliJ diff viewer.
    */
+  // for source/binary compatibility, preserve old signature
+  @deprecated("Use version with implicit Location", "1.0.4")
   def failEqualsComparison(
       obtained: A,
       expected: B,
@@ -44,13 +46,26 @@ trait Compare[A, B] {
       loc: Location,
       assertions: Assertions,
   ): Nothing = {
+    implicit val _loc: Location = loc
+    failEqualsComparison(obtained, expected, title, assertions)
+  }
+
+  def failEqualsComparison(
+      obtained: A,
+      expected: B,
+      title: Any,
+      assertions: Assertions,
+  )(implicit loc: Location): Nothing = {
     val diffHandler = new ComparisonFailExceptionHandler {
       override def handle(
           message: String,
           _obtained: String,
           _expected: String,
-          loc: Location,
-      ): Nothing = assertions.failComparison(message, obtained, expected)(loc)
+          _loc: Location,
+      ): Nothing = {
+        implicit val loc: Location = _loc
+        assertions.failComparison(message, obtained, expected)
+      }
     }
     // Attempt 1: custom pretty-printer that produces multiline output, which is
     // optimized for line-by-line diffing.
@@ -60,7 +75,7 @@ trait Compare[A, B] {
       diffHandler,
       title = assertions.munitPrint(title),
       printObtainedAsStripMargin = false,
-    )(loc)
+    )
 
     // Attempt 2: try with `.toString` in case `munitPrint()` produces identical
     // formatting for both values.
@@ -72,7 +87,7 @@ trait Compare[A, B] {
       diffHandler,
       title = assertions.munitPrint(title),
       printObtainedAsStripMargin = false,
-    )(loc)
+    )
 
     // Attempt 3: string comparison is not working, unconditionally fail the test.
     val why =
@@ -84,7 +99,7 @@ trait Compare[A, B] {
       s"values are not equal, even if $why: $obtained",
       obtained,
       expected,
-    )(loc)
+    )
   }
 
 }
