@@ -25,7 +25,7 @@ object FullStackTraceFrameworkSuite
       """|at munit.Assertions:failComparison
          |  at munit.Assertions:failComparison$
          |  at munit.FunSuite:failComparison
-         |  at munit.Assertions$$anon$1:handle
+         |  at munit.Assertions:$anonfun$exceptionHandlerFromAssertions$1
          |==> failure munit.StackTraceFrameworkSuite.fail - tests/shared/src/main/scala/munit/StackTraceFrameworkSuite.scala:4
          |3:class StackTraceFrameworkSuite extends FunSuite {
          |4:  test("fail")(assertNoDiff("a", "b"))
