@@ -97,7 +97,7 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
             )
           case _ =>
         }
-        compare.failEqualsComparison(obtained, expected, clue, loc, this)
+        compare.failEqualsComparison(obtained, expected, clue, this)
       }
     }
 
