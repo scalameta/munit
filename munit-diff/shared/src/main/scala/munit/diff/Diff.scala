@@ -25,15 +25,15 @@ class Diff(val obtained: String, val expected: String, val options: DiffOptions)
       title: String,
       printObtainedAsStripMargin: Boolean = true,
   ): String = {
-    val sb = new StringBuilder
+    implicit val sb: StringBuilder = new StringBuilder
     if (title.nonEmpty) sb.append(title).append("\n")
     if (obtainedClean.length < 1000) {
-      header("Obtained", sb).append("\n")
-      if (printObtainedAsStripMargin) sb.append(asStripMargin(obtainedClean))
-      else sb.append(obtainedClean)
+      header("Obtained")
+      sb.append("\n")
+      sb.append(asStripMargin(obtainedClean, printObtainedAsStripMargin))
       sb.append("\n")
     }
-    appendDiffOnlyReport(sb)
+    appendDiffOnlyReport
     sb.toString()
   }
 
@@ -41,18 +41,18 @@ class Diff(val obtained: String, val expected: String, val options: DiffOptions)
     createReport(title, options.obtainedAsStripMargin)
 
   def createDiffOnlyReport(): String = {
-    val out = new StringBuilder
-    appendDiffOnlyReport(out)
+    implicit val out: StringBuilder = new StringBuilder
+    appendDiffOnlyReport
     out.toString()
   }
 
-  private def appendDiffOnlyReport(sb: StringBuilder): Unit = {
-    header("Diff", sb)
-    val red = AnsiColors.use(AnsiColors.LightRed)
-    val reset = AnsiColors.use(AnsiColors.Reset)
-    val green = AnsiColors.use(AnsiColors.LightGreen)
-    sb.append(s" ($red- expected$reset, $green+ obtained$reset)")
-    sb.append("\n")
+  private def appendDiffOnlyReport(implicit sb: StringBuilder): Unit = {
+    header("Diff")
+    sb.append(" (")
+    AnsiColors.c(AnsiColors.LightRed, options.ansi)(_.append("- expected"))
+    sb.append(", ")
+    AnsiColors.c(AnsiColors.LightGreen, options.ansi)(_.append("+ obtained"))
+    sb.append(")\n")
     sb.append(unifiedDiff)
   }
 
@@ -76,8 +76,9 @@ object Diff {
       options: DiffOptions
   ): String = apply(obtained, expected).unifiedDiff
 
-  private def asStripMargin(obtained: String): String =
-    if (!obtained.contains("\n")) Printers.print(obtained)
+  private def asStripMargin(obtained: String, flag: Boolean): String =
+    if (!flag) obtained
+    else if (!obtained.contains("\n")) Printers.print(obtained)
     else {
       val out = new StringBuilder
       val lines = obtained.trim.linesIterator
@@ -88,8 +89,10 @@ object Diff {
       out.toString()
     }
 
-  private def header(t: String, sb: StringBuilder): StringBuilder = sb
-    .append(AnsiColors.c(s"=> $t", AnsiColors.Bold))
+  private def header(
+      t: String
+  )(implicit sb: StringBuilder, options: DiffOptions): Unit = AnsiColors
+    .c(AnsiColors.Bold, options.ansi)(_.append("=> ").append(t))
 
   private def createUnifiedDiff(original: Seq[String], revised: Seq[String])(
       implicit options: DiffOptions
@@ -107,8 +110,10 @@ object Diff {
         .map(line => if (line.lastOption.contains(' ')) line + "∙" else line)
         .map(line =>
           line.headOption match {
-            case Some('-') => AnsiColors.c(line, AnsiColors.LightRed)
-            case Some('+') => AnsiColors.c(line, AnsiColors.LightGreen)
+            case Some('-') if options.ansi =>
+              AnsiColors.c(line, AnsiColors.LightRed)
+            case Some('+') if options.ansi =>
+              AnsiColors.c(line, AnsiColors.LightGreen)
             case _ => line
           }
         ).mkString("\n")

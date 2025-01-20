@@ -34,9 +34,10 @@ trait SuiteTransforms {
       if (onlySuite.nonEmpty)
         if (!isCI) onlySuite
         else onlySuite.map(t =>
-          if (t.tags(Only)) t.withBody(() =>
-            fail("'Only' tag is not allowed when `isCI=true`")(t.location)
-          )
+          if (t.tags(Only)) t.withBody { () =>
+            implicit val loc = t.location
+            fail("'Only' tag is not allowed when `isCI=true`")
+          }
           else t
         )
       else tests
