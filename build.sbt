@@ -1,6 +1,5 @@
 import scala.collection.mutable
 
-import sbtcrossproject.CrossPlugin.autoImport.CrossType
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 def previousVersion = "1.0.0-RC1"
 
@@ -59,7 +58,8 @@ def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
 lazy val skipIdeaSettings = SettingKey[Boolean]("ide-skip-project")
   .withRank(KeyRanks.Invisible) := true
 lazy val mimaEnable: List[Def.Setting[_]] = List(
-  mimaBinaryIssueFilters ++= List.empty,
+  mimaBinaryIssueFilters +=
+    _root_.munit.build.Mima.languageAgnosticCompatibilityPolicy,
   mimaPreviousArtifacts := {
     if (crossPaths.value)
       Set("org.scalameta" %% moduleName.value % previousVersion)

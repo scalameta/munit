@@ -3,7 +3,6 @@ package munit
 import munit.diff.DiffOptions
 import munit.diff.EmptyPrinter
 import munit.diff.Printer
-import munit.diff.console.AnsiColors
 import munit.internal.MacroCompat
 import munit.internal.console.Lines
 import munit.internal.console.Printers
@@ -27,9 +26,8 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   val munitLines = new Lines
 
   def munitAnsiColors: Boolean = true
-
-  private def munitFilterAnsi(message: String): String =
-    if (munitAnsiColors) message else AnsiColors.filterAnsi(message)
+  private def useAnsiColors(implicit diffOptions: DiffOptions): Boolean =
+    diffOptions.ansi(munitAnsiColors)
 
   def assert(cond: => Boolean, clue: => Any = "assertion failed")(implicit
       loc: Location
@@ -234,26 +232,60 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     }
   }
 
+  // for MIMA compatibility
+  @deprecated("Use version with implicit DiffOptions", "1.0.4")
+  protected def fail(
+      message: String,
+      cause: Throwable,
+      loc: Location,
+  ): Nothing = {
+    implicit val _loc: Location = loc
+    fail(message, cause)
+  }
+
   /**
    * Unconditionally fails this test with the given message and exception marked as the cause.
    */
-  def fail(message: String, cause: Throwable)(implicit loc: Location): Nothing =
-    throw new FailException(
-      munitFilterAnsi(munitLines.formatLine(loc, message)),
-      cause,
-      isStackTracesEnabled = true,
-      location = loc,
-    )
+  def fail(message: String, cause: Throwable)(implicit
+      loc: Location,
+      diffOptions: DiffOptions,
+  ): Nothing = throw new FailException(
+    munitLines.formatLine(loc, message, ansi = useAnsiColors),
+    cause,
+    isStackTracesEnabled = true,
+    location = loc,
+  )
+
+  // for MIMA compatibility
+  @deprecated("Use version with implicit DiffOptions", "1.0.4")
+  protected def fail(message: String, clues: Clues, loc: Location): Nothing = {
+    implicit val _loc: Location = loc
+    fail(message, clues)
+  }
 
   /**
    * Unconditionally fails this test with the given message and optional clues.
    */
   def fail(message: String, clues: Clues = new Clues(Nil))(implicit
-      loc: Location
+      loc: Location,
+      diffOptions: DiffOptions,
   ): Nothing = throw new FailException(
-    munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+    munitLines.formatLine(loc, message, clues, ansi = useAnsiColors),
     loc,
   )
+
+  // for MIMA compatibility
+  @deprecated("Use version with implicit DiffOptions", "1.0.4")
+  protected def failComparison(
+      message: String,
+      obtained: Any,
+      expected: Any,
+      clues: Clues,
+      loc: Location,
+  ): Nothing = {
+    implicit val _loc: Location = loc
+    failComparison(message, obtained, expected, clues)
+  }
 
   /**
    * Unconditionally fails this test due to result of comparing two values.
@@ -267,29 +299,45 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
       obtained: Any,
       expected: Any,
       clues: Clues = new Clues(Nil),
-  )(implicit loc: Location): Nothing = throw new ComparisonFailException(
-    munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
-    obtained,
-    expected,
-    loc,
-    isStackTracesEnabled = true,
-  )
+  )(implicit loc: Location, diffOptions: DiffOptions): Nothing =
+    throw new ComparisonFailException(
+      munitLines.formatLine(loc, message, clues, ansi = useAnsiColors),
+      obtained,
+      expected,
+      loc,
+      isStackTracesEnabled = true,
+    )
+
+  // for MIMA compatibility
+  @deprecated("Use version with implicit DiffOptions", "1.0.4")
+  protected def failSuite(
+      message: String,
+      clues: Clues,
+      loc: Location,
+  ): Nothing = {
+    implicit val _loc: Location = loc
+    failSuite(message, clues)
+  }
 
   /**
    * Unconditionally fail this test case and cancel all the subsequent tests in this suite.
    */
   def failSuite(message: String, clues: Clues = new Clues(Nil))(implicit
-      loc: Location
+      loc: Location,
+      diffOptions: DiffOptions,
   ): Nothing = throw new FailSuiteException(
-    munitFilterAnsi(munitLines.formatLine(loc, message, clues)),
+    munitLines.formatLine(loc, message, clues, ansi = useAnsiColors),
     loc,
   )
 
   private def exceptionHandlerFromAssertions(
       assertions: Assertions,
       clues: => Clues,
-  ): ComparisonFailExceptionHandler =
-    assertions.failComparison(_, _, _, clues)(_)
+  )(implicit diffOptions: DiffOptions): ComparisonFailExceptionHandler = {
+    (message: String, obtained: String, expected: String, location: Location) =>
+      implicit val loc = location
+      assertions.failComparison(message, obtained, expected, clues)
+  }
 
   private val munitCapturedClues: mutable.ListBuffer[Clue[_]] =
     mutable.ListBuffer.empty

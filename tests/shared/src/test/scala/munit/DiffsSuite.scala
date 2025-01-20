@@ -2,6 +2,7 @@ package munit
 
 import munit.diff.Diff
 import munit.diff.DiffOptions
+import munit.diff.console.AnsiColors
 
 class DiffsSuite extends FunSuite {
   self =>
@@ -57,6 +58,48 @@ class DiffsSuite extends FunSuite {
          |""".stripMargin,
     )
   }
+
+  def testAnsi(ansi: Boolean): Unit = test(s"DiffOptions: ansi=$ansi") {
+    def mark(color: String)(str: String): String =
+      if (ansi) AnsiColors.c(str, color) else str
+    val bold = mark(AnsiColors.Bold) _
+    val red = mark(AnsiColors.LightRed) _
+    val grn = mark(AnsiColors.LightGreen) _
+
+    val error = // with ansi markers
+      s"""|values are not the same
+          |${bold("=> Obtained")}
+          |List(
+          |  "a",
+          |  "a",
+          |  "a",
+          |  "a",
+          |  "b",
+          |  "a",
+          |  "a",
+          |  "a",
+          |  "a"
+          |)
+          |${bold("=> Diff")} (${red("- expected")}, ${grn("+ obtained")})
+          |   "a",
+          |${grn("""+  "b",""")}
+          |   "a",
+          |   "a",
+          |${red("""-  "a",""")}
+          |   "a"""".stripMargin
+    locally {
+      implicit val loc = munit.Location.empty
+      implicit val diffOptions = DiffOptions.withForceAnsi(Some(ansi))
+      assertEquals(
+        intercept[ComparisonFailException](assertEquals(listWithB, listWithA))
+          .message,
+        error,
+      )
+    }
+  }
+
+  testAnsi(true)
+  testAnsi(false)
 
   test("DiffOptions: contextSize=10") {
     implicit val diffOptions = DiffOptions.withContextSize(10)

@@ -21,6 +21,11 @@ object AnsiColors {
 
   def c(s: String, colorSequence: String): String =
     if (colorSequence == null || noColor) s else colorSequence + s + Reset
+  def c(colorSequence: String, flag: Boolean = false)(
+      f: StringBuilder => Unit
+  )(implicit sb: StringBuilder): Unit =
+    if (!flag || colorSequence == null || noColor) f(sb)
+    else { sb.append(colorSequence); f(sb); sb.append(Reset) }
 
   def filterAnsi(s: String): String =
     if (s == null) null
