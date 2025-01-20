@@ -5,7 +5,6 @@ trait Equalizer[T] {
 }
 object Equalizer {
   def default[T]: Equalizer[T] = new Equalizer[T] {
-    override def equals(original: T, revised: T): Boolean = original
-      .equals(revised)
+    override def equals(original: T, revised: T): Boolean = original == revised
   }
 }
