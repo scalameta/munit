@@ -39,10 +39,10 @@ class DiffsSuite extends FunSuite {
 
   check("windows-crlf", "a\r\nb", "a\nb", "")
 
-  private val listWithA = munit.Assertions
-    .munitPrint(List("a", "a", "a", "a", "a", "a", "a", "a", "a"))
-  private val listWithB = munit.Assertions
-    .munitPrint(List("a", "a", "a", "a", "b", "a", "a", "a", "a"))
+  private val listWithAOrig = List("a", "a", "a", "a", "a", "a", "a", "a", "a")
+  private val listWithBOrig = List("a", "a", "a", "a", "b", "a", "a", "a", "a")
+  private val listWithA = munit.Assertions.munitPrint(listWithAOrig)
+  private val listWithB = munit.Assertions.munitPrint(listWithBOrig)
 
   test("DiffOptions: default") {
     implicit val diffOptions = DiffOptions.withContextSize(1)
@@ -105,6 +105,31 @@ class DiffsSuite extends FunSuite {
          |-  "a",
          |   "a"
          |""".stripMargin,
+    )
+  }
+
+  test("DiffOptions: printer") {
+    implicit val diffOptions: DiffOptions = DiffOptions
+      .withPrinter(Some { (value: Any, out: StringBuilder, indent: Int) =>
+        out.append("indent=").append(indent).append(": [\n  ").append(value)
+          .append("\n]")
+        true
+      })
+    implicit val loc: Location = munit.Location.empty
+    assertNoDiff(
+      intercept[ComparisonFailException](
+        assertEquals(listWithBOrig, listWithAOrig)
+      ).message,
+      """|values are not the same
+         |=> Obtained
+         |indent=0: [
+         |  List(a, a, a, a, b, a, a, a, a)
+         |]
+         |=> Diff (- expected, + obtained)
+         | indent=0: [
+         |-  List(a, a, a, a, a, a, a, a, a)
+         |+  List(a, a, a, a, b, a, a, a, a)
+         | ]""".stripMargin,
     )
   }
 

@@ -63,13 +63,15 @@ trait Compare[A, B] {
         implicit val loc: Location = _loc
         assertions.failComparison(message, obtained, expected)
     }
+    val printer = options.printer.getOrElse(assertions.printer)
+    def munitPrint[T](value: T) = Assertions.munitPrint(value, printer)
     // Attempt 1: custom pretty-printer that produces multiline output, which is
     // optimized for line-by-line diffing.
     Diffs.assertNoDiff(
-      assertions.munitPrint(obtained),
-      assertions.munitPrint(expected),
+      munitPrint(obtained),
+      munitPrint(expected),
       diffHandler,
-      title = assertions.munitPrint(title),
+      title = munitPrint(title),
     )
 
     // Attempt 2: try with `.toString` in case `munitPrint()` produces identical
@@ -80,7 +82,7 @@ trait Compare[A, B] {
       obtainedStr,
       expectedStr,
       diffHandler,
-      title = assertions.munitPrint(title),
+      title = munitPrint(title),
     )
 
     // Attempt 3: string comparison is not working, unconditionally fail the test.
