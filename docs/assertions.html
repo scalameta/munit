@@ -168,9 +168,9 @@ instead:</p>
 <span class="hljs-comment">// munit.ComparisonFailException: values are not the same</span>
 <span class="hljs-comment">// =&gt; Obtained</span>
 <span class="hljs-comment">// 1</span>
-<span class="hljs-comment">// =&gt; Diff (- obtained, + expected)</span>
-<span class="hljs-comment">// -1</span>
-<span class="hljs-comment">// +2</span>
+<span class="hljs-comment">// =&gt; Diff (- expected, + obtained)</span>
+<span class="hljs-comment">// -2</span>
+<span class="hljs-comment">// +1</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison(Assertions.scala:239)</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison$(Assertions.scala:229)</span>
 <span class="hljs-comment">//  at munit.FunSuite.failComparison(FunSuite.scala:13)</span>
@@ -215,10 +215,10 @@ instead:</p>
 <span class="hljs-comment">//     1</span>
 <span class="hljs-comment">//   )</span>
 <span class="hljs-comment">// )</span>
-<span class="hljs-comment">// =&gt; Diff (- obtained, + expected)</span>
+<span class="hljs-comment">// =&gt; Diff (- expected, + obtained)</span>
 <span class="hljs-comment">//  Library(</span>
-<span class="hljs-comment">// -  name = "MUnit",</span>
-<span class="hljs-comment">// +  name = "MDoc",</span>
+<span class="hljs-comment">// -  name = "MDoc",</span>
+<span class="hljs-comment">// +  name = "MUnit",</span>
 <span class="hljs-comment">//    awesome = true,</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison(Assertions.scala:239)</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison$(Assertions.scala:229)</span>
@@ -254,11 +254,11 @@ instead:</p>
 <span class="hljs-comment">//     )</span>
 <span class="hljs-comment">//   )</span>
 <span class="hljs-comment">// )</span>
-<span class="hljs-comment">// =&gt; Diff (- obtained, + expected)</span>
+<span class="hljs-comment">// =&gt; Diff (- expected, + obtained)</span>
 <span class="hljs-comment">//        2,</span>
-<span class="hljs-comment">// -      3</span>
-<span class="hljs-comment">// +      3,</span>
-<span class="hljs-comment">// +      4</span>
+<span class="hljs-comment">// -      3,</span>
+<span class="hljs-comment">// -      4</span>
+<span class="hljs-comment">// +      3</span>
 <span class="hljs-comment">//      )</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison(Assertions.scala:239)</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison$(Assertions.scala:229)</span>
@@ -360,10 +360,10 @@ assertNotEquals(a, b)
 <span class="hljs-comment">//        |val y = 43</span>
 <span class="hljs-comment">//        |val z = 43</span>
 <span class="hljs-comment">//        |""".stripMargin</span>
-<span class="hljs-comment">// =&gt; Diff (- obtained, + expected)</span>
+<span class="hljs-comment">// =&gt; Diff (- expected, + obtained)</span>
 <span class="hljs-comment">//  val x = 41</span>
-<span class="hljs-comment">// -val y = 43</span>
-<span class="hljs-comment">// +val y = 42</span>
+<span class="hljs-comment">// -val y = 42</span>
+<span class="hljs-comment">// +val y = 43</span>
 <span class="hljs-comment">//  val z = 43</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison(Assertions.scala:239)</span>
 <span class="hljs-comment">//  at munit.Assertions.failComparison$(Assertions.scala:229)</span>
