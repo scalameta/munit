@@ -5,11 +5,12 @@ import scala.util.Try
 
 object JSIO {
 
-  private def require(module: String): Option[js.Dynamic] =
-    Try(js.Dynamic.global.require(module)) // Node.js
-      .orElse( // JSDOM
-        Try(js.Dynamic.global.Node.constructor("return require")()(module))
-      ).toOption
+  private def require(module: String): Option[js.Dynamic] = Try(
+    js.Dynamic.global.require(module)
+  ) // Node.js
+    .orElse( // JSDOM
+      Try(js.Dynamic.global.Node.constructor("return require")()(module))
+    ).toOption
   val process: Option[js.Dynamic] = require("process")
   val path: Option[js.Dynamic] = require("path")
   val fs: Option[js.Dynamic] = require("fs")
