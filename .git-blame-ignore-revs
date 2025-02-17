@@ -3,3 +3,6 @@
 
 # adjust scalafmt config
 2087aa17546b6526511b5848faa0aa9819432181
+
+# Scala Steward: Reformat with scalafmt 3.9.0
+416d9458020004a9491df520dcf4e8df2c5c15a9
