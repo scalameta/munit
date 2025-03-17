@@ -27,13 +27,7 @@ class TypeCheckSuite extends FunSuite {
                 |    ^
                 |""".stripMargin,
       "3" ->
-        """|error:
-           |value foobar is not a member of String, but could be made available as an extension method.
-           |
-           |The following import might make progress towards fixing the problem:
-           |
-           |  import munit.Clue.generate
-           |
+        """|error: value foobar is not a member of String
            |msg.foobar
            |   ^
            |""".stripMargin,
@@ -70,11 +64,6 @@ class TypeCheckSuite extends FunSuite {
         """|error:
            |Found:    (TypeCheckSuite.this.msg : String)
            |Required: Int
-           |
-           |The following import might make progress towards fixing the problem:
-           |
-           |  import munit.Clue.generate
-           |
            |val n: Int = msg
            |            ^
            |""".stripMargin,
