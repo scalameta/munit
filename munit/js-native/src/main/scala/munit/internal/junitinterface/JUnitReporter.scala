@@ -34,15 +34,15 @@ final class JUnitReporter(
       AnsiColors.c(s"==> i $method$suffixed ignored", AnsiColors.YELLOW) + " " +
         formatTime(elapsedMillis),
     )
-    emitEvent(method, Status.Ignored)
+    emitEvent(method, Status.Ignored, None, elapsedMillis)
   }
   def reportAssumptionViolation(
       method: String,
-      timeInSeconds: Double,
+      elapsedMillis: Double,
       e: Throwable,
   ): Unit = {
     log(Info, AnsiColors.c(s"==> s $method skipped", AnsiColors.YELLOW))
-    emitEvent(method, Status.Skipped, new OptionalThrowable(e))
+    emitEvent(method, Status.Skipped, Option(e), 0)
   }
   def reportTestPassed(method: String, elapsedMillis: Double): Unit = {
     log(
@@ -50,7 +50,7 @@ final class JUnitReporter(
       AnsiColors.c(s"  + $method", AnsiColors.GREEN) + " " +
         formatTime(elapsedMillis),
     )
-    emitEvent(method, Status.Success)
+    emitEvent(method, Status.Success, None, elapsedMillis)
   }
   def reportTestFailed(
       method: String,
@@ -66,7 +66,7 @@ final class JUnitReporter(
         .append(ex.getClass().getName()).append(": ").append(ex.getMessage())
         .toString(),
     )
-    emitEvent(method, Status.Failure, new OptionalThrowable(ex))
+    emitEvent(method, Status.Failure, Option(ex), elapsedMillis)
   }
 
   private def trace(t: Throwable): Unit =
@@ -75,13 +75,20 @@ final class JUnitReporter(
   private def emitEvent(
       method: String,
       status: Status,
-      throwable: OptionalThrowable = new OptionalThrowable,
+      throwable: Option[Throwable],
+      elapsedMillis: Double,
   ): Unit = {
     val testName = taskDef.fullyQualifiedName() + "." +
       settings.decodeName(method)
     val selector = new TestSelector(testName)
-    eventHandler
-      .handle(new JUnitEvent(taskDef, testName, status, selector, throwable))
+    eventHandler.handle(new JUnitEvent(
+      taskDef,
+      testName,
+      status,
+      selector,
+      new OptionalThrowable(throwable.orNull),
+      elapsedMillis.toLong,
+    ))
   }
 
   private def log(level: Level, s: String): Unit =
