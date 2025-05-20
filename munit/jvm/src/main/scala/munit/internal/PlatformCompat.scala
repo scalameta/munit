@@ -45,25 +45,25 @@ object PlatformCompat {
       startFuture: () => Future[T],
       duration: Duration,
       ec: ExecutionContext,
-  ): Future[T] = {
-    val onComplete = Promise[T]()
-    val timeout =
-      if (duration.isFinite) Some(sh.schedule[Unit](
+  ): Future[T] =
+    if (!duration.isFinite) startFuture()
+    else {
+      val onComplete = Promise[T]()
+      val timeout = sh.schedule[Unit](
         () =>
           onComplete
             .tryFailure(new TimeoutException(s"test timed out after $duration")),
         duration.toMillis,
         TimeUnit.MILLISECONDS,
-      ))
-      else None
-    ec.execute(new Runnable {
-      def run(): Unit = startFuture().onComplete { result =>
-        onComplete.tryComplete(result)
-        timeout.foreach(_.cancel(false))
-      }(ec)
-    })
-    onComplete.future
-  }
+      )
+      ec.execute(new Runnable {
+        def run(): Unit = startFuture().onComplete { result =>
+          onComplete.tryComplete(result)
+          timeout.cancel(false)
+        }(ec)
+      })
+      onComplete.future
+    }
 
   def setTimeout(ms: Int)(body: => Unit): () => Unit = {
     val scheduled = sh.schedule[Unit](() => body, ms, TimeUnit.MILLISECONDS)

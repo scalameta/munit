@@ -59,21 +59,20 @@ object PlatformCompat {
       ec: ExecutionContext,
   ): Future[T] =
     if (!isMultithreadingEnabled) startFuture()
+    else if (!duration.isFinite) startFuture()
     else {
       val onComplete = Promise[T]()
-      val timeout =
-        if (duration.isFinite) Some(sh.schedule[Unit](
-          () =>
-            onComplete
-              .tryFailure(new TimeoutException(s"test timed out after $duration")),
-          duration.toMillis,
-          TimeUnit.MILLISECONDS,
-        ))
-        else None
+      val timeout = sh.schedule[Unit](
+        () =>
+          onComplete
+            .tryFailure(new TimeoutException(s"test timed out after $duration")),
+        duration.toMillis,
+        TimeUnit.MILLISECONDS,
+      )
       ec.execute(new Runnable {
         def run(): Unit = startFuture().onComplete { result =>
           onComplete.tryComplete(result)
-          timeout.foreach(_.cancel(false))
+          timeout.cancel(false)
         }(ec)
       })
       onComplete.future
