@@ -130,25 +130,18 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private def sequenceFutures[A](
       futures: Iterator[Future[A]]
   ): Future[List[Try[A]]] = {
-    def loop(
-        it: Iterator[Future[A]],
-        acc: mutable.ListBuffer[Try[A]],
-    ): Future[List[Try[A]]] =
-      if (!it.hasNext) Future.successful(acc.toList)
+    val acc = mutable.ListBuffer.empty[Try[A]]
+    def loop(): Future[List[Try[A]]] =
+      if (!futures.hasNext) Future.successful(acc.toList)
       else {
-        val future = it.next()
+        val future = futures.next()
         future.value match {
-          case Some(value) =>
-            acc += value
-            // use tail-recursive call if possible to keep stack traces clean.
-            loop(it, acc)
-          case None => future.flatMap { t =>
-              acc += util.Success(t)
-              loop(it, acc)
-            }
+          // use tail-recursive call if possible to keep stack traces clean.
+          case Some(t) => acc += t; loop()
+          case None => future.transformWithCompat { t => acc += t; loop() }
         }
       }
-    loop(futures, mutable.ListBuffer.empty)
+    loop()
   }
 
   private[munit] class BeforeAllResult(
