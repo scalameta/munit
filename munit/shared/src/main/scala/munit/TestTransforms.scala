@@ -1,7 +1,5 @@
 package munit
 
-import munit.internal.FutureCompat._
-
 import scala.concurrent.Future
 import scala.util.Failure
 import scala.util.Success
@@ -26,7 +24,7 @@ trait TestTransforms {
     "fail",
     { t =>
       if (t.tags(Fail)) t.withBodyMap(
-        _.transformCompat(res =>
+        _.transform(res =>
           if (res.isSuccess) Failure(
             throw new FailException(
               munitLines
@@ -64,7 +62,7 @@ trait TestTransforms {
     "failureSuffix",
     { t =>
       t.withBodyMap {
-        _.transformCompat { f =>
+        _.transform { f =>
           f.recoverWith { case exception =>
             buildSuffix(t).fold(f) { suffix =>
               def append(existing: String): String =
