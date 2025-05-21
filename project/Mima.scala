@@ -6,15 +6,15 @@ import com.typesafe.tools.mima.core.*
 // https://github.com/typesafehub/migration-manager/wiki/sbt-plugin#basic-usage
 object Mima {
   val languageAgnosticCompatibilityPolicy: ProblemFilter = (problem: Problem) => {
-    val fullName = problem match {
+    val (fullName, accessible) = problem match {
       case problem: TemplateProblem =>
         val ref = problem.ref
-        ref.fullName
+        (ref.fullName, MunitMimaUtils.isPublic(ref))
       case problem: MemberProblem =>
         val ref = problem.ref
-        ref.fullName
+        (ref.fullName, MunitMimaUtils.isPublic(ref))
     }
 
-    !fullName.startsWith("munit.internal.")
+    accessible && !fullName.startsWith("munit.internal.")
   }
 }
