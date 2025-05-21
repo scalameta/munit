@@ -26,16 +26,16 @@ trait TestTransforms {
     "fail",
     { t =>
       if (t.tags(Fail)) t.withBodyMap(
-        _.transformCompat {
-          case Success(value) => Failure(
-              throw new FailException(
-                munitLines
-                  .formatLine(t.location, "expected failure but test passed"),
-                t.location,
-              )
+        _.transformCompat(res =>
+          if (res.isSuccess) Failure(
+            throw new FailException(
+              munitLines
+                .formatLine(t.location, "expected failure but test passed"),
+              t.location,
             )
-          case Failure(exception) => Success(())
-        }(munitExecutionContext)
+          )
+          else Success(())
+        )(munitExecutionContext)
       )
       else t
     },
@@ -45,14 +45,10 @@ trait TestTransforms {
   final def munitFlakyTransform: TestTransform = new TestTransform(
     "flaky",
     { t =>
-      if (t.tags(Flaky)) t.withBodyMap(
-        _.transformCompat {
-          case Success(value) => Success(value)
-          case Failure(exception) =>
-            if (munitFlakyOK) Success(new TestValues.FlakyFailure(exception))
-            else throw exception
-        }(munitExecutionContext)
-      )
+      if (t.tags(Flaky) && munitFlakyOK) t
+        .withBodyMap(_.recover { case ex => new TestValues.FlakyFailure(ex) }(
+          munitExecutionContext
+        ))
       else t
     },
   )
@@ -68,9 +64,9 @@ trait TestTransforms {
     "failureSuffix",
     { t =>
       t.withBodyMap {
-        _.transformCompat {
-          case s @ Success(_) => s
-          case f @ Failure(exception) => buildSuffix(t).fold(f) { suffix =>
+        _.transformCompat { f =>
+          f.recoverWith { case exception =>
+            buildSuffix(t).fold(f) { suffix =>
               def append(existing: String): String =
                 if (existing.endsWith("\n")) s"$existing$suffix\n"
                 else s"$existing\n$suffix"
@@ -85,6 +81,7 @@ trait TestTransforms {
                   )
               })
             }
+          }
         }(munitExecutionContext)
       }
     },

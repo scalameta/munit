@@ -21,17 +21,14 @@ trait ValueTransforms {
   final def munitValueTransform(testValue: => Any): Future[Any] = {
     // Takes an arbitrarily nested future `Future[Future[Future[...]]]` and
     // returns a `Future[T]` where `T` is not a `Future`.
-    def flattenFuture(future: Future[_]): Future[_] = {
-      val nested: Future[Future[Any]] = future.map { value =>
-        val transformed = munitValueTransforms.iterator.map(fn => fn(value))
-          .collectFirst { case Some(future) => future }
-        transformed match {
-          case Some(f) => flattenFuture(f)
-          case None => Future.successful(value)
-        }
-      }(munitExecutionContext)
-      nested.flattenCompat(munitExecutionContext)
-    }
+    def flattenFuture(future: Future[_]): Future[_] = future.map { value =>
+      val transformed = munitValueTransforms.iterator.map(fn => fn(value))
+        .collectFirst { case Some(future) => future }
+      transformed match {
+        case Some(f) => flattenFuture(f)
+        case None => Future.successful(value)
+      }
+    }(munitExecutionContext).flattenCompat(munitExecutionContext)
     val wrappedFuture = Future.fromTry(Try(StackTraces.dropOutside(testValue)))
     flattenFuture(wrappedFuture)
   }

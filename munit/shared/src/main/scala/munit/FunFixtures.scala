@@ -4,7 +4,6 @@ import munit.internal.FutureCompat._
 
 import scala.concurrent.Future
 import scala.util.Failure
-import scala.util.Success
 
 trait FunFixtures {
   self: BaseFunSuite =>
@@ -25,13 +24,13 @@ trait FunFixtures {
       setup(options).flatMap(argument =>
         munitValueTransform(body(argument)).transformWithCompat(testValue =>
           teardown(argument).transformCompat {
-            case Success(_) => testValue
-            case teardownFailure @ Failure(teardownException) => testValue match {
-                case testFailure @ Failure(testException) =>
-                  testException.addSuppressed(teardownException)
+            case teardownFailure: Failure[_] => testValue match {
+                case testFailure: Failure[_] =>
+                  testFailure.exception.addSuppressed(teardownFailure.exception)
                   testFailure
                 case _ => teardownFailure
               }
+            case _ => testValue
           }
         )
       )
