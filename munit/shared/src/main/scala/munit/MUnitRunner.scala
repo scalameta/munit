@@ -12,7 +12,6 @@ import java.lang.reflect.Modifier
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import scala.concurrent.duration.Duration
 import scala.util.Try
 import scala.util.control.NonFatal
 
@@ -149,11 +148,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     loop(futures, mutable.ListBuffer.empty)
   }
 
-  private def munitTimeout(): Option[Duration] = suite match {
-    case funSuite: FunSuite => Some(funSuite.munitTimeout)
-    case _ => None
-  }
-
   private def runAll(notifier: RunNotifier): Future[Unit] =
     runBeforeAll(notifier).flatMap { beforeAll =>
       val body =
@@ -200,11 +194,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     sequenceFutures[Boolean](beforeAll.loadedFixtures.iterator.map(f =>
       runHiddenTest(notifier, s"afterAll(${f.fixtureName})", () => f.afterAll())
     )).map(_ => ())
-
-  private[munit] class BeforeEachResult(
-      val error: Option[Throwable],
-      val loadedFixtures: List[AnyFixture[_]],
-  )
 
   private def runBeforeEach(test: Test): Future[BeforeAllResult] = {
     val context = new BeforeEach(test)
