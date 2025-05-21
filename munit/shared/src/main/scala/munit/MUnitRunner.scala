@@ -196,10 +196,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private def runAfterAll(
       notifier: RunNotifier,
       beforeAll: BeforeAllResult,
-  ): Future[Unit] =
+  ): Future[List[Try[Boolean]]] =
     sequenceFutures[Boolean](beforeAll.loadedFixtures.iterator.map(f =>
       runHiddenTest(notifier, s"afterAll(${f.fixtureName})", () => f.afterAll())
-    )).map(_ => ())
+    ))
 
   private[munit] class BeforeEachResult(
       val error: Option[Throwable],
@@ -226,11 +226,11 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
   private def runAfterEach(
       test: Test,
       fixtures: List[AnyFixture[_]],
-  ): Future[Unit] = {
+  ): Future[List[Try[_]]] = {
     val context = new AfterEach(test)
     sequenceFutures(
       fixtures.iterator.map(f => valueTransform(() => f.afterEach(context)))
-    ).map(_ => ())
+    )
   }
 
   private def runTest(notifier: RunNotifier, test: Test): Future[Boolean] = {
@@ -294,28 +294,23 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       notifier: RunNotifier,
       description: Description,
       test: Test,
-  ): Future[Unit] = {
-    val result: Future[Any] = runBeforeEach(test).flatMap[Any](beforeEach =>
-      beforeEach.errors match {
-        case Nil => StackTraces.dropOutside(test.body())
-            .transformWithCompat(result =>
-              runAfterEach(test, beforeEach.loadedFixtures)
-                .transformCompat(_ => result)
-            )
-        case error :: errors =>
-          errors.foreach(err => error.addSuppressed(err))
-          try runAfterEach(test, beforeEach.loadedFixtures)
-          finally throw error
-      }
-    )
-    result.map {
-      case f: TestValues.FlakyFailure =>
-        trimStackTrace(f)
-        notifier.fireTestAssumptionFailed(new Failure(description, f))
-      case TestValues.Ignore => notifier.fireTestIgnored(description)
-      case _ if test.tags(Pending) => notifier.fireTestIgnored(description)
-      case _ => ()
+  ): Future[Unit] = runBeforeEach(test).flatMap[Any] { beforeEach =>
+    def afterEach() = runAfterEach(test, beforeEach.loadedFixtures)
+    beforeEach.errors match {
+      case Nil => StackTraces.dropOutside(test.body())
+          .transformWithCompat(result => afterEach().transform(_ => result))
+      case error :: errors =>
+        afterEach()
+        errors.foreach(err => error.addSuppressed(err))
+        Future.failed(error)
     }
+  }.map {
+    case f: TestValues.FlakyFailure =>
+      trimStackTrace(f)
+      notifier.fireTestAssumptionFailed(new Failure(description, f))
+    case TestValues.Ignore => notifier.fireTestIgnored(description)
+    case _ if test.tags(Pending) => notifier.fireTestIgnored(description)
+    case _ => ()
   }
 
   private def runHiddenTest(
