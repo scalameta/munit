@@ -13,7 +13,6 @@ import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
-import scala.util.Success
 import scala.util.Try
 import scala.util.control.NonFatal
 
@@ -180,12 +179,15 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       )
     )
     result.map { results =>
-      val loadedFixtures = results.collect { case Success((fixture, true)) =>
-        fixture
+      val loadedFixtures = List.newBuilder[AnyFixture[_]]
+      val errors = List.newBuilder[Throwable]
+      var isSuccess = true
+      results.foreach {
+        case util.Failure(ex) => errors += ex; isSuccess = false
+        case util.Success((fixture, success)) =>
+          if (success) loadedFixtures += fixture else isSuccess = false
       }
-      val errors = results.collect { case util.Failure(ex) => ex }
-      val isSuccess = loadedFixtures.length == results.length
-      new BeforeAllResult(isSuccess, loadedFixtures, errors)
+      new BeforeAllResult(isSuccess, loadedFixtures.result(), errors.result())
     }
   }
 
@@ -204,15 +206,18 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
 
   private def runBeforeEach(test: Test): Future[BeforeAllResult] = {
     val context = new BeforeEach(test)
-    val fixtures = mutable.ListBuffer.empty[AnyFixture[_]]
     sequenceFutures(
       munitFixtures.iterator
         .map(f => valueTransform(() => f.beforeEach(context)).map(_ => f))
     ).map { results =>
-      val loadedFixtures = results.collect { case Success(f) => f }
-      val errors = results.collect { case util.Failure(ex) => ex }
-      val isSuccess = loadedFixtures.length == results.length
-      new BeforeAllResult(isSuccess, loadedFixtures, errors)
+      val loadedFixtures = List.newBuilder[AnyFixture[_]]
+      val errors = List.newBuilder[Throwable]
+      results.foreach {
+        case util.Failure(ex) => errors += ex
+        case util.Success(fixture) => loadedFixtures += fixture
+      }
+      val errorList = errors.result()
+      new BeforeAllResult(errorList.isEmpty, loadedFixtures.result(), errorList)
     }
   }
 
@@ -318,10 +323,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       thunk: () => Any,
   ): Future[Boolean] =
     try StackTraces.dropOutside(valueTransform(thunk).transformCompat {
-        case util.Success(value) => util.Success(true)
         case util.Failure(exception) =>
           fireFailedHiddenTest(notifier, name, exception)
           util.Success(false)
+        case _ => util.Success(true)
       })
     catch {
       case ex: Throwable =>
