@@ -74,7 +74,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     .getOrElseUpdate(
       test, {
         val escapedName = Printers.escapeNonVisible(test.name)
-        val testName = munit.internal.Compat.LazyList.from(0).map {
+        val testName = Iterator.from(0).map {
           case 0 => escapedName
           case n => s"$escapedName-$n"
         }.find(candidate => !testNames.contains(candidate)).head
