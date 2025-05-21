@@ -154,13 +154,15 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     case _ => None
   }
 
-  private def runAll(notifier: RunNotifier): Future[Unit] = for {
-    beforeAll <- runBeforeAll(notifier)
-    _ <- {
-      if (beforeAll.isSuccess) runTests(notifier) else Future.successful(Nil)
+  private def runAll(notifier: RunNotifier): Future[Unit] =
+    runBeforeAll(notifier).flatMap { beforeAll =>
+      val body =
+        if (beforeAll.isSuccess) runTests(notifier) else Future.successful(Nil)
+      body.transformCompat { res =>
+        runAfterAll(notifier, beforeAll)
+        res.map(_ => ())
+      }
     }
-    _ <- runAfterAll(notifier, beforeAll)
-  } yield ()
 
   private[munit] class BeforeAllResult(
       val isSuccess: Boolean,
