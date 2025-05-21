@@ -1,6 +1,5 @@
 package munit
 
-import munit.internal.FutureCompat._
 import munit.internal.PlatformCompat
 import munit.internal.console.Printers
 import munit.internal.console.StackTraces
@@ -114,7 +113,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         val body =
           if (!beforeAll.isSuccess) Future.successful(Nil)
           else sequenceFutures(munitTests.iterator.map(runTest(notifier, _)))
-        body.transformCompat { res =>
+        body.transform { res =>
           runAfterAll(notifier, beforeAll)
           res.failed.foreach(ex =>
             fireFailedHiddenTest(notifier, "unexpected error running tests", ex)
@@ -138,7 +137,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
         future.value match {
           // use tail-recursive call if possible to keep stack traces clean.
           case Some(t) => acc += t; loop()
-          case None => future.transformWithCompat { t => acc += t; loop() }
+          case None => future.transformWith { t => acc += t; loop() }
         }
       }
     loop()
@@ -273,7 +272,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
     def afterEach() = runAfterEach(test, beforeEach.loadedFixtures)
     beforeEach.errors match {
       case Nil => StackTraces.dropOutside(test.body())
-          .transformWithCompat(result => afterEach().transform(_ => result))
+          .transformWith(result => afterEach().transform(_ => result))
       case error :: errors =>
         afterEach()
         errors.foreach(err => error.addSuppressed(err))
@@ -293,7 +292,7 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       name: String,
       thunk: () => Any,
   ): Future[Boolean] =
-    try StackTraces.dropOutside(valueTransform(thunk).transformCompat {
+    try StackTraces.dropOutside(valueTransform(thunk).transform {
         case util.Failure(exception) =>
           fireFailedHiddenTest(notifier, name, exception)
           util.Success(false)

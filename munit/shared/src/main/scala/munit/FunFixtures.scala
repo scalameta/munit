@@ -1,7 +1,5 @@
 package munit
 
-import munit.internal.FutureCompat._
-
 import scala.concurrent.Future
 import scala.util.Failure
 
@@ -22,8 +20,8 @@ trait FunFixtures {
       implicit val ec = munitExecutionContext
       // the setup, test and teardown need to keep the happens-before execution order
       setup(options).flatMap(argument =>
-        munitValueTransform(body(argument)).transformWithCompat(testValue =>
-          teardown(argument).transformCompat {
+        munitValueTransform(body(argument)).transformWith(testValue =>
+          teardown(argument).transform {
             case teardownFailure: Failure[_] => testValue match {
                 case testFailure: Failure[_] =>
                   testFailure.exception.addSuppressed(teardownFailure.exception)

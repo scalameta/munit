@@ -1,6 +1,5 @@
 package munit
 
-import munit.internal.FutureCompat._
 import munit.internal.console.StackTraces
 
 import scala.concurrent.Future
@@ -28,7 +27,7 @@ trait ValueTransforms {
         case Some(f) => flattenFuture(f)
         case None => Future.successful(value)
       }
-    }(munitExecutionContext).flattenCompat(munitExecutionContext)
+    }(munitExecutionContext).flatten
     val wrappedFuture = Future.fromTry(Try(StackTraces.dropOutside(testValue)))
     flattenFuture(wrappedFuture)
   }
