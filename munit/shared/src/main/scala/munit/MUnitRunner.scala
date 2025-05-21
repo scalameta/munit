@@ -110,18 +110,21 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       Future.successful(())
     } else {
       notifier.fireTestSuiteStarted(description)
-      runAll(notifier).transformCompat[Unit] { result =>
-        result.failed.foreach(ex =>
-          fireFailedHiddenTest(notifier, "unexpected error running tests", ex)
-        )
-        notifier.fireTestSuiteFinished(description)
-        util.Success(())
+      runBeforeAll(notifier).flatMap { beforeAll =>
+        val body =
+          if (!beforeAll.isSuccess) Future.successful(Nil)
+          else sequenceFutures(munitTests.iterator.map(runTest(notifier, _)))
+        body.transformCompat { res =>
+          runAfterAll(notifier, beforeAll)
+          res.failed.foreach(ex =>
+            fireFailedHiddenTest(notifier, "unexpected error running tests", ex)
+          )
+          notifier.fireTestSuiteFinished(description)
+          util.Success(())
+        }
       }
     }
   }
-
-  private def runTests(notifier: RunNotifier): Future[List[Try[Boolean]]] =
-    sequenceFutures(munitTests.iterator.map(t => runTest(notifier, t)))
 
   // Similar `Future.sequence` but with cleaner stack traces for non-async code.
   private def sequenceFutures[A](
@@ -147,16 +150,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
       }
     loop(futures, mutable.ListBuffer.empty)
   }
-
-  private def runAll(notifier: RunNotifier): Future[Unit] =
-    runBeforeAll(notifier).flatMap { beforeAll =>
-      val body =
-        if (beforeAll.isSuccess) runTests(notifier) else Future.successful(Nil)
-      body.transformCompat { res =>
-        runAfterAll(notifier, beforeAll)
-        res.map(_ => ())
-      }
-    }
 
   private[munit] class BeforeAllResult(
       val isSuccess: Boolean,
