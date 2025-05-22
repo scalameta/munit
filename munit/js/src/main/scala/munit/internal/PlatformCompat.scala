@@ -48,12 +48,11 @@ object PlatformCompat {
         .setTimeout(duration.toMillis)(onComplete.tryFailure(
           new TimeoutException(s"test timed out after $duration")
         ))
-      ec.execute(new Runnable {
-        def run(): Unit = startFuture().onComplete { result =>
-          onComplete.tryComplete(result)
-          timers.clearTimeout(timeoutHandle)
-        }(ec)
-      })
+      def completeWith(result: util.Try[T]): Unit = {
+        onComplete.tryComplete(result)
+        timers.clearTimeout(timeoutHandle)
+      }
+      ec.execute(() => startFuture().onComplete(completeWith)(ec))
       onComplete.future
     }
 
