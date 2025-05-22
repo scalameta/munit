@@ -1,10 +1,12 @@
 package munit
 
+import munit.internal.PlatformCompat
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 class LazyFutureSuite extends FunSuite {
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val ec: ExecutionContext = PlatformCompat.executionContext
   case class LazyFuture[+T](run: () => Future[T])
   object LazyFuture {
     def apply[T](thunk: => T)(implicit ec: ExecutionContext): LazyFuture[T] =

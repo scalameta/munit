@@ -19,6 +19,10 @@ import scala.scalajs.js.timers
 import scala.scalajs.reflect.Reflect
 
 object PlatformCompat {
+
+  val executionContext: ExecutionContext =
+    scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+
   def awaitResult[T](awaitable: Awaitable[T]): T = Await
     .result(awaitable, Duration.Inf)
 

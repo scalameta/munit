@@ -39,6 +39,8 @@ private object LazyMultithreadingSupport {
 object PlatformCompat {
   import LazyMultithreadingSupport._
 
+  val executionContext: ExecutionContext = ExecutionContext.global
+
   def awaitResult[T](awaitable: Awaitable[T]): T = {
     if (!isMultithreadingEnabled) Thread.`yield`() // invokes SN 0.4 scalanative.runtime.loop()
     Await.result(awaitable, Duration.Inf)
