@@ -71,12 +71,11 @@ object PlatformCompat {
         duration.toMillis,
         TimeUnit.MILLISECONDS,
       )
-      ec.execute(new Runnable {
-        def run(): Unit = startFuture().onComplete { result =>
-          onComplete.tryComplete(result)
-          timeout.cancel(false)
-        }(ec)
-      })
+      def completeWith(result: util.Try[T]): Unit = {
+        onComplete.tryComplete(result)
+        timeout.cancel(false)
+      }
+      ec.execute(() => startFuture().onComplete(completeWith)(ec))
       onComplete.future
     }
 
