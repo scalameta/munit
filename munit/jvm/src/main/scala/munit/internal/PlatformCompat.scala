@@ -18,6 +18,9 @@ import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
 
 object PlatformCompat {
+
+  val executionContext: ExecutionContext = ExecutionContext.global
+
   private val sh = Executors
     .newSingleThreadScheduledExecutor(new ThreadFactory {
       val counter = new AtomicInteger
