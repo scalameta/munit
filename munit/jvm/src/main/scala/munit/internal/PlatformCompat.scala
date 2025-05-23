@@ -16,6 +16,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
+import scala.util.control.NonFatal
 
 object PlatformCompat {
 
@@ -63,7 +64,10 @@ object PlatformCompat {
         onComplete.tryComplete(result)
         timeout.cancel(false)
       }
-      ec.execute(() => startFuture().onComplete(completeWith)(ec))
+      ec.execute(() =>
+        try startFuture().onComplete(completeWith)(ec)
+        catch { case NonFatal(ex) => completeWith(util.Failure(ex)) }
+      )
       onComplete.future
     }
 
