@@ -21,6 +21,7 @@ import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
 import scala.scalanative.meta.LinktimeInfo.isMultithreadingEnabled
 import scala.scalanative.reflect.Reflect
+import scala.util.control.NonFatal
 
 // Delay reachability of multithreading capability
 // Would not force multithreading support unless explicitly configured by the user
@@ -75,7 +76,10 @@ object PlatformCompat {
         onComplete.tryComplete(result)
         timeout.cancel(false)
       }
-      ec.execute(() => startFuture().onComplete(completeWith)(ec))
+      ec.execute(() =>
+        try startFuture().onComplete(completeWith)(ec)
+        catch { case NonFatal(ex) => completeWith(util.Failure(ex)) }
+      )
       onComplete.future
     }
 

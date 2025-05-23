@@ -17,6 +17,7 @@ import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
 import scala.scalajs.js.timers
 import scala.scalajs.reflect.Reflect
+import scala.util.control.NonFatal
 
 object PlatformCompat {
 
@@ -52,7 +53,10 @@ object PlatformCompat {
         onComplete.tryComplete(result)
         timers.clearTimeout(timeoutHandle)
       }
-      ec.execute(() => startFuture().onComplete(completeWith)(ec))
+      ec.execute(() =>
+        try startFuture().onComplete(completeWith)(ec)
+        catch { case NonFatal(ex) => completeWith(util.Failure(ex)) }
+      )
       onComplete.future
     }
 
