@@ -7,8 +7,6 @@ import org.junit.runner.notification
 import org.junit.runner.notification.RunNotifier
 
 class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
-  var ignored = 0
-  var total = 0
   var startedTimestamp = 0L
   val isReported: mutable.Set[Description] = mutable.Set.empty[Description]
   override def fireTestSuiteStarted(description: Description): Unit =
@@ -22,7 +20,6 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
     elapsedNanos / 1000000.0
   }
   override def fireTestIgnored(description: Description): Unit = {
-    ignored += 1
     isReported += description
     val pendingSuffixes = {
       val annotations = description.getAnnotations
@@ -53,7 +50,6 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   }
   override def fireTestFinished(description: Description): Unit = {
     val methodName = description.getMethodName
-    total += 1
     if (!isReported(description)) reporter
       .reportTestPassed(methodName, elapsedMillis())
   }
