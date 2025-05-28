@@ -15,13 +15,41 @@ final class JUnitReporter(
     settings: RunSettings,
     taskDef: TaskDef,
 ) {
+  import JUnitReporter._
+
   private val isAnsiSupported = loggers.forall(_.ansiCodesSupported()) &&
     settings.color
 
+  private def logEvent(method: String, color: String = null, fq: Boolean = false)(
+      prefix: String = "",
+      suffix: String = "",
+      millis: Double = -1.0,
+      extra: StringBuilder => Unit = null,
+  ): Unit = {
+    implicit val sb = new StringBuilder()
+    AnsiColors.c(color, flag = true) { sb =>
+      if (prefix.nonEmpty) sb.append(prefix).append(' ')
+      if (fq) {
+        sb.append(taskDef.fullyQualifiedName())
+        if (method.nonEmpty) sb.append('.')
+      }
+      sb.append(method).append(suffix)
+    }
+    if (millis >= 0) {
+      sb.append(' ')
+      AnsiColors.c(AnsiColors.DarkGrey, flag = true)(_.append(
+        "%.3fs".format(millis / 1000.0)
+      ))
+    }
+    if (extra ne null) extra(sb.append(' '))
+    log(Info, sb.toString())
+  }
+
   def reportTestSuiteStarted(): Unit =
-    log(Info, AnsiColors.c(s"${taskDef.fullyQualifiedName()}:", AnsiColors.GREEN))
+    logEvent("", AnsiColors.GREEN, fq = true)(suffix = ":")
+
   def reportTestStarted(method: String): Unit =
-    if (settings.verbose) log(Info, s"$method started")
+    if (settings.verbose) logEvent(method)(suffix = " started")
 
   def reportTestIgnored(
       method: String,
@@ -29,42 +57,38 @@ final class JUnitReporter(
       suffix: String,
   ): Unit = {
     val suffixed = if (suffix.isEmpty) "" else s" $suffix"
-    log(
-      Info,
-      AnsiColors.c(s"==> i $method$suffixed ignored", AnsiColors.YELLOW) + " " +
-        formatTime(elapsedMillis),
+    logEvent(method, AnsiColors.YELLOW)(
+      "==> i",
+      suffixed + " ignored",
+      millis = elapsedMillis,
     )
     emitEvent(method, Status.Ignored, None, elapsedMillis)
   }
+
   def reportAssumptionViolation(
       method: String,
       elapsedMillis: Double,
       e: Throwable,
   ): Unit = {
-    log(Info, AnsiColors.c(s"==> s $method skipped", AnsiColors.YELLOW))
+    logEvent(method, AnsiColors.YELLOW)("==> s", " skipped")
     emitEvent(method, Status.Skipped, Option(e), 0)
   }
+
   def reportTestPassed(method: String, elapsedMillis: Double): Unit = {
-    log(
-      Info,
-      AnsiColors.c(s"  + $method", AnsiColors.GREEN) + " " +
-        formatTime(elapsedMillis),
-    )
+    logEvent(method, AnsiColors.GREEN)("  +", millis = elapsedMillis)
     emitEvent(method, Status.Success, None, elapsedMillis)
   }
+
   def reportTestFailed(
       method: String,
       ex: Throwable,
       elapsedMillis: Double,
   ): Unit = {
-    log(
-      Info,
-      new StringBuilder().append(AnsiColors.c(
-        s"==> X ${taskDef.fullyQualifiedName()}.$method",
-        AnsiColors.LightRed,
-      )).append(" ").append(formatTime(elapsedMillis)).append(" ")
-        .append(ex.getClass().getName()).append(": ").append(ex.getMessage())
-        .toString(),
+    logEvent(method, AnsiColors.LightRed, fq = true)(
+      s"==> X",
+      millis = elapsedMillis,
+      extra =
+        _.append(ex.getClass().getName()).append(": ").append(ex.getMessage()),
     )
     emitEvent(method, Status.Failure, Option(ex), elapsedMillis)
   }
@@ -109,6 +133,7 @@ final class JUnitReporter(
 
   private def filterAnsiIfNeeded(l: Logger, s: String): String =
     filterAnsiIfNeeded(l.ansiCodesSupported(), s)
+
   private def filterAnsiIfNeeded(isColorSupported: Boolean, s: String): String =
     if (isColorSupported && settings.color) s else AnsiColors.filterAnsi(s)
 
@@ -219,8 +244,9 @@ final class JUnitReporter(
         }
       ).append(')').append(AnsiColors.use(AnsiColors.Reset)).toString()
   }
-  private def formatTime(elapsedMillis: Double): String = AnsiColors
-    .c("%.3fs".format(elapsedMillis / 1000.0), AnsiColors.DarkGrey)
+}
+
+object JUnitReporter {
   private val Trace = 0
   private val Debug = 1
   private val Info = 2

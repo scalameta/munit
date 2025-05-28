@@ -62,11 +62,11 @@ final class JUnitTask implements Task {
         boolean isRun = shouldRun(fingerprint, cl, settings);
         if (isRun) {
           Request request = Request.classes(computer, cl);
-          if (settings.globPatterns.size() > 0) {
+          if (!settings.globPatterns.isEmpty()) {
             request =
                 new SilentFilterRequest(request, new GlobFilter(settings, settings.globPatterns));
           }
-          if (settings.testFilter.length() > 0) {
+          if (!settings.testFilter.isEmpty()) {
             request = new SilentFilterRequest(request, new TestFilter(settings.testFilter, ed));
           }
           if (!settings.includeCategories.isEmpty() || !settings.excludeCategories.isEmpty()) {
