@@ -17,13 +17,15 @@ final class JUnitReporter(
 ) {
   import JUnitReporter._
 
+  private var suiteStartNanos: Long = Long.MaxValue
+
   private val isAnsiSupported = loggers.forall(_.ansiCodesSupported()) &&
     settings.color
 
   private def logEvent(method: String, color: String = null, fq: Boolean = false)(
       prefix: String = "",
       suffix: String = "",
-      millis: Double = -1.0,
+      nanos: Long = -1,
       extra: StringBuilder => Unit = null,
   ): Unit = {
     implicit val sb = new StringBuilder()
@@ -35,62 +37,56 @@ final class JUnitReporter(
       }
       sb.append(method).append(suffix)
     }
-    if (millis >= 0) {
+    if (nanos >= 0) {
       sb.append(' ')
       AnsiColors.c(AnsiColors.DarkGrey, flag = true)(_.append(
-        "%.3fs".format(millis / 1000.0)
+        "%.3fs".format(nanos / 1000000000.0)
       ))
     }
     if (extra ne null) extra(sb.append(' '))
     log(Info, sb.toString())
   }
 
-  def reportTestSuiteStarted(): Unit =
+  def reportTestSuiteStarted(): Unit = {
+    suiteStartNanos = System.nanoTime
     logEvent("", AnsiColors.GREEN, fq = true)(suffix = ":")
+  }
 
   def reportTestStarted(method: String): Unit =
     if (settings.verbose) logEvent(method)(suffix = " started")
 
-  def reportTestIgnored(
-      method: String,
-      elapsedMillis: Double,
-      suffix: String,
-  ): Unit = {
+  def reportTestIgnored(method: String, suffix: String): Unit = {
     val suffixed = if (suffix.isEmpty) "" else s" $suffix"
     logEvent(method, AnsiColors.YELLOW)(
       "==> i",
       suffixed + " ignored",
-      millis = elapsedMillis,
+      nanos = System.nanoTime - suiteStartNanos,
     )
-    emitEvent(method, Status.Ignored, None, elapsedMillis)
+    emitEvent(method, Status.Ignored, None, 0)
   }
 
-  def reportAssumptionViolation(
-      method: String,
-      elapsedMillis: Double,
-      e: Throwable,
-  ): Unit = {
+  def reportAssumptionViolation(method: String, e: Throwable): Unit = {
     logEvent(method, AnsiColors.YELLOW)("==> s", " skipped")
     emitEvent(method, Status.Skipped, Option(e), 0)
   }
 
-  def reportTestPassed(method: String, elapsedMillis: Double): Unit = {
-    logEvent(method, AnsiColors.GREEN)("  +", millis = elapsedMillis)
-    emitEvent(method, Status.Success, None, elapsedMillis)
+  def reportTestPassed(method: String, elapsedNanos: Long): Unit = {
+    logEvent(method, AnsiColors.GREEN)("  +", nanos = elapsedNanos)
+    emitEvent(method, Status.Success, None, elapsedNanos)
   }
 
   def reportTestFailed(
       method: String,
       ex: Throwable,
-      elapsedMillis: Double,
+      elapsedNanos: Long,
   ): Unit = {
     logEvent(method, AnsiColors.LightRed, fq = true)(
       s"==> X",
-      millis = elapsedMillis,
+      nanos = elapsedNanos,
       extra =
         _.append(ex.getClass().getName()).append(": ").append(ex.getMessage()),
     )
-    emitEvent(method, Status.Failure, Option(ex), elapsedMillis)
+    emitEvent(method, Status.Failure, Option(ex), elapsedNanos)
   }
 
   private def trace(t: Throwable): Unit =
@@ -100,7 +96,7 @@ final class JUnitReporter(
       method: String,
       status: Status,
       throwable: Option[Throwable],
-      elapsedMillis: Double,
+      elapsedNanos: Long,
   ): Unit = {
     val testName = taskDef.fullyQualifiedName() + "." +
       settings.decodeName(method)
@@ -111,7 +107,7 @@ final class JUnitReporter(
       status,
       selector,
       new OptionalThrowable(throwable.orNull),
-      elapsedMillis.toLong,
+      elapsedNanos / 1000000L,
     ))
   }
 
