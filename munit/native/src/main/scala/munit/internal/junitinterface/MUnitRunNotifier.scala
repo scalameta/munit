@@ -1,48 +1,101 @@
 package munit.internal.junitinterface
 
-import scala.collection.mutable
+import java.util.concurrent._
 
 import org.junit.runner.Description
 import org.junit.runner.notification
-import org.junit.runner.notification.RunNotifier
 
-class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
-  var startedTimestamp = 0L
-  val isReported: mutable.Set[Description] = mutable.Set.empty[Description]
+class MUnitRunNotifier(reporter: JUnitReporter) extends notification.RunNotifier {
+  private val status = new ConcurrentHashMap[String, MUnitRunNotifier.TestStatus]
+
   override def fireTestSuiteStarted(description: Description): Unit =
     reporter.reportTestSuiteStarted()
-  override def fireTestStarted(description: Description): Unit = {
-    startedTimestamp = System.nanoTime()
-    reporter.reportTestStarted(description.getMethodName)
-  }
-  private def elapsedNanos(): Long = System.nanoTime() - startedTimestamp
-  override def fireTestIgnored(description: Description): Unit = {
-    isReported += description
-    val pendingSuffixes = {
-      val annotations = description.getAnnotations
-      val isPending = annotations.collect { case munit.Pending => "PENDING" }
-        .distinct
-      val pendingComments = annotations
-        .collect { case tag: munit.PendingComment => tag.value }
-      isPending ++ pendingComments
-    }
-    reporter
-      .reportTestIgnored(description.getMethodName, pendingSuffixes.mkString(" "))
-  }
-  override def fireTestAssumptionFailed(failure: notification.Failure): Unit = {
-    isReported += failure.description
-    reporter
-      .reportAssumptionViolation(failure.description.getMethodName, failure.ex)
-  }
-  override def fireTestFailure(failure: notification.Failure): Unit = {
-    val methodName = failure.description.getMethodName
-    isReported += failure.description
-    reporter.reportTestFailed(methodName, failure.ex, elapsedNanos())
-  }
-  override def fireTestFinished(description: Description): Unit = {
-    val methodName = description.getMethodName
-    if (!isReported(description)) reporter
-      .reportTestPassed(methodName, elapsedNanos())
-  }
+
+  override def fireTestStarted(description: Description): Unit = status
+    .computeIfAbsent(
+      description.getMethodName,
+      methodName => {
+        reporter.reportTestStarted(methodName)
+        new MUnitRunNotifier.TestStatus()
+      },
+    )
+
+  override def fireTestIgnored(description: Description): Unit = status.compute(
+    description.getMethodName,
+    (methodName, existingStatus) => {
+      val status = existingStatus.orCreate
+      if (status.ignore()) {
+        val sb = new StringBuilder()
+        val annotations = description.getAnnotations
+        if (annotations.contains(munit.Pending)) sb.append("PENDING")
+        annotations.foreach {
+          case tag: munit.PendingComment =>
+            if (sb.nonEmpty) sb.append(' ')
+            sb.append(tag.value)
+          case _ =>
+        }
+        reporter.reportTestIgnored(methodName, sb.toString())
+      }
+      status
+    },
+  )
+
+  override def fireTestAssumptionFailed(failure: notification.Failure): Unit =
+    status.compute(
+      failure.description.getMethodName,
+      (methodName, existingStatus) => {
+        val status = existingStatus.orCreate
+        if (status.fail(failure)) reporter
+          .reportAssumptionViolation(methodName, failure.ex)
+        status
+      },
+    )
+
+  override def fireTestFailure(failure: notification.Failure): Unit = status
+    .compute(
+      failure.description.getMethodName,
+      (methodName, existingStatus) => {
+        val status = existingStatus.orCreate
+        if (status.fail(failure)) reporter
+          .reportTestFailed(methodName, failure.ex, status.elapsedNanos)
+        status
+      },
+    )
+
+  override def fireTestFinished(description: Description): Unit = status
+    .computeIfPresent(
+      description.getMethodName,
+      (methodName, status) => {
+        if (status.ok()) reporter
+          .reportTestPassed(methodName, status.elapsedNanos)
+        status
+      },
+    )
+
   override def fireTestSuiteFinished(description: Description): Unit = {}
+}
+
+object MUnitRunNotifier {
+
+  private val none = new notification.Failure(null, null)
+  private val ignored = new notification.Failure(null, null)
+
+  class TestStatus() {
+    private val startNanos: Long = System.nanoTime()
+    private val completed: atomic.AtomicReference[notification.Failure] =
+      new atomic.AtomicReference(null)
+
+    def elapsedNanos: Long = System.nanoTime() - startNanos
+
+    def ok(): Boolean = fail(none)
+    def ignore(): Boolean = fail(ignored)
+    def fail(failure: notification.Failure): Boolean = completed
+      .compareAndSet(null, failure)
+  }
+
+  implicit class ImplicitTestStatus(private val status: TestStatus)
+      extends AnyVal {
+    def orCreate: TestStatus = if (status eq null) new TestStatus() else status
+  }
+
 }
