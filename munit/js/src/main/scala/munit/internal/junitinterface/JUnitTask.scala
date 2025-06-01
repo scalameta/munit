@@ -8,8 +8,6 @@ import munit.internal.PlatformCompat
 
 import sbt.testing._
 
-import org.junit.runner.notification.RunNotifier
-
 /* Implementation note: In JUnitTask we use Future[Try[Unit]] instead of simply
  * Future[Unit]. This is to prevent Scala's Future implementation to box/wrap
  * fatal errors (most importantly AssertionError) in ExecutionExceptions. We
@@ -34,15 +32,15 @@ final class JUnitTask(
       eventHandler: EventHandler,
       loggers: Array[Logger],
       continuation: Array[Task] => Unit,
-  ): Unit = PlatformCompat.newRunner(taskDef(), classLoader) match {
-    case None =>
-    case Some(runner) =>
-      runner.filter(runSettings.tags)
-      val reporter =
-        new JUnitReporter(eventHandler, loggers, runSettings, taskDef())
-      val notifier: RunNotifier = new MUnitRunNotifier(reporter)
-      runner.runAsync(notifier)
-        .foreach(_ => continuation(Array()))(PlatformCompat.executionContext)
+  ): Unit = {
+    def reporter =
+      new JUnitReporter(eventHandler, loggers, runSettings, _taskDef)
+    try PlatformCompat.newRunner(_taskDef, classLoader).foreach { runner =>
+        runner.filter(runSettings.tags)
+        runner.runAsync(new MUnitRunNotifier(reporter))
+          .foreach(_ => continuation(Array()))(PlatformCompat.executionContext)
+      }
+    catch { case ex: Throwable => reporter.reportTestSuiteError(ex) }
   }
 
 }
