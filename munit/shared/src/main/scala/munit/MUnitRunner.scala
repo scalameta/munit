@@ -22,13 +22,14 @@ import org.junit.runner.manipulation.Filterable
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
 
-class MUnitRunner(val cls: Class[_ <: Suite], newInstance: () => Suite)
+class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
     extends Runner with Filterable with Configurable {
 
-  def this(cls: Class[_ <: Suite]) =
-    this(MUnitRunner.ensureEligibleConstructor(cls), () => cls.newInstance())
+  def this(cls: Class[_ <: Suite], newInstance: () => Suite) =
+    this(cls, newInstance())
 
-  val suite: Suite = newInstance()
+  def this(cls: Class[_ <: Suite]) =
+    this(MUnitRunner.ensureEligibleConstructor(cls), cls.newInstance())
 
   private implicit val ec: ExecutionContext = suite.munitExecutionContext
 

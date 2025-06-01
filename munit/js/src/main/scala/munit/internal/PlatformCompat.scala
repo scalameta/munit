@@ -80,7 +80,7 @@ object PlatformCompat {
     .lookupInstantiatableClass(taskDef.fullyQualifiedName()).map(cls =>
       new MUnitRunner(
         cls.runtimeClass.asInstanceOf[Class[_ <: munit.Suite]],
-        () => cls.newInstance().asInstanceOf[munit.Suite],
+        cls.newInstance().asInstanceOf[munit.Suite],
       )
     )
   private var myClassLoader: ClassLoader = _
