@@ -52,6 +52,15 @@ final class JUnitReporter(
     logEvent("", AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
+  def reportTestSuiteError(ex: Throwable): Unit = {
+    logEvent("", AnsiColors.LightRed, fq = true)(
+      s"==> X",
+      extra =
+        _.append(ex.getClass().getName()).append(": ").append(ex.getMessage()),
+    )
+    emitEvent("", Status.Error, Option(ex), 0)
+  }
+
   def reportTestStarted(method: String): Unit =
     if (settings.verbose) logEvent(method)(suffix = " started")
 
@@ -98,9 +107,13 @@ final class JUnitReporter(
       throwable: Option[Throwable],
       elapsedNanos: Long,
   ): Unit = {
-    val testName = taskDef.fullyQualifiedName() + "." +
-      settings.decodeName(method)
-    val selector = new TestSelector(testName)
+    val suite = taskDef.fullyQualifiedName()
+    val (testName, selector) =
+      if (method.isEmpty) (suite, new SuiteSelector)
+      else {
+        val name = suite + "." + settings.decodeName(method)
+        (name, new TestSelector(name))
+      }
     eventHandler.handle(new JUnitEvent(
       taskDef,
       testName,
