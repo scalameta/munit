@@ -13,8 +13,8 @@ jobs:
           - 8
           - 11
         os:
-          - ubuntu-22.04
-          - windows-2022
+          - ubuntu-latest
+          - windows-latest
         sbt:
           - '+testsJVM/test'
           - '+testsJS/test'
