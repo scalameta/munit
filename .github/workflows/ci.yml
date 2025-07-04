@@ -13,8 +13,8 @@ jobs:
           - 8
           - 11
         os:
-          - ubuntu-22.04
-          - windows-2022
+          - ubuntu-latest
+          - windows-latest
         sbt:
           - '+testsJVM/test'
           - '+testsJS/test'
@@ -33,6 +33,19 @@ jobs:
           distribution: temurin
           java-version: "${{ matrix.java }}"
           cache: sbt
+
+      - name: Install LLVM
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: choco install llvm --version="20.1.4" --allow-downgrade --force
+      - name: Add LLVM on Path
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: echo "${env:ProgramFiles}\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Assert clang installed and on path
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: clang --version
       - uses: sbt/setup-sbt@v1
       - run: sbt ${{ matrix.sbt }}
   jsdom:
