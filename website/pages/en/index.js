@@ -113,9 +113,11 @@ const Features = props => {
     {
       title: "IDE support",
       content:
-        "Run MUnit test suites directly from the comfort of your IDE, whether it's IntelliJ, VS Code, or any other LSP editor.",
-      image:
-        "https://camo.githubusercontent.com/2965bd83df7b98dbc2734815c5bcbe3e784f6242/68747470733a2f2f692e696d6775722e636f6d2f6f4141325a65512e706e67",
+        "Run MUnit test suites directly from the comfort of your IDE, whether it's IntelliJ, VS Code, or any other LSP editor.<br/><br/>" +
+        '<div style="display: flex; gap: 20px; align-items: center; justify-content: center; margin-top: 20px;">' +
+        '<img src="img/scalameta-logo.png" alt="Metals Logo" style="height: 100px;" />' +
+        '<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA_icon.svg" alt="IntelliJ IDEA Logo" style="height: 100px;" />' +
+        '</div>',
       imageAlign: "right"
     }
   ];
