@@ -21,13 +21,13 @@ MUnit is a Scala testing library with the following goals:
 
 ![Badge with version of the latest release](https://img.shields.io/maven-central/v/org.scalameta/munit_2.13?style=for-the-badge)
 
-**scala-cli:**
+**scala-cli**
 
 ```scala
 //> using test.dep org.scalameta::munit::@STABLE_VERSION@
 ```
 
-**sbt:**
+**sbt**
 
 ```scala
 libraryDependencies += "org.scalameta" %% "munit" % "@STABLE_VERSION@" % Test
@@ -62,6 +62,10 @@ object test extends ScalaTests with TestModule.Munit {
 </dependency>
 ```
 The complete setup can be seen in a Maven g8 template [scalameta/maven-scala-seed.g8](https://github.com/scalameta/maven-scala-seed.g8)
+
+**Gradle**
+
+See [Gradle plugin for Scala.js and Scala Native](https://github.com/dubinsky/scalajs-gradle).
 
 ### Supported Platforms
 
