@@ -1,5 +1,6 @@
 package munit
 
+import munit.MUnitRunner.TestTeardownException
 import munit.internal.PlatformCompat
 import munit.internal.console.Printers
 import munit.internal.console.StackTraces
@@ -243,6 +244,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
       case ex: AssumptionViolatedException =>
         trimStackTrace(ex)
         notifier.fireTestAssumptionFailed(new Failure(description, ex))
+      case ex: TestTeardownException =>
+        suiteAborted = true
+        trimStackTrace(ex)
+        notifier.fireTestFailure(new Failure(description, ex))
       case NonFatal(ex) => handleNonFatalOrStackOverflow(ex)
       case ex: StackOverflowError => handleNonFatalOrStackOverflow(ex)
       case ex =>
@@ -309,8 +314,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
                 .failed(addSuppressed(testException, afterEachErrors))
             case TestSuccess(testResult) =>
               if (afterEachErrors.isEmpty) Future.successful(testResult)
-              else Future
-                .failed(addSuppressed(afterEachErrors.head, afterEachErrors.tail))
+              else Future.failed(addSuppressed(
+                new TestTeardownException(afterEachErrors.head),
+                afterEachErrors.tail,
+              ))
           }
         }
       }
@@ -377,4 +384,11 @@ object MUnitRunner {
       val constructor = cls.getConstructor(new Array[java.lang.Class[_]](0): _*)
       Modifier.isPublic(constructor.getModifiers)
     } catch { case nsme: NoSuchMethodException => false }
+
+  /**
+   * Exception used to wrap any throwables thrown in afterEach, in order to communicate to the runner that
+   * the suite should be aborted.
+   */
+  private class TestTeardownException(cause: Throwable)
+      extends RuntimeException("Teardown of test failed", cause)
 }
