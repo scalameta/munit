@@ -1,5 +1,6 @@
 package munit
 
+import munit.MUnitRunner.TestTeardownException
 import munit.internal.PlatformCompat
 import munit.internal.console.Printers
 import munit.internal.console.StackTraces
@@ -243,6 +244,10 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
       case ex: AssumptionViolatedException =>
         trimStackTrace(ex)
         notifier.fireTestAssumptionFailed(new Failure(description, ex))
+      case ex: TestTeardownException =>
+        suiteAborted = true
+        trimStackTrace(ex)
+        notifier.fireTestFailure(new Failure(description, ex))
       case NonFatal(ex) => handleNonFatalOrStackOverflow(ex)
       case ex: StackOverflowError => handleNonFatalOrStackOverflow(ex)
       case ex =>
@@ -269,23 +274,61 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
       notifier: RunNotifier,
       description: Description,
       test: Test,
-  ): Future[Unit] = runBeforeEach(test).flatMap[Any] { beforeEach =>
-    def afterEach() = runAfterEach(test, beforeEach.loadedFixtures)
-    beforeEach.errors match {
-      case Nil => StackTraces.dropOutside(test.body())
-          .transformWith(result => afterEach().transform(_ => result))
-      case error :: errors =>
-        afterEach()
-        errors.foreach(err => error.addSuppressed(err))
-        Future.failed(error)
+  ): Future[Unit] = {
+    import scala.util.{Failure => TryFailure}
+    import scala.util.{Success => TrySuccess}
+    import org.junit.runner.notification.{Failure => JunitFailure}
+
+    def addSuppressed(firstError: Throwable, otherErrors: Seq[Throwable]) = {
+      otherErrors.foreach(err => firstError.addSuppressed(err))
+      firstError
     }
-  }.map {
-    case f: TestValues.FlakyFailure =>
-      trimStackTrace(f)
-      notifier.fireTestAssumptionFailed(new Failure(description, f))
-    case TestValues.Ignore => notifier.fireTestIgnored(description)
-    case _ if test.tags(Pending) => notifier.fireTestIgnored(description)
-    case _ => ()
+
+    runBeforeEach(test).flatMap[Any] { beforeEach =>
+      sealed trait Outcome
+      case class BeforeEachFailure(exceptions: List[Throwable]) extends Outcome
+      case class TestFailure(exception: Throwable) extends Outcome
+      case class TestSuccess(testResult: Any) extends Outcome
+
+      (beforeEach.errors match {
+        case Nil => StackTraces.dropOutside(test.body()).transform {
+            case TrySuccess(testResult) => TrySuccess(TestSuccess(testResult))
+            case TryFailure(testException) =>
+              TrySuccess(TestFailure(testException))
+          }
+        case errors => Future.successful(BeforeEachFailure(errors))
+      }).flatMap { outcome =>
+        runAfterEach(test, beforeEach.loadedFixtures).transform {
+          case TryFailure(afterEachException) =>
+            TrySuccess(List(afterEachException))
+          case TrySuccess(afterEachExceptions) =>
+            TrySuccess(afterEachExceptions.collect { case TryFailure(e) => e })
+        }.flatMap { afterEachErrors =>
+          outcome match {
+            case BeforeEachFailure(beforeEachErrors) => Future
+                .failed(addSuppressed(
+                  beforeEachErrors.head,
+                  beforeEachErrors.tail ++ afterEachErrors,
+                ))
+            case TestFailure(testException) => Future
+                .failed(addSuppressed(testException, afterEachErrors))
+            case TestSuccess(testResult) =>
+              if (afterEachErrors.isEmpty) Future.successful(testResult)
+              else Future.failed(addSuppressed(
+                new TestTeardownException(afterEachErrors.head),
+                afterEachErrors.tail,
+              ))
+          }
+        }
+      }
+    }.map {
+      case f: TestValues.FlakyFailure =>
+        trimStackTrace(f)
+        notifier.fireTestAssumptionFailed(new JunitFailure(description, f))
+      case TestValues.Ignore => notifier.fireTestIgnored(description)
+      case _ if test.tags(Pending) => notifier.fireTestIgnored(description)
+      case _ => ()
+    }
   }
 
   private def runHiddenTest(
@@ -341,4 +384,11 @@ object MUnitRunner {
       val constructor = cls.getConstructor(new Array[java.lang.Class[_]](0): _*)
       Modifier.isPublic(constructor.getModifiers)
     } catch { case nsme: NoSuchMethodException => false }
+
+  /**
+   * Exception used to wrap any throwables thrown in afterEach, in order to communicate to the runner that
+   * the suite should be aborted.
+   */
+  private class TestTeardownException(cause: Throwable)
+      extends RuntimeException("Teardown of test failed", cause)
 }
