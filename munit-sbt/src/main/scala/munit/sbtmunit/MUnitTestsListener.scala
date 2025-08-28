@@ -91,7 +91,8 @@ class MUnitTestsListener(
       MUnitTestReport.TestException(
         className = className,
         message = message,
-        stack = Option(ex.getStackTrace()).getOrElse(Array()).map(_.toString),
+        stack = Option(ex.getStackTrace())
+          .getOrElse(Array.empty[StackTraceElement]).map(_.toString),
         cause = newTestException(ex.getCause()),
       )
     }
