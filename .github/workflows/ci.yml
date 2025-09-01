@@ -27,7 +27,7 @@ jobs:
       GOOGLE_APPLICATION_CREDENTIALS_JSON:
         ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -51,7 +51,7 @@ jobs:
   jsdom:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -68,7 +68,7 @@ jobs:
   mima:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -80,7 +80,7 @@ jobs:
     name: Scalafix, Scalafmt and Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
