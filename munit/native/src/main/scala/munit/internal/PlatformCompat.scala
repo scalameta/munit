@@ -97,9 +97,9 @@ object PlatformCompat {
   // Scala Native does not support looking up annotations at runtime.
   def isIgnoreSuite(cls: Class[_]): Boolean = false
 
-  def isJVM: Boolean = false
-  def isJS: Boolean = false
-  def isNative: Boolean = true
+  final def isJVM: Boolean = false
+  final def isJS: Boolean = false
+  final def isNative: Boolean = true
 
   def newRunner(
       taskDef: TaskDef,
