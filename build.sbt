@@ -219,7 +219,7 @@ lazy val docs = project.in(file("munit-docs")).dependsOn(munitJVM)
     sharedSettings,
     publish / skip := true,
     moduleName := "munit-docs",
-    libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.1.0",
+    libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.2.0",
     crossScalaVersions := List(scala213, scala212),
     test := {},
     mdocOut := (ThisBuild / baseDirectory).value / "website" / "target" / "docs",
