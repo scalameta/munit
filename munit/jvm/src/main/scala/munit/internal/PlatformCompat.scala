@@ -79,9 +79,9 @@ object PlatformCompat {
 
   def isIgnoreSuite(cls: Class[_]): Boolean = cls
     .getAnnotationsByType(classOf[munit.IgnoreSuite]).nonEmpty
-  final def isJVM: Boolean = true
-  final def isJS: Boolean = false
-  final def isNative: Boolean = false
+  final val isJVM = true
+  final val isJS = false
+  final val isNative = false
   def getThisClassLoader: ClassLoader = this.getClass().getClassLoader()
 
   type InvocationTargetException = java.lang.reflect.InvocationTargetException
