@@ -67,7 +67,10 @@
 <h2><a class="anchor" aria-hidden="true" id="getting-started"></a><a href="#getting-started" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Getting started</h2>
 <p>ScalaCheck support is provided as a separate module. You can add it to your
 build via:</p>
-<pre><code class="hljs css language-scala">libraryDependencies += <span class="hljs-string">"org.scalameta"</span> %% <span class="hljs-string">"munit-scalacheck"</span> % <span class="hljs-string">"1.1.0"</span> % <span class="hljs-type">Test</span>
+<pre><code class="hljs css language-scala">libraryDependencies += <span class="hljs-string">"org.scalameta"</span> %% <span class="hljs-string">"munit-scalacheck"</span> % <span class="hljs-string">"1.2.0"</span> % <span class="hljs-type">Test</span>
+</code></pre>
+<p>Or, on scala-cli:</p>
+<pre><code class="hljs css language-scala"><span class="hljs-comment">//&gt; using test.dep org.scalameta::munit:1.2.0</span>
 </code></pre>
 <p>You can then extend <code>ScalaCheckSuite</code> and write ScalaCheck property tests:</p>
 <pre><code class="hljs css language-scala"><span class="hljs-keyword">import</span> munit.<span class="hljs-type">ScalaCheckSuite</span>
@@ -75,12 +78,11 @@ build via:</p>
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
 
-  property(<span class="hljs-string">"addition is commutative"</span>) {
-    forAll { (n1: <span class="hljs-type">Int</span>, n2: <span class="hljs-type">Int</span>) =&gt;
-      n1 + n2 == n2 + n1
-    }
+  property(<span class="hljs-string">"addition is commutative"</span>) = forAll { (n1: <span class="hljs-type">Int</span>, n2: <span class="hljs-type">Int</span>) =&gt;
+    n1 + n2 == n2 + n1
   }
 
+  <span class="hljs-comment">// block syntax also works</span>
   property(<span class="hljs-string">"0 is the identity of addition"</span>) {
     forAll { (n: <span class="hljs-type">Int</span>) =&gt;
       n + <span class="hljs-number">0</span> == n
@@ -94,13 +96,9 @@ build via:</p>
 ensures that the test value is a ScalaCheck <code>Prop</code>.</p>
 <p>It supports all of <code>test</code>'s features, such as tagging and marking the property
 as expected to fail:</p>
-<pre><code class="hljs css language-scala">property(<span class="hljs-string">"my property"</span>.tag(<span class="hljs-type">WindowsOnly</span>)) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt; n * <span class="hljs-number">0</span> == <span class="hljs-number">0</span> }
-}
+<pre><code class="hljs css language-scala">property(<span class="hljs-string">"my property"</span>.tag(<span class="hljs-type">WindowsOnly</span>)) = forAll { (n: <span class="hljs-type">Int</span>) =&gt; n * <span class="hljs-number">0</span> == <span class="hljs-number">0</span> }
 </code></pre>
-<pre><code class="hljs css language-scala">property(<span class="hljs-string">"issue-123"</span>.fail) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt; buggyFunction(n) }
-}
+<pre><code class="hljs css language-scala">property(<span class="hljs-string">"issue-123"</span>.fail) = forAll { (n: <span class="hljs-type">Int</span>) =&gt; buggyFunction(n) }
 </code></pre>
 </blockquote>
 <h2><a class="anchor" aria-hidden="true" id="using-assertions"></a><a href="#using-assertions" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using assertions</h2>
@@ -112,20 +110,16 @@ examples above).</p>
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IntegerSuite</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ScalaCheckSuite</span> </span>{
 
-  property(<span class="hljs-string">"integer identities"</span>) {
-    forAll { (n: <span class="hljs-type">Int</span>) =&gt;
-      assertEquals(n + <span class="hljs-number">0</span>, n)
-      assertEquals(n * <span class="hljs-number">1</span>, n)
-    }
+  property(<span class="hljs-string">"integer identities"</span>) = forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+    assertEquals(n + <span class="hljs-number">0</span>, n)
+    assertEquals(n * <span class="hljs-number">1</span>, n)
   }
 
 }
 </code></pre>
 <p>The property above is equivalent to</p>
-<pre><code class="hljs css language-scala">property(<span class="hljs-string">"integer identities"</span>) {
-  forAll { (n: <span class="hljs-type">Int</span>) =&gt;
-    (n + <span class="hljs-number">0</span> == n) &amp;&amp; (n * <span class="hljs-number">1</span> == n)
-  }
+<pre><code class="hljs css language-scala">property(<span class="hljs-string">"integer identities"</span>) = forAll { (n: <span class="hljs-type">Int</span>) =&gt;
+  (n + <span class="hljs-number">0</span> == n) &amp;&amp; (n * <span class="hljs-number">1</span> == n)
 }
 </code></pre>
 <p>but it provides better error reporting by including the source location of the
@@ -143,10 +137,8 @@ customize how ScalaCheck checks the properties:</p>
       .withMinSuccessfulTests(<span class="hljs-number">200</span>)
       .withMaxDiscardRatio(<span class="hljs-number">10</span>)
 
-  property(<span class="hljs-string">"addition is commutative"</span>) {
-    forAll { (n1: <span class="hljs-type">Int</span>, n2: <span class="hljs-type">Int</span>) =&gt;
-      n1 + n2 == n2 + n1
-    }
+  property(<span class="hljs-string">"addition is commutative"</span>) = forAll { (n1: <span class="hljs-type">Int</span>, n2: <span class="hljs-type">Int</span>) =&gt;
+    n1 + n2 == n2 + n1
   }
 
 }
@@ -247,10 +239,8 @@ you can define a utility method along the lines of:</p>
   include(<span class="hljs-type">LegacyIntProps</span>)
 
   <span class="hljs-comment">// ...and write new properties using MUnit</span>
-  property(<span class="hljs-string">"addition is associative"</span>) {
-    forAll { (x: <span class="hljs-type">Int</span>, y: <span class="hljs-type">Int</span>, z: <span class="hljs-type">Int</span>) =&gt;
-      x + y + z == x + (y + z)
-    }
+  property(<span class="hljs-string">"addition is associative"</span>) = forAll { (x: <span class="hljs-type">Int</span>, y: <span class="hljs-type">Int</span>, z: <span class="hljs-type">Int</span>) =&gt;
+    x + y + z == x + (y + z)
   }
 
 }
