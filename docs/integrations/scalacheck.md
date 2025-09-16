@@ -12,7 +12,13 @@ ScalaCheck support is provided as a separate module. You can add it to your
 build via:
 
 ```scala
-libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.1.0" % Test
+libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.2.0" % Test
+```
+
+Or, on scala-cli:
+
+```scala
+//> using test.dep org.scalameta::munit:1.2.0
 ```
 
 You can then extend `ScalaCheckSuite` and write ScalaCheck property tests:
@@ -23,12 +29,11 @@ import org.scalacheck.Prop._
 
 class IntegerSuite extends ScalaCheckSuite {
 
-  property("addition is commutative") {
-    forAll { (n1: Int, n2: Int) =>
-      n1 + n2 == n2 + n1
-    }
+  property("addition is commutative") = forAll { (n1: Int, n2: Int) =>
+    n1 + n2 == n2 + n1
   }
 
+  // block syntax also works
   property("0 is the identity of addition") {
     forAll { (n: Int) =>
       n + 0 == n
@@ -45,15 +50,11 @@ class IntegerSuite extends ScalaCheckSuite {
 > as expected to fail:
 >
 > ```scala
-> property("my property".tag(WindowsOnly)) {
->   forAll { (n: Int) => n * 0 == 0 }
-> }
+> property("my property".tag(WindowsOnly)) = forAll { (n: Int) => n * 0 == 0 }
 > ```
 >
 > ```scala
-> property("issue-123".fail) {
->   forAll { (n: Int) => buggyFunction(n) }
-> }
+> property("issue-123".fail) = forAll { (n: Int) => buggyFunction(n) }
 > ```
 
 ## Using assertions
@@ -69,11 +70,9 @@ import org.scalacheck.Prop._
 
 class IntegerSuite extends ScalaCheckSuite {
 
-  property("integer identities") {
-    forAll { (n: Int) =>
-      assertEquals(n + 0, n)
-      assertEquals(n * 1, n)
-    }
+  property("integer identities") = forAll { (n: Int) =>
+    assertEquals(n + 0, n)
+    assertEquals(n * 1, n)
   }
 
 }
@@ -82,10 +81,8 @@ class IntegerSuite extends ScalaCheckSuite {
 The property above is equivalent to
 
 ```scala
-property("integer identities") {
-  forAll { (n: Int) =>
-    (n + 0 == n) && (n * 1 == n)
-  }
+property("integer identities") = forAll { (n: Int) =>
+  (n + 0 == n) && (n * 1 == n)
 }
 ```
 
@@ -108,10 +105,8 @@ class IntegerSuite extends ScalaCheckSuite {
       .withMinSuccessfulTests(200)
       .withMaxDiscardRatio(10)
 
-  property("addition is commutative") {
-    forAll { (n1: Int, n2: Int) =>
-      n1 + n2 == n2 + n1
-    }
+  property("addition is commutative") = forAll { (n1: Int, n2: Int) =>
+    n1 + n2 == n2 + n1
   }
 
 }
@@ -237,10 +232,8 @@ class IntSuite extends ScalaCheckSuite with PropertiesAdapter {
   include(LegacyIntProps)
 
   // ...and write new properties using MUnit
-  property("addition is associative") {
-    forAll { (x: Int, y: Int, z: Int) =>
-      x + y + z == x + (y + z)
-    }
+  property("addition is associative") = forAll { (x: Int, y: Int, z: Int) =>
+    x + y + z == x + (y + z)
   }
 
 }
