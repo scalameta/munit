@@ -19,6 +19,8 @@ class MyTestSuite extends FunSuite {
   test("testFoo")(assert(true, "Test should pass"))
 
   test("testBar")(assert(true, "Test should pass"))
+
+  test("testBar(")(assert(true, "Test should pass"))
 }
 
 /**
@@ -62,7 +64,7 @@ class TestSelectorSuite extends FunSuite {
     task.execute(eventHandler, Nil.toArray)
     assertEquals(
       executedItems.toSet,
-      Set("munit.MyTestSuite.testBar", "munit.MyTestSuite.testFoo"),
+      Set("munit.MyTestSuite.testBar", "munit.MyTestSuite.testFoo", "munit.MyTestSuite.testBar("),
     )
   }
 
@@ -96,6 +98,19 @@ class TestSelectorSuite extends FunSuite {
 
     task.execute(eventHandler, Nil.toArray)
     assertEquals(executedItems.toSet, Set("munit.MyTestSuite.testFoo"))
+  }
 
+  test("runWithParentheses") {
+    val selectors = Array[Selector](new TestSelector(raw"testBar\("))
+    val taskDefs = getTaskDefs(selectors)
+
+    val tasks = runner.tasks(taskDefs)
+    assertEquals(tasks.size, 1)
+    val task = tasks(0)
+
+    val (executedItems, eventHandler) = getEventHandler()
+
+    task.execute(eventHandler, Nil.toArray)
+    assertEquals(executedItems.toSet, Set("munit.MyTestSuite.testBar("))
   }
 }

@@ -30,8 +30,8 @@ public final class TestFilter extends Filter {
 
     // We get asked both if we should run the class/suite, as well as the individual tests
     // So let the suite always run, so we can evaluate the individual test cases
-    if (displayName.indexOf('(') == -1) return true;
-    String testName = displayName.substring(0, displayName.indexOf('('));
+    if (displayName.lastIndexOf('(') == -1) return true;
+    String testName = displayName.substring(0, displayName.lastIndexOf('('));
 
     // JUnit calls this multiple times per test and we don't want to print a new "test ignored"
     // message each time
