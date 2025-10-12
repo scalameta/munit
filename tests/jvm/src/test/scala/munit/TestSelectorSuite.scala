@@ -64,7 +64,11 @@ class TestSelectorSuite extends FunSuite {
     task.execute(eventHandler, Nil.toArray)
     assertEquals(
       executedItems.toSet,
-      Set("munit.MyTestSuite.testBar", "munit.MyTestSuite.testFoo", "munit.MyTestSuite.testBar("),
+      Set(
+        "munit.MyTestSuite.testBar",
+        "munit.MyTestSuite.testFoo",
+        "munit.MyTestSuite.testBar(",
+      ),
     )
   }
 
