@@ -27,11 +27,11 @@ public final class TestFilter extends Filter {
   @Override
   public boolean shouldRun(Description d) {
     String displayName = d.getDisplayName();
-
+    int lastClosingParenthesis = displayName.lastIndexOf('(');
     // We get asked both if we should run the class/suite, as well as the individual tests
     // So let the suite always run, so we can evaluate the individual test cases
-    if (displayName.lastIndexOf('(') == -1) return true;
-    String testName = displayName.substring(0, displayName.lastIndexOf('('));
+    if (lastClosingParenthesis == -1) return true;
+    String testName = displayName.substring(0, lastClosingParenthesis);
 
     // JUnit calls this multiple times per test and we don't want to print a new "test ignored"
     // message each time
