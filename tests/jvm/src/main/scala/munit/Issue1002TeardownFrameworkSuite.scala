@@ -17,11 +17,12 @@ class Issue1002TeardownFrameworkSuite extends FunSuite {
     }
   }
 
-  override def munitFixtures = super.munitFixtures ++ List(futureFixture)
+  override def munitFixtures: Seq[AnyFixture[_]] = super.munitFixtures ++
+    List(futureFixture)
 
   override def afterAll(): Unit = assert(cleanedUp)
 
-  test("dummy")()
+  test("dummy") {}
 }
 
 object Issue1002TeardownFrameworkSuite

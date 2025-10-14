@@ -115,15 +115,19 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
         val body =
           if (!beforeAll.isSuccess) Future.successful(Nil)
           else sequenceFutures(munitTests.iterator.map(runTest(notifier, _)))
-        body.transformWith { res =>
+        body.transformWith(res =>
           runAfterAll(notifier, beforeAll).map { _ =>
             res.failed.foreach(ex =>
-              fireFailedHiddenTest(notifier, "unexpected error running tests", ex)
+              fireFailedHiddenTest(
+                notifier,
+                "unexpected error running tests",
+                ex,
+              )
             )
             notifier.fireTestSuiteFinished(description)
             util.Success(())
           }
-        }
+        )
       }
     }
   }
