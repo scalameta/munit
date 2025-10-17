@@ -305,12 +305,12 @@ When declaring tests in a helper function, it's useful to pass around an
 `implicit loc: munit.Location` parameter in order to show relevant source
 locations when a test fails.
 
-![Screen shot of console output with implicit Location parameter](https://i.imgur.com/v7Vv5Rk.png)
+![Screen shot of console output with implicit Location parameter](https://github.com/scalameta/gh-pages-images/blob/master/munit/tests/v7Vv5Rk.png?raw=true)
 
 **Screenshot above**: test failure with implicit `Location` parameter, observe
 that the highlighted line points to the failing test case.
 
-![Screen shot of console output without implicit Location parameter](https://i.imgur.com/yXpA9dp.png)
+![Screen shot of console output without implicit Location parameter](https://github.com/scalameta/gh-pages-images/blob/master/munit/tests/yXpA9dp.png?raw=true)
 
 **Screenshot above** test failure without implicit `Location` parameter, observe
 that the highlighted line points to `assertEquals` line that is reused in all

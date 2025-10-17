@@ -110,7 +110,7 @@ Use `testOnly` to run only a single test suite in the sbt shell.
 MUnit test suites can be executed from in IntelliJ like normal test suites.
 Please ensure that the JUnit plugin is enabled.
 
-![Running MUnit from IntelliJ](https://i.imgur.com/oAA2ZeQ.png)
+![Running MUnit from IntelliJ](https://github.com/scalameta/gh-pages-images/blob/master/munit/getting-started/oAA2ZeQ.png?raw=true)
 
 It's possible to run individual test cases from IntelliJ by clicking on the
 green "Play" icon in the left gutter. Alternatively, you can also use the
@@ -127,7 +127,7 @@ green "Play" icon in the left gutter. Alternatively, you can also use the
 
 MUnit test suites can be executed from VS Code like normal test suites.
 
-![Running MUnit from VS Code](https://i.imgur.com/hmL0hAp.png)
+![Running MUnit from VS Code](https://github.com/scalameta/gh-pages-images/blob/master/munit/getting-started/hmL0hAp.png?raw=true)
 
 ### Search for failed tests in CI logs
 
