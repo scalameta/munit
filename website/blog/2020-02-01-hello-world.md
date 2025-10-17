@@ -119,14 +119,14 @@ learn more how to enable/disable tests with MUnit.
 The design goal for MUnit error messages is to give you as much context as
 possible to address the test failure. Let's consider a few concrete examples.
 
-![Demo showing source location for failed assertion](https://i.imgur.com/goYdJhw.png)
+![Demo showing source location for failed assertion](https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/goYdJhw.png?raw=true)
 
 In the image above, you can cmd+click on the
 `.../test/scala/munit/DemoSuite.scala:7` path to open the failing line of code
 in your editor. By highlighting the failing line of code, you also immediately
 gain some understanding for why the test might be failing.
 
-![Demo showing diff between values of a case class](https://i.imgur.com/NaAU2He.png)
+![Demo showing diff between values of a case class](https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/NaAU2He.png?raw=true)
 
 In the image above, the failing `assertEquals()` displays a diff comparing two
 values of a `User` case class. The "Obtained" section includes copy-paste
@@ -134,7 +134,7 @@ friendly syntax of the obtained value, which can be helpful in the common
 situation when a failing test case should have passed because the expected
 behavior of your program has changed.
 
-![Demo showing diff between multiline strings](https://i.imgur.com/ZcRiR49.png)
+![Demo showing diff between multiline strings](https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/ZcRiR49.png?raw=true)
 
 In the image above, the failing `assertNoDiff()` includes a `stripMargin`
 formatted multiline string of the obtained string. The `assertNoDiff()`
@@ -142,12 +142,12 @@ assertions is helpful for comparing multiline strings ignoring non-visible
 differences such as Windows/Unix newlines, ANSI color codes and leading/trailing
 whitespace.
 
-![Demo showing how to include clues in error messages](https://i.imgur.com/Iy82OWe.png)
+![Demo showing how to include clues in error messages](https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/Iy82OWe.png?raw=true)
 
 In the image above, the `clue(a)` helpers are used to enrich the error message
 with additional information that is displayed when the assertion fails.
 
-![Demo showing highlighted stack traces](https://i.imgur.com/iosErEv.png)
+![Demo showing highlighted stack traces](https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/iosErEv.png?raw=true)
 
 In the image above, stack trace elements that are defined from library
 dependencies like the standard library are grayed out making it easier to find
@@ -182,7 +182,7 @@ historical test data.
 The image below shows test cases in the
 [Metals codebase](https://scalameta.org/metals/docs/contributors/tests.html)
 sorted by how frequently they fail on the `master` branch.
-[![Example HTML test report based on historical data](https://i.imgur.com/UuxYnSa.png)](https://scalameta.org/metals/docs/contributors/tests.html)
+[![Example HTML test report based on historical data](https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/UuxYnSa.png?raw=true)](https://scalameta.org/metals/docs/contributors/tests.html)
 
 > Click on image to open full report
 

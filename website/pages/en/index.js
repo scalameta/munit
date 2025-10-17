@@ -30,10 +30,10 @@ class Button extends React.Component {
 }
 
 Button.defaultProps = {
-  target: "_self"
+  target: "_self",
 };
 
-const SplashContainer = props => (
+const SplashContainer = (props) => (
   <div className="homeContainer">
     <div className="homeSplashFade">
       <div className="wrapper homeWrapper">{props.children}</div>
@@ -41,14 +41,14 @@ const SplashContainer = props => (
   </div>
 );
 
-const ProjectTitle = props => (
+const ProjectTitle = (props) => (
   <h2 className="projectTitle">
     {siteConfig.title}
     <small>{siteConfig.tagline}</small>
   </h2>
 );
 
-const PromoSection = props => (
+const PromoSection = (props) => (
   <div className="section promoSection">
     <div className="promoRow">
       <div className="pluginRowBlock">{props.children}</div>
@@ -74,7 +74,7 @@ class HomeSplash extends React.Component {
   }
 }
 
-const Block = props => (
+const Block = (props) => (
   <Container
     padding={["bottom", "top"]}
     id={props.id}
@@ -84,31 +84,34 @@ const Block = props => (
   </Container>
 );
 
-const Features = props => {
+const Features = (props) => {
   const features = [
     {
       title: "Source locations for errors",
       content:
         "Test failures point to the source code location where the failure happened. " +
         "Cmd+click on the filename to open the relevant line number in your editor (does not work in all terminals).",
-      image: "https://i.imgur.com/goYdJhw.png",
-      imageAlign: "left"
+      image:
+        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/goYdJhw.png?raw=true",
+      imageAlign: "left",
     },
     {
       title: "Helpful diffs",
       content:
         "Assertion failures show the difference between the expected and obtained behavior. " +
         "Diffs for case classes include field names in Scala 2.13.",
-      image: "https://i.imgur.com/NaAU2He.png",
-      imageAlign: "right"
+      image:
+        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/NaAU2He.png?raw=true",
+      imageAlign: "right",
     },
     {
       title: "Highlighted stack traces",
       content:
         "Classes that are defined in your workspace are highlighted in stack traces " +
         "making it easier to quickly understand an error.",
-      image: "https://i.imgur.com/iosErEv.png",
-      imageAlign: "left"
+      image:
+        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/iosErEv.png?raw=true",
+      imageAlign: "left",
     },
     {
       title: "IDE support",
@@ -117,16 +120,16 @@ const Features = props => {
         '<div style="display: flex; gap: 20px; align-items: center; justify-content: center; margin-top: 20px;">' +
         '<img src="img/scalameta-logo.png" alt="Metals Logo" style="height: 100px;" />' +
         '<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA_icon.svg" alt="IntelliJ IDEA Logo" style="height: 100px;" />' +
-        '</div>',
-      imageAlign: "right"
-    }
+        "</div>",
+      imageAlign: "right",
+    },
   ];
   return (
     <div
       className="productShowcaseSection paddingBottom"
       style={{ textAlign: "left" }}
     >
-      {features.map(feature => (
+      {features.map((feature) => (
         <Block key={feature.title}>{[feature]}</Block>
       ))}
     </div>
