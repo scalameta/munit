@@ -158,27 +158,27 @@ learn more how to enable/disable tests with MUnit.</p>
 <h2><a class="anchor" aria-hidden="true" id="actionable-errors"></a><a href="#actionable-errors" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Actionable errors</h2>
 <p>The design goal for MUnit error messages is to give you as much context as
 possible to address the test failure. Let's consider a few concrete examples.</p>
-<p><img src="https://i.imgur.com/goYdJhw.png" alt="Demo showing source location for failed assertion"></p>
+<p><img src="https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/goYdJhw.png?raw=true" alt="Demo showing source location for failed assertion"></p>
 <p>In the image above, you can cmd+click on the
 <code>.../test/scala/munit/DemoSuite.scala:7</code> path to open the failing line of code
 in your editor. By highlighting the failing line of code, you also immediately
 gain some understanding for why the test might be failing.</p>
-<p><img src="https://i.imgur.com/NaAU2He.png" alt="Demo showing diff between values of a case class"></p>
+<p><img src="https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/NaAU2He.png?raw=true" alt="Demo showing diff between values of a case class"></p>
 <p>In the image above, the failing <code>assertEquals()</code> displays a diff comparing two
 values of a <code>User</code> case class. The &quot;Obtained&quot; section includes copy-paste
 friendly syntax of the obtained value, which can be helpful in the common
 situation when a failing test case should have passed because the expected
 behavior of your program has changed.</p>
-<p><img src="https://i.imgur.com/ZcRiR49.png" alt="Demo showing diff between multiline strings"></p>
+<p><img src="https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/ZcRiR49.png?raw=true" alt="Demo showing diff between multiline strings"></p>
 <p>In the image above, the failing <code>assertNoDiff()</code> includes a <code>stripMargin</code>
 formatted multiline string of the obtained string. The <code>assertNoDiff()</code>
 assertions is helpful for comparing multiline strings ignoring non-visible
 differences such as Windows/Unix newlines, ANSI color codes and leading/trailing
 whitespace.</p>
-<p><img src="https://i.imgur.com/Iy82OWe.png" alt="Demo showing how to include clues in error messages"></p>
+<p><img src="https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/Iy82OWe.png?raw=true" alt="Demo showing how to include clues in error messages"></p>
 <p>In the image above, the <code>clue(a)</code> helpers are used to enrich the error message
 with additional information that is displayed when the assertion fails.</p>
-<p><img src="https://i.imgur.com/iosErEv.png" alt="Demo showing highlighted stack traces"></p>
+<p><img src="https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/iosErEv.png?raw=true" alt="Demo showing highlighted stack traces"></p>
 <p>In the image above, stack trace elements that are defined from library
 dependencies like the standard library are grayed out making it easier to find
 stack trace elements that are relevant for your code. This can be helpful when
@@ -203,7 +203,7 @@ historical test data.</p>
 <p>The image below shows test cases in the
 <a href="https://scalameta.org/metals/docs/contributors/tests.html">Metals codebase</a>
 sorted by how frequently they fail on the <code>master</code> branch.
-<a href="https://scalameta.org/metals/docs/contributors/tests.html"><img src="https://i.imgur.com/UuxYnSa.png" alt="Example HTML test report based on historical data"></a></p>
+<a href="https://scalameta.org/metals/docs/contributors/tests.html"><img src="https://github.com/scalameta/gh-pages-images/blob/master/munit//2020-02-01-hello-world/UuxYnSa.png?raw=true" alt="Example HTML test report based on historical data"></a></p>
 <blockquote>
 <p>Click on image to open full report</p>
 </blockquote>
