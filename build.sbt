@@ -171,7 +171,7 @@ lazy val plugin = project.in(file("munit-sbt")).enablePlugins(BuildInfoPlugin)
     },
     buildInfoPackage := "munit.sbtmunit",
     buildInfoKeys := Seq[BuildInfoKey]("munitVersion" -> version.value),
-    crossScalaVersions := List(scala212, "3.7.3"),
+    crossScalaVersions := List(scala212, "3.7.4"),
     libraryDependencies ++= List(gcp),
   ).disablePlugins(MimaPlugin)
 
