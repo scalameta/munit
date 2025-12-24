@@ -24,9 +24,9 @@ class MyTestSuite extends FunSuite {
  * Execute prepared TaskDef's using manually created instances of sbt.testing.{Framework and Runner}.
  */
 class TestSelectorSuite extends FunSuite {
-  val framework = new Framework();
+  val framework = new Framework()
   val runner: Runner = framework
-    .runner(Array.empty, Array.empty, this.getClass().getClassLoader());
+    .runner(Array.empty, Array.empty, this.getClass().getClassLoader())
 
   val fingerprint = framework.munitFingerprint
 

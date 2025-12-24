@@ -7,8 +7,14 @@ class AsyncFixtureTeardownFrameworkSuite extends FunSuite {
   var cleanedUp: Boolean = _
 
   val cleanupInTeardown: FunFixture[Unit] = FunFixture.async[Unit](
-    _ => { cleanedUp = false; Future.successful(()) },
-    _ => { cleanedUp = true; Future.successful(()) },
+    _ => {
+      cleanedUp = false
+      Future.successful(())
+    },
+    _ => {
+      cleanedUp = true
+      Future.successful(())
+    },
   )
 
   override def afterAll(): Unit = assert(cleanedUp)
