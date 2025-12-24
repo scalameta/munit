@@ -2,12 +2,7 @@ package munit
 
 import munit.internal.PlatformCompat
 
-import sbt.testing.Event
-import sbt.testing.EventHandler
-import sbt.testing.Runner
-import sbt.testing.SuiteSelector
-import sbt.testing.Task
-import sbt.testing.TaskDef
+import sbt.testing.{Event, EventHandler, Runner, SuiteSelector, Task, TaskDef}
 
 import scala.collection.mutable
 

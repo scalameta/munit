@@ -1,10 +1,8 @@
 package munit
 
-import munit.internal.junitinterface.CustomFingerprint
-import munit.internal.junitinterface.CustomRunners
+import munit.internal.junitinterface.{CustomFingerprint, CustomRunners}
 
-import sbt.testing.Fingerprint
-import sbt.testing.SubclassFingerprint
+import sbt.testing.{Fingerprint, SubclassFingerprint}
 
 class Framework extends munit.internal.junitinterface.JUnitFramework {
   val munitFingerprint: CustomFingerprint = CustomFingerprint

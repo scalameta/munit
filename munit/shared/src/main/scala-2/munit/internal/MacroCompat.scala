@@ -1,7 +1,6 @@
 package munit.internal
 
-import munit.Clue
-import munit.Location
+import munit.{Clue, Location}
 
 import scala.language.experimental.macros
 

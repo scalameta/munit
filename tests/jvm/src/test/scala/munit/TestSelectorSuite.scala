@@ -1,13 +1,9 @@
 package munit
 
-import sbt.testing.Event
-import sbt.testing.EventHandler
-import sbt.testing.Runner
-import sbt.testing.Selector
-import sbt.testing.Status
-import sbt.testing.SuiteSelector
-import sbt.testing.TaskDef
-import sbt.testing.TestSelector
+import sbt.testing.{
+  Event, EventHandler, Runner, Selector, Status, SuiteSelector, TaskDef,
+  TestSelector,
+}
 
 import scala.collection.mutable
 

@@ -1,11 +1,9 @@
 package munit.internal
 
-import munit.Clue
-import munit.Location
+import munit.{Clue, Location}
 
-import scala.reflect.macros.ParseException
-import scala.reflect.macros.TypecheckException
 import scala.reflect.macros.blackbox.Context
+import scala.reflect.macros.{ParseException, TypecheckException}
 
 object MacroCompatScala2 {
 

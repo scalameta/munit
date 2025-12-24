@@ -1,7 +1,6 @@
 package munit.diff.console
 
-import munit.diff.EmptyPrinter
-import munit.diff.Printer
+import munit.diff.{EmptyPrinter, Printer}
 
 import scala.annotation.switch
 

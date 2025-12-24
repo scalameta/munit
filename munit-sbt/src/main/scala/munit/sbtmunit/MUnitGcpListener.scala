@@ -7,10 +7,8 @@ import sbt.util.Logger
 import java.nio.charset.StandardCharsets
 
 import com.google.cloud.storage.Bucket.BlobTargetOption
-import com.google.cloud.storage.BucketInfo
 import com.google.cloud.storage.Storage.PredefinedAcl
-import com.google.cloud.storage.StorageException
-import com.google.cloud.storage.StorageOptions
+import com.google.cloud.storage.{BucketInfo, StorageException, StorageOptions}
 import com.google.gson.Gson
 
 class MUnitGcpListener(

@@ -2,8 +2,7 @@ package munit
 
 import munit.internal.PlatformCompat
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class LazyFutureSuite extends FunSuite {
   implicit val ec: ExecutionContext = PlatformCompat.executionContext

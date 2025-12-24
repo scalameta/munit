@@ -2,9 +2,8 @@ package munit.internal.junitinterface
 
 import scala.collection.mutable
 
-import org.junit.runner.Description
-import org.junit.runner.notification
 import org.junit.runner.notification.RunNotifier
+import org.junit.runner.{Description, notification}
 
 class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   var startedTimestamp = 0L

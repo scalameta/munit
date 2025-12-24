@@ -1,12 +1,8 @@
 package munit
 
-import munit.diff.DiffOptions
-import munit.diff.EmptyPrinter
-import munit.diff.Printer
+import munit.diff.{DiffOptions, EmptyPrinter, Printer}
 import munit.internal.MacroCompat
-import munit.internal.console.Lines
-import munit.internal.console.Printers
-import munit.internal.console.StackTraces
+import munit.internal.console.{Lines, Printers, StackTraces}
 
 import scala.collection.mutable
 import scala.reflect.ClassTag

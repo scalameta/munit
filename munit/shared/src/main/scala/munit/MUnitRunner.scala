@@ -2,26 +2,20 @@ package munit
 
 import munit.MUnitRunner.TestTeardownException
 import munit.internal.PlatformCompat
-import munit.internal.console.Printers
-import munit.internal.console.StackTraces
-import munit.internal.junitinterface.Configurable
-import munit.internal.junitinterface.Settings
+import munit.internal.console.{Printers, StackTraces}
+import munit.internal.junitinterface.{Configurable, Settings}
 
 import java.lang.reflect.Modifier
 
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 import scala.util.control.NonFatal
 
 import org.junit.AssumptionViolatedException
-import org.junit.runner.Description
-import org.junit.runner.Runner
-import org.junit.runner.manipulation.Filter
-import org.junit.runner.manipulation.Filterable
-import org.junit.runner.notification.Failure
-import org.junit.runner.notification.RunNotifier
+import org.junit.runner.manipulation.{Filter, Filterable}
+import org.junit.runner.notification.{Failure, RunNotifier}
+import org.junit.runner.{Description, Runner}
 
 class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
     extends Runner with Filterable with Configurable {

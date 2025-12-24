@@ -2,8 +2,7 @@ package munit.internal.junitinterface
 
 import java.util.concurrent._
 
-import org.junit.runner.Description
-import org.junit.runner.notification
+import org.junit.runner.{Description, notification}
 
 class MUnitRunNotifier(reporter: JUnitReporter) extends notification.RunNotifier {
   private val status = new ConcurrentHashMap[String, MUnitRunNotifier.TestStatus]

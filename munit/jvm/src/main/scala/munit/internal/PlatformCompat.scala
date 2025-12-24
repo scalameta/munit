@@ -1,21 +1,14 @@
 package munit.internal
 
-import sbt.testing.EventHandler
-import sbt.testing.Logger
-import sbt.testing.Task
+import sbt.testing.{EventHandler, Logger, Task}
 
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.{
+  Executors, ThreadFactory, TimeUnit, TimeoutException,
+}
 
-import scala.concurrent.Await
-import scala.concurrent.Awaitable
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Awaitable, ExecutionContext, Future, Promise}
 import scala.util.control.NonFatal
 
 object PlatformCompat {

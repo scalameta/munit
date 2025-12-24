@@ -1,7 +1,6 @@
 package munit.internal.junitinterface
 
-import sbt.testing.Fingerprint
-import sbt.testing.SubclassFingerprint
+import sbt.testing.{Fingerprint, SubclassFingerprint}
 
 class CustomRunners(val runners: List[CustomFingerprint]) {
   private val superclasses = runners.iterator.map(_.suite).toSet

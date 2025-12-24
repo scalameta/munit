@@ -1,7 +1,6 @@
 package munit
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 import org.junit.runner.RunWith
 

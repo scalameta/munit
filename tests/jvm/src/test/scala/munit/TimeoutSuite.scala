@@ -1,10 +1,8 @@
 package munit
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.{ExecutionContext, Future}
 
 class TimeoutSuite extends munit.FunSuite {
   override val munitTimeout: FiniteDuration = Duration(100, "ms")

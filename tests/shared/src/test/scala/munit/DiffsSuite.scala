@@ -1,8 +1,7 @@
 package munit
 
-import munit.diff.Diff
-import munit.diff.DiffOptions
 import munit.diff.console.AnsiColors
+import munit.diff.{Diff, DiffOptions}
 
 class DiffsSuite extends FunSuite {
   self =>

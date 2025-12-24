@@ -1,7 +1,6 @@
 package munit.diff
 
-import munit.diff.console.AnsiColors
-import munit.diff.console.Printers
+import munit.diff.console.{AnsiColors, Printers}
 
 import scala.collection.JavaConverters._
 

@@ -3,13 +3,9 @@ package munit
 import munit.diff.console.AnsiColors
 import munit.internal.PlatformCompat
 
-import sbt.testing.Event
-import sbt.testing.EventHandler
-import sbt.testing.Logger
-import sbt.testing.TaskDef
+import sbt.testing.{Event, EventHandler, Logger, TaskDef}
 
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
+import java.io.{ByteArrayOutputStream, PrintStream}
 import java.nio.charset.StandardCharsets
 import java.util.regex.Pattern
 

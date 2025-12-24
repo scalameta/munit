@@ -1,8 +1,7 @@
 package munit.diff
 
 import java.util
-import java.util.Collections
-import java.util.Comparator
+import java.util.{Collections, Comparator}
 
 class Patch[T] {
   private val deltas: util.List[Delta[T]] = new util.ArrayList()
