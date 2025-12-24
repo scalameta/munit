@@ -1,7 +1,8 @@
 package munit
 
-import munit.internal.PlatformCompat.InvocationTargetException
-import munit.internal.PlatformCompat.UndeclaredThrowableException
+import munit.internal.PlatformCompat.{
+  InvocationTargetException, UndeclaredThrowableException,
+}
 
 import java.util.concurrent.ExecutionException
 

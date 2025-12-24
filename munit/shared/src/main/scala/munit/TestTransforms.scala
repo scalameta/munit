@@ -1,9 +1,8 @@
 package munit
 
 import scala.concurrent.Future
-import scala.util.Failure
-import scala.util.Success
 import scala.util.control.NonFatal
+import scala.util.{Failure, Success}
 
 trait TestTransforms {
   this: BaseFunSuite =>

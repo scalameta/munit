@@ -1,8 +1,8 @@
 package munit
 
-import munit.internal.junitinterface.CustomFingerprint
-import munit.internal.junitinterface.CustomRunners
-import munit.internal.junitinterface.JUnitFramework
+import munit.internal.junitinterface.{
+  CustomFingerprint, CustomRunners, JUnitFramework,
+}
 
 class Framework extends JUnitFramework {
   override def name(): String = "munit"

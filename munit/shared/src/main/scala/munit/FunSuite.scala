@@ -6,8 +6,7 @@ import java.util.concurrent.TimeUnit
 
 import scala.collection.mutable
 import scala.concurrent.Future
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.control.NonFatal
 
 abstract class FunSuite extends BaseFunSuite

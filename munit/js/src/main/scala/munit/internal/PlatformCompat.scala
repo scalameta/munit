@@ -2,19 +2,12 @@ package munit.internal
 
 import munit.MUnitRunner
 
-import sbt.testing.EventHandler
-import sbt.testing.Logger
-import sbt.testing.Task
-import sbt.testing.TaskDef
+import sbt.testing.{EventHandler, Logger, Task, TaskDef}
 
 import java.util.concurrent.TimeoutException
 
-import scala.concurrent.Await
-import scala.concurrent.Awaitable
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.concurrent.Promise
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Awaitable, ExecutionContext, Future, Promise}
 import scala.scalajs.js.timers
 import scala.scalajs.reflect.Reflect
 import scala.util.control.NonFatal

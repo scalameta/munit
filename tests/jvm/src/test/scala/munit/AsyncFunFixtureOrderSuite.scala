@@ -1,7 +1,6 @@
 package munit
 
-import scala.concurrent.Future
-import scala.concurrent.Promise
+import scala.concurrent.{Future, Promise}
 
 class AsyncFunFixtureOrderSuite extends FunSuite {
   val latch: Promise[Unit] = Promise[Unit]()

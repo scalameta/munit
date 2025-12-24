@@ -4,8 +4,7 @@ import sbt.Keys._
 import sbt._
 import sbt.plugins._
 
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.{Files, Paths}
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.{util => ju}

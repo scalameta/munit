@@ -1,11 +1,8 @@
 package munit
 
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Promise
+import scala.concurrent.{ExecutionContext, Promise}
 
 class AsyncFixtureSuite extends BaseSuite {
   case class PromiseWrapper(name: String, promise: Promise[_])

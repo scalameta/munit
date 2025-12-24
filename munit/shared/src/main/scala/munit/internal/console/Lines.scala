@@ -1,11 +1,8 @@
 package munit.internal.console
 
-import munit.Clues
-import munit.Location
 import munit.diff.console.AnsiColors
-import munit.internal.io.PlatformIO.Files
-import munit.internal.io.PlatformIO.Path
-import munit.internal.io.PlatformIO.Paths
+import munit.internal.io.PlatformIO.{Files, Path, Paths}
+import munit.{Clues, Location}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable

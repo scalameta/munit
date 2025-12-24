@@ -1,12 +1,10 @@
 package munit.sbtmunit
 
 import sbt._
-import sbt.testing.Event
-import sbt.testing.Status
+import sbt.testing.{Event, Status}
 
 import java.text.SimpleDateFormat
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 import java.{util => ju}
 
 import scala.collection.JavaConverters._

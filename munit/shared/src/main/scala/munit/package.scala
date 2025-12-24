@@ -1,5 +1,4 @@
-import munit.internal.junitinterface.PendingCommentTag
-import munit.internal.junitinterface.PendingTag
+import munit.internal.junitinterface.{PendingCommentTag, PendingTag}
 
 package object munit {
   case class PendingComment(override val value: String)

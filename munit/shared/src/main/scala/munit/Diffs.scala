@@ -1,7 +1,6 @@
 package munit
 
-import munit.diff.Diff
-import munit.diff.DiffOptions
+import munit.diff.{Diff, DiffOptions}
 
 object Diffs {
 
