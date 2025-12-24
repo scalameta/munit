@@ -39,9 +39,8 @@ final class JUnitReporter(
     }
     if (nanos >= 0) {
       sb.append(' ')
-      AnsiColors.c(AnsiColors.DarkGrey, flag = true)(_.append(
-        "%.3fs".format(nanos / 1000000000.0)
-      ))
+      AnsiColors
+        .c(AnsiColors.DarkGrey, flag = true)(_.append("%.3fs".format(nanos / 1e9)))
     }
     if (extra ne null) extra(sb.append(' '))
     log(Info, sb.toString())
