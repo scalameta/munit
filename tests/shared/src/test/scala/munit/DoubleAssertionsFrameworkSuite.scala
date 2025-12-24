@@ -30,26 +30,26 @@ class DoubleAssertionsFrameworkSuite extends BaseSuite {
   ))
 
   // And now, the same with floats...
-  test("Assert Equals NaN Fails".fail)(assertEqualsFloat(1.234f, Float.NaN, 0.0f))
+  test("Assert Equals NaN Fails".fail)(assertEqualsFloat(1.234f, Float.NaN, 0f))
 
-  test("Assert NaN Equals Fails".fail)(assertEqualsFloat(Float.NaN, 1.234f, 0.0f))
+  test("Assert NaN Equals Fails".fail)(assertEqualsFloat(Float.NaN, 1.234f, 0f))
 
-  test("Assert NaN Equals NaN")(assertEqualsFloat(Float.NaN, Float.NaN, 0.0f))
+  test("Assert NaN Equals NaN")(assertEqualsFloat(Float.NaN, Float.NaN, 0f))
 
   test("Assert Pos Infinity Not Equals Neg Infinity".fail)(
-    assertEqualsFloat(Float.PositiveInfinity, Float.NegativeInfinity, 0.0f)
+    assertEqualsFloat(Float.PositiveInfinity, Float.NegativeInfinity, 0f)
   )
 
   test("Assert Pos Infinity Not Equals".fail)(
-    assertEqualsFloat(Float.PositiveInfinity, 1.23f, 0.0f)
+    assertEqualsFloat(Float.PositiveInfinity, 1.23f, 0f)
   )
 
   test("Assert Pos Infinity Equals Infinity")(
-    assertEqualsFloat(Float.PositiveInfinity, Float.PositiveInfinity, 0.0f)
+    assertEqualsFloat(Float.PositiveInfinity, Float.PositiveInfinity, 0f)
   )
 
   test("Assert Neg Infinity Equals Infinity")(
-    assertEqualsFloat(Float.NegativeInfinity, Float.NegativeInfinity, 0.0f)
+    assertEqualsFloat(Float.NegativeInfinity, Float.NegativeInfinity, 0f)
   )
 
   test("All Infinities")(assertEqualsFloat(
