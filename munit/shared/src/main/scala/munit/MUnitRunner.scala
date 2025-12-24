@@ -135,8 +135,13 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
         val future = futures.next()
         future.value match {
           // use tail-recursive call if possible to keep stack traces clean.
-          case Some(t) => acc += t; loop()
-          case None => future.transformWith { t => acc += t; loop() }
+          case Some(t) =>
+            acc += t
+            loop()
+          case None => future.transformWith { t =>
+              acc += t
+              loop()
+            }
         }
       }
     loop()
@@ -163,7 +168,9 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
       val errors = List.newBuilder[Throwable]
       var isSuccess = true
       results.foreach {
-        case util.Failure(ex) => errors += ex; isSuccess = false
+        case util.Failure(ex) =>
+          errors += ex
+          isSuccess = false
         case util.Success((fixture, success)) =>
           if (success) loadedFixtures += fixture else isSuccess = false
       }

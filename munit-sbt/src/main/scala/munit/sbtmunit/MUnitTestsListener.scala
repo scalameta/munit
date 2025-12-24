@@ -37,7 +37,7 @@ class MUnitTestsListener(
   def doComplete(finalResult: TestResult): Unit = listener
     .onReport(newReport(finalResult))
 
-  val ISO_8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", ju.Locale.US);
+  val ISO_8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", ju.Locale.US)
   private def newReport(testResult: TestResult): MUnitTestReport.Summary =
     MUnitTestReport.Summary(
       repository = repository,

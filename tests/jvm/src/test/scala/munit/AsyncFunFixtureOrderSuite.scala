@@ -11,7 +11,7 @@ class AsyncFunFixtureOrderSuite extends FunSuite {
     setup = { test => Future.successful(test.name) },
     teardown = { name =>
       implicit val ec = munitExecutionContext
-      Future { completedFromTeardown = Some(latch.trySuccess(())); }
+      Future { completedFromTeardown = Some(latch.trySuccess(())) }
     },
   )
 
