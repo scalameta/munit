@@ -2,29 +2,29 @@
 # yarn lockfile v1
 
 
-"@acemir/cssom@^0.9.23":
-  version "0.9.24"
-  resolved "https://registry.yarnpkg.com/@acemir/cssom/-/cssom-0.9.24.tgz#1917a2d9f307e247831415cc7c5ac987e670b645"
+"@acemir/cssom@^0.9.28":
+  version "0.9.30"
+  resolved "https://registry.yarnpkg.com/@acemir/cssom/-/cssom-0.9.30.tgz#78e73afd5284d2655f0a83458afefb2920d7bfba"
 
-"@asamuzakjp/css-color@^4.0.3":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@asamuzakjp/css-color/-/css-color-4.0.5.tgz#cc533095241d8a56c49614591955280ab8c4bb02"
+"@asamuzakjp/css-color@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@asamuzakjp/css-color/-/css-color-4.1.1.tgz#e5c662f488367dc74194609179fe6621f2586114"
   dependencies:
     "@csstools/css-calc" "^2.1.4"
     "@csstools/css-color-parser" "^3.1.0"
     "@csstools/css-parser-algorithms" "^3.0.5"
     "@csstools/css-tokenizer" "^3.0.4"
-    lru-cache "^11.2.1"
+    lru-cache "^11.2.4"
 
-"@asamuzakjp/dom-selector@^6.7.4":
-  version "6.7.5"
-  resolved "https://registry.yarnpkg.com/@asamuzakjp/dom-selector/-/dom-selector-6.7.5.tgz#aedff82baafcc7b2d1b3e7bce4459937e4ce550e"
+"@asamuzakjp/dom-selector@^6.7.6":
+  version "6.7.6"
+  resolved "https://registry.yarnpkg.com/@asamuzakjp/dom-selector/-/dom-selector-6.7.6.tgz#9cd7671a61a9cb490852ed6a441b3b0950aab945"
   dependencies:
     "@asamuzakjp/nwsapi" "^2.3.9"
     bidi-js "^1.0.3"
     css-tree "^3.1.0"
     is-potential-custom-element-name "^1.0.1"
-    lru-cache "^11.2.2"
+    lru-cache "^11.2.4"
 
 "@asamuzakjp/nwsapi@^2.3.9":
   version "2.3.9"
@@ -49,13 +49,17 @@
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@csstools/css-parser-algorithms/-/css-parser-algorithms-3.0.5.tgz#5755370a9a29abaec5515b43c8b3f2cf9c2e3076"
 
-"@csstools/css-syntax-patches-for-csstree@^1.0.14":
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/@csstools/css-syntax-patches-for-csstree/-/css-syntax-patches-for-csstree-1.0.15.tgz#fa4361230cc22410c7f885289e4aa16c0dc224ac"
+"@csstools/css-syntax-patches-for-csstree@^1.0.21":
+  version "1.0.22"
+  resolved "https://registry.yarnpkg.com/@csstools/css-syntax-patches-for-csstree/-/css-syntax-patches-for-csstree-1.0.22.tgz#7a14209eee004598dae61310e180f9826821d6c9"
 
 "@csstools/css-tokenizer@^3.0.4":
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/@csstools/css-tokenizer/-/css-tokenizer-3.0.4.tgz#333fedabc3fd1a8e5d0100013731cf19e6a8c5d3"
+
+"@exodus/bytes@^1.6.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@exodus/bytes/-/bytes-1.7.0.tgz#0bfe8baefb3843eb28b15eff7fd18edaefff6228"
 
 agent-base@^7.1.0:
   version "7.1.0"
@@ -80,13 +84,14 @@ css-tree@^3.1.0:
     mdn-data "2.12.2"
     source-map-js "^1.0.1"
 
-cssstyle@^5.3.3:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-5.3.3.tgz#977f3868f379c17d619e9672839f9b5bb3db9861"
+cssstyle@^5.3.4:
+  version "5.3.6"
+  resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-5.3.6.tgz#af8b9cf6cdebac06d399aa70d8982d2fd43888d5"
   dependencies:
-    "@asamuzakjp/css-color" "^4.0.3"
-    "@csstools/css-syntax-patches-for-csstree" "^1.0.14"
+    "@asamuzakjp/css-color" "^4.1.1"
+    "@csstools/css-syntax-patches-for-csstree" "^1.0.21"
     css-tree "^3.1.0"
+    lru-cache "^11.2.4"
 
 data-urls@^6.0.0:
   version "6.0.0"
@@ -109,11 +114,11 @@ entities@^6.0.0:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/entities/-/entities-6.0.1.tgz#c28c34a43379ca7f61d074130b2f5f7020a30694"
 
-html-encoding-sniffer@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/html-encoding-sniffer/-/html-encoding-sniffer-4.0.0.tgz#696df529a7cfd82446369dc5193e590a3735b448"
+html-encoding-sniffer@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/html-encoding-sniffer/-/html-encoding-sniffer-6.0.0.tgz#f8d9390b3b348b50d4f61c16dd2ef5c05980a882"
   dependencies:
-    whatwg-encoding "^3.1.1"
+    "@exodus/bytes" "^1.6.0"
 
 http-proxy-agent@^7.0.2:
   version "7.0.2"
@@ -129,26 +134,21 @@ https-proxy-agent@^7.0.6:
     agent-base "^7.1.2"
     debug "4"
 
-iconv-lite@0.6.3:
-  version "0.6.3"
-  resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz"
-  dependencies:
-    safer-buffer ">= 2.1.2 < 3.0.0"
-
 is-potential-custom-element-name@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/is-potential-custom-element-name/-/is-potential-custom-element-name-1.0.1.tgz"
 
-jsdom@^27.2.0:
-  version "27.2.0"
-  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-27.2.0.tgz#499a41eef477c3632f44009e095cb8e418fdd714"
+jsdom@^27.4.0:
+  version "27.4.0"
+  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-27.4.0.tgz#c36af2e43e1281a7e8bb8f255086435d177801f2"
   dependencies:
-    "@acemir/cssom" "^0.9.23"
-    "@asamuzakjp/dom-selector" "^6.7.4"
-    cssstyle "^5.3.3"
+    "@acemir/cssom" "^0.9.28"
+    "@asamuzakjp/dom-selector" "^6.7.6"
+    "@exodus/bytes" "^1.6.0"
+    cssstyle "^5.3.4"
     data-urls "^6.0.0"
     decimal.js "^10.6.0"
-    html-encoding-sniffer "^4.0.0"
+    html-encoding-sniffer "^6.0.0"
     http-proxy-agent "^7.0.2"
     https-proxy-agent "^7.0.6"
     is-potential-custom-element-name "^1.0.1"
@@ -158,15 +158,14 @@ jsdom@^27.2.0:
     tough-cookie "^6.0.0"
     w3c-xmlserializer "^5.0.0"
     webidl-conversions "^8.0.0"
-    whatwg-encoding "^3.1.1"
     whatwg-mimetype "^4.0.0"
     whatwg-url "^15.1.0"
     ws "^8.18.3"
     xml-name-validator "^5.0.0"
 
-lru-cache@^11.2.1, lru-cache@^11.2.2:
-  version "11.2.2"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.2.2.tgz#40fd37edffcfae4b2940379c0722dc6eeaa75f24"
+lru-cache@^11.2.4:
+  version "11.2.4"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.2.4.tgz#ecb523ebb0e6f4d837c807ad1abaea8e0619770d"
 
 mdn-data@2.12.2:
   version "2.12.2"
@@ -189,10 +188,6 @@ punycode@^2.3.1:
 require-from-string@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
-
-"safer-buffer@>= 2.1.2 < 3.0.0":
-  version "2.1.2"
-  resolved "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz"
 
 saxes@^6.0.0:
   version "6.0.0"
@@ -239,12 +234,6 @@ w3c-xmlserializer@^5.0.0:
 webidl-conversions@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-8.0.0.tgz#821c92aa4f88d88a31264d887e244cb9655690c6"
-
-whatwg-encoding@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/whatwg-encoding/-/whatwg-encoding-3.1.1.tgz#d0f4ef769905d426e1688f3e34381a99b60b76e5"
-  dependencies:
-    iconv-lite "0.6.3"
 
 whatwg-mimetype@^4.0.0:
   version "4.0.0"
