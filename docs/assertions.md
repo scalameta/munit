@@ -149,6 +149,29 @@ The assertion does not fail when both values are different.
 assertNotEquals(a, b)
 ```
 
+## `assertMatches()`
+
+Use `assertMatches` to assert that a value conforms to a particular pattern.
+
+```scala mdoc
+val results = List(Left("parse error"), Right(42))
+```
+
+```scala mdoc
+assertMatches(results) {
+   case List(Left(_), Right(n)) => n % 2 == 0
+}
+```
+
+The assertion will fail if the value does not match the pattern or if the predicate
+returns false.
+
+```scala mdoc:crash
+assertMatches(results) {
+   case List(Right(_), Right(n)) => n % 2 == 0
+}
+```
+
 ## `assertNoDiff()`
 
 Use `assertNoDiff()` to compare two multiline strings.
