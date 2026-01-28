@@ -32,6 +32,18 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     if (!isTrue) fail(munitPrint(clue), clues)
   }
 
+  def assertMatches[A](value: A, clue: => String = "assertion failed")(
+      predicate: PartialFunction[A, Boolean]
+  )(implicit loc: Location): Unit = StackTraces.dropInside(
+    if (predicate.isDefinedAt(value)) {
+      val (matches, clues) = munitCaptureClues(predicate(value))
+      if (!matches) fail(
+        s"${munitPrint(clue)}: predicate returned false for value: $value",
+        clues,
+      )
+    } else fail(s"${munitPrint(clue)}: predicate not defined for value: $value")
+  )
+
   def assume(cond: Boolean, clue: => Any = "assumption failed")(implicit
       loc: Location
   ): Unit = StackTraces

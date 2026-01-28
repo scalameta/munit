@@ -51,6 +51,11 @@ class AssertionsSuite extends BaseSuite {
     assertEquals(Option(1), Option(1))
   }
 
+  test("matches") {
+    val values = List(1, 2, 3)
+    assertMatches(values) { case l @ 1 :: _ => l(2) == 3 }
+  }
+
   test("false-negative") {
     assume(BuildInfo.scalaVersion != "3.3.3")
     assertNoDiff(
