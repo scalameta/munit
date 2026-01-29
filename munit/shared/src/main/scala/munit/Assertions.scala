@@ -25,6 +25,9 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
   private def useAnsiColors(implicit diffOptions: DiffOptions): Boolean =
     diffOptions.ansi(munitAnsiColors)
 
+  /**
+   * Asserts that the given condition is true.
+   */
   def assert(cond: => Boolean, clue: => Any = "assertion failed")(implicit
       loc: Location
   ): Unit = StackTraces.dropInside {
@@ -32,6 +35,10 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     if (!isTrue) fail(munitPrint(clue), clues)
   }
 
+  /**
+   * Asserts that the given partial function is defined for the given value and that applying the partial function
+   * to the value returns true.
+   */
   def assertMatches[A](value: A, clue: => String = "assertion failed")(
       predicate: PartialFunction[A, Boolean]
   )(implicit loc: Location): Unit = StackTraces.dropInside(
@@ -44,6 +51,10 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     } else fail(s"${munitPrint(clue)}: predicate not defined for value: $value")
   )
 
+  /**
+   * Aborts the test if the given condition is false. In contrast with `assert`, a failed assumption does not fail the test,
+   * but rather marks it as skipped.
+   */
   def assume(cond: Boolean, clue: => Any = "assumption failed")(implicit
       loc: Location
   ): Unit = StackTraces
@@ -61,6 +72,10 @@ trait Assertions extends MacroCompat.CompileErrorMacro {
     assertNoDiff(obtained, expected, clue)
   }
 
+  /**
+   * Asserts that two strings are equal, ignoring non-visible differences such as whitespace. Useful for comparing
+   * multiline strings.
+   */
   def assertNoDiff(
       obtained: String,
       expected: String,
