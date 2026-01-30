@@ -9,7 +9,7 @@ def scala212 = "2.12.21"
 
 def scala3 = "3.3.7"
 def junitVersion = "4.13.2"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "2.61.0"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "2.62.1"
 inThisBuild {
   List(
     // version is set dynamically by sbt-dynver, but let's adjust it
