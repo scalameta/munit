@@ -42,6 +42,7 @@ abstract class JUnitFramework extends Framework {
   private def parseRunSettings(args: Array[String]): RunSettings = {
     val defaults = Settings.defaults()
     var verbose = false
+    var logMode: RunSettings.LogMode = RunSettings.LogMode.Success
     var noColor = false
     var decodeScalaNames = false
     var logAssert = false
@@ -52,6 +53,8 @@ abstract class JUnitFramework extends Framework {
     var excludeTags = Set.empty[String]
     for (str <- args) str match {
       case "-v" => verbose = true
+      case s if s.startsWith("--log=") =>
+        logMode = RunSettings.LogMode.parse(s.stripPrefix("--log=").toLowerCase)
       case "-n" => noColor = true
       case "-s" => decodeScalaNames = true
       case "-a" => logAssert = true
@@ -105,6 +108,7 @@ abstract class JUnitFramework extends Framework {
       color = !noColor,
       decodeScalaNames = decodeScalaNames,
       verbose = verbose,
+      logMode = logMode,
       logAssert = logAssert,
       notLogExceptionClass = notLogExceptionClass,
       useSbtLoggers = useSbtLoggers,

@@ -37,6 +37,10 @@ class FrameworkSuite extends BaseFrameworkSuite {
     SkippedFrameworkStdoutJVMSuite,
     SkippedFrameworkStdoutJsNativeVerboseSuite,
     SkippedFrameworkStdoutJVMVerboseSuite,
+    SkippedFrameworkStdoutJsNativeLogIgnoredSuite,
+    SkippedFrameworkStdoutJVMLogIgnoredSuite,
+    SkippedFrameworkStdoutJsNativeLogFailureSuite,
+    SkippedFrameworkStdoutJVMLogFailureSuite,
   )
   tests.foreach(t => check(t))
 }
