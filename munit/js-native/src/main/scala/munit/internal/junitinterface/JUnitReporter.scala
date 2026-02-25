@@ -59,13 +59,13 @@ final class JUnitReporter(
 
   def reportTestSuiteStarted(): Unit = {
     suiteStartNanos = System.nanoTime
-    if (settings.shouldLogDebug)
-      logEvent(color = AnsiColors.GREEN, fq = true)("Test run", " started")
     if (settings.shouldLogInfo)
+      logEvent(color = AnsiColors.GREEN, fq = true)("Test run", " started")
+    if (settings.shouldLogDebug)
       logEvent(color = AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
-  def reportTestSuiteFinished(): Unit = if (settings.shouldLogDebug) {
+  def reportTestSuiteFinished(): Unit = if (settings.shouldLogInfo) {
     val nanos = System.nanoTime - suiteStartNanos
     logEvent(color = AnsiColors.GREEN, fq = true)(
       suffix = ": finished",
@@ -107,7 +107,7 @@ final class JUnitReporter(
   }
 
   def reportTestPassed(method: String, elapsedNanos: Long): Unit = {
-    if (settings.shouldLogInfo)
+    if (settings.shouldLogDebug)
       logEvent(method, AnsiColors.GREEN)("  +", nanos = elapsedNanos)
     emitEvent(method, Status.Success, None, elapsedNanos)
   }

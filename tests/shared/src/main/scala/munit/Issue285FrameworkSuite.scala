@@ -27,10 +27,30 @@ class Issue285FrameworkSuite extends FunSuite {
   test("issue-285-ok")(())
 }
 
-object Issue285FrameworkSuite
+object Issue285FrameworkInfoSuite
     extends FrameworkTest(
       classOf[Issue285FrameworkSuite],
-      """|munit.Issue285FrameworkSuite:
+      """|Test run munit.Issue285FrameworkSuite started
+         |beforeAll
+         |beforeEach - issue-285-ok
+         |afterEach - issue-285-ok
+         |beforeEach - issue-285-fail
+         |afterEach - issue-285-fail
+         |==> X munit.Issue285FrameworkSuite.issue-285-fail <elapsed time>java.util.concurrent.TimeoutException: test timed out after 5 milliseconds
+         |beforeEach - issue-285-ok
+         |afterEach - issue-285-ok
+         |afterAll
+         |munit.Issue285FrameworkSuite: finished <elapsed time>
+         |Test run munit.Issue285FrameworkSuite finished: 1 failed, 0 ignored, 3 total <elapsed time>
+         |""".stripMargin,
+      format = StdoutFormat,
+    )
+
+object Issue285FrameworkDebugSuite
+    extends FrameworkTest(
+      classOf[Issue285FrameworkSuite],
+      """|Test run munit.Issue285FrameworkSuite started
+         |munit.Issue285FrameworkSuite:
          |beforeAll
          |beforeEach - issue-285-ok
          |afterEach - issue-285-ok
@@ -42,6 +62,9 @@ object Issue285FrameworkSuite
          |afterEach - issue-285-ok
          |  + issue-285-ok-1 <elapsed time>
          |afterAll
+         |munit.Issue285FrameworkSuite: finished <elapsed time>
+         |Test run munit.Issue285FrameworkSuite finished: 1 failed, 0 ignored, 3 total <elapsed time>
          |""".stripMargin,
       format = StdoutFormat,
+      arguments = Array("--log=debug"),
     )

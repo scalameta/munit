@@ -47,8 +47,8 @@ object RunSettings {
     def parse(mode: String): LogMode = mode.toLowerCase match {
       case "error" | "failure" => Error
       case "warn" | "ignored" | "skipped" => Warn
-      case "info" | "success" => Info
-      case "debug" => Debug
+      case "info" => Info
+      case "debug" | "success" => Debug
       case "trace" => Trace
       case _ => throw new IllegalArgumentException(
           s"Invalid --log mode '$mode'. Supported values: error, warn, info, debug, trace"

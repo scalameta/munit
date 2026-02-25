@@ -58,12 +58,10 @@ object SkippedFrameworkSuite
 object SkippedFrameworkStdoutJsNativeSuite
     extends FrameworkTest(
       classOf[SkippedFrameworkSuite],
-      """|munit.SkippedFrameworkSuite:
-         |  + pass <elapsed time>
+      """|Test run munit.SkippedFrameworkSuite started
          |==> i ignore ignored <elapsed time>
          |==> i ignore.failed.pending PENDING ignored <elapsed time>
          |==> i ignore.failed.pending.comment PENDING comment ignored <elapsed time>
-         |  + assume(true) <elapsed time>
          |==> s assume(false) skipped
          |==> i pending.empty.ignored PENDING ignored <elapsed time>
          |==> i pending.empty.ignored.comment PENDING comment ignored <elapsed time>
@@ -79,6 +77,8 @@ object SkippedFrameworkStdoutJsNativeSuite
          |27:  test("pending.failed.ignored".pending.ignore)(assert(false))
          |==> i pending.failed.ignored PENDING ignored <elapsed time>
          |==> i pending.failed.ignored.comment PENDING comment ignored <elapsed time>
+         |munit.SkippedFrameworkSuite: finished <elapsed time>
+         |Test run munit.SkippedFrameworkSuite finished: 2 failed, 9 ignored, 9 total <elapsed time>
          |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,
       tags = Set(NoJVM),
@@ -129,12 +129,10 @@ object SkippedFrameworkStdoutJsNativeVerboseSuite
 object SkippedFrameworkStdoutJVMSuite
     extends FrameworkTest(
       classOf[SkippedFrameworkSuite],
-      """|munit.SkippedFrameworkSuite:
-         |  + pass <elapsed time>
+      """|Test run munit.SkippedFrameworkSuite started
          |==> i munit.SkippedFrameworkSuite.ignore ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.ignore.failed.pending PENDING ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.ignore.failed.pending.comment PENDING comment ignored <elapsed time>
-         |  + assume(true) <elapsed time>
          |==> s munit.SkippedFrameworkSuite.assume(false) skipped <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.empty.ignored PENDING ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.empty.ignored.comment PENDING comment ignored <elapsed time>
@@ -154,6 +152,8 @@ object SkippedFrameworkStdoutJVMSuite
          |    at munit.SkippedFrameworkSuite.$anonfun$new$24(SkippedFrameworkSuite.scala:26)
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored PENDING ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored.comment PENDING comment ignored <elapsed time>
+         |munit.SkippedFrameworkSuite: finished <elapsed time>
+         |Test run munit.SkippedFrameworkSuite finished: 2 failed, 9 ignored, 9 total <elapsed time>
          |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,
       tags = Set(OnlyJVM),
