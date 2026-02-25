@@ -64,6 +64,10 @@ abstract class AbstractEvent implements Event {
   }
 
   String durationToString() {
+    return durationToString(duration);
+  }
+
+  static String durationToString(long duration) {
     return c(duration / 1000.0 + "s", FAINT);
   }
 }

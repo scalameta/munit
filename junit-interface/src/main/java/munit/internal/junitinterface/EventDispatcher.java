@@ -177,7 +177,13 @@ final class EventDispatcher extends RunListener {
   }
 
   @Override
-  public void testSuiteFinished(Description desc) throws Exception {
+  public void testSuiteFinished(Description desc) {
+    if (settings.shouldLogDebug()) {
+      String logName = getSuiteLabel(desc);
+      if (logName != null) {
+        logger.info(logName + ": finished " + AbstractEvent.durationToString(elapsedTime(logName)));
+      }
+    }
     logger.flush();
   }
 
@@ -185,7 +191,7 @@ final class EventDispatcher extends RunListener {
   public void testStarted(Description desc) {
     recordStartTime(desc);
     testSuiteStarted(desc);
-    if (settings.shouldLogDebug()) {
+    if (settings.shouldLogTrace()) {
       logger.info(settings.buildPlainName(desc) + " started");
     }
   }
