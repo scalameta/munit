@@ -30,6 +30,7 @@ class RunSettings implements Settings {
   final boolean useBufferedLoggers;
   final boolean trimStackTraces;
   final boolean verbose;
+  final LogMode logMode;
   final Summary summary;
   final ArrayList<String> globPatterns;
   final Set<String> includeCategories, excludeCategories;
@@ -43,6 +44,7 @@ class RunSettings implements Settings {
       boolean color,
       boolean decodeScalaNames,
       boolean verbose,
+      LogMode logMode,
       boolean useSbtLoggers,
       boolean useBufferedLoggers,
       boolean trimStackTraces,
@@ -60,6 +62,7 @@ class RunSettings implements Settings {
     this.color = color;
     this.decodeScalaNames = decodeScalaNames;
     this.verbose = verbose;
+    this.logMode = logMode;
     this.summary = summary;
     this.logAssert = logAssert;
     this.logExceptionClass = logExceptionClass;
@@ -82,6 +85,7 @@ class RunSettings implements Settings {
         this.color,
         this.decodeScalaNames,
         this.verbose,
+        this.logMode,
         this.useSbtLoggers,
         this.useBufferedLoggers,
         this.trimStackTraces,
@@ -96,6 +100,14 @@ class RunSettings implements Settings {
         this.includeTags,
         this.excludeTags,
         newTestFilter);
+  }
+
+  boolean shouldLogSuccess() {
+    return logMode.shouldLogSuccess();
+  }
+
+  boolean shouldLog(Status status) {
+    return logMode.shouldLog(status);
   }
 
   String decodeName(String name) {
@@ -230,6 +242,41 @@ class RunSettings implements Settings {
   @Override
   public boolean trimStackTraces() {
     return this.trimStackTraces;
+  }
+
+  static enum LogMode {
+    FAILURE,
+    IGNORED,
+    SUCCESS;
+
+    static LogMode parse(String mode) {
+      if ("failure".equals(mode)) return FAILURE;
+      if ("ignored".equals(mode)) return IGNORED;
+      if ("skipped".equals(mode)) return IGNORED;
+      if ("success".equals(mode)) return SUCCESS;
+      throw new IllegalArgumentException(
+          "Invalid --log mode '"
+              + mode
+              + "'. Supported values: failure, ignored, skipped, success");
+    }
+
+    boolean shouldLogSuccess() {
+      return this == SUCCESS;
+    }
+
+    boolean shouldLog(Status status) {
+      switch (this) {
+        case SUCCESS:
+          return true;
+        case IGNORED:
+          return status == Status.Ignored
+              || status == Status.Skipped
+              || status == Status.Failure
+              || status == Status.Error;
+        default:
+          return status == Status.Failure || status == Status.Error;
+      }
+    }
   }
 
   static enum Summary {

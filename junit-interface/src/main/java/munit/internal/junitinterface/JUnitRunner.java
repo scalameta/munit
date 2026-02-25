@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,6 +47,7 @@ final class JUnitRunner implements Runner {
         useSbtLoggers = false,
         useBufferedLoggers = true;
     boolean verbose = false;
+    RunSettings.LogMode logMode = RunSettings.LogMode.SUCCESS;
     boolean trimStackTraces = defaults.trimStackTraces();
     RunSettings.Summary summary = RunSettings.Summary.SBT;
     HashMap<String, String> sysprops = new HashMap<String, String>();
@@ -60,6 +62,8 @@ final class JUnitRunner implements Runner {
     String runListener = null;
     for (String s : args) {
       if ("-v".equals(s) || "--verbose".equals(s)) verbose = true;
+      else if (s.startsWith("--log="))
+        logMode = RunSettings.LogMode.parse(s.substring("--log=".length()).toLowerCase(Locale.ROOT));
       else if (s.startsWith("--summary="))
         summary = RunSettings.Summary.values()[Integer.parseInt(s.substring(10))];
       else if ("-n".equals(s)) nocolor = true;
@@ -102,6 +106,7 @@ final class JUnitRunner implements Runner {
             !nocolor,
             decodeScalaNames,
             verbose,
+            logMode,
             useSbtLoggers,
             useBufferedLoggers,
             trimStackTraces,

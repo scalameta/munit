@@ -163,6 +163,7 @@ final class EventDispatcher extends RunListener {
 
   @Override
   public void testSuiteStarted(Description desc) {
+    if (!settings.shouldLogSuccess()) return;
     if (desc == null || desc.getClassName() == null || desc.getClassName().equals("null")) return;
     if (suiteStartReported.compareAndSet(false, true))
       logger.info(c(desc.getClassName() + ":", SUCCESS1));
@@ -172,7 +173,7 @@ final class EventDispatcher extends RunListener {
   public void testStarted(Description desc) {
     recordStartTime(desc);
     testSuiteStarted(desc);
-    if (settings.verbose) {
+    if (settings.verbose && settings.shouldLogSuccess()) {
       logger.info(settings.buildPlainName(desc) + " started");
     }
   }
@@ -192,7 +193,7 @@ final class EventDispatcher extends RunListener {
 
   @Override
   public void testRunFinished(Result result) {
-    if (settings.verbose) {
+    if (settings.verbose && settings.shouldLogSuccess()) {
       logger.info(
           "Test run "
               + taskInfo
@@ -218,7 +219,7 @@ final class EventDispatcher extends RunListener {
 
   @Override
   public void testRunStarted(Description desc) {
-    if (settings.verbose) {
+    if (settings.verbose && settings.shouldLogSuccess()) {
       logger.info(taskInfo + " started");
     }
   }
@@ -235,16 +236,20 @@ final class EventDispatcher extends RunListener {
 
   private void postIfFirst(Description desc, AbstractEvent e) {
     if (reported.add(desc)) {
-      e.logTo(logger);
+      if (shouldLog(e.status())) e.logTo(logger);
       runStatistics.captureStats(e);
       handler.handle(e);
     }
   }
 
   void post(AbstractEvent e) {
-    e.logTo(logger);
+    if (shouldLog(e.status())) e.logTo(logger);
     runStatistics.captureStats(e);
     handler.handle(e);
+  }
+
+  private boolean shouldLog(Status status) {
+    return settings.shouldLog(status);
   }
 
   // Removes stack trace elements that reference the reflective invocation in TestLauncher.
