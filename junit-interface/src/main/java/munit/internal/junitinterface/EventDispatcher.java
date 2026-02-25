@@ -118,7 +118,7 @@ final class EventDispatcher extends RunListener {
   public void testFinished(Description desc) {
     postIfFirst(
         desc,
-        RunSettings.LogMode.INFO,
+        RunSettings.LogMode.DEBUG,
         new InfoEvent(desc, Status.Success) {
           void logTo(RichLogger logger) {
             logger.info(
@@ -171,14 +171,14 @@ final class EventDispatcher extends RunListener {
   @Override
   public void testSuiteStarted(Description desc) {
     String logName = getSuiteLabel(desc);
-    if (logName != null && recordStartTime(logName) && settings.shouldLogInfo()) {
+    if (logName != null && recordStartTime(logName) && settings.shouldLogDebug()) {
       logger.info(logName + ":");
     }
   }
 
   @Override
   public void testSuiteFinished(Description desc) {
-    if (settings.shouldLogDebug()) {
+    if (settings.shouldLogInfo()) {
       String logName = getSuiteLabel(desc);
       if (logName != null) {
         logger.info(logName + ": finished " + AbstractEvent.durationToString(elapsedTime(logName)));
@@ -215,7 +215,7 @@ final class EventDispatcher extends RunListener {
 
   @Override
   public void testRunFinished(Result result) {
-    if (settings.shouldLogDebug()) {
+    if (settings.shouldLogInfo()) {
       logger.info(
           "Test run " + taskInfo + " finished: "
               + result.getFailureCount() + " failed, "
@@ -228,7 +228,7 @@ final class EventDispatcher extends RunListener {
 
   @Override
   public void testRunStarted(Description desc) {
-    if (settings.shouldLogDebug()) {
+    if (settings.shouldLogInfo()) {
       logger.info("Test run " + taskInfo + " started");
     }
   }

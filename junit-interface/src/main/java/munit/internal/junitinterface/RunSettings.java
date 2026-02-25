@@ -265,9 +265,9 @@ class RunSettings implements Settings {
         case "skipped":
         case "warn":
           return WARN;
-        case "success":
         case "info":
           return INFO;
+        case "success":
         case "debug":
           return DEBUG;
         case "trace":

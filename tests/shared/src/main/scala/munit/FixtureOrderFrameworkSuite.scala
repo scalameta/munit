@@ -27,7 +27,8 @@ class FixtureOrderFrameworkSuite extends FunSuite {
 object FixtureOrderFrameworkSuite
     extends FrameworkTest(
       classOf[FixtureOrderFrameworkSuite],
-      """|munit.FixtureOrderFrameworkSuite:
+      """|Test run munit.FixtureOrderFrameworkSuite started
+         |munit.FixtureOrderFrameworkSuite:
          |beforeAll(ad-hoc)
          |beforeAll(a)
          |beforeAll(b)
@@ -58,6 +59,9 @@ object FixtureOrderFrameworkSuite
          |afterAll(a)
          |afterAll(b)
          |afterAll(ad-hoc)
+         |munit.FixtureOrderFrameworkSuite: finished <elapsed time>
+         |Test run munit.FixtureOrderFrameworkSuite finished: 0 failed, 0 ignored, 3 total <elapsed time>
          |""".stripMargin,
       format = StdoutFormat,
+      arguments = Array("--log=debug"),
     )
