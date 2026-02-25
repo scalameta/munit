@@ -4,14 +4,11 @@
 
 package munit.internal.junitinterface
 
-import sbt.testing.Status
-
 import scala.util.Try
 
 final class RunSettings(
     val color: Boolean,
     decodeScalaNames: Boolean,
-    val verbose: Boolean,
     val logMode: RunSettings.LogMode,
     val logAssert: Boolean,
     val notLogExceptionClass: Boolean,
@@ -19,9 +16,12 @@ final class RunSettings(
     val trimStackTraces: Boolean,
     val tags: TagsFilter,
 ) extends Settings {
-  def shouldLog(status: Status): Boolean = logMode.shouldLog(status)
+  def shouldLog(value: RunSettings.LogMode): Boolean = logMode.severity >=
+    value.severity
 
-  def shouldLogSuccess: Boolean = logMode.shouldLogSuccess
+  def shouldLogWarn: Boolean = shouldLog(RunSettings.LogMode.Warn)
+  def shouldLogInfo: Boolean = shouldLog(RunSettings.LogMode.Info)
+  def shouldLogDebug: Boolean = shouldLog(RunSettings.LogMode.Debug)
 
   def decodeName(name: String): String =
     if (decodeScalaNames) Try(scala.reflect.NameTransformer.decode(name))
@@ -30,34 +30,24 @@ final class RunSettings(
 }
 
 object RunSettings {
-  sealed abstract class LogMode {
-    final def shouldLogSuccess: Boolean = this == LogMode.Success
-
-    def shouldLog(status: Status): Boolean
-  }
+  sealed abstract class LogMode(val severity: Int)
 
   object LogMode {
-    case object Failure extends LogMode {
-      override def shouldLog(status: Status): Boolean =
-        status == Status.Failure || status == Status.Error
-    }
+    case object Error extends LogMode(1)
 
-    case object Ignored extends LogMode {
-      override def shouldLog(status: Status): Boolean =
-        status == Status.Ignored || status == Status.Skipped ||
-          status == Status.Failure || status == Status.Error
-    }
+    case object Warn extends LogMode(2)
 
-    case object Success extends LogMode {
-      override def shouldLog(status: Status): Boolean = true
-    }
+    case object Info extends LogMode(3)
 
-    def parse(mode: String): LogMode = mode match {
-      case "failure" => Failure
-      case "ignored" | "skipped" => Ignored
-      case "success" => Success
+    case object Debug extends LogMode(4)
+
+    def parse(mode: String): LogMode = mode.toLowerCase match {
+      case "error" | "failure" => Error
+      case "warn" | "ignored" | "skipped" => Warn
+      case "info" | "success" => Info
+      case "debug" => Debug
       case _ => throw new IllegalArgumentException(
-          s"Invalid --log mode '$mode'. Supported values: failure, ignored, skipped, success"
+          s"Invalid --log mode '$mode'. Supported values: error, warn, info, debug"
         )
     }
   }

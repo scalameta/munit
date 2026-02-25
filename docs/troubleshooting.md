@@ -18,13 +18,14 @@ $ sbt
 
 ## Control test logging verbosity
 
-Use the `--log=MODE` test framework flag to control which test output is
-printed.
+Use the `--log=LEVEL` test framework flag to control which test output is
+printed. The default is `info`.
 
-- `--log=success` (default) prints successful, ignored/skipped, and failing
-  tests.
-- `--log=ignored` prints failing and ignored/skipped tests.
-- `--log=failure` prints failing tests only.
+- `--log=error` prints failing tests only
+- `--log=warn` also prints other non-successful (such as ignored/skipped) tests
+- `--log=info` (default) also prints suite-started and test-succeeded events
+- `--log=debug` also prints test-started as well as entire-run started/finished events
+  - this is equivalent to specifying `--verbose`
 
 This behavior is the same regardless of logger configuration (`--logger=sbt`,
 `--logger=buffered`, or `-b` for non-buffered output).

@@ -55,7 +55,7 @@ final class JUnitReporter(
 
   def reportTestSuiteStarted(): Unit = {
     suiteStartNanos = System.nanoTime
-    if (settings.shouldLogSuccess)
+    if (settings.shouldLogInfo)
       logEvent(color = AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
@@ -67,12 +67,11 @@ final class JUnitReporter(
   }
 
   def reportTestStarted(method: String): Unit =
-    if (settings.verbose && settings.shouldLogSuccess)
-      logEvent(method)(suffix = " started")
+    if (settings.shouldLogDebug) logEvent(method)(suffix = " started")
 
   def reportTestIgnored(method: String, suffix: String): Unit = {
     val suffixed = if (suffix.isEmpty) "" else s" $suffix"
-    if (settings.shouldLog(Status.Ignored)) logEvent(method, AnsiColors.YELLOW)(
+    if (settings.shouldLogWarn) logEvent(method, AnsiColors.YELLOW)(
       "==> i",
       suffixed + " ignored",
       nanos = System.nanoTime - suiteStartNanos,
@@ -81,13 +80,13 @@ final class JUnitReporter(
   }
 
   def reportAssumptionViolation(method: String, e: Throwable): Unit = {
-    if (settings.shouldLog(Status.Skipped))
+    if (settings.shouldLogWarn)
       logEvent(method, AnsiColors.YELLOW)("==> s", " skipped")
     emitEvent(method, Status.Skipped, Option(e), 0)
   }
 
   def reportTestPassed(method: String, elapsedNanos: Long): Unit = {
-    if (settings.shouldLog(Status.Success))
+    if (settings.shouldLogInfo)
       logEvent(method, AnsiColors.GREEN)("  +", nanos = elapsedNanos)
     emitEvent(method, Status.Success, None, elapsedNanos)
   }
@@ -135,17 +134,13 @@ final class JUnitReporter(
     if (settings.useSbtLoggers) for (l <- loggers) {
       val msg = filterAnsiIfNeeded(l, s)
       level match {
-        case Debug => l.debug(msg)
-        case Info => l.info(msg)
+        case Debug | Trace => l.debug(msg)
         case Warn => l.warn(msg)
         case Error => l.error(msg)
-        case _ => l.error(msg)
+        case _ => l.info(msg)
       }
     }
-    else level match {
-      case Debug | Trace if !settings.verbose =>
-      case _ => println(filterAnsiIfNeeded(isAnsiSupported, s))
-    }
+    else println(filterAnsiIfNeeded(isAnsiSupported, s))
 
   private def filterAnsiIfNeeded(l: Logger, s: String): String =
     filterAnsiIfNeeded(l.ansiCodesSupported(), s)
