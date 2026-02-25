@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -74,13 +75,14 @@ final class EventDispatcher extends RunListener {
   public void testAssumptionFailure(final Failure failure) {
     postIfFirst(
         failure.getDescription(),
+        RunSettings.LogMode.WARN,
         new ErrorEvent(failure, Status.Skipped) {
           void logTo(RichLogger logger) {
             logger.warn(
-                    settings.buildTestResult(Status.Skipped)
-                            + ansiName
-                            + Ansi.c(" skipped", SKIPPED)
-                            + durationSuffix());
+                settings.buildTestResult(Status.Skipped)
+                    + ansiName
+                    + Ansi.c(" skipped", SKIPPED)
+                    + durationSuffix());
           }
         });
   }
@@ -100,6 +102,7 @@ final class EventDispatcher extends RunListener {
     }
     postIfFirst(
         failure.getDescription(),
+        RunSettings.LogMode.ERROR,
         new ErrorEvent(failure, Status.Failure) {
           void logTo(RichLogger logger) {
             logger.error(
@@ -117,6 +120,7 @@ final class EventDispatcher extends RunListener {
   public void testFinished(Description desc) {
     postIfFirst(
         desc,
+        RunSettings.LogMode.INFO,
         new InfoEvent(desc, Status.Success) {
           void logTo(RichLogger logger) {
             logger.info(
@@ -131,6 +135,7 @@ final class EventDispatcher extends RunListener {
   public void testIgnored(Description desc) {
     postIfFirst(
         desc,
+        RunSettings.LogMode.WARN,
         new InfoEvent(desc, Status.Ignored) {
           void logTo(RichLogger logger) {
             StringBuilder builder = new StringBuilder(1024);
@@ -140,8 +145,7 @@ final class EventDispatcher extends RunListener {
                 Tag tag = (Tag) annotation;
                 if (tag instanceof PendingTag) {
                   isPending = true;
-                }
-                else if (tag instanceof PendingCommentTag) {
+                } else if (tag instanceof PendingCommentTag) {
                   builder.append(" ");
                   builder.append(tag.value());
                 }
@@ -160,12 +164,16 @@ final class EventDispatcher extends RunListener {
         });
   }
 
+  private static boolean canLogDesc(Description desc) {
+    return desc != null && desc.getClassName() != null && !desc.getClassName().equals("null");
+  }
+
   @Override
   public void testSuiteStarted(Description desc) {
-    if (!settings.shouldLogSuccess()) return;
-    if (desc == null || desc.getClassName() == null || desc.getClassName().equals("null")) return;
-    if (suiteStartReported.compareAndSet(false, true))
+    boolean ok = settings.shouldLogInfo() && canLogDesc(desc);
+    if (ok && suiteStartReported.compareAndSet(false, true)) {
       logger.info(c(desc.getClassName() + ":", SUCCESS1));
+    }
   }
 
   @Override
@@ -177,7 +185,7 @@ final class EventDispatcher extends RunListener {
   public void testStarted(Description desc) {
     recordStartTime(desc);
     testSuiteStarted(desc);
-    if (settings.verbose && settings.shouldLogSuccess()) {
+    if (settings.shouldLogDebug()) {
       logger.info(settings.buildPlainName(desc) + " started");
     }
   }
@@ -197,7 +205,7 @@ final class EventDispatcher extends RunListener {
 
   @Override
   public void testRunFinished(Result result) {
-    if (settings.verbose && settings.shouldLogSuccess()) {
+    if (settings.shouldLogDebug()) {
       logger.info(
           "Test run "
               + taskInfo
@@ -218,13 +226,13 @@ final class EventDispatcher extends RunListener {
 
   @Override
   public void testRunStarted(Description desc) {
-    if (settings.verbose && settings.shouldLogSuccess()) {
+    if (settings.shouldLogDebug()) {
       logger.info(taskInfo + " started");
     }
   }
 
   void testExecutionFailed(String testName, Throwable err) {
-    post(
+    post(RunSettings.LogMode.ERROR,
         new Event(
             Ansi.c(testName, Ansi.ERRMSG), settings.buildErrorMessage(err), Status.Error, 0L, err) {
           void logTo(RichLogger logger) {
@@ -233,22 +241,18 @@ final class EventDispatcher extends RunListener {
         });
   }
 
-  private void postIfFirst(Description desc, AbstractEvent e) {
+  private void postIfFirst(Description desc, RunSettings.LogMode logMode, AbstractEvent e) {
     if (reported.add(desc)) {
-      if (shouldLog(e.status())) e.logTo(logger);
-      runStatistics.captureStats(e);
-      handler.handle(e);
+      post(logMode, e);
     }
   }
 
-  void post(AbstractEvent e) {
-    if (shouldLog(e.status())) e.logTo(logger);
+  private void post(RunSettings.LogMode logMode, AbstractEvent e) {
+    if (settings.shouldLog(logMode)) {
+      e.logTo(logger);
+    }
     runStatistics.captureStats(e);
     handler.handle(e);
-  }
-
-  private boolean shouldLog(Status status) {
-    return settings.shouldLog(status);
   }
 
   // Removes stack trace elements that reference the reflective invocation in TestLauncher.

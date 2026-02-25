@@ -47,7 +47,7 @@ final class JUnitRunner implements Runner {
         useSbtLoggers = false,
         useBufferedLoggers = true;
     boolean verbose = false;
-    RunSettings.LogMode logMode = RunSettings.LogMode.SUCCESS;
+    RunSettings.LogMode logMode = null;
     boolean trimStackTraces = defaults.trimStackTraces();
     RunSettings.Summary summary = RunSettings.Summary.SBT;
     HashMap<String, String> sysprops = new HashMap<String, String>();
@@ -63,7 +63,7 @@ final class JUnitRunner implements Runner {
     for (String s : args) {
       if ("-v".equals(s) || "--verbose".equals(s)) verbose = true;
       else if (s.startsWith("--log="))
-        logMode = RunSettings.LogMode.parse(s.substring("--log=".length()).toLowerCase(Locale.ROOT));
+        logMode = RunSettings.LogMode.parse(s.substring("--log=".length()));
       else if (s.startsWith("--summary="))
         summary = RunSettings.Summary.values()[Integer.parseInt(s.substring(10))];
       else if ("-n".equals(s)) nocolor = true;
@@ -101,11 +101,12 @@ final class JUnitRunner implements Runner {
       else if ("+c".equals(s)) logExceptionClass = true;
       else if ("+l".equals(s)) useSbtLoggers = true;
     }
+    if (logMode == null)
+      logMode = verbose ? RunSettings.LogMode.DEBUG : RunSettings.LogMode.INFO;
     this.settings =
         new RunSettings(
             !nocolor,
             decodeScalaNames,
-            verbose,
             logMode,
             useSbtLoggers,
             useBufferedLoggers,

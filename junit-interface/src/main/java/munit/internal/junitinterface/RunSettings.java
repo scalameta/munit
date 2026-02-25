@@ -16,6 +16,7 @@ import static munit.internal.junitinterface.Ansi.c;
 
 import java.lang.reflect.Method;
 import java.util.*;
+
 import org.junit.runner.Description;
 import sbt.testing.Status;
 
@@ -29,7 +30,6 @@ class RunSettings implements Settings {
   final boolean useSbtLoggers;
   final boolean useBufferedLoggers;
   final boolean trimStackTraces;
-  final boolean verbose;
   final LogMode logMode;
   final Summary summary;
   final ArrayList<String> globPatterns;
@@ -43,7 +43,6 @@ class RunSettings implements Settings {
   RunSettings(
       boolean color,
       boolean decodeScalaNames,
-      boolean verbose,
       LogMode logMode,
       boolean useSbtLoggers,
       boolean useBufferedLoggers,
@@ -61,7 +60,6 @@ class RunSettings implements Settings {
       String testFilter) {
     this.color = color;
     this.decodeScalaNames = decodeScalaNames;
-    this.verbose = verbose;
     this.logMode = logMode;
     this.summary = summary;
     this.logAssert = logAssert;
@@ -84,7 +82,6 @@ class RunSettings implements Settings {
     return new RunSettings(
         this.color,
         this.decodeScalaNames,
-        this.verbose,
         this.logMode,
         this.useSbtLoggers,
         this.useBufferedLoggers,
@@ -102,12 +99,16 @@ class RunSettings implements Settings {
         newTestFilter);
   }
 
-  boolean shouldLogSuccess() {
-    return logMode.shouldLogSuccess();
+  boolean shouldLog(LogMode mode) {
+    return logMode.ordinal() >= mode.ordinal();
   }
 
-  boolean shouldLog(Status status) {
-    return logMode.shouldLog(status);
+  boolean shouldLogDebug() {
+    return shouldLog(LogMode.DEBUG);
+  }
+
+  boolean shouldLogInfo() {
+    return shouldLog(LogMode.INFO);
   }
 
   String decodeName(String name) {
@@ -244,39 +245,38 @@ class RunSettings implements Settings {
     return this.trimStackTraces;
   }
 
-  static enum LogMode {
-    FAILURE,
-    IGNORED,
-    SUCCESS;
+  enum LogMode {
+    ERROR,
+    WARN,
+    INFO,
+    DEBUG;
 
     static LogMode parse(String mode) {
-      if ("failure".equals(mode)) return FAILURE;
-      if ("ignored".equals(mode)) return IGNORED;
-      if ("skipped".equals(mode)) return IGNORED;
-      if ("success".equals(mode)) return SUCCESS;
-      throw new IllegalArgumentException(
-          "Invalid --log mode '"
-              + mode
-              + "'. Supported values: failure, ignored, skipped, success");
-    }
-
-    boolean shouldLogSuccess() {
-      return this == SUCCESS;
-    }
-
-    boolean shouldLog(Status status) {
-      switch (this) {
-        case SUCCESS:
-          return true;
-        case IGNORED:
-          return status == Status.Ignored
-              || status == Status.Skipped
-              || status == Status.Failure
-              || status == Status.Error;
+      switch (mode.toLowerCase(Locale.ROOT)) {
+        case "failure":
+        case "error":
+          return ERROR;
+        case "ignored":
+        case "skipped":
+        case "warn":
+          return WARN;
+        case "success":
+        case "info":
+          return INFO;
+        case "debug":
+          return DEBUG;
         default:
-          return status == Status.Failure || status == Status.Error;
+          StringBuilder sb = new StringBuilder();
+          sb.append("Invalid --log mode '").append(mode).append("'. Supported values: ");
+          int sblen = sb.length();
+          for (LogMode value : values()) {
+            if (sb.length() != sblen) sb.append(", ");
+            sb.append(value.name());
+          }
+          throw new IllegalArgumentException(sb.toString());
       }
     }
+
   }
 
   static enum Summary {
