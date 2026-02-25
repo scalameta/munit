@@ -117,6 +117,7 @@ object SkippedFrameworkStdoutJsNativeVerboseSuite
          |27:  test("pending.failed.ignored".pending.ignore)(assert(false))
          |==> i pending.failed.ignored PENDING ignored <elapsed time>
          |==> i pending.failed.ignored.comment PENDING comment ignored <elapsed time>
+         |munit.SkippedFrameworkSuite: finished <elapsed time>
          |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,
       tags = Set(NoJVM),
@@ -194,6 +195,7 @@ object SkippedFrameworkStdoutJVMVerboseSuite
          |    at munit.SkippedFrameworkSuite.$anonfun$new$24(SkippedFrameworkSuite.scala:26)
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored PENDING ignored <elapsed time>
          |==> i munit.SkippedFrameworkSuite.pending.failed.ignored.comment PENDING comment ignored <elapsed time>
+         |munit.SkippedFrameworkSuite: finished <elapsed time>
          |Test run munit.SkippedFrameworkSuite finished: 2 failed, 9 ignored, 9 total, <elapsed time>
          |""".stripMargin.replace('/', File.separatorChar),
       format = StdoutFormat,

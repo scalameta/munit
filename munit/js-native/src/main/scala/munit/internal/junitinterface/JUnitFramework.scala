@@ -84,7 +84,7 @@ abstract class JUnitFramework extends Framework {
       case _ =>
     }
     if (logMode eq null) logMode =
-      if (verbose) RunSettings.LogMode.Debug else RunSettings.LogMode.Info
+      if (verbose) RunSettings.LogMode.Trace else RunSettings.LogMode.Info
     new RunSettings(
       color = !noColor,
       decodeScalaNames = decodeScalaNames,

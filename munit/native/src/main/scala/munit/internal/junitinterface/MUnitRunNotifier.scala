@@ -10,6 +10,9 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends notification.RunNotifier
   override def fireTestSuiteStarted(description: Description): Unit =
     reporter.reportTestSuiteStarted()
 
+  override def fireTestSuiteFinished(description: Description): Unit =
+    reporter.reportTestSuiteFinished()
+
   override def fireTestStarted(description: Description): Unit = status
     .computeIfAbsent(
       description.getMethodName,
@@ -70,8 +73,6 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends notification.RunNotifier
         status
       },
     )
-
-  override def fireTestSuiteFinished(description: Description): Unit = {}
 }
 
 object MUnitRunNotifier {

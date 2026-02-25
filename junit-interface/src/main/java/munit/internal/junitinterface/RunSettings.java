@@ -103,6 +103,10 @@ class RunSettings implements Settings {
     return logMode.ordinal() >= mode.ordinal();
   }
 
+  boolean shouldLogTrace() {
+    return shouldLog(LogMode.TRACE);
+  }
+
   boolean shouldLogDebug() {
     return shouldLog(LogMode.DEBUG);
   }
@@ -249,7 +253,8 @@ class RunSettings implements Settings {
     ERROR,
     WARN,
     INFO,
-    DEBUG;
+    DEBUG,
+    TRACE;
 
     static LogMode parse(String mode) {
       switch (mode.toLowerCase(Locale.ROOT)) {
@@ -265,6 +270,8 @@ class RunSettings implements Settings {
           return INFO;
         case "debug":
           return DEBUG;
+        case "trace":
+          return TRACE;
         default:
           StringBuilder sb = new StringBuilder();
           sb.append("Invalid --log mode '").append(mode).append("'. Supported values: ");

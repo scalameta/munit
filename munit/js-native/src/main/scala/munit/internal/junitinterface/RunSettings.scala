@@ -22,6 +22,7 @@ final class RunSettings(
   def shouldLogWarn: Boolean = shouldLog(RunSettings.LogMode.Warn)
   def shouldLogInfo: Boolean = shouldLog(RunSettings.LogMode.Info)
   def shouldLogDebug: Boolean = shouldLog(RunSettings.LogMode.Debug)
+  def shouldLogTrace: Boolean = shouldLog(RunSettings.LogMode.Trace)
 
   def decodeName(name: String): String =
     if (decodeScalaNames) Try(scala.reflect.NameTransformer.decode(name))
@@ -41,13 +42,16 @@ object RunSettings {
 
     case object Debug extends LogMode(4)
 
+    case object Trace extends LogMode(5)
+
     def parse(mode: String): LogMode = mode.toLowerCase match {
       case "error" | "failure" => Error
       case "warn" | "ignored" | "skipped" => Warn
       case "info" | "success" => Info
       case "debug" => Debug
+      case "trace" => Trace
       case _ => throw new IllegalArgumentException(
-          s"Invalid --log mode '$mode'. Supported values: error, warn, info, debug"
+          s"Invalid --log mode '$mode'. Supported values: error, warn, info, debug, trace"
         )
     }
   }

@@ -180,7 +180,7 @@ final class JUnitRunner implements Runner {
       }
     }
     if (logMode == null)
-      logMode = verbose ? RunSettings.LogMode.DEBUG : RunSettings.LogMode.INFO;
+      logMode = verbose ? RunSettings.LogMode.TRACE : RunSettings.LogMode.INFO;
     this.settings =
         new RunSettings(
             !nocolor,

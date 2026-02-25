@@ -24,7 +24,8 @@ printed. The default is `info`.
 - `--log=error` prints failing tests only
 - `--log=warn` also prints other non-successful (such as ignored/skipped) tests
 - `--log=info` (default) also prints suite-started and test-succeeded events
-- `--log=debug` also prints test-started as well as entire-run started/finished events
+- `--log=debug` also prints suite-finished as well as entire-run started/finished events
+- `--log=trace` also prints test-started events
   - this is equivalent to specifying `--verbose`
 
 This behavior is the same regardless of logger configuration (`--logger=sbt`,

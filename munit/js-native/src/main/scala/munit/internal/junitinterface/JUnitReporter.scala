@@ -59,7 +59,10 @@ final class JUnitReporter(
       logEvent(color = AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
-  def reportTestSuiteFinished(): Unit = {}
+  def reportTestSuiteFinished(): Unit = if (settings.shouldLogDebug) logEvent(
+    color = AnsiColors.GREEN,
+    fq = true,
+  )(suffix = ": finished", nanos = System.nanoTime - suiteStartNanos)
 
   def reportTestSuiteError(ex: Throwable): Unit = {
     logEvent(color = AnsiColors.LightRed, fq = true)(s"==> X", cause = ex)
@@ -67,7 +70,7 @@ final class JUnitReporter(
   }
 
   def reportTestStarted(method: String): Unit =
-    if (settings.shouldLogDebug) logEvent(method)(suffix = " started")
+    if (settings.shouldLogTrace) logEvent(method)(suffix = " started")
 
   def reportTestIgnored(method: String, suffix: String): Unit = {
     val suffixed = if (suffix.isEmpty) "" else s" $suffix"
