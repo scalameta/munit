@@ -51,46 +51,25 @@ abstract class JUnitFramework extends Framework {
     var trimStackTraces = defaults.trimStackTraces
     var includeTags = Set.empty[String]
     var excludeTags = Set.empty[String]
-    for (str <- args) str match {
-      case "-v" => verbose = true
-      case s if s.startsWith("--log=") =>
-        logMode = RunSettings.LogMode.parse(s.stripPrefix("--log="))
-      case "-n" => noColor = true
-      case "-s" => decodeScalaNames = true
-      case "-a" => logAssert = true
-      case "-c" => notLogExceptionClass = true
-
-      case s if s.startsWith("-tests=") =>
-        throw new UnsupportedOperationException("-tests")
-
-      case s if s.startsWith("--tests=") =>
-        throw new UnsupportedOperationException("--tests")
-
-      case s if s.startsWith("--ignore-runners=") =>
-        throw new UnsupportedOperationException("--ignore-runners")
-
-      case s if s.startsWith("--run-listener=") =>
-        throw new UnsupportedOperationException("--run-listener")
-
-      case s if s.startsWith("--exclude-tags=") =>
-        excludeTags += s.stripPrefix("--exclude-tags=")
-
-      case s if s.startsWith("--include-tags=") =>
-        includeTags += s.stripPrefix("--include-tags=")
-
-      case s if s.startsWith("--include-categories=") =>
-        throw new UnsupportedOperationException("--include-categories")
-
-      case s if s.startsWith("--exclude-categories=") =>
-        throw new UnsupportedOperationException("--exclude-categories")
-
-      case s if s.startsWith("-D") && s.contains("=") =>
-        throw new UnsupportedOperationException("-Dkey=value")
-
-      case s if !s.startsWith("-") && !s.startsWith("+") =>
-        throw new UnsupportedOperationException(s)
-
-      case _ =>
+    for (str <- args) {
+      if (!str.startsWith("-") && !str.startsWith("+"))
+        throw new UnsupportedOperationException(str)
+      val sep = str.indexOf('=')
+      def value = str.substring(sep + 1)
+      if (sep < 0) str match {
+        case "-v" => verbose = true
+        case "-n" => noColor = true
+        case "-s" => decodeScalaNames = true
+        case "-a" => logAssert = true
+        case "-c" => notLogExceptionClass = true
+        case _ =>
+      }
+      else str.substring(0, sep) match {
+        case "--log" => logMode = RunSettings.LogMode.parse(value)
+        case "--exclude-tags" => excludeTags += value
+        case "--include-tags" => includeTags += value
+        case _ => throw new UnsupportedOperationException(str)
+      }
     }
     for (s <- args) s match {
       case "+v" => verbose = false
