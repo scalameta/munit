@@ -22,10 +22,15 @@ final class JUnitReporter(
   private val isAnsiSupported = loggers.forall(_.ansiCodesSupported()) &&
     settings.color
 
-  private def logEvent(method: String, color: String = null, fq: Boolean = false)(
+  private def logEvent(
+      method: String = "",
+      color: String = null,
+      fq: Boolean = false,
+  )(
       prefix: String = "",
       suffix: String = "",
       nanos: Long = -1,
+      cause: Throwable = null,
       extra: StringBuilder => Unit = null,
   ): Unit = {
     implicit val sb = new StringBuilder()
@@ -42,6 +47,8 @@ final class JUnitReporter(
       AnsiColors
         .c(AnsiColors.DarkGrey, flag = true)(_.append("%.3fs".format(nanos / 1e9)))
     }
+    if (cause ne null) sb.append(' ').append(cause.getClass().getName())
+      .append(": ").append(cause.getMessage())
     if (extra ne null) extra(sb.append(' '))
     log(Info, sb.toString())
   }
@@ -49,15 +56,11 @@ final class JUnitReporter(
   def reportTestSuiteStarted(): Unit = {
     suiteStartNanos = System.nanoTime
     if (settings.shouldLogSuccess)
-      logEvent("", AnsiColors.GREEN, fq = true)(suffix = ":")
+      logEvent(color = AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
   def reportTestSuiteError(ex: Throwable): Unit = {
-    logEvent("", AnsiColors.LightRed, fq = true)(
-      s"==> X",
-      extra =
-        _.append(ex.getClass().getName()).append(": ").append(ex.getMessage()),
-    )
+    logEvent(color = AnsiColors.LightRed, fq = true)(s"==> X", cause = ex)
     emitEvent("", Status.Error, Option(ex), 0)
   }
 
@@ -95,8 +98,7 @@ final class JUnitReporter(
     logEvent(method, AnsiColors.LightRed, fq = true)(
       s"==> X",
       nanos = elapsedNanos,
-      extra =
-        _.append(ex.getClass().getName()).append(": ").append(ex.getMessage()),
+      cause = ex,
     )
     emitEvent(method, Status.Failure, Option(ex), elapsedNanos)
   }
