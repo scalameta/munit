@@ -105,7 +105,6 @@ final class EventDispatcher extends RunListener {
             logger.error(
                 settings.buildTestResult(Status.Failure)
                     + ansiName
-                    + " "
                     + durationSuffix()
                     + " "
                     + ansiMsg,
@@ -170,6 +169,11 @@ final class EventDispatcher extends RunListener {
   }
 
   @Override
+  public void testSuiteFinished(Description desc) throws Exception {
+    logger.flush();
+  }
+
+  @Override
   public void testStarted(Description desc) {
     recordStartTime(desc);
     testSuiteStarted(desc);
@@ -210,11 +214,6 @@ final class EventDispatcher extends RunListener {
               + "s");
     }
     runStatistics.addTime(result.getRunTime());
-  }
-
-  @Override
-  public void testSuiteFinished(Description desc) throws Exception {
-    logger.flush();
   }
 
   @Override

@@ -52,6 +52,8 @@ final class JUnitReporter(
       logEvent("", AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
+  def reportTestSuiteFinished(): Unit = {}
+
   def reportTestSuiteError(ex: Throwable): Unit = {
     logEvent("", AnsiColors.LightRed, fq = true)(
       s"==> X",
