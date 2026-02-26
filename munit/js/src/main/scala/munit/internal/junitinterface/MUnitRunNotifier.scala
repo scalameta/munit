@@ -10,6 +10,8 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
   val isReported: mutable.Set[Description] = mutable.Set.empty[Description]
   override def fireTestSuiteStarted(description: Description): Unit =
     reporter.reportTestSuiteStarted()
+  override def fireTestSuiteFinished(description: Description): Unit =
+    reporter.reportTestSuiteFinished()
   override def fireTestStarted(description: Description): Unit = {
     startedTimestamp = System.nanoTime()
     reporter.reportTestStarted(description.getMethodName)
@@ -43,5 +45,4 @@ class MUnitRunNotifier(reporter: JUnitReporter) extends RunNotifier {
     if (!isReported(description)) reporter
       .reportTestPassed(methodName, elapsedNanos())
   }
-  override def fireTestSuiteFinished(description: Description): Unit = {}
 }
