@@ -18,6 +18,10 @@ final class JUnitReporter(
   import JUnitReporter._
 
   private var suiteStartNanos: Long = Long.MaxValue
+  private var failedCount = 0
+  private var skippedCount = 0
+  private var ignoredCount = 0
+  private var totalCount = 0
 
   private val isAnsiSupported = loggers.forall(_.ansiCodesSupported()) &&
     settings.color
@@ -55,24 +59,37 @@ final class JUnitReporter(
 
   def reportTestSuiteStarted(): Unit = {
     suiteStartNanos = System.nanoTime
+    if (settings.shouldLogDebug)
+      logEvent(color = AnsiColors.GREEN, fq = true)("Test run", " started")
     if (settings.shouldLogInfo)
       logEvent(color = AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
-  def reportTestSuiteFinished(): Unit = if (settings.shouldLogDebug) logEvent(
-    color = AnsiColors.GREEN,
-    fq = true,
-  )(suffix = ": finished", nanos = System.nanoTime - suiteStartNanos)
+  def reportTestSuiteFinished(): Unit = if (settings.shouldLogDebug) {
+    val nanos = System.nanoTime - suiteStartNanos
+    logEvent(color = AnsiColors.GREEN, fq = true)(
+      suffix = ": finished",
+      nanos = nanos,
+    )
+    logEvent(color = AnsiColors.GREEN, fq = true)(
+      prefix = "Test run",
+      suffix = s" finished: $failedCount failed, $ignoredCount ignored, $totalCount total",
+      nanos = nanos,
+    )
+  }
 
   def reportTestSuiteError(ex: Throwable): Unit = {
     logEvent(color = AnsiColors.LightRed, fq = true)(s"==> X", cause = ex)
     emitEvent("", Status.Error, Option(ex), 0)
   }
 
-  def reportTestStarted(method: String): Unit =
+  def reportTestStarted(method: String): Unit = {
+    totalCount += 1
     if (settings.shouldLogTrace) logEvent(method)(suffix = " started")
+  }
 
   def reportTestIgnored(method: String, suffix: String): Unit = {
+    ignoredCount += 1
     val suffixed = if (suffix.isEmpty) "" else s" $suffix"
     if (settings.shouldLogWarn) logEvent(method, AnsiColors.YELLOW)(
       "==> i",
@@ -83,6 +100,7 @@ final class JUnitReporter(
   }
 
   def reportAssumptionViolation(method: String, e: Throwable): Unit = {
+    skippedCount += 1
     if (settings.shouldLogWarn)
       logEvent(method, AnsiColors.YELLOW)("==> s", " skipped")
     emitEvent(method, Status.Skipped, Option(e), 0)
@@ -99,6 +117,7 @@ final class JUnitReporter(
       ex: Throwable,
       elapsedNanos: Long,
   ): Unit = {
+    failedCount += 1
     logEvent(method, AnsiColors.LightRed, fq = true)(
       s"==> X",
       nanos = elapsedNanos,
