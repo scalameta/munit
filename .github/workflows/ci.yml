@@ -16,10 +16,10 @@ jobs:
           - ubuntu-latest
           - windows-latest
         sbt:
-          - '+testsJVM/test'
-          - '+testsJS/test'
-          - '+testsNative/test'
-          - 'plugin/test'
+          - 'testsJVM'
+          - 'testsJS'
+          - 'testsNative'
+          - 'plugin'
     runs-on: ${{ matrix.os }}
     env:
       GOOGLE_APPLICATION_CREDENTIALS:
@@ -47,7 +47,7 @@ jobs:
         shell: pwsh
         run: clang --version
       - uses: sbt/setup-sbt@v1
-      - run: sbt ${{ matrix.sbt }}
+      - run: sbt +${{ matrix.sbt }}/test
   jsdom:
     runs-on: ubuntu-latest
     steps:
