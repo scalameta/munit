@@ -96,19 +96,19 @@ val sharedSettings = List(
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 11)) => List(
           "-Yrangepos",
+          "-target:jvm-1.8",
           "-Xexperimental",
           "-Ywarn-unused-import",
-          "-target:jvm-1.8",
         )
-      case Some((major, _)) if major != 2 =>
-        List("-language:implicitConversions")
-      case _ => List(
-          "-target:jvm-1.8",
+      case Some((2, _)) => List(
           "-Yrangepos",
+          "-target:jvm-1.8",
           // -Xlint is unusable because of
           // https://github.com/scala/bug/issues/10448
           "-Ywarn-unused:imports",
         )
+      case Some((3, _)) => List("-language:implicitConversions")
+      case _ => Nil
     }
   },
 )
