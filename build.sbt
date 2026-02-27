@@ -1,6 +1,7 @@
 import scala.collection.mutable
 
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
+
 def previousVersion = "1.0.0-RC1"
 
 def scala213 = "2.13.18"
@@ -8,8 +9,12 @@ def scala213 = "2.13.18"
 def scala212 = "2.12.21"
 
 def scala3 = "3.3.7"
+
+def scala3next = "3.8.2"
+
 def junitVersion = "4.13.2"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.63.0"
+
 inThisBuild {
   List(
     // version is set dynamically by sbt-dynver, but let's adjust it
@@ -171,7 +176,7 @@ lazy val plugin = project.in(file("munit-sbt")).enablePlugins(BuildInfoPlugin)
     },
     buildInfoPackage := "munit.sbtmunit",
     buildInfoKeys := Seq[BuildInfoKey]("munitVersion" -> version.value),
-    crossScalaVersions := List(scala212, "3.8.2"),
+    crossScalaVersions := List(scala212, scala3next),
     libraryDependencies ++= List(gcp),
   ).disablePlugins(MimaPlugin)
 
