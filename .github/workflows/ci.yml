@@ -20,6 +20,9 @@ jobs:
           - 'testsJS'
           - 'testsNative'
           - 'plugin'
+        exclude:
+          - sbt: 'plugin'
+            java: 8
     runs-on: ${{ matrix.os }}
     env:
       GOOGLE_APPLICATION_CREDENTIALS:
