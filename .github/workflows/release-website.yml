@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 11
+          java-version: 21
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - run: git fetch --unshallow
