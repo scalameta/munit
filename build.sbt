@@ -96,7 +96,12 @@ val sharedNativeConfigure: Project => Project =
   _.disablePlugins(ScalafixPlugin, MimaPlugin)
 
 val sharedSettings = List(
-  javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
+  javacOptions ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((3, minor)) if minor >= 8 => Seq("--release", "17")
+      case _ => Seq("-source", "1.8", "-target", "1.8")
+    }
+  },
   scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 11)) => List(
@@ -112,7 +117,11 @@ val sharedSettings = List(
           // https://github.com/scala/bug/issues/10448
           "-Ywarn-unused:imports",
         )
-      case Some((3, _)) => List("-language:implicitConversions")
+      case Some((3, minor)) => List(
+          "-language:implicitConversions",
+          "-release",
+          if (minor >= 8) "17" else "8",
+        )
       case _ => Nil
     }
   },
