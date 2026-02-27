@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -21,7 +20,6 @@ final class EventDispatcher extends RunListener {
   private final RichLogger logger;
   private final Set<Description> reported =
       Collections.newSetFromMap(new ConcurrentHashMap<Description, Boolean>());
-  private final AtomicBoolean suiteStartReported = new AtomicBoolean(false);
   private final ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<String, Long>();
   private final EventHandler handler;
   private final RunSettings settings;
@@ -164,15 +162,17 @@ final class EventDispatcher extends RunListener {
         });
   }
 
-  private static boolean canLogDesc(Description desc) {
-    return desc != null && desc.getClassName() != null && !desc.getClassName().equals("null");
+  private static String getSuiteLabel(Description desc) {
+    if (desc == null) return null;
+    String label = desc.getClassName();
+    return (label == null || label.equals("null")) ? null : c(label, SUCCESS1);
   }
 
   @Override
   public void testSuiteStarted(Description desc) {
-    boolean ok = settings.shouldLogInfo() && canLogDesc(desc);
-    if (ok && suiteStartReported.compareAndSet(false, true)) {
-      logger.info(c(desc.getClassName() + ":", SUCCESS1));
+    String logName = getSuiteLabel(desc);
+    if (logName != null && recordStartTime(logName) && settings.shouldLogInfo()) {
+      logger.info(logName + ":");
     }
   }
 
@@ -190,17 +190,21 @@ final class EventDispatcher extends RunListener {
     }
   }
 
-  private void recordStartTime(Description description) {
-    startTimes.putIfAbsent(description.getMethodName(), System.currentTimeMillis());
+  private boolean recordStartTime(String label) {
+    return null == startTimes.putIfAbsent(label, System.currentTimeMillis());
+  }
+
+  private boolean recordStartTime(Description description) {
+    return recordStartTime(description.getMethodName());
+  }
+
+  private Long elapsedTime(String label) {
+    Long startTime = startTimes.get(label);
+    return startTime == null ? 0L : System.currentTimeMillis() - startTime;
   }
 
   private Long elapsedTime(Description description) {
-    Long startTime = startTimes.get(description.getMethodName());
-    if (startTime == null) {
-      return 0L;
-    } else {
-      return System.currentTimeMillis() - startTime;
-    }
+    return elapsedTime(description.getMethodName());
   }
 
   @Override
