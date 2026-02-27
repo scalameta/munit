@@ -217,19 +217,11 @@ final class EventDispatcher extends RunListener {
   public void testRunFinished(Result result) {
     if (settings.shouldLogDebug()) {
       logger.info(
-          "Test run "
-              + taskInfo
-              + " finished: "
-              + result.getFailureCount()
-              + " failed"
-              + ", "
-              + result.getIgnoreCount()
-              + " ignored"
-              + ", "
-              + result.getRunCount()
-              + " total, "
-              + (result.getRunTime() / 1000.0)
-              + "s");
+          "Test run " + taskInfo + " finished: "
+              + result.getFailureCount() + " failed, "
+              + result.getIgnoreCount() + " ignored, "
+              + result.getRunCount() + " total "
+              + AbstractEvent.durationToString(result.getRunTime()));
     }
     runStatistics.addTime(result.getRunTime());
   }
@@ -237,7 +229,7 @@ final class EventDispatcher extends RunListener {
   @Override
   public void testRunStarted(Description desc) {
     if (settings.shouldLogDebug()) {
-      logger.info(taskInfo + " started");
+      logger.info("Test run " + taskInfo + " started");
     }
   }
 
