@@ -13,7 +13,7 @@ def scala3 = "3.3.7"
 def scala3next = "3.8.2"
 
 def junitVersion = "4.13.2"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "2.63.0"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "2.64.0"
 
 inThisBuild {
   List(
