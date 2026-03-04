@@ -213,15 +213,24 @@ final class EventDispatcher extends RunListener {
     return elapsedTime(description.getMethodName());
   }
 
+  private void appendCount(StringBuilder sb, int count, String label, String color, String suffix) {
+    boolean useColor = count != 0 && null != color && !Ansi.noColor;
+    if (useColor) sb.append(color);
+    sb.append(count).append(label);
+    if (useColor) sb.append(Ansi.NORMAL);
+    sb.append(suffix);
+  }
+
   @Override
   public void testRunFinished(Result result) {
     if (settings.shouldLogInfo()) {
-      logger.info(
-          "Test run " + taskInfo + " finished: "
-              + result.getFailureCount() + " failed, "
-              + result.getIgnoreCount() + " ignored, "
-              + result.getRunCount() + " total "
-              + AbstractEvent.durationToString(result.getRunTime()));
+      StringBuilder sb = new StringBuilder();
+      sb.append("Test run ").append(taskInfo).append(" finished: ");
+      appendCount(sb, result.getFailureCount(), " failed", Ansi.FAILURE1, ", ");
+      appendCount(sb, result.getIgnoreCount(), " ignored", Ansi.SKIPPED, ", ");
+      sb.append(result.getRunCount()).append(" total ");
+      sb.append(AbstractEvent.durationToString(result.getRunTime()));
+      logger.info(sb.toString());
     }
     runStatistics.addTime(result.getRunTime());
   }

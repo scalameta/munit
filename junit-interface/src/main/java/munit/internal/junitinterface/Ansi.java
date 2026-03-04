@@ -2,7 +2,7 @@ package munit.internal.junitinterface;
 
 public class Ansi {
   // Standard ANSI sequences
-  private static final String NORMAL = "\u001B[0m";
+  static final String NORMAL = "\u001B[0m";
   private static final String HIGH_INTENSITY = "\u001B[1m";
   private static final String LOW_INTENSITY = "\u001B[2m";
   private static final String BLACK = "\u001B[30m";
@@ -22,7 +22,7 @@ public class Ansi {
   private static final String BRIGHT_MAGENTA = "\u001B[95m";
   private static final String BRIGHT_CYAN = "\u001B[96m";
 
-  private static final boolean noColor = shouldDisableColor();
+  static final boolean noColor = shouldDisableColor();
 
   private static final boolean shouldDisableColor() {
     String noColorEnv = System.getenv("NO_COLOR");
