@@ -1,19 +1,5 @@
 package munit.internal.junitinterface;
 
-import static munit.internal.junitinterface.Ansi.ENAME1;
-import static munit.internal.junitinterface.Ansi.ENAME2;
-import static munit.internal.junitinterface.Ansi.ENAME3;
-import static munit.internal.junitinterface.Ansi.ERRMSG;
-import static munit.internal.junitinterface.Ansi.FAILURE1;
-import static munit.internal.junitinterface.Ansi.FAILURE2;
-import static munit.internal.junitinterface.Ansi.NNAME1;
-import static munit.internal.junitinterface.Ansi.NNAME2;
-import static munit.internal.junitinterface.Ansi.NNAME3;
-import static munit.internal.junitinterface.Ansi.SKIPPED;
-import static munit.internal.junitinterface.Ansi.SUCCESS1;
-import static munit.internal.junitinterface.Ansi.SUCCESS2;
-import static munit.internal.junitinterface.Ansi.c;
-
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -140,28 +126,28 @@ class RunSettings implements Settings {
       case Skipped:
         return buildSkippedName(desc);
       default:
-        return buildColoredName(desc, NNAME1, NNAME2);
+        return buildColoredName(desc, Ansi.NNAME1, Ansi.NNAME2);
     }
   }
 
   String buildErrorEventName(Description desc, Status status) {
     switch (status) {
       case Failure:
-        return buildColoredName(desc, FAILURE1, FAILURE2);
+        return buildColoredName(desc, Ansi.FAILURE1, Ansi.FAILURE2);
       case Skipped:
       case Ignored:
         return buildSkippedName(desc);
       default:
-        return buildColoredName(desc, ENAME1, ENAME2);
+        return buildColoredName(desc, Ansi.ENAME1, Ansi.ENAME2);
     }
   }
 
   String buildSuccessName(Description desc) {
-    return buildColoredName(desc, SUCCESS1, SUCCESS2);
+    return buildColoredName(desc, Ansi.SUCCESS1, Ansi.SUCCESS2);
   }
 
   String buildSkippedName(Description desc) {
-    return buildColoredName(desc, SKIPPED);
+    return buildColoredName(desc, Ansi.SKIPPED);
   }
 
   String buildPlainName(Description desc) {
@@ -171,13 +157,13 @@ class RunSettings implements Settings {
   String buildTestResult(Status status) {
     switch (status) {
       case Success:
-        return c("  + ", SUCCESS1);
+        return Ansi.c("  + ", Ansi.SUCCESS1);
       case Ignored:
-        return c("==> i ", SKIPPED);
+        return Ansi.c("==> i ", Ansi.SKIPPED);
       case Skipped:
-        return c("==> s ", SKIPPED);
+        return Ansi.c("==> s ", Ansi.SKIPPED);
       default:
-        return c("==> X ", ERRMSG);
+        return Ansi.c("==> X ", Ansi.ERRMSG);
     }
   }
 
@@ -191,17 +177,17 @@ class RunSettings implements Settings {
   }
 
   String buildErrorMessage(Throwable t) {
-    return buildColoredMessage(t, ENAME2);
+    return buildColoredMessage(t, Ansi.ENAME2);
   }
 
   private String buildColoredName(Description desc, String c1, String c2) {
     StringBuilder b = new StringBuilder();
     String cn = decodeName(desc.getClassName());
-    b.append(c(cn, c1));
+    b.append(Ansi.c(cn, c1));
     String m = desc.getMethodName();
     if (m != null) {
       b.append('.');
-      b.append(c(decodeName(m), c2));
+      b.append(Ansi.c(decodeName(m), c2));
     }
     return b.toString();
   }
