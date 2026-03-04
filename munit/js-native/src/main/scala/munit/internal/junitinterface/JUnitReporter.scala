@@ -38,14 +38,15 @@ final class JUnitReporter(
       extra: StringBuilder => Unit = null,
   ): Unit = {
     implicit val sb = new StringBuilder()
+    if (prefix.nonEmpty) sb.append(prefix).append(' ')
     AnsiColors.c(color, flag = true) { sb =>
-      if (prefix.nonEmpty) sb.append(prefix).append(' ')
       if (fq) {
         sb.append(taskDef.fullyQualifiedName())
         if (method.nonEmpty) sb.append('.')
       }
-      sb.append(method).append(suffix)
+      sb.append(method)
     }
+    sb.append(suffix)
     if (nanos >= 0) {
       sb.append(' ')
       AnsiColors
@@ -71,9 +72,21 @@ final class JUnitReporter(
       suffix = ": finished",
       nanos = nanos,
     )
+    val sb = new StringBuilder()
+    def appendCount(cnt: Int, label: String, color: String): Unit = {
+      val useColor = cnt != 0 && color != null && !AnsiColors.noColor
+      if (useColor) sb.append(color)
+      sb.append(cnt).append(label)
+      if (useColor) sb.append(AnsiColors.Reset)
+    }
+    sb.append(" finished: ")
+    appendCount(failedCount, " failed", AnsiColors.RED)
+    sb.append(", ")
+    appendCount(ignoredCount, " ignored", AnsiColors.YELLOW)
+    sb.append(", ").append(totalCount).append(" total")
     logEvent(color = AnsiColors.CYAN, fq = true)(
       prefix = "Test run",
-      suffix = s" finished: $failedCount failed, $ignoredCount ignored, $totalCount total",
+      suffix = sb.toString,
       nanos = nanos,
     )
   }
