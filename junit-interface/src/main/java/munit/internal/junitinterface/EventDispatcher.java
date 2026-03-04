@@ -38,7 +38,7 @@ final class EventDispatcher extends RunListener {
     this.handler = handler;
     this.settings = settings;
     this.fingerprint = fingerprint;
-    this.taskInfo = settings.buildPlainName(taskDescription);
+    this.taskInfo = settings.buildInfoName(taskDescription);
     this.runStatistics = runStatistics;
   }
 

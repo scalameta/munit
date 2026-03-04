@@ -51,7 +51,7 @@ public class Ansi {
 
   private Ansi() {}
 
-  public static final String INFO = LIGHT_BLUE;
+  public static final String INFO = CYAN;
   public static final String SKIPPED = YELLOW;
   public static final String SUCCESS1 = GREEN;
   public static final String SUCCESS2 = GREEN;
