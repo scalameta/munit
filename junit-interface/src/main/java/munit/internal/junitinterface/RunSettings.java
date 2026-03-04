@@ -132,11 +132,7 @@ class RunSettings implements Settings {
     }
   }
 
-  String buildInfoName(Description desc) {
-    return buildColoredName(desc, NNAME1, NNAME2);
-  }
-
-  String buildInfoName(Description desc, Status status) {
+  String buildInfoEventName(Description desc, Status status) {
     switch (status) {
       case Success:
         return buildSuccessName(desc);
@@ -144,15 +140,11 @@ class RunSettings implements Settings {
       case Skipped:
         return buildSkippedName(desc);
       default:
-        return buildInfoName(desc);
+        return buildColoredName(desc, NNAME1, NNAME2);
     }
   }
 
-  String buildErrorName(Description desc) {
-    return buildColoredName(desc, ENAME1, ENAME2);
-  }
-
-  String buildErrorName(Description desc, Status status) {
+  String buildErrorEventName(Description desc, Status status) {
     switch (status) {
       case Failure:
         return buildColoredName(desc, FAILURE1, FAILURE2);
@@ -160,7 +152,7 @@ class RunSettings implements Settings {
       case Ignored:
         return buildSkippedName(desc);
       default:
-        return buildErrorName(desc);
+        return buildColoredName(desc, ENAME1, ENAME2);
     }
   }
 

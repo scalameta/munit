@@ -55,7 +55,7 @@ final class EventDispatcher extends RunListener {
   private abstract class ErrorEvent extends Event {
     ErrorEvent(Failure failure, Status status) {
       super(
-          settings.buildErrorName(failure.getDescription(), status),
+          settings.buildErrorEventName(failure.getDescription(), status),
           settings.buildErrorMessage(failure.getException()),
           status,
           elapsedTime(failure.getDescription()),
@@ -65,7 +65,7 @@ final class EventDispatcher extends RunListener {
 
   private abstract class InfoEvent extends Event {
     InfoEvent(Description desc, Status status) {
-      super(settings.buildInfoName(desc, status), null, status, elapsedTime(desc), null);
+      super(settings.buildInfoEventName(desc, status), null, status, elapsedTime(desc), null);
     }
   }
 
