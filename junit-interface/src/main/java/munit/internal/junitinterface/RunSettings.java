@@ -133,7 +133,7 @@ class RunSettings implements Settings {
   }
 
   String buildInfoName(Description desc) {
-    return buildColoredName(desc, NNAME1, NNAME2, NNAME3);
+    return buildColoredName(desc, NNAME1, NNAME2);
   }
 
   String buildInfoName(Description desc, Status status) {
@@ -149,13 +149,13 @@ class RunSettings implements Settings {
   }
 
   String buildErrorName(Description desc) {
-    return buildColoredName(desc, ENAME1, ENAME2, ENAME3);
+    return buildColoredName(desc, ENAME1, ENAME2);
   }
 
   String buildErrorName(Description desc, Status status) {
     switch (status) {
       case Failure:
-        return buildColoredName(desc, FAILURE1, FAILURE2, FAILURE2);
+        return buildColoredName(desc, FAILURE1, FAILURE2);
       case Skipped:
       case Ignored:
         return buildSkippedName(desc);
@@ -165,15 +165,15 @@ class RunSettings implements Settings {
   }
 
   String buildSuccessName(Description desc) {
-    return buildColoredName(desc, SUCCESS1, SUCCESS2, SUCCESS2);
+    return buildColoredName(desc, SUCCESS1, SUCCESS2);
   }
 
   String buildSkippedName(Description desc) {
-    return buildColoredName(desc, SKIPPED, SKIPPED, SKIPPED);
+    return buildColoredName(desc, SKIPPED);
   }
 
   String buildPlainName(Description desc) {
-    return buildColoredName(desc, null, null, null);
+    return buildColoredName(desc, null);
   }
 
   String buildTestResult(Status status) {
@@ -202,7 +202,7 @@ class RunSettings implements Settings {
     return buildColoredMessage(t, ENAME2);
   }
 
-  private String buildColoredName(Description desc, String c1, String c2, String c3) {
+  private String buildColoredName(Description desc, String c1, String c2) {
     StringBuilder b = new StringBuilder();
     String cn = decodeName(desc.getClassName());
     b.append(c(cn, c1));
@@ -212,6 +212,10 @@ class RunSettings implements Settings {
       b.append(c(decodeName(m), c2));
     }
     return b.toString();
+  }
+
+  private String buildColoredName(Description desc, String c1) {
+    return buildColoredName(desc, c1, c1);
   }
 
   boolean ignoreRunner(String cln) {
