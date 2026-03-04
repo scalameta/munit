@@ -60,7 +60,7 @@ final class JUnitReporter(
   def reportTestSuiteStarted(): Unit = {
     suiteStartNanos = System.nanoTime
     if (settings.shouldLogInfo)
-      logEvent(color = AnsiColors.GREEN, fq = true)("Test run", " started")
+      logEvent(color = AnsiColors.CYAN, fq = true)("Test run", " started")
     if (settings.shouldLogDebug)
       logEvent(color = AnsiColors.GREEN, fq = true)(suffix = ":")
   }
@@ -71,7 +71,7 @@ final class JUnitReporter(
       suffix = ": finished",
       nanos = nanos,
     )
-    logEvent(color = AnsiColors.GREEN, fq = true)(
+    logEvent(color = AnsiColors.CYAN, fq = true)(
       prefix = "Test run",
       suffix = s" finished: $failedCount failed, $ignoredCount ignored, $totalCount total",
       nanos = nanos,

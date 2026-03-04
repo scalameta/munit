@@ -150,6 +150,10 @@ class RunSettings implements Settings {
     return buildColoredName(desc, Ansi.SKIPPED);
   }
 
+  String buildInfoName(Description desc) {
+    return buildColoredName(desc, Ansi.INFO);
+  }
+
   String buildPlainName(Description desc) {
     return buildColoredName(desc, null);
   }
