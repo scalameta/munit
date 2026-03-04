@@ -18,13 +18,15 @@ $ sbt
 
 ## Control test logging verbosity
 
-Use the `--log=LEVEL` test framework flag to control which test output is
-printed. The default is `info`.
+Use the `--log=LEVEL` test framework flag (added in v1.2.3) to control which
+test output is printed. The default is `info`.
 
 - `--log=error` prints failing tests only
 - `--log=warn` also prints other non-successful (such as ignored/skipped) tests
 - `--log=info` (default) also suite-finished events as well as entire-run started/finished events
+  - prior to v1.2.4, this was only printed when specifying `--verbose`
 - `--log=debug` also prints suite-started and test-succeeded events
+  - prior to v1.2.4, this was the default level
 - `--log=trace` also prints test-started events
   - this is equivalent to specifying `--verbose`
 
@@ -33,13 +35,13 @@ This behavior is the same regardless of logger configuration (`--logger=sbt`,
 
 ```sh
 $ sbt
-> myproject/testOnly -- --log=ignored
+> myproject/testOnly -- --log=warn
 ```
 
 To apply this to all test runs in sbt:
 
 ```scala
-Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "--log=failure")
+Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "--log=error")
 ```
 
 ## Invalid test class
