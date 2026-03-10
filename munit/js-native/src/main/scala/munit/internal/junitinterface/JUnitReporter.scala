@@ -26,6 +26,7 @@ final class JUnitReporter(
     if (settings.useBufferedLogger) new PlatformCompat.LogBuffer else null
 
   private def logEvent(
+      level: Level,
       method: String = "",
       color: String = null,
       fq: Boolean = false,
@@ -54,20 +55,20 @@ final class JUnitReporter(
     if (cause ne null) sb.append(' ').append(cause.getClass().getName())
       .append(": ").append(cause.getMessage())
     if (extra ne null) extra(sb.append(' '))
-    log(Info, sb.toString())
+    log(level, sb.toString())
   }
 
   def reportTestSuiteStarted(): Unit = {
     suiteStartNanos = System.nanoTime
     if (settings.shouldLogInfo)
-      logEvent(color = AnsiColors.CYAN, fq = true)("Test run", " started")
+      logEvent(Info, color = AnsiColors.CYAN, fq = true)("Test run", " started")
     if (settings.shouldLogDebug)
-      logEvent(color = AnsiColors.GREEN, fq = true)(suffix = ":")
+      logEvent(Debug, color = AnsiColors.GREEN, fq = true)(suffix = ":")
   }
 
   def reportTestSuiteFinished(): Unit = if (settings.shouldLogInfo) {
     val nanos = System.nanoTime - suiteStartNanos
-    logEvent(color = AnsiColors.GREEN, fq = true)(
+    logEvent(Info, color = AnsiColors.GREEN, fq = true)(
       suffix = ": finished",
       nanos = nanos,
     )
@@ -83,7 +84,7 @@ final class JUnitReporter(
     sb.append(", ")
     appendCount(ignoredCount, " ignored", AnsiColors.YELLOW)
     sb.append(", ").append(totalCount).append(" total")
-    logEvent(color = AnsiColors.CYAN, fq = true)(
+    logEvent(Info, color = AnsiColors.CYAN, fq = true)(
       prefix = "Test run",
       suffix = sb.toString,
       nanos = nanos,
@@ -92,20 +93,20 @@ final class JUnitReporter(
   }
 
   def reportTestSuiteError(ex: Throwable): Unit = {
-    logEvent(color = AnsiColors.LightRed, fq = true)(s"==> X", cause = ex)
+    logEvent(Error, color = AnsiColors.LightRed, fq = true)(s"==> X", cause = ex)
     emitEvent("", Status.Error, Option(ex), 0)
     flush()
   }
 
   def reportTestStarted(method: String): Unit = {
     totalCount += 1
-    if (settings.shouldLogTrace) logEvent(method)(suffix = " started")
+    if (settings.shouldLogTrace) logEvent(Trace, method)(suffix = " started")
   }
 
   def reportTestIgnored(method: String, suffix: String): Unit = {
     ignoredCount += 1
     val suffixed = if (suffix.isEmpty) "" else s" $suffix"
-    if (settings.shouldLogWarn) logEvent(method, AnsiColors.YELLOW)(
+    if (settings.shouldLogWarn) logEvent(Warn, method, AnsiColors.YELLOW)(
       "==> i",
       suffixed + " ignored",
       nanos = System.nanoTime - suiteStartNanos,
@@ -116,13 +117,13 @@ final class JUnitReporter(
   def reportAssumptionViolation(method: String, e: Throwable): Unit = {
     skippedCount += 1
     if (settings.shouldLogWarn)
-      logEvent(method, AnsiColors.YELLOW)("==> s", " skipped")
+      logEvent(Warn, method, AnsiColors.YELLOW)("==> s", " skipped")
     emitEvent(method, Status.Skipped, Option(e), 0)
   }
 
   def reportTestPassed(method: String, elapsedNanos: Long): Unit = {
     if (settings.shouldLogDebug)
-      logEvent(method, AnsiColors.GREEN)("  +", nanos = elapsedNanos)
+      logEvent(Debug, method, AnsiColors.GREEN)("  +", nanos = elapsedNanos)
     emitEvent(method, Status.Success, None, elapsedNanos)
   }
 
@@ -132,7 +133,7 @@ final class JUnitReporter(
       elapsedNanos: Long,
   ): Unit = {
     failedCount += 1
-    logEvent(method, AnsiColors.LightRed, fq = true)(
+    logEvent(Error, method, AnsiColors.LightRed, fq = true)(
       s"==> X",
       nanos = elapsedNanos,
       cause = ex,

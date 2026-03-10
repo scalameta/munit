@@ -30,7 +30,7 @@ abstract class BaseFrameworkSuite extends BaseSuite {
         def error(x: String): Unit = out.println(x)
         def warn(x: String): Unit = out.println(x)
         def info(x: String): Unit = out.println(x)
-        def debug(x: String): Unit = () // ignore debugging output
+        def debug(x: String): Unit = out.println(x)
         def trace(x: Throwable): Unit = out.println(x)
       }
       val framework = new Framework
