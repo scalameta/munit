@@ -13,6 +13,7 @@ final class RunSettings(
     val logAssert: Boolean,
     val notLogExceptionClass: Boolean,
     val useSbtLoggers: Boolean,
+    val useBufferedLogger: Boolean,
     val trimStackTraces: Boolean,
     val tags: TagsFilter,
 ) extends Settings {

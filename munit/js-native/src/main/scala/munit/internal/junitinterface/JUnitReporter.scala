@@ -22,6 +22,8 @@ final class JUnitReporter(
   private var skippedCount = 0
   private var ignoredCount = 0
   private var totalCount = 0
+  private val buffer =
+    if (settings.useBufferedLogger) new PlatformCompat.LogBuffer else null
 
   private def logEvent(
       method: String = "",
@@ -86,11 +88,13 @@ final class JUnitReporter(
       suffix = sb.toString,
       nanos = nanos,
     )
+    flush()
   }
 
   def reportTestSuiteError(ex: Throwable): Unit = {
     logEvent(color = AnsiColors.LightRed, fq = true)(s"==> X", cause = ex)
     emitEvent("", Status.Error, Option(ex), 0)
+    flush()
   }
 
   def reportTestStarted(method: String): Unit = {
@@ -174,7 +178,13 @@ final class JUnitReporter(
     }
     else logNonSbt(filterAnsi(s, loggers: _*))
 
-  private def logNonSbt(message: String): Unit = println(message)
+  private def logNonSbt(message: String): Unit =
+    if (buffer eq null) println(message) else buffer.append(message)
+
+  private[internal] def flush(): Unit = if (buffer ne null) {
+    val out = buffer.flush()
+    if (out.nonEmpty) println(out)
+  }
 
   private def filterAnsi(s: String, loggers: Logger*): String =
     if (settings.color && loggers.forall(_.ansiCodesSupported())) s
