@@ -23,9 +23,6 @@ final class JUnitReporter(
   private var ignoredCount = 0
   private var totalCount = 0
 
-  private val isAnsiSupported = loggers.forall(_.ansiCodesSupported()) &&
-    settings.color
-
   private def logEvent(
       method: String = "",
       color: String = null,
@@ -167,7 +164,7 @@ final class JUnitReporter(
 
   private def log(level: Level, s: String): Unit =
     if (settings.useSbtLoggers) for (l <- loggers) {
-      val msg = filterAnsiIfNeeded(l, s)
+      val msg = filterAnsi(s, l)
       level match {
         case Debug | Trace => l.debug(msg)
         case Warn => l.warn(msg)
@@ -175,13 +172,13 @@ final class JUnitReporter(
         case _ => l.info(msg)
       }
     }
-    else println(filterAnsiIfNeeded(isAnsiSupported, s))
+    else logNonSbt(filterAnsi(s, loggers: _*))
 
-  private def filterAnsiIfNeeded(l: Logger, s: String): String =
-    filterAnsiIfNeeded(l.ansiCodesSupported(), s)
+  private def logNonSbt(message: String): Unit = println(message)
 
-  private def filterAnsiIfNeeded(isColorSupported: Boolean, s: String): String =
-    if (isColorSupported && settings.color) s else AnsiColors.filterAnsi(s)
+  private def filterAnsi(s: String, loggers: Logger*): String =
+    if (settings.color && loggers.forall(_.ansiCodesSupported())) s
+    else AnsiColors.filterAnsi(s)
 
   private def logTrace(t: Throwable): Unit = {
     val trace = t.getStackTrace.dropWhile(p =>
