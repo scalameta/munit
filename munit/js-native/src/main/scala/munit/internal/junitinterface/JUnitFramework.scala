@@ -52,6 +52,8 @@ abstract class JUnitFramework extends Framework {
     var includeTags = Set.empty[String]
     var excludeTags = Set.empty[String]
     for (str <- args) {
+      def unsupported: Nothing =
+        throw new UnsupportedOperationException(s"Invalid munit parameter: $str")
       if (!str.startsWith("-") && !str.startsWith("+"))
         throw new UnsupportedOperationException(str)
       val sep = str.indexOf('=')
@@ -68,7 +70,11 @@ abstract class JUnitFramework extends Framework {
         case "--log" => logMode = RunSettings.LogMode.parse(value)
         case "--exclude-tags" => excludeTags += value
         case "--include-tags" => includeTags += value
-        case _ => throw new UnsupportedOperationException(str)
+        case "--logger" => value.toLowerCase match {
+            case "sbt" => useSbtLoggers = true
+            case _ => unsupported
+          }
+        case _ => unsupported
       }
     }
     for (s <- args) s match {
