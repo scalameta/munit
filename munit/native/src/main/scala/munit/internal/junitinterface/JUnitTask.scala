@@ -31,6 +31,7 @@ final class JUnitTask(
         runner.run(new MUnitRunNotifier(reporter))
       }
     catch { case ex: Throwable => reporter.reportTestSuiteError(ex) }
+    finally reporter.flush()
     Array()
   }
 

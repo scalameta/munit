@@ -83,4 +83,13 @@ object PlatformCompat {
   type InvocationTargetException = munit.internal.InvocationTargetException
   type UndeclaredThrowableException =
     munit.internal.UndeclaredThrowableException
+
+  class LogBuffer {
+    private val buffer = new scala.collection.mutable.ArrayBuffer[String]
+    def append(message: String): Unit = if (message ne null) buffer += message
+    def flush(): String =
+      try buffer.mkString("\n")
+      finally buffer.clear()
+  }
+
 }

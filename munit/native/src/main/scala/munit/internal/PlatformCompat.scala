@@ -110,4 +110,24 @@ object PlatformCompat {
   type InvocationTargetException = java.lang.reflect.InvocationTargetException
   type UndeclaredThrowableException =
     java.lang.reflect.UndeclaredThrowableException
+
+  class LogBuffer {
+    private val buffer = new java.util.concurrent.ConcurrentLinkedDeque[String]
+    def append(message: String): Unit =
+      if (message ne null) buffer.addLast(message)
+    def flush(): String = {
+      val sb = new java.lang.StringBuilder()
+      while ({
+        val line = buffer.pollFirst()
+        val ok = line ne null
+        if (ok) {
+          if (sb.length() != 0) sb.append('\n')
+          sb.append(line)
+        }
+        ok
+      }) {}
+      sb.toString
+    }
+  }
+
 }

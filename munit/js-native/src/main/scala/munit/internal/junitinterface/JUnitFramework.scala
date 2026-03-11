@@ -48,6 +48,7 @@ abstract class JUnitFramework extends Framework {
     var logAssert = false
     var notLogExceptionClass = false
     var useSbtLoggers = false
+    var useBufferedLogger = false
     var trimStackTraces = defaults.trimStackTraces
     var includeTags = Set.empty[String]
     var excludeTags = Set.empty[String]
@@ -72,6 +73,7 @@ abstract class JUnitFramework extends Framework {
         case "--include-tags" => includeTags += value
         case "--logger" => value.toLowerCase match {
             case "sbt" => useSbtLoggers = true
+            case "buffered" => useBufferedLogger = true
             case _ => unsupported
           }
         case _ => unsupported
@@ -98,6 +100,7 @@ abstract class JUnitFramework extends Framework {
       logAssert = logAssert,
       notLogExceptionClass = notLogExceptionClass,
       useSbtLoggers = useSbtLoggers,
+      useBufferedLogger = useBufferedLogger,
       trimStackTraces = trimStackTraces,
       tags = new TagsFilter(includeTags, excludeTags),
     )

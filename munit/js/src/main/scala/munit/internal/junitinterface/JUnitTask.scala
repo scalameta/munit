@@ -41,6 +41,7 @@ final class JUnitTask(
           .foreach(_ => continuation(Array()))(PlatformCompat.executionContext)
       }
     catch { case ex: Throwable => reporter.reportTestSuiteError(ex) }
+    finally reporter.flush()
   }
 
 }
