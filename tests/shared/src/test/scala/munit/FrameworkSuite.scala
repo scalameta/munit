@@ -17,6 +17,7 @@ class FrameworkSuite extends BaseFrameworkSuite {
     TagsExcludeFramweworkSuite,
     SuiteTransformCrashFrameworkSuite,
     SuiteTransformFrameworkSuite,
+    FixtureEnumerationCrashFrameworkSuite,
     TestTransformCrashFrameworkSuite,
     TestTransformFrameworkSuite,
     ValueTransformCrashFrameworkSuite,

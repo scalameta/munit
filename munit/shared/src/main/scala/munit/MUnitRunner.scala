@@ -153,30 +153,38 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
       val errors: List[Throwable],
   )
 
-  private def runBeforeAll(notifier: RunNotifier): Future[BeforeAllResult] = {
-    val result: Future[List[Try[(AnyFixture[_], Boolean)]]] = sequenceFutures(
-      munitFixtures.iterator.map(f =>
-        runHiddenTest(
-          notifier,
-          s"beforeAll(${f.fixtureName})",
-          () => f.beforeAll(),
-        ).map(isSuccess => f -> isSuccess)
+  /**
+   * Runs `beforeAll` on every suite fixture and collects the result.
+   *
+   * The body is wrapped in `Future.unit.flatMap` so that any synchronous
+   * exception thrown while forcing the `munitFixtures` lazy val becomes a
+   * `Future.failed` instead of escaping this method.
+   */
+  private def runBeforeAll(notifier: RunNotifier): Future[BeforeAllResult] =
+    Future.unit.flatMap { _ =>
+      val result: Future[List[Try[(AnyFixture[_], Boolean)]]] = sequenceFutures(
+        munitFixtures.iterator.map(f =>
+          runHiddenTest(
+            notifier,
+            s"beforeAll(${f.fixtureName})",
+            () => f.beforeAll(),
+          ).map(isSuccess => f -> isSuccess)
+        )
       )
-    )
-    result.map { results =>
-      val loadedFixtures = List.newBuilder[AnyFixture[_]]
-      val errors = List.newBuilder[Throwable]
-      var isSuccess = true
-      results.foreach {
-        case util.Failure(ex) =>
-          errors += ex
-          isSuccess = false
-        case util.Success((fixture, success)) =>
-          if (success) loadedFixtures += fixture else isSuccess = false
+      result.map { results =>
+        val loadedFixtures = List.newBuilder[AnyFixture[_]]
+        val errors = List.newBuilder[Throwable]
+        var isSuccess = true
+        results.foreach {
+          case util.Failure(ex) =>
+            errors += ex
+            isSuccess = false
+          case util.Success((fixture, success)) =>
+            if (success) loadedFixtures += fixture else isSuccess = false
+        }
+        new BeforeAllResult(isSuccess, loadedFixtures.result(), errors.result())
       }
-      new BeforeAllResult(isSuccess, loadedFixtures.result(), errors.result())
     }
-  }
 
   private def runAfterAll(
       notifier: RunNotifier,
