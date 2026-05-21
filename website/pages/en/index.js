@@ -92,7 +92,7 @@ const Features = (props) => {
         "Test failures point to the source code location where the failure happened. " +
         "Cmd+click on the filename to open the relevant line number in your editor (does not work in all terminals).",
       image:
-        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/goYdJhw.png?raw=true",
+        "https://raw.githubusercontent.com/scalameta/gh-pages-images/main/munit/index/goYdJhw.png",
       imageAlign: "left",
     },
     {
@@ -101,7 +101,7 @@ const Features = (props) => {
         "Assertion failures show the difference between the expected and obtained behavior. " +
         "Diffs for case classes include field names in Scala 2.13.",
       image:
-        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/NaAU2He.png?raw=true",
+        "https://raw.githubusercontent.com/scalameta/gh-pages-images/main/munit/index/NaAU2He.png",
       imageAlign: "right",
     },
     {
@@ -110,7 +110,7 @@ const Features = (props) => {
         "Classes that are defined in your workspace are highlighted in stack traces " +
         "making it easier to quickly understand an error.",
       image:
-        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/iosErEv.png?raw=true",
+        "https://raw.githubusercontent.com/scalameta/gh-pages-images/main/munit/index/iosErEv.png",
       imageAlign: "left",
     },
     {
