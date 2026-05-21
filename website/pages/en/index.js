@@ -110,7 +110,7 @@ const Features = (props) => {
         "Classes that are defined in your workspace are highlighted in stack traces " +
         "making it easier to quickly understand an error.",
       image:
-        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/iosErEv.png?raw=true",
+        "https://raw.githubusercontent.com/scalameta/gh-pages-images/main/munit/index/iosErEv.png",
       imageAlign: "left",
     },
     {
