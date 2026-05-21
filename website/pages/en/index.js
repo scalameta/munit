@@ -101,7 +101,7 @@ const Features = (props) => {
         "Assertion failures show the difference between the expected and obtained behavior. " +
         "Diffs for case classes include field names in Scala 2.13.",
       image:
-        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/NaAU2He.png?raw=true",
+        "https://raw.githubusercontent.com/scalameta/gh-pages-images/main/munit/index/NaAU2He.png",
       imageAlign: "right",
     },
     {
