@@ -92,7 +92,7 @@ const Features = (props) => {
         "Test failures point to the source code location where the failure happened. " +
         "Cmd+click on the filename to open the relevant line number in your editor (does not work in all terminals).",
       image:
-        "https://github.com/scalameta/gh-pages-images/blob/master/munit/index/goYdJhw.png?raw=true",
+        "https://raw.githubusercontent.com/scalameta/gh-pages-images/main/munit/index/goYdJhw.png",
       imageAlign: "left",
     },
     {
