@@ -153,7 +153,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
 ).nativeConfigure(sharedNativeConfigure).nativeSettings(
   sharedNativeSettings,
   libraryDependencies ++=
-    List("org.scala-native" %%% "test-interface" % nativeVersion),
+    List("org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion),
 ).jsConfigure(sharedJSConfigure).jsSettings(
   sharedJSSettings,
   libraryDependencies ++= List(
