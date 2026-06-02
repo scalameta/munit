@@ -13,6 +13,7 @@ def scala3 = "3.3.7"
 def scala3next = "3.8.2"
 
 def junitVersion = "4.13.2"
+def portableScalaReflectVersion = "1.1.3"
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.64.0"
 
 inThisBuild {
@@ -152,8 +153,11 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
   } % Provided),
 ).nativeConfigure(sharedNativeConfigure).nativeSettings(
   sharedNativeSettings,
-  libraryDependencies ++=
-    List("org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion),
+  libraryDependencies ++= List(
+    "org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion,
+    ("org.portable-scala" %%% "portable-scala-reflect" %
+      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13) % Provided,
+  ),
 ).jsConfigure(sharedJSConfigure).jsSettings(
   sharedJSSettings,
   libraryDependencies ++= List(
@@ -161,6 +165,8 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
       .cross(CrossVersion.for3Use2_13),
     ("org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion)
       .cross(CrossVersion.for3Use2_13),
+    ("org.portable-scala" %%% "portable-scala-reflect" %
+      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13),
   ),
 ).jvmSettings(
   sharedJVMSettings,
