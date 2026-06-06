@@ -10,7 +10,7 @@ def scala212 = "2.12.21"
 
 def scala3 = "3.3.7"
 
-def scala3next = "3.8.2"
+def scala3next = "3.8.4"
 
 def junitVersion = "4.13.2"
 def portableScalaReflectVersion = "1.1.3"
