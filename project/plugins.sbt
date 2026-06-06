@@ -3,7 +3,7 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
 
 addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.8.2")
 
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.6")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.1")
 
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.6")
 
