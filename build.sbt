@@ -14,7 +14,7 @@ def scala3next = "3.8.2"
 
 def junitVersion = "4.13.2"
 def portableScalaReflectVersion = "1.1.3"
-def gcp = "com.google.cloud" % "google-cloud-storage" % "2.64.0"
+def gcp = "com.google.cloud" % "google-cloud-storage" % "2.64.1"
 
 inThisBuild {
   List(
