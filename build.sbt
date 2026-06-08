@@ -57,6 +57,14 @@ addCommandAlias(
   "scalafixCheckAll",
   s"; ++$scala212 ;  scalafixEnable ; scalafix --check ; test:scalafix --check",
 )
+addCommandAlias(
+  "checkDiscoveryNative",
+  s"; +testsNative/run ; ++$scala3next! ; testsNative/run",
+)
+addCommandAlias(
+  "checkDiscoveryJS",
+  s"; +testsJS/run ; ++$scala3next! ; testsJS/run",
+)
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212)
 
@@ -222,6 +230,8 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   ).nativeConfigure(sharedNativeConfigure).nativeSettings(sharedNativeSettings)
   .jsConfigure(sharedJSConfigure).jsSettings(
     sharedJSSettings,
+    Compile / mainClass := Some("munit.ReflectiveInstantiationCheck"),
+    scalaJSUseMainModuleInitializer := true,
     jsEnv := {
       val log = sLog.value
       if (Option(System.getenv("GITHUB_JOB")).contains("jsdom")) {

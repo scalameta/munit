@@ -2,9 +2,6 @@ package munit
 
 import sbt.testing.{Event, EventHandler, Logger, Status, TaskDef}
 
-// Canonical plain suite: relies on @EnableReflectiveInstantiation being
-// inherited from PlatformSuite. Compiled per-platform, so it is registered
-// for reflective instantiation on Native/JS.
 class GuardSuite extends FunSuite {
   test("runs")(assert(true))
 }
