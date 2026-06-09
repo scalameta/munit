@@ -30,7 +30,11 @@ _site/
 metals.sbt
 metals/project/
 
+.scala-build/
+
 .vscode/
+
+.cursor/
 
 local.*
 

@@ -68,6 +68,33 @@ jobs:
             ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON:
             ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+  discovery-guard-native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - name: Install LLVM
+        run: sudo apt-get update && sudo apt-get install -y clang
+      - name: Assert clang installed and on path
+        run: clang --version
+      - uses: sbt/setup-sbt@v1
+      - run: sbt checkDiscoveryNative
+  discovery-guard-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - run: npm install
+      - run: sbt checkDiscoveryJS
   mima:
     runs-on: ubuntu-latest
     steps:
