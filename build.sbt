@@ -164,7 +164,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
   libraryDependencies ++= List(
     "org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion,
     ("org.portable-scala" %%% "portable-scala-reflect" %
-      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13) % Provided,
+      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13),
   ),
 ).jsConfigure(sharedJSConfigure).jsSettings(
   sharedJSSettings,
@@ -178,7 +178,11 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
   ),
 ).jvmSettings(
   sharedJVMSettings,
-  libraryDependencies ++= List("junit" % "junit" % junitVersion),
+  libraryDependencies ++= List(
+    "junit" % "junit" % junitVersion,
+    ("org.portable-scala" %%% "portable-scala-reflect" %
+      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13),
+  ),
 ).jvmConfigure(_.dependsOn(junit)).dependsOn(munitDiff)
 
 lazy val munitJVM = munit.jvm
