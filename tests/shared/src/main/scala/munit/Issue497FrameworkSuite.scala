@@ -31,7 +31,8 @@ object Issue497FrameworkSuite
     extends FrameworkTest(
       classOf[Issue497FrameworkSuite],
       """|Test run munit.Issue497FrameworkSuite started
-         |Test run munit.Issue497FrameworkSuite finished: 1 failed, 1 ignored, 0 total <elapsed time>
+         |==> i munit.Issue497FrameworkSuite ignored <elapsed time>
+         |Test run munit.Issue497FrameworkSuite finished: 0 failed, 1 ignored, 0 total <elapsed time>
          |""".stripMargin,
       arguments = Array("--exclude-categories=munit.Slow"),
       tags = Set(OnlyJVM),

@@ -197,7 +197,9 @@ final class EventDispatcher extends RunListener {
   }
 
   private boolean recordStartTime(String label) {
-    return null == startTimes.putIfAbsent(label, System.currentTimeMillis());
+    // Suite-level descriptions have a null method name, and ConcurrentHashMap
+    // forbids null keys, so guard against it.
+    return label != null && null == startTimes.putIfAbsent(label, System.currentTimeMillis());
   }
 
   private boolean recordStartTime(Description description) {
@@ -205,7 +207,9 @@ final class EventDispatcher extends RunListener {
   }
 
   private Long elapsedTime(String label) {
-    Long startTime = startTimes.get(label);
+    // Suite-level descriptions have a null method name, and ConcurrentHashMap
+    // forbids null keys, so guard against it.
+    Long startTime = label == null ? null : startTimes.get(label);
     return startTime == null ? 0L : System.currentTimeMillis() - startTime;
   }
 
