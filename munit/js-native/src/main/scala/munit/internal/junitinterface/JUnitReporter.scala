@@ -106,11 +106,13 @@ final class JUnitReporter(
   def reportTestIgnored(method: String, suffix: String): Unit = {
     ignoredCount += 1
     val suffixed = if (suffix.isEmpty) "" else s" $suffix"
-    if (settings.shouldLogWarn) logEvent(Warn, method, AnsiColors.YELLOW)(
-      "==> i",
-      suffixed + " ignored",
-      nanos = System.nanoTime - suiteStartNanos,
-    )
+    // A suite-level ignore has no method name; render the suite name instead.
+    if (settings.shouldLogWarn) logEvent(
+      Warn,
+      method,
+      AnsiColors.YELLOW,
+      fq = method.isEmpty,
+    )("==> i", suffixed + " ignored", nanos = System.nanoTime - suiteStartNanos)
     emitEvent(method, Status.Ignored, None, 0)
   }
 

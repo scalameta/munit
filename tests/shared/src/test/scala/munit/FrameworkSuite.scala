@@ -2,6 +2,8 @@ package munit
 
 class FrameworkSuite extends BaseFrameworkSuite {
   val tests: List[FrameworkTest] = List[FrameworkTest](
+    EmptyFrameworkStdoutJVMSuite,
+    EmptyFrameworkStdoutJsNativeSuite,
     AfterEachExceptionSuite,
     SwallowedExceptionSuite,
     InterceptFrameworkSuite,
