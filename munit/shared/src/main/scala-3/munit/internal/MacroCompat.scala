@@ -43,6 +43,14 @@ object MacroCompat {
   }
 
   trait CompileErrorMacro {
+
+    /**
+     * Return compilation errors as `String`.
+     *
+     * Note: for reproducible results set `-pagewidth` scalac option to a fixed value, eg 80.
+     * @param code scala code that should not compile
+     * @return formatted errors
+     */
     transparent inline def compileErrors(inline code: String): String = {
       val errors = scala.compiletime.testing.typeCheckErrors(code)
       errors.map { error =>
