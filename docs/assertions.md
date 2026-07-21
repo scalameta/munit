@@ -257,3 +257,8 @@ Inline the `code` variable to fix the compile error.
 ```scala mdoc
 compileErrors("val x: String = 2")
 ```
+
+Note: for reproducible results on Scala3 set `-pagewidth` scalac option to a fixed value, eg 80:
+```scala
+Test / scalacOptions ++= Seq("-pagewidth", "80")  
+```

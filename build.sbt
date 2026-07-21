@@ -138,6 +138,12 @@ val sharedSettings = List(
       case _ => Nil
     }
   },
+  Test / scalacOptions ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((3, minor)) => List("-pagewidth", "80")
+      case _ => Nil
+    }
+  },
 )
 
 lazy val junit = project.in(file("junit-interface")).settings(
