@@ -1,5 +1,9 @@
 # Contributing
 
+## Submitting a PR
+
+Please run `preparePR` before creating a PR.
+
 ## Importing the build into IntelliJ
 
 This codebase is primarily developed with VS Code but it's possible to work on

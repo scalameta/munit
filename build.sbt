@@ -65,6 +65,10 @@ addCommandAlias(
   "checkDiscoveryJS",
   s"; +testsJS/run ; ++$scala3next! ; testsJS/run",
 )
+addCommandAlias(
+  "preparePR",
+  "; scalafmtSbt; reload; +scalafmt; +Test/scalafmt ; scalafixCheckAll",
+)
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212)
 
