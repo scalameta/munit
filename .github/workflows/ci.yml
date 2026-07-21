@@ -117,6 +117,6 @@ jobs:
           java-version: 21
           cache: sbt
       - uses: sbt/setup-sbt@v1
+      - run: ./bin/scalafmt --check
       - run: sbt scalafixCheckAll
       - run: sbt docs/docusaurusCreateSite
-      - run: ./bin/scalafmt --check
