@@ -64,6 +64,7 @@ jobs:
       - run: npm install
       - run: sbt +testsJS/test
         env:
+          MUNIT_JS_ENV: jsdom
           GOOGLE_APPLICATION_CREDENTIALS:
             ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON:
