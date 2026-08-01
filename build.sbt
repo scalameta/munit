@@ -112,7 +112,7 @@ val sharedSettings = List(
   javacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((3, minor)) if minor >= 8 => Seq("--release", "17")
-      case _ => Seq("-source", "1.8", "-target", "1.8")
+      case _ => Seq("--release", "8")
     }
   },
   scalacOptions ++= {
@@ -125,7 +125,7 @@ val sharedSettings = List(
         )
       case Some((2, _)) => List(
           "-Yrangepos",
-          "-target:jvm-1.8",
+          "-release:8",
           // -Xlint is unusable because of
           // https://github.com/scala/bug/issues/10448
           "-Ywarn-unused:imports",
@@ -158,8 +158,7 @@ lazy val junit = project.in(file("junit-interface")).settings(
     "junit" % "junit" % junitVersion,
     "org.scala-sbt" % "test-interface" % "1.0",
   ),
-  Compile / javacOptions ++= List("-target", "1.8", "-source", "1.8"),
-  Compile / doc / javacOptions --= List("-target", "1.8"),
+  Compile / javacOptions ++= List("--release", "8"),
 )
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
