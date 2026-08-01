@@ -10,8 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         java:
-          - 8
-          - 21
+          - 17
+          - 25
         os:
           - ubuntu-latest
           - windows-latest
@@ -20,9 +20,6 @@ jobs:
           - 'testsJS'
           - 'testsNative'
           - 'plugin'
-        exclude:
-          - sbt: 'plugin'
-            java: 8
     runs-on: ${{ matrix.os }}
     env:
       GOOGLE_APPLICATION_CREDENTIALS:
@@ -58,7 +55,7 @@ jobs:
       - uses: actions/setup-java@v5.6.0
         with:
           distribution: temurin
-          java-version: 8
+          java-version: 17
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - run: npm install
@@ -75,7 +72,7 @@ jobs:
       - uses: actions/setup-java@v5.6.0
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
           cache: sbt
       - name: Install LLVM
         run: sudo apt-get update && sudo apt-get install -y clang
@@ -90,7 +87,7 @@ jobs:
       - uses: actions/setup-java@v5.6.0
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - run: npm install
@@ -102,7 +99,7 @@ jobs:
       - uses: actions/setup-java@v5.6.0
         with:
           distribution: temurin
-          java-version: 8
+          java-version: 17
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - run: sbt mimaReportBinaryIssues
@@ -114,7 +111,7 @@ jobs:
       - uses: actions/setup-java@v5.6.0
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - run: ./bin/scalafmt --check
