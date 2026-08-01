@@ -247,7 +247,7 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     scalaJSUseMainModuleInitializer := true,
     jsEnv := {
       val log = sLog.value
-      if (Option(System.getenv("GITHUB_JOB")).contains("jsdom")) {
+      if (Option(System.getenv("MUNIT_JS_ENV")).contains("jsdom")) {
         log.info("Testing in JSDOMNodeJSEnv")
         new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
       } else {
