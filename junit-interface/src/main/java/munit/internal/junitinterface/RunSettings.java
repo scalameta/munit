@@ -2,7 +2,6 @@ package munit.internal.junitinterface;
 
 import java.lang.reflect.Method;
 import java.util.*;
-
 import org.junit.runner.Description;
 import sbt.testing.Status;
 
@@ -269,7 +268,6 @@ class RunSettings implements Settings {
           throw new IllegalArgumentException(sb.toString());
       }
     }
-
   }
 
   static enum Summary {

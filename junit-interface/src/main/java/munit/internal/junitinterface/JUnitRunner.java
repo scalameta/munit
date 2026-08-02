@@ -5,11 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.junit.runner.notification.RunListener;
 import sbt.testing.Runner;
 import sbt.testing.Selector;
@@ -179,8 +177,7 @@ final class JUnitRunner implements Runner {
         default:
       }
     }
-    if (logMode == null)
-      logMode = verbose ? RunSettings.LogMode.TRACE : RunSettings.LogMode.INFO;
+    if (logMode == null) logMode = verbose ? RunSettings.LogMode.TRACE : RunSettings.LogMode.INFO;
     this.settings =
         new RunSettings(
             !nocolor,
