@@ -9,117 +9,122 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# pr-* jobs have no event guard, so post-* only ever ADD to them; the two
+# sets cannot drift. Workers are balanced on purpose — slots, not minutes,
+# are scarce during an update storm — so keep them even when adding a step.
+
+env:
+  java: '17' # the floor, and what we release from; post-jdk25 overrides it
+
+# A job's `name` is the required-check context; renaming one needs an admin
+# change to branch protection.
 jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        java:
-          - 17
-          - 25
-        os:
-          - ubuntu-latest
-          - windows-latest
-        sbt:
-          - 'testsJVM'
-          - 'testsJS'
-          - 'testsNative'
-          - 'plugin'
-    runs-on: ${{ matrix.os }}
+  # ===== PR gate: 2 workers, run on PR *and* push =====
+  pr-jvm-native-lint:
+    name: JDK 17 (JVM, Native, plugin), linting
+    runs-on: ubuntu-latest
+    steps:
+      - &checkout
+        uses: actions/checkout@v7
+      - &jdk
+        uses: actions/setup-java@v5.6.0
+        with:
+          distribution: temurin
+          java-version: ${{ env.java }}
+          cache: sbt
+      - &sbt
+        uses: sbt/setup-sbt@v1
+      - &testjvm
+        if: ${{ !cancelled() }}
+        run: sbt +testsJVM/test
+      - &testnative
+        if: ${{ !cancelled() }}
+        run: sbt +testsNative/test
+      # guards against a silent 0-test run; reuses the compile just above
+      - if: ${{ !cancelled() }}
+        run: sbt checkDiscoveryNative
+      - &testplugin
+        if: ${{ !cancelled() }}
+        run: sbt +plugin/test
+      - if: ${{ !cancelled() }}
+        run: sbt scalafixCheckAll
+      - if: ${{ !cancelled() }}
+        run: ./bin/scalafmt --check
+
+  pr-js-mima-docs:
+    name: JS and jsdom tests, MiMa and Docs
+    runs-on: ubuntu-latest
     env:
+      # unread: nothing in this build enables MUnitPlugin, their only reader
       GOOGLE_APPLICATION_CREDENTIALS:
         ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       GOOGLE_APPLICATION_CREDENTIALS_JSON:
         ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5.6.0
-        with:
-          distribution: temurin
-          java-version: "${{ matrix.java }}"
-          cache: sbt
+      - *checkout
+      - *jdk
+      - *sbt
+      - &testjs
+        if: ${{ !cancelled() }}
+        run: sbt +testsJS/test
+      - if: ${{ !cancelled() }}
+        run: sbt checkDiscoveryJS
+      - if: ${{ !cancelled() }}
+        run: npm install # jsdom itself
+      # same linked JS, different jsenv (see jsEnv in build.sbt)
+      - if: ${{ !cancelled() }}
+        env:
+          MUNIT_JS_ENV: jsdom
+        run: sbt +testsJS/test
+      - if: ${{ !cancelled() }}
+        run: sbt mimaReportBinaryIssues
+      - if: ${{ !cancelled() }}
+        run: sbt docs/docusaurusCreateSite
 
+  # ===== post-merge superset: deferred axes, added only on push to main =====
+  post-jdk25:
+    name: JDK 25 (JVM, JS, Native, plugin)
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    env:
+      java: '25'
+    steps:
+      - *checkout
+      - *jdk
+      - *sbt
+      - *testjvm
+      - *testjs
+      - *testnative
+      - *testplugin
+
+  # Windows divergence is JDK-independent; only the Native leg needs clang.
+  post-windows:
+    name: Windows (JVM, JS, plugin)
+    if: ${{ github.event_name == 'push' }}
+    runs-on: windows-latest
+    steps:
+      - *checkout
+      - *jdk
+      - *sbt
+      - *testjvm
+      - *testjs
+      - *testplugin
+
+  post-windows-native:
+    name: Windows (Native)
+    if: ${{ github.event_name == 'push' }}
+    runs-on: windows-latest
+    steps:
+      - *checkout
+      - *jdk
+      - *sbt
       - name: Install LLVM
-        if: matrix.os == 'windows-latest'
         shell: pwsh
         run: choco install llvm --version="20.1.4" --allow-downgrade --force
       - name: Add LLVM on Path
-        if: matrix.os == 'windows-latest'
         shell: pwsh
         run: echo "${env:ProgramFiles}\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Assert clang installed and on path
-        if: matrix.os == 'windows-latest'
         shell: pwsh
         run: clang --version
-      - uses: sbt/setup-sbt@v1
-      - run: sbt +${{ matrix.sbt }}/test
-  jsdom:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5.6.0
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: sbt
-      - uses: sbt/setup-sbt@v1
-      - run: npm install
-      - run: sbt +testsJS/test
-        env:
-          MUNIT_JS_ENV: jsdom
-          GOOGLE_APPLICATION_CREDENTIALS:
-            ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          GOOGLE_APPLICATION_CREDENTIALS_JSON:
-            ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
-  discovery-guard-native:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5.6.0
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: sbt
-      - name: Install LLVM
-        run: sudo apt-get update && sudo apt-get install -y clang
-      - name: Assert clang installed and on path
-        run: clang --version
-      - uses: sbt/setup-sbt@v1
-      - run: sbt checkDiscoveryNative
-  discovery-guard-js:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5.6.0
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: sbt
-      - uses: sbt/setup-sbt@v1
-      - run: npm install
-      - run: sbt checkDiscoveryJS
-  mima:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5.6.0
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: sbt
-      - uses: sbt/setup-sbt@v1
-      - run: sbt mimaReportBinaryIssues
-  check:
-    name: Scalafix, Scalafmt and Docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5.6.0
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: sbt
-      - uses: sbt/setup-sbt@v1
-      - run: ./bin/scalafmt --check
-      - run: sbt scalafixCheckAll
-      - run: sbt docs/docusaurusCreateSite
+      - *testnative
