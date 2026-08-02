@@ -43,6 +43,8 @@ inThisBuild {
     )),
     scalaVersion := scala213,
     useSuperShell := false,
+    // the bundled google-java-format needs 21; pick one our floor JDK can run
+    javafmtFormatterCompatibleJavaVersion := 17,
   )
 }
 
@@ -67,7 +69,7 @@ addCommandAlias(
 )
 addCommandAlias(
   "preparePR",
-  "; scalafmtSbt; reload; +scalafmt; +Test/scalafmt ; scalafixCheckAll",
+  "; scalafmtSbt; reload; +scalafmt; +Test/scalafmt ; javafmt ; scalafixCheckAll",
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212)
