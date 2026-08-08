@@ -45,7 +45,7 @@ jobs:
         run: sbt checkDiscoveryNative
       - &testplugin
         if: ${{ !cancelled() }}
-        run: sbt +plugin/test
+        run: sbt +plugin/testFull
       - if: ${{ !cancelled() }}
         run: sbt scalafixCheckAll
       - if: ${{ !cancelled() }}
