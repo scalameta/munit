@@ -56,11 +56,11 @@ def scalafixOn(args: String) = onEach(scalafixTargets, s"scalafix $args") +
   onEach(scalafixTargets, s"Test/scalafix $args")
 addCommandAlias("scalafixAll", "; scalafixEnable" + scalafixOn(""))
 addCommandAlias("scalafixCheckAll", "; scalafixEnable" + scalafixOn("--check"))
-addCommandAlias("testJVM", onEach(tests.jvm.get, "test"))
-addCommandAlias("testJS", onEach(allScalaVersions.map(tests.js(_)), "test"))
+addCommandAlias("testJVM", onEach(tests.jvm.get, "testFull"))
+addCommandAlias("testJS", onEach(allScalaVersions.map(tests.js(_)), "testFull"))
 addCommandAlias(
   "testNative",
-  onEach(allScalaVersions.map(tests.native(_)), "test"),
+  onEach(allScalaVersions.map(tests.native(_)), "testFull"),
 )
 addCommandAlias("checkDiscoveryNative", onEach(tests.native.get, "run"))
 addCommandAlias("checkDiscoveryJS", onEach(tests.js.get, "run"))
@@ -83,8 +83,8 @@ def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
 val unpublished = publish / skip := true
 
 // NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
-val skipIdeaSetting =
-  SettingKey[Boolean]("ide-skip-project", rank = KeyRanks.Invisible)
+val skipIdeaSetting = SettingKey[Boolean]("ide-skip-project")
+  .withRank(KeyRanks.Invisible)
 def onOtherPlatform(except: AutoPlugin*): Project => Project =
   _.disablePlugins(MimaPlugin +: except: _*).settings(skipIdeaSetting := true)
 val onJS: Project => Project = onOtherPlatform()
@@ -170,7 +170,7 @@ val munitSettings = Def.settings(
   unmanagedMainSources("munit", "shared"),
   libraryDependencies ++= List(
     scalaReflect.value,
-    ("org.portable-scala" %%% "portable-scala-reflect" % "1.1.3")
+    ("org.portable-scala" %% "portable-scala-reflect" % "1.1.3")
       .cross(CrossVersion.for3Use2_13),
   ),
 )
@@ -184,7 +184,7 @@ val munitOnJVM: Project => Project = _.dependsOn(junit).settings(
 val munitOnNative: Project => Project = onNative.settings(
   unmanagedMainSources("munit", "native", "js-native"),
   libraryDependencies ++=
-    List("org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion),
+    List("org.scala-native" %% "test-interface-sbt-defs" % nativeVersion),
 )
 
 val munitOnJS: Project => Project = onJS.settings(
@@ -264,7 +264,7 @@ val testsOnJS: Project => Project = onJS.settings(
   unmanagedSources("tests", "js"),
   Compile / mainClass := Some("munit.ReflectiveInstantiationCheck"),
   scalaJSUseMainModuleInitializer := true,
-  jsEnv := {
+  jsEnv := Def.uncached {
     val log = sLog.value
     if (System.getenv("MUNIT_JS_ENV") == "jsdom") {
       log.info("Testing in JSDOMNodeJSEnv")
@@ -282,7 +282,8 @@ lazy val tests = projectMatrix.in(file("tests")).dependsOn(munit)
   .nativePlatform(List(scala3next), nextRow, testsOnNative)
   .jsPlatform(allScalaVersions, Nil, testsOnJS)
   .jsPlatform(List(scala3next), nextRow, testsOnJS)
-  .jvmPlatform(allScalaVersions, testsJVMSettings).disablePlugins(MimaPlugin)
+  .jvmPlatform(allScalaVersions, Nil, _.settings(testsJVMSettings))
+  .disablePlugins(MimaPlugin)
 
 // A matrix cell per Scala version replaces `+`, so the platform-wide commands
 // are aliases over the cells rather than one cross-built project.
