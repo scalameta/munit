@@ -205,10 +205,11 @@ lazy val plugin = project.in(file("munit-sbt")).enablePlugins(BuildInfoPlugin)
     moduleName := "sbt-munit",
     sbtPlugin := true,
     scalaVersion := scala212,
+    // the floor a user of this plugin must be on, not the sbt we build with
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
-        case "2.12" => sbtVersion.value
-        case _ => "2.0.0-RC6"
+        case "2.12" => "1.9.0"
+        case _ => "2.0.0"
       }
     },
     buildInfoPackage := "munit.sbtmunit",
