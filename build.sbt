@@ -1,6 +1,6 @@
 import scala.collection.mutable
 
-import sbtcrossproject.CrossPlugin.autoImport.crossProject
+import Extensions._
 
 def previousVersion = "1.0.0-RC1"
 
@@ -48,25 +48,25 @@ inThisBuild {
   )
 }
 
+// `++` cannot select a matrix row, so the 2.12 cells are named explicitly;
+// plugin pins 2.12 itself, so the old `++` prefix is redundant.
+def scalafixTargets = List(munitDiff, munit, tests)
+  .flatMap(m => List(m.jvm(scala212), m.js(scala212))) ++ List(plugin, docs)
+def scalafixOn(args: String) = onEach(scalafixTargets, s"scalafix $args") +
+  onEach(scalafixTargets, s"Test/scalafix $args")
+addCommandAlias("scalafixAll", "; scalafixEnable" + scalafixOn(""))
+addCommandAlias("scalafixCheckAll", "; scalafixEnable" + scalafixOn("--check"))
+addCommandAlias("testJVM", onEach(tests.jvm.get, "test"))
+addCommandAlias("testJS", onEach(allScalaVersions.map(tests.js(_)), "test"))
 addCommandAlias(
-  "scalafixAll",
-  s"; ++$scala212 ; scalafixEnable ; all scalafix test:scalafix",
+  "testNative",
+  onEach(allScalaVersions.map(tests.native(_)), "test"),
 )
-addCommandAlias(
-  "scalafixCheckAll",
-  s"; ++$scala212 ;  scalafixEnable ; scalafix --check ; test:scalafix --check",
-)
-addCommandAlias(
-  "checkDiscoveryNative",
-  s"; +testsNative/run ; ++$scala3next! ; testsNative/run",
-)
-addCommandAlias(
-  "checkDiscoveryJS",
-  s"; +testsJS/run ; ++$scala3next! ; testsJS/run",
-)
+addCommandAlias("checkDiscoveryNative", onEach(tests.native.get, "run"))
+addCommandAlias("checkDiscoveryJS", onEach(tests.js.get, "run"))
 addCommandAlias(
   "preparePR",
-  "; scalafmtSbt; reload; +scalafmt; +Test/scalafmt ; javafmt ; scalafixCheckAll",
+  "; scalafmtSbt; reload; scalafmt; Test/scalafmt ; javafmt ; scalafixCheckAll",
 )
 val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212)
@@ -99,10 +99,13 @@ val mimaEnable = Def.settings(
   ),
 )
 
-val sharedJVMSettings = Def
-  .settings(crossScalaVersions := allScalaVersions, mimaEnable)
-val sharedJSSettings = Def.settings(crossScalaVersions := allScalaVersions)
-val sharedNativeSettings = Def.settings(crossScalaVersions := allScalaVersions)
+// The matrix supplies the Scala versions, so crossScalaVersions is gone; what
+// is left per platform is mima and the IntelliJ/scalafix opt-outs.
+// The discovery guards also check the *next* Scala on JS and Native, which
+// needs a row of its own. Its binary version is 3, like scala3, so it would
+// collide on both cell id and artifact name: give it an explicit axis, and
+// never publish it.
+def nextRow = List(VirtualAxis.scalaPartialVersion(scala3next))
 
 val sharedSettings = List(
   javacOptions ++= {
@@ -172,35 +175,36 @@ val munitSettings = Def.settings(
   ),
 )
 
-val munitJVMSettings = Def.settings(
-  sharedJVMSettings,
+val munitOnJVM: Project => Project = _.dependsOn(junit).settings(
+  mimaEnable,
+  unmanagedMainSources("munit", "jvm"),
   libraryDependencies ++= List("junit" % "junit" % junitVersion),
 )
 
-val munitNativeSettings = Def.settings(
-  sharedNativeSettings,
+val munitOnNative: Project => Project = onNative.settings(
+  unmanagedMainSources("munit", "native", "js-native"),
   libraryDependencies ++=
     List("org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion),
 )
 
-val munitJSSettings = Def.settings(
-  sharedJSSettings,
+val munitOnJS: Project => Project = onJS.settings(
+  unmanagedMainSources("munit", "js", "js-native"),
   libraryDependencies ++= {
-    def dep(name: String) = ("org.scala-js" %% name % scalaJSVersion)
-      .cross(CrossVersion.for3Use2_13)
+    // Published with a plain binary suffix only
+    val binary = if (isScala3Setting.value) "2.13" else scalaBinaryVersion.value
+    def dep(name: String) = "org.scala-js" % s"${name}_$binary" % scalaJSVersion
     List(dep("scalajs-test-interface"), dep("scalajs-junit-test-runtime"))
   },
 )
 
-lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .settings(munitSettings).nativeConfigure(onNative)
-  .nativeSettings(munitNativeSettings).jsConfigure(onJS)
-  .jsSettings(munitJSSettings).jvmSettings(munitJVMSettings)
-  .jvmConfigure(_.dependsOn(junit)).dependsOn(munitDiff)
+lazy val munit = projectMatrix.in(file("munit")).dependsOn(munitDiff)
+  .settings(munitSettings).jvmPlatform(allScalaVersions, Nil, munitOnJVM)
+  .jsPlatform(allScalaVersions, Nil, munitOnJS)
+  .jsPlatform(List(scala3next), nextRow, munitOnJS.settings(unpublished))
+  .nativePlatform(allScalaVersions, Nil, munitOnNative)
+  .nativePlatform(List(scala3next), nextRow, munitOnNative.settings(unpublished))
 
-lazy val munitJVM = munit.jvm
-lazy val munitJS = munit.js
-lazy val munitNative = munit.native
+lazy val munitJVM = munit.jvm(scala213)
 
 lazy val plugin = project.in(file("munit-sbt")).enablePlugins(BuildInfoPlugin)
   .settings(
@@ -224,14 +228,16 @@ lazy val plugin = project.in(file("munit-sbt")).enablePlugins(BuildInfoPlugin)
 val munitDiffSettings = Def.settings(
   moduleName := "munit-diff",
   sharedSettings,
+  unmanagedMainSources("munit-diff", "shared"),
   libraryDependencies ++= List(scalaReflect.value),
 )
 
-lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .in(file("munit-diff")).settings(munitDiffSettings)
-  .jvmSettings(sharedJVMSettings).nativeConfigure(onNative)
-  .nativeSettings(sharedNativeSettings).jsConfigure(onJS)
-  .jsSettings(sharedJSSettings)
+lazy val munitDiff = projectMatrix.in(file("munit-diff"))
+  .settings(munitDiffSettings).jvmPlatform(allScalaVersions, mimaEnable)
+  .jsPlatform(allScalaVersions, Nil, onJS)
+  .jsPlatform(List(scala3next), nextRow, onJS.settings(unpublished))
+  .nativePlatform(allScalaVersions, Nil, onNative)
+  .nativePlatform(List(scala3next), nextRow, onNative.settings(unpublished))
 
 val testsSettings = Def.settings(
   sharedSettings,
@@ -240,21 +246,22 @@ val testsSettings = Def.settings(
     "sourceDirectory" -> src("tests", "shared", "main").value.getAbsolutePath,
     scalaVersion,
   ),
-  unmanagedTestSources("tests", "shared"),
+  unmanagedSources("tests", "shared"),
   unpublished,
 )
 
 val testsJVMSettings = Def.settings(
-  sharedJVMSettings,
+  unmanagedSources("tests", "jvm"),
   Test / fork := true,
   Test / parallelExecution := true,
   Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "+b"),
 )
 
-val testsNativeSettings = Def.settings(sharedNativeSettings)
+val testsOnNative: Project => Project = onNative
+  .settings(unmanagedSources("tests", "native"))
 
-val testsJSSettings = Def.settings(
-  sharedJSSettings,
+val testsOnJS: Project => Project = onJS.settings(
+  unmanagedSources("tests", "js"),
   Compile / mainClass := Some("munit.ReflectiveInstantiationCheck"),
   scalaJSUseMainModuleInitializer := true,
   jsEnv := {
@@ -269,15 +276,18 @@ val testsJSSettings = Def.settings(
   },
 )
 
-lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .dependsOn(munit).enablePlugins(BuildInfoPlugin).settings(testsSettings)
-  .nativeConfigure(onNative).nativeSettings(testsNativeSettings)
-  .jsConfigure(onJS).jsSettings(testsJSSettings).jvmSettings(testsJVMSettings)
-  .disablePlugins(MimaPlugin)
+lazy val tests = projectMatrix.in(file("tests")).dependsOn(munit)
+  .enablePlugins(BuildInfoPlugin).settings(testsSettings)
+  .nativePlatform(allScalaVersions, Nil, testsOnNative)
+  .nativePlatform(List(scala3next), nextRow, testsOnNative)
+  .jsPlatform(allScalaVersions, Nil, testsOnJS)
+  .jsPlatform(List(scala3next), nextRow, testsOnJS)
+  .jvmPlatform(allScalaVersions, testsJVMSettings).disablePlugins(MimaPlugin)
 
-lazy val testsJVM = tests.jvm
-lazy val testsJS = tests.js
-lazy val testsNative = tests.native
+// A matrix cell per Scala version replaces `+`, so the platform-wide commands
+// are aliases over the cells rather than one cross-built project.
+def onEach(ps: Seq[Project], task: String) = ps.map(p => s"${p.id}/$task")
+  .mkString("; ", "; ", "")
 
 lazy val docs = project.in(file("munit-docs")).dependsOn(munitJVM)
   .enablePlugins(MdocPlugin, DocusaurusPlugin).disablePlugins(MimaPlugin)
@@ -300,18 +310,8 @@ lazy val docs = project.in(file("munit-docs")).dependsOn(munitJVM)
 // Aggregate only: it builds nothing, so it has no artifact to publish and
 // nothing to check for binary compatibility.
 lazy val root = project.in(file(".")).withId("munit-root").aggregate(
-  junit,
-  plugin,
-  docs,
-  munitJVM,
-  munitJS,
-  munitNative,
-  munitDiff.jvm,
-  munitDiff.js,
-  munitDiff.native,
-  testsJVM,
-  testsJS,
-  testsNative,
+  munitDiff.projectRefs ++ munit.projectRefs ++ tests.projectRefs ++
+    Seq[ProjectReference](junit, plugin, docs): _*
 ).settings(
   unpublished,
   mimaPreviousArtifacts := Set.empty,
@@ -325,12 +325,18 @@ def srcWithRoot(root: File, dir: String, cfg: String) = root / dir / "src" / cfg
 def src(name: String, dir: String, cfg: String) = Def
   .setting[File](srcWithRoot((ThisBuild / baseDirectory).value / name, dir, cfg))
 
+// crossProject's layout, wired by hand: a matrix has one base directory, so
+// each cell names the trees it shares. Absent directories are harmless.
 def roots(name: String, cfg: String, dirs: String*) = Def.setting[Seq[File]] {
   val variants = new mutable.ListBuffer[String]()
+  variants += "scala"
+  variants += "java"
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, minor)) =>
       variants += "scala-2"
+      variants += "scala-2." + minor
       if (minor < 13) variants += "scala-pre-2.13"
+    case Some((3, _)) => variants += "scala-3"
     case _ =>
   }
   val root = (ThisBuild / baseDirectory).value / name
@@ -344,4 +350,9 @@ def unmanagedMainSources(name: String, dirs: String*) = Def.settings(
 
 def unmanagedTestSources(name: String, dirs: String*) = Def.settings(
   Test / unmanagedSourceDirectories ++= roots(name, "test", dirs: _*).value
+)
+
+def unmanagedSources(name: String, dirs: String*) = Def.settings(
+  unmanagedMainSources(name, dirs: _*),
+  unmanagedTestSources(name, dirs: _*),
 )

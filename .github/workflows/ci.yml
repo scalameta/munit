@@ -36,10 +36,10 @@ jobs:
         uses: sbt/setup-sbt@v1
       - &testjvm
         if: ${{ !cancelled() }}
-        run: sbt +testsJVM/test
+        run: sbt testJVM
       - &testnative
         if: ${{ !cancelled() }}
-        run: sbt +testsNative/test
+        run: sbt testNative
       # guards against a silent 0-test run; reuses the compile just above
       - if: ${{ !cancelled() }}
         run: sbt checkDiscoveryNative
@@ -66,7 +66,7 @@ jobs:
       - *sbt
       - &testjs
         if: ${{ !cancelled() }}
-        run: sbt +testsJS/test
+        run: sbt testJS
       - if: ${{ !cancelled() }}
         run: sbt checkDiscoveryJS
       - if: ${{ !cancelled() }}
@@ -75,7 +75,7 @@ jobs:
       - if: ${{ !cancelled() }}
         env:
           MUNIT_JS_ENV: jsdom
-        run: sbt +testsJS/test
+        run: sbt testJS
       - if: ${{ !cancelled() }}
         run: sbt mimaReportBinaryIssues
       - if: ${{ !cancelled() }}
