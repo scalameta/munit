@@ -13,7 +13,7 @@ def scala3 = "3.3.8"
 def scala3next = "3.8.4"
 
 def junitVersion = "4.13.2"
-def portableScalaReflectVersion = "1.1.3"
+
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.71.0"
 
 inThisBuild {
@@ -157,36 +157,33 @@ lazy val junit = project.in(file("junit-interface")).settings(
   Compile / javacOptions ++= List("--release", "8"),
 )
 
+val scalaReflect = Def.setting {
+  val ver = if (isScala3Setting.value) scala213 else scalaVersion.value
+  "org.scala-lang" % "scala-reflect" % ver % Provided
+}
+
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
   sharedSettings,
   unmanagedMainSources("munit", "shared"),
-  libraryDependencies ++= List("org.scala-lang" % "scala-reflect" % {
-    if (isScala3Setting.value) scala213 else scalaVersion.value
-  } % Provided),
+  libraryDependencies ++= List(
+    scalaReflect.value,
+    ("org.portable-scala" %%% "portable-scala-reflect" % "1.1.3")
+      .cross(CrossVersion.for3Use2_13),
+  ),
 ).nativeConfigure(sharedNativeConfigure).nativeSettings(
   sharedNativeSettings,
-  libraryDependencies ++= List(
-    "org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion,
-    ("org.portable-scala" %%% "portable-scala-reflect" %
-      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13),
-  ),
+  libraryDependencies ++=
+    List("org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion),
 ).jsConfigure(sharedJSConfigure).jsSettings(
   sharedJSSettings,
-  libraryDependencies ++= List(
-    ("org.scala-js" %% "scalajs-test-interface" % scalaJSVersion)
-      .cross(CrossVersion.for3Use2_13),
-    ("org.scala-js" %% "scalajs-junit-test-runtime" % scalaJSVersion)
-      .cross(CrossVersion.for3Use2_13),
-    ("org.portable-scala" %%% "portable-scala-reflect" %
-      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13),
-  ),
+  libraryDependencies ++= {
+    def dep(name: String) = ("org.scala-js" %% name % scalaJSVersion)
+      .cross(CrossVersion.for3Use2_13)
+    List(dep("scalajs-test-interface"), dep("scalajs-junit-test-runtime"))
+  },
 ).jvmSettings(
   sharedJVMSettings,
-  libraryDependencies ++= List(
-    "junit" % "junit" % junitVersion,
-    ("org.portable-scala" %%% "portable-scala-reflect" %
-      portableScalaReflectVersion).cross(CrossVersion.for3Use2_13),
-  ),
+  libraryDependencies ++= List("junit" % "junit" % junitVersion),
 ).jvmConfigure(_.dependsOn(junit)).dependsOn(munitDiff)
 
 lazy val munitJVM = munit.jvm
@@ -216,9 +213,7 @@ lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("munit-diff")).settings(
     moduleName := "munit-diff",
     sharedSettings,
-    libraryDependencies ++= List("org.scala-lang" % "scala-reflect" % {
-      if (isScala3Setting.value) scala213 else scalaVersion.value
-    } % Provided),
+    libraryDependencies ++= List(scalaReflect.value),
   ).jvmSettings(sharedJVMSettings).nativeConfigure(sharedNativeConfigure)
   .nativeSettings(sharedNativeSettings).jsConfigure(sharedJSConfigure)
   .jsSettings(sharedJSSettings)
