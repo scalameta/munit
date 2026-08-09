@@ -48,9 +48,6 @@ inThisBuild {
   )
 }
 
-publish / skip := true
-mimaPreviousArtifacts := Set.empty
-crossScalaVersions := List()
 addCommandAlias(
   "scalafixAll",
   s"; ++$scala212 ; scalafixEnable ; all scalafix test:scalafix",
@@ -82,6 +79,8 @@ val isScala3Setting = Def
   .setting(isScala3(CrossVersion.partialVersion(scalaVersion.value)))
 
 def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
+
+val unpublished = publish / skip := true
 
 // NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
 lazy val skipIdeaSettings = SettingKey[Boolean]("ide-skip-project")
@@ -241,7 +240,7 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     ),
     Test / unmanagedSourceDirectories ++=
       crossBuildingDirectories("tests", "test").value,
-    publish / skip := true,
+    unpublished,
   ).nativeConfigure(sharedNativeConfigure).nativeSettings(sharedNativeSettings)
   .jsConfigure(sharedJSConfigure).jsSettings(
     sharedJSSettings,
@@ -271,11 +270,11 @@ lazy val docs = project.in(file("munit-docs")).dependsOn(munitJVM)
   .enablePlugins(MdocPlugin, DocusaurusPlugin).disablePlugins(MimaPlugin)
   .settings(
     sharedSettings,
-    publish / skip := true,
+    unpublished,
     moduleName := "munit-docs",
     libraryDependencies += "org.scalameta" %% "munit-scalacheck" % "1.3.0",
     crossScalaVersions := List(scala213, scala212),
-    test := {},
+    Test / skip := true,
     mdocOut := (ThisBuild / baseDirectory).value / "website" / "target" / "docs",
     mdocExtraArguments := List("--no-link-hygiene"),
     mdocVariables := Map(
@@ -284,6 +283,27 @@ lazy val docs = project.in(file("munit-docs")).dependsOn(munitJVM)
     ),
     fork := false,
   )
+
+// Aggregate only: it builds nothing, so it has no artifact to publish and
+// nothing to check for binary compatibility.
+lazy val root = project.in(file(".")).withId("munit-root").aggregate(
+  junit,
+  plugin,
+  docs,
+  munitJVM,
+  munitJS,
+  munitNative,
+  munitDiff.jvm,
+  munitDiff.js,
+  munitDiff.native,
+  testsJVM,
+  testsJS,
+  testsNative,
+).settings(
+  unpublished,
+  mimaPreviousArtifacts := Set.empty,
+  crossScalaVersions := List(),
+)
 
 Global / excludeLintKeys ++= Set(mimaPreviousArtifacts)
 def crossBuildingDirectories(name: String, config: String) = Def
