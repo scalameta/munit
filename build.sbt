@@ -83,31 +83,26 @@ def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
 val unpublished = publish / skip := true
 
 // NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
-lazy val skipIdeaSettings = SettingKey[Boolean]("ide-skip-project")
-  .withRank(KeyRanks.Invisible) := true
-lazy val mimaEnable: List[Def.Setting[_]] = List(
+val skipIdeaSetting =
+  SettingKey[Boolean]("ide-skip-project", rank = KeyRanks.Invisible)
+def onOtherPlatform(except: AutoPlugin*): Project => Project =
+  _.disablePlugins(MimaPlugin +: except: _*).settings(skipIdeaSetting := true)
+val sharedJSConfigure: Project => Project = onOtherPlatform()
+val sharedNativeConfigure: Project => Project = onOtherPlatform(ScalafixPlugin)
+
+val mimaEnable = Def.settings(
   mimaBinaryIssueFilters +=
     _root_.munit.build.Mima.languageAgnosticCompatibilityPolicy,
-  mimaPreviousArtifacts := {
-    if (crossPaths.value)
-      Set("org.scalameta" %% moduleName.value % previousVersion)
-    else Set("org.scalameta" % moduleName.value % previousVersion)
-  },
+  mimaPreviousArtifacts := Set(
+    if (crossPaths.value) "org.scalameta" %% moduleName.value % previousVersion
+    else "org.scalameta" % moduleName.value % previousVersion
+  ),
 )
 
-val sharedJVMSettings: List[Def.Setting[_]] =
-  List(crossScalaVersions := allScalaVersions) ++ mimaEnable
-
-val sharedJSSettings: List[Def.Setting[_]] = List(
-  skipIdeaSettings,
-  crossScalaVersions := allScalaVersions.filterNot(_.startsWith("0.")),
-)
-val sharedJSConfigure: Project => Project = _.disablePlugins(MimaPlugin)
-
-val sharedNativeSettings: List[Def.Setting[_]] =
-  List(skipIdeaSettings, crossScalaVersions := allScalaVersions)
-val sharedNativeConfigure: Project => Project =
-  _.disablePlugins(ScalafixPlugin, MimaPlugin)
+val sharedJVMSettings = Def
+  .settings(crossScalaVersions := allScalaVersions, mimaEnable)
+val sharedJSSettings = Def.settings(crossScalaVersions := allScalaVersions)
+val sharedNativeSettings = Def.settings(crossScalaVersions := allScalaVersions)
 
 val sharedSettings = List(
   javacOptions ++= {
