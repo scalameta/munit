@@ -159,8 +159,7 @@ lazy val junit = project.in(file("junit-interface")).settings(
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
   sharedSettings,
-  Compile / unmanagedSourceDirectories ++=
-    crossBuildingDirectories("munit", "main").value,
+  unmanagedMainSources("munit", "shared"),
   libraryDependencies ++= List("org.scala-lang" % "scala-reflect" % {
     if (isScala3Setting.value) scala213 else scalaVersion.value
   } % Provided),
@@ -229,13 +228,10 @@ lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     sharedSettings,
     buildInfoPackage := "munit",
     buildInfoKeys := Seq[BuildInfoKey](
-      "sourceDirectory" ->
-        ((ThisBuild / baseDirectory).value / "tests" / "shared" / "src" / "main")
-          .getAbsolutePath.toString,
+      "sourceDirectory" -> src("tests", "shared", "main").value.getAbsolutePath,
       scalaVersion,
     ),
-    Test / unmanagedSourceDirectories ++=
-      crossBuildingDirectories("tests", "test").value,
+    unmanagedTestSources("tests", "shared"),
     unpublished,
   ).nativeConfigure(sharedNativeConfigure).nativeSettings(sharedNativeSettings)
   .jsConfigure(sharedJSConfigure).jsSettings(
@@ -302,13 +298,29 @@ lazy val root = project.in(file(".")).withId("munit-root").aggregate(
 )
 
 Global / excludeLintKeys ++= Set(mimaPreviousArtifacts)
-def crossBuildingDirectories(name: String, config: String) = Def
-  .setting[Seq[File]] {
-    val root = (ThisBuild / baseDirectory).value / name
-    val base = root / "shared" / "src" / config
-    val result = mutable.ListBuffer.empty[File]
-    val partialVersion = CrossVersion.partialVersion(scalaVersion.value)
-    if (isPreScala213(partialVersion)) result += base / "scala-pre-2.13"
-    if (isScala2(partialVersion)) result += base / "scala-2"
-    result.toList
+
+def srcWithRoot(root: File, dir: String, cfg: String) = root / dir / "src" / cfg
+
+def src(name: String, dir: String, cfg: String) = Def
+  .setting[File](srcWithRoot((ThisBuild / baseDirectory).value / name, dir, cfg))
+
+def roots(name: String, cfg: String, dirs: String*) = Def.setting[Seq[File]] {
+  val variants = new mutable.ListBuffer[String]()
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, minor)) =>
+      variants += "scala-2"
+      if (minor < 13) variants += "scala-pre-2.13"
+    case _ =>
   }
+  val root = (ThisBuild / baseDirectory).value / name
+  for (dir <- dirs; base = srcWithRoot(root, dir, cfg); variant <- variants)
+    yield base / variant
+}
+
+def unmanagedMainSources(name: String, dirs: String*) = Def.settings(
+  Compile / unmanagedSourceDirectories ++= roots(name, "main", dirs: _*).value
+)
+
+def unmanagedTestSources(name: String, dirs: String*) = Def.settings(
+  Test / unmanagedSourceDirectories ++= roots(name, "test", dirs: _*).value
+)
