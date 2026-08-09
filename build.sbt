@@ -87,8 +87,8 @@ val skipIdeaSetting =
   SettingKey[Boolean]("ide-skip-project", rank = KeyRanks.Invisible)
 def onOtherPlatform(except: AutoPlugin*): Project => Project =
   _.disablePlugins(MimaPlugin +: except: _*).settings(skipIdeaSetting := true)
-val sharedJSConfigure: Project => Project = onOtherPlatform()
-val sharedNativeConfigure: Project => Project = onOtherPlatform(ScalafixPlugin)
+val onJS: Project => Project = onOtherPlatform()
+val onNative: Project => Project = onOtherPlatform(ScalafixPlugin)
 
 val mimaEnable = Def.settings(
   mimaBinaryIssueFilters +=
@@ -162,7 +162,7 @@ val scalaReflect = Def.setting {
   "org.scala-lang" % "scala-reflect" % ver % Provided
 }
 
-lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
+val munitSettings = Def.settings(
   sharedSettings,
   unmanagedMainSources("munit", "shared"),
   libraryDependencies ++= List(
@@ -170,21 +170,33 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform).settings(
     ("org.portable-scala" %%% "portable-scala-reflect" % "1.1.3")
       .cross(CrossVersion.for3Use2_13),
   ),
-).nativeConfigure(sharedNativeConfigure).nativeSettings(
+)
+
+val munitJVMSettings = Def.settings(
+  sharedJVMSettings,
+  libraryDependencies ++= List("junit" % "junit" % junitVersion),
+)
+
+val munitNativeSettings = Def.settings(
   sharedNativeSettings,
   libraryDependencies ++=
     List("org.scala-native" %%% "test-interface-sbt-defs" % nativeVersion),
-).jsConfigure(sharedJSConfigure).jsSettings(
+)
+
+val munitJSSettings = Def.settings(
   sharedJSSettings,
   libraryDependencies ++= {
     def dep(name: String) = ("org.scala-js" %% name % scalaJSVersion)
       .cross(CrossVersion.for3Use2_13)
     List(dep("scalajs-test-interface"), dep("scalajs-junit-test-runtime"))
   },
-).jvmSettings(
-  sharedJVMSettings,
-  libraryDependencies ++= List("junit" % "junit" % junitVersion),
-).jvmConfigure(_.dependsOn(junit)).dependsOn(munitDiff)
+)
+
+lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .settings(munitSettings).nativeConfigure(onNative)
+  .nativeSettings(munitNativeSettings).jsConfigure(onJS)
+  .jsSettings(munitJSSettings).jvmSettings(munitJVMSettings)
+  .jvmConfigure(_.dependsOn(junit)).dependsOn(munitDiff)
 
 lazy val munitJVM = munit.jvm
 lazy val munitJS = munit.js
@@ -209,46 +221,60 @@ lazy val plugin = project.in(file("munit-sbt")).enablePlugins(BuildInfoPlugin)
     libraryDependencies ++= List(gcp),
   ).disablePlugins(MimaPlugin)
 
+val munitDiffSettings = Def.settings(
+  moduleName := "munit-diff",
+  sharedSettings,
+  libraryDependencies ++= List(scalaReflect.value),
+)
+
 lazy val munitDiff = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .in(file("munit-diff")).settings(
-    moduleName := "munit-diff",
-    sharedSettings,
-    libraryDependencies ++= List(scalaReflect.value),
-  ).jvmSettings(sharedJVMSettings).nativeConfigure(sharedNativeConfigure)
-  .nativeSettings(sharedNativeSettings).jsConfigure(sharedJSConfigure)
+  .in(file("munit-diff")).settings(munitDiffSettings)
+  .jvmSettings(sharedJVMSettings).nativeConfigure(onNative)
+  .nativeSettings(sharedNativeSettings).jsConfigure(onJS)
   .jsSettings(sharedJSSettings)
 
+val testsSettings = Def.settings(
+  sharedSettings,
+  buildInfoPackage := "munit",
+  buildInfoKeys := Seq[BuildInfoKey](
+    "sourceDirectory" -> src("tests", "shared", "main").value.getAbsolutePath,
+    scalaVersion,
+  ),
+  unmanagedTestSources("tests", "shared"),
+  unpublished,
+)
+
+val testsJVMSettings = Def.settings(
+  sharedJVMSettings,
+  Test / fork := true,
+  Test / parallelExecution := true,
+  Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "+b"),
+)
+
+val testsNativeSettings = Def.settings(sharedNativeSettings)
+
+val testsJSSettings = Def.settings(
+  sharedJSSettings,
+  Compile / mainClass := Some("munit.ReflectiveInstantiationCheck"),
+  scalaJSUseMainModuleInitializer := true,
+  jsEnv := {
+    val log = sLog.value
+    if (System.getenv("MUNIT_JS_ENV") == "jsdom") {
+      log.info("Testing in JSDOMNodeJSEnv")
+      new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
+    } else {
+      log.info("Testing in NodeJSEnv")
+      new org.scalajs.jsenv.nodejs.NodeJSEnv
+    }
+  },
+)
+
 lazy val tests = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .dependsOn(munit).enablePlugins(BuildInfoPlugin).settings(
-    sharedSettings,
-    buildInfoPackage := "munit",
-    buildInfoKeys := Seq[BuildInfoKey](
-      "sourceDirectory" -> src("tests", "shared", "main").value.getAbsolutePath,
-      scalaVersion,
-    ),
-    unmanagedTestSources("tests", "shared"),
-    unpublished,
-  ).nativeConfigure(sharedNativeConfigure).nativeSettings(sharedNativeSettings)
-  .jsConfigure(sharedJSConfigure).jsSettings(
-    sharedJSSettings,
-    Compile / mainClass := Some("munit.ReflectiveInstantiationCheck"),
-    scalaJSUseMainModuleInitializer := true,
-    jsEnv := {
-      val log = sLog.value
-      if (Option(System.getenv("MUNIT_JS_ENV")).contains("jsdom")) {
-        log.info("Testing in JSDOMNodeJSEnv")
-        new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
-      } else {
-        log.info("Testing in NodeJSEnv")
-        new org.scalajs.jsenv.nodejs.NodeJSEnv
-      }
-    },
-  ).jvmSettings(
-    sharedJVMSettings,
-    fork := true,
-    Test / parallelExecution := true,
-    Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "+b"),
-  ).disablePlugins(MimaPlugin)
+  .dependsOn(munit).enablePlugins(BuildInfoPlugin).settings(testsSettings)
+  .nativeConfigure(onNative).nativeSettings(testsNativeSettings)
+  .jsConfigure(onJS).jsSettings(testsJSSettings).jvmSettings(testsJVMSettings)
+  .disablePlugins(MimaPlugin)
+
 lazy val testsJVM = tests.jvm
 lazy val testsJS = tests.js
 lazy val testsNative = tests.native
