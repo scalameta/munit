@@ -310,10 +310,7 @@ lazy val docs = project.in(file("munit-docs")).dependsOn(munitJVM)
 
 // Aggregate only: it builds nothing, so it has no artifact to publish and
 // nothing to check for binary compatibility.
-lazy val root = project.in(file(".")).withId("munit-root").aggregate(
-  munitDiff.projectRefs ++ munit.projectRefs ++ tests.projectRefs ++
-    Seq[ProjectReference](junit, plugin, docs): _*
-).settings(
+lazy val root = rootProject.withId("munit-root").autoAggregate.settings(
   unpublished,
   mimaPreviousArtifacts := Set.empty,
   crossScalaVersions := List(),
