@@ -34,7 +34,7 @@ trait BaseFunSuite
         try waitForCompletion(() => munitValueTransform(body))
         catch { case NonFatal(e) => Future.failed(e) }
       },
-      options.tags.toSet,
+      options.tags,
       loc,
     ))
 
