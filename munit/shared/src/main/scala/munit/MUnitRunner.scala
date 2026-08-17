@@ -17,7 +17,7 @@ import org.junit.runner.manipulation.{Filter, Filterable}
 import org.junit.runner.notification.{Failure, RunNotifier}
 import org.junit.runner.{Description, Runner}
 
-class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
+class MUnitRunner(val cls: Class[_ <: Suite], val suite: Suite)
     extends Runner with Filterable with Configurable {
 
   def this(cls: Class[_ <: Suite], newInstance: () => Suite) =
