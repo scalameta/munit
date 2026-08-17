@@ -32,14 +32,14 @@ inThisBuild {
       dynverGitDescribeOutput.value.mkVersion(dynVer, curVersion)
     },
     organization := "org.scalameta",
-    homepage := Some(url("https://github.com/scalameta/munit")),
+    homepage := Some(uri("https://github.com/scalameta/munit")),
     licenses :=
-      List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+      List("Apache-2.0" -> uri("http://www.apache.org/licenses/LICENSE-2.0")),
     developers := List(Developer(
       "olafurpg",
       "Ólafur Páll Geirsson",
       "olafurpg@gmail.com",
-      url("https://geirsson.com"),
+      uri("https://geirsson.com"),
     )),
     scalaVersion := scala213,
     useSuperShell := false,
@@ -86,7 +86,7 @@ val unpublished = publish / skip := true
 val skipIdeaSetting = SettingKey[Boolean]("ide-skip-project")
   .withRank(KeyRanks.Invisible)
 def onOtherPlatform(except: AutoPlugin*): Project => Project =
-  _.disablePlugins(MimaPlugin +: except: _*).settings(skipIdeaSetting := true)
+  _.disablePlugins(MimaPlugin +: except *).settings(skipIdeaSetting := true)
 val onJS: Project => Project = onOtherPlatform()
 val onNative: Project => Project = onOtherPlatform(ScalafixPlugin)
 
@@ -343,14 +343,14 @@ def roots(name: String, cfg: String, dirs: String*) = Def.setting[Seq[File]] {
 }
 
 def unmanagedMainSources(name: String, dirs: String*) = Def.settings(
-  Compile / unmanagedSourceDirectories ++= roots(name, "main", dirs: _*).value
+  Compile / unmanagedSourceDirectories ++= roots(name, "main", dirs *).value
 )
 
 def unmanagedTestSources(name: String, dirs: String*) = Def.settings(
-  Test / unmanagedSourceDirectories ++= roots(name, "test", dirs: _*).value
+  Test / unmanagedSourceDirectories ++= roots(name, "test", dirs *).value
 )
 
 def unmanagedSources(name: String, dirs: String*) = Def.settings(
-  unmanagedMainSources(name, dirs: _*),
-  unmanagedTestSources(name, dirs: _*),
+  unmanagedMainSources(name, dirs *),
+  unmanagedTestSources(name, dirs *),
 )
