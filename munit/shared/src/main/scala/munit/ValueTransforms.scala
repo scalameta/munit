@@ -2,8 +2,7 @@ package munit
 
 import munit.internal.console.StackTraces
 
-import scala.concurrent.Future
-import scala.util.Try
+import scala.concurrent._
 
 trait ValueTransforms {
   this: BaseFunSuite =>
@@ -18,6 +17,7 @@ trait ValueTransforms {
   def munitValueTransforms: List[ValueTransform] = List(munitFutureTransform)
 
   final def munitValueTransform(testValue: => Any): Future[Any] = {
+    implicit val ec: ExecutionContext = munitExecutionContext
     // Takes an arbitrarily nested future `Future[Future[Future[...]]]` and
     // returns a `Future[T]` where `T` is not a `Future`.
     def flattenFuture(future: Future[_]): Future[_] = future.map { value =>
@@ -27,9 +27,8 @@ trait ValueTransforms {
         case Some(f) => flattenFuture(f)
         case None => Future.successful(value)
       }
-    }(munitExecutionContext).flatten
-    val wrappedFuture = Future.fromTry(Try(StackTraces.dropOutside(testValue)))
-    flattenFuture(wrappedFuture)
+    }.flatten
+    flattenFuture(Future(StackTraces.dropOutside(testValue)))
   }
 
   final def munitFutureTransform: ValueTransform =

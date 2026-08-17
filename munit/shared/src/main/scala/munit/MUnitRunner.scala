@@ -277,11 +277,6 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
     catch { case ex: Throwable => onResult(util.Failure(ex)) }
   }
 
-  private def futureFromAny(any: Any): Future[Any] = any match {
-    case f: Future[_] => f
-    case _ => Future.successful(any)
-  }
-
   private def runTestBody(
       notifier: RunNotifier,
       description: Description,
@@ -377,10 +372,14 @@ class MUnitRunner(val cls: Class[_ <: Suite], suite: Suite)
 
   private def valueTransform(thunk: () => Any): Future[Any] = suite match {
     case funSuite: FunSuite => funSuite.munitValueTransform(thunk())
-    case _ => futureFromAny(thunk())
+    case _ => Future(thunk()).flatMap {
+        case f: Future[_] => f
+        case other => Future.successful(other)
+      }
   }
 
 }
+
 object MUnitRunner {
   private def ensureEligibleConstructor(
       cls: Class[_ <: Suite]
