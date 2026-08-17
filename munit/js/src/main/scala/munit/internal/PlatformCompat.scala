@@ -6,7 +6,7 @@ import sbt.testing.{EventHandler, Logger, Task, TaskDef}
 
 import java.util.concurrent.TimeoutException
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future, Promise}
 import scala.scalajs.js.timers
 import scala.scalajs.reflect.Reflect
@@ -19,6 +19,9 @@ object PlatformCompat {
 
   def awaitResult[T](awaitable: Awaitable[T]): T = Await
     .result(awaitable, Duration.Inf)
+
+  // Scala.js is single threaded, so we can't block.
+  def sleep(duration: FiniteDuration): Unit = ()
 
   def executeAsync(
       task: Task,

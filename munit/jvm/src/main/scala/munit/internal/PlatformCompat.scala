@@ -7,7 +7,7 @@ import java.util.concurrent.{
   Executors, ThreadFactory, TimeUnit, TimeoutException,
 }
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future, Promise}
 import scala.util.control.NonFatal
 
@@ -28,6 +28,8 @@ object PlatformCompat {
 
   def awaitResult[T](awaitable: Awaitable[T]): T = Await
     .result(awaitable, Duration.Inf)
+
+  def sleep(duration: FiniteDuration): Unit = Thread.sleep(duration.toMillis)
 
   def executeAsync(
       task: Task,

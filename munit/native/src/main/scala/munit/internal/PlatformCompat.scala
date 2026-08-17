@@ -9,7 +9,7 @@ import java.util.concurrent.{
   Executors, ThreadFactory, TimeUnit, TimeoutException,
 }
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future, Promise}
 import scala.scalanative.meta.LinktimeInfo.isMultithreadingEnabled
 import scala.scalanative.reflect.Reflect
@@ -38,6 +38,8 @@ object PlatformCompat {
     if (!isMultithreadingEnabled) Thread.`yield`() // invokes SN 0.4 scalanative.runtime.loop()
     Await.result(awaitable, Duration.Inf)
   }
+
+  def sleep(duration: FiniteDuration): Unit = Thread.sleep(duration.toMillis)
 
   def executeAsync(
       task: Task,
