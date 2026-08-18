@@ -27,6 +27,7 @@ class FrameworkSuite extends BaseFrameworkSuite {
     AsyncFunFixtureFrameworkSuite,
     AsyncFixtureTeardownFrameworkSuite,
     DuplicateNameFrameworkSuite,
+    EventuallyStackTraceFrameworkSuite,
     FullStackTraceFrameworkSuite,
     SmallStackTraceFrameworkSuite,
     AssertionsFrameworkSuite,
