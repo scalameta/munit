@@ -496,6 +496,64 @@ use historical
 to keep track of how frequently flaky tests are failing and to get a better
 understanding of when and why they are failing.
 
+## Retry failing assertions
+
+Use `eventually()` to re-evaluate a body until its assertions stop failing, for
+a test that waits on something outside its control such as a background write or
+an eventually-consistent read.
+
+In order to use it, you must first build an instance of `EventuallyOptions` with
+`EventuallyOptions(retries, sleep)` (both parameters must be positive) and modify
+using `withMaxRetries`, `withSleep`, `withFilters` (or `addFilters`). You can
+also use `EventuallyOptions.disabled`, which runs the body without retrying.
+
+> On Scala.js a body that is not async cannot sleep between attempts, so its
+> retries run back to back.
+
+The filters are predicates taking a `Throwable` and returning a Boolean, to
+designate which exceptions we will retry on. By default, only failed munit
+assertions (derived from `munit.FailExceptionLike`) are retried. `addFilters`
+adds filters to the current set, while `withFilters` replaces it.
+
+`eventually()` needs an `EventuallyOptions` in implicit scope. (As is usual
+with implicits, if you declare one for the whole suite and want to override it
+in a narrower scope, you must give the inner one the same name.) You can also
+call `eventually()` directly on an `EventuallyOptions` when a single call
+needs its own settings.
+
+```scala mdoc
+import munit.EventuallyOptions
+
+import scala.concurrent.duration._
+
+class EventuallySuite extends munit.FunSuite {
+  private implicit val options: EventuallyOptions =
+    EventuallyOptions(40, 100.millis)
+
+  // a query against a table another process writes to
+  def rowCount: Int = ???
+
+  test("rows arrive") {
+    eventually(assertEquals(rowCount, 3))
+  }
+
+  test("this table takes longer to fill") {
+    EventuallyOptions(60, 1.second).eventually(assertEquals(rowCount, 3))
+  }
+
+  test("the connection also comes up late") {
+    options.addFilters(_.isInstanceOf[java.io.IOException])
+      .eventually(assertEquals(rowCount, 3))
+  }
+
+  test("this whole test waits longer") {
+    implicit val options: EventuallyOptions = this.options.withMaxRetries(120)
+    eventually(assert(rowCount > 0))
+    eventually(assertEquals(rowCount, 3))
+  }
+}
+```
+
 ## Run logic before and after tests
 
 See the [fixtures guide](fixtures.html) for instructions for running custom
