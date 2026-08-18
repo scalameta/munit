@@ -26,6 +26,9 @@ jobs:
     steps:
       - &checkout
         uses: actions/checkout@v7
+        with:
+          # the mima baseline is the last tag
+          fetch-depth: 0
       - &jdk
         uses: actions/setup-java@v5.6.0
         with:
