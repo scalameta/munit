@@ -5,8 +5,8 @@ import munit.internal.PlatformCompat
 import java.util.concurrent.TimeUnit
 
 import scala.collection.mutable
-import scala.concurrent.Future
 import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 abstract class FunSuite extends BaseFunSuite
@@ -18,7 +18,8 @@ trait BaseFunSuite
     with TestOptionsConversions
     with TestTransforms
     with SuiteTransforms
-    with ValueTransforms {
+    with ValueTransforms
+    with EventuallyTransforms {
   self =>
 
   final val munitTestsBuffer: mutable.ListBuffer[Test] = mutable.ListBuffer
@@ -41,5 +42,10 @@ trait BaseFunSuite
   def munitTimeout: Duration = new FiniteDuration(30, TimeUnit.SECONDS)
   private final def waitForCompletion[T](f: () => Future[T]) = PlatformCompat
     .waitAtMost(f, munitTimeout, munitExecutionContext)
+
+  /** Wraps non-implicit fields as implicit */
+  implicit def implicitContext: SuiteContext = new SuiteContext {
+    override def ec: ExecutionContext = munitExecutionContext
+  }
 
 }
