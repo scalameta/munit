@@ -2,8 +2,6 @@ import scala.collection.mutable
 
 import Extensions._
 
-def previousVersion = "1.0.0-RC1"
-
 def scala213 = "2.13.18"
 
 def scala212 = "2.12.21"
@@ -93,10 +91,11 @@ val onNative: Project => Project = onOtherPlatform(ScalafixPlugin)
 val mimaEnable = Def.settings(
   mimaBinaryIssueFilters +=
     _root_.munit.build.Mima.languageAgnosticCompatibilityPolicy,
-  mimaPreviousArtifacts := Set(
-    if (crossPaths.value) "org.scalameta" %% moduleName.value % previousVersion
-    else "org.scalameta" % moduleName.value % previousVersion
-  ),
+  // the last tag, so the baseline cannot go stale; CI has to fetch tags for it
+  mimaPreviousArtifacts := previousStableVersion.value.map(v =>
+    if (crossPaths.value) "org.scalameta" %% moduleName.value % v
+    else "org.scalameta" % moduleName.value % v
+  ).toSet,
 )
 
 // The matrix supplies the Scala versions, so crossScalaVersions is gone; what
