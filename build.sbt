@@ -113,8 +113,7 @@ val sharedSettings = List(
         )
       case Some((3, minor)) => List(
           "-language:implicitConversions",
-          "-release",
-          if (minor >= 8) "17" else "8",
+          "-release:" + (if (minor >= 8) "17" else "8"),
         )
       case _ => Nil
     }
