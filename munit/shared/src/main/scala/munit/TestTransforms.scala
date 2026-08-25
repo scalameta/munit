@@ -71,7 +71,8 @@ trait TestTransforms {
               Failure(Exceptions.rootCause(exception) match {
                 case fel: FailExceptionLike[_] => fel.updateMessage(append)
                 case e => new FailException(
-                    message = append(e.getMessage),
+                    message =
+                      append(Option(e.getMessage).getOrElse(e.getClass.getName)),
                     cause = e,
                     isStackTracesEnabled = false,
                     location = t.location,
