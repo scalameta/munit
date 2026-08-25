@@ -17,6 +17,7 @@ class TestTransformFrameworkSuite extends munit.FunSuite {
   test("suffix-success") {}
   test("suffix-fail")(fail("boom"))
   test("suffix-assertEquals")(assertEquals(0, 1))
+  test("suffix-null-message")(throw new NullPointerException())
 }
 object TestTransformFrameworkSuite
     extends FrameworkTest(
@@ -31,13 +32,15 @@ object TestTransformFrameworkSuite
          |==> failure munit.TestTransformFrameworkSuite.suffix-assertEquals - tests/shared/src/main/scala/munit/TestTransformFrameworkSuite.scala:19
          |18:  test("suffix-fail")(fail("boom"))
          |19:  test("suffix-assertEquals")(assertEquals(0, 1))
-         |20:}
+         |20:  test("suffix-null-message")(throw new NullPointerException())
          |values are not the same
          |=> Obtained
          |0
          |=> Diff (- expected, + obtained)
          |-1
          |+0
+         |==> extra info
+         |==> failure munit.TestTransformFrameworkSuite.suffix-null-message - java.lang.NullPointerException
          |==> extra info
          |""".stripMargin,
     )
