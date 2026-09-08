@@ -197,11 +197,11 @@ val munitOnJS: Project => Project = onJS.settings(
 )
 
 lazy val munit = projectMatrix.in(file("munit")).dependsOn(munitDiff)
-  .settings(munitSettings).jvmPlatform(allScalaVersions, Nil, munitOnJVM)
-  .jsPlatform(allScalaVersions, Nil, munitOnJS)
-  .jsPlatform(List(scala3next), nextRow, munitOnJS.settings(unpublished))
-  .nativePlatform(allScalaVersions, Nil, munitOnNative)
-  .nativePlatform(List(scala3next), nextRow, munitOnNative.settings(unpublished))
+  .settings(munitSettings).crossJvm(allScalaVersions)(munitOnJVM)
+  .crossJs(allScalaVersions)(munitOnJS)
+  .crossJs(List(scala3next), nextRow)(munitOnJS.settings(unpublished))
+  .crossNative(allScalaVersions)(munitOnNative)
+  .crossNative(List(scala3next), nextRow)(munitOnNative.settings(unpublished))
 
 lazy val munitJVM = munit.jvm(scala213)
 
@@ -232,11 +232,11 @@ val munitDiffSettings = Def.settings(
 )
 
 lazy val munitDiff = projectMatrix.in(file("munit-diff"))
-  .settings(munitDiffSettings).jvmPlatform(allScalaVersions, mimaEnable)
-  .jsPlatform(allScalaVersions, Nil, onJS)
-  .jsPlatform(List(scala3next), nextRow, onJS.settings(unpublished))
-  .nativePlatform(allScalaVersions, Nil, onNative)
-  .nativePlatform(List(scala3next), nextRow, onNative.settings(unpublished))
+  .settings(munitDiffSettings).crossJvm(allScalaVersions, ss = mimaEnable)()
+  .crossJs(allScalaVersions)(onJS)
+  .crossJs(List(scala3next), nextRow)(onJS.settings(unpublished))
+  .crossNative(allScalaVersions)(onNative)
+  .crossNative(List(scala3next), nextRow)(onNative.settings(unpublished))
 
 val testsSettings = Def.settings(
   sharedSettings,
@@ -277,12 +277,11 @@ val testsOnJS: Project => Project = onJS.settings(
 
 lazy val tests = projectMatrix.in(file("tests")).dependsOn(munit)
   .enablePlugins(BuildInfoPlugin).settings(testsSettings)
-  .nativePlatform(allScalaVersions, Nil, testsOnNative)
-  .nativePlatform(List(scala3next), nextRow, testsOnNative)
-  .jsPlatform(allScalaVersions, Nil, testsOnJS)
-  .jsPlatform(List(scala3next), nextRow, testsOnJS)
-  .jvmPlatform(allScalaVersions, Nil, _.settings(testsJVMSettings))
-  .disablePlugins(MimaPlugin)
+  .crossNative(allScalaVersions)(testsOnNative)
+  .crossNative(List(scala3next), nextRow)(testsOnNative)
+  .crossJs(allScalaVersions)(testsOnJS)
+  .crossJs(List(scala3next), nextRow)(testsOnJS)
+  .crossJvm(allScalaVersions, ss = testsJVMSettings)().disablePlugins(MimaPlugin)
 
 // A matrix cell per Scala version replaces `+`, so the platform-wide commands
 // are aliases over the cells rather than one cross-built project.
