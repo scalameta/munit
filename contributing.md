@@ -51,17 +51,11 @@ these properties.
   ![Screenshot 2020-08-30 at 08 17 39](https://user-images.githubusercontent.com/1408093/91652688-dacd3980-ea99-11ea-949e-8d9a09ea566e.png)
 
 - If you get a "No scalac found to compile scala sources" error, you may need to
-  manually add Scala SDK 2.13.3 to the `junit` module.
+  add the Scala 2.13 SDK to the `junit` module by hand.
 
-  ![Screenshot 2020-08-30 at 08 18 56](https://user-images.githubusercontent.com/1408093/91652687-dacd3980-ea99-11ea-9bd3-18eb60113023.png)
-  ![Screenshot 2020-08-30 at 08 20 26](https://user-images.githubusercontent.com/1408093/91652686-da34a300-ea99-11ea-86bb-21bce663766a.png)
-
-- If you get a "Class not found" error when running tests, you may need to
-  manually edit the run configuration to use the `testsJVM` module instead of
-  `tests-sources`.
-
-  ![Screenshot 2020-08-30 at 08 20 51](https://user-images.githubusercontent.com/1408093/91652685-d99c0c80-ea99-11ea-9b85-f8067f9b9dec.png)
-  ![Screenshot 2020-08-30 at 08 21 06](https://user-images.githubusercontent.com/1408093/91652684-d99c0c80-ea99-11ea-8ac8-8b1279cdf0da.png)
+- The test modules are one per row: `tests2_13` and `tests2_12`. A run
+  configuration saved before the build moved to `projectMatrix` names a module
+  that no longer exists.
 
 - There may be highlighting errors for `PlatformCompat` and `BuildInfo`. You can
   ignore these highlighting errors, the project should still compile
