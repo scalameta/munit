@@ -2,14 +2,6 @@ import scala.collection.mutable
 
 import Extensions._
 
-def scala213 = "2.13.18"
-
-def scala212 = "2.12.21"
-
-def scala3 = "3.3.8"
-
-def scala3next = "3.8.4"
-
 def junitVersion = "4.13.2"
 
 def gcp = "com.google.cloud" % "google-cloud-storage" % "2.71.0"
@@ -80,11 +72,8 @@ def isScala3(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 3)
 
 val unpublished = publish / skip := true
 
-// NOTE(olafur): disable Scala.js and Native settings for IntelliJ.
-val skipIdeaSetting = SettingKey[Boolean]("ide-skip-project")
-  .withRank(KeyRanks.Invisible)
 def onOtherPlatform(except: AutoPlugin*): Project => Project =
-  _.disablePlugins(MimaPlugin +: except *).settings(skipIdeaSetting := true)
+  _.disablePlugins(MimaPlugin +: except *)
 val onJS: Project => Project = onOtherPlatform()
 val onNative: Project => Project = onOtherPlatform(ScalafixPlugin)
 
