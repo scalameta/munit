@@ -1,5 +1,7 @@
 import scala.collection.mutable
 
+import com.typesafe.tools.mima.core.*
+
 import Extensions._
 
 def junitVersion = "4.13.2"
@@ -79,7 +81,7 @@ val onNative: Project => Project = onOtherPlatform(ScalafixPlugin)
 
 val mimaEnable = Def.settings(
   mimaBinaryIssueFilters +=
-    _root_.munit.build.Mima.languageAgnosticCompatibilityPolicy,
+    { (x: Problem) => x.matchName.exists(!_.startsWith("munit.internal.")) },
   // the last tag, so the baseline cannot go stale; CI has to fetch tags for it
   mimaPreviousArtifacts := previousStableVersion.value.map(v =>
     if (crossPaths.value) "org.scalameta" %% moduleName.value % v
