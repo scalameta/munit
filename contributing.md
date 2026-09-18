@@ -66,5 +66,5 @@ IntelliJ like normal:
 
 ![Screenshot 2020-08-30 at 08 21 21](https://user-images.githubusercontent.com/1408093/91652682-d6a11c00-ea99-11ea-8792-19eaa377bc9e.png)
 
-Please ask on [Gitter](https://gitter.im/scalameta/munit) if you have any issues
+Please ask on [Discord](https://discord.gg/JfsAGmgZJ7) if you have any issues
 working on the MUnit codebase via IntelliJ.
