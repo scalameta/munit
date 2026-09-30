@@ -185,8 +185,8 @@ tr46@^6.0.0:
     punycode "^2.3.1"
 
 undici@^8.9.0:
-  version "8.9.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-8.9.0.tgz#f51154fe38c56e3ff21ab62a5ed484e70de53d8d"
+  version "8.11.2"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-8.11.2.tgz#b8f6f6504384ae535c8e46f8403fd8075f011d46"
 
 w3c-xmlserializer@^5.0.0:
   version "5.0.0"
