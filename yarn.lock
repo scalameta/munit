@@ -2,24 +2,24 @@
 # yarn lockfile v1
 
 
-"@asamuzakjp/css-color@^6.0.5":
-  version "6.0.5"
-  resolved "https://registry.yarnpkg.com/@asamuzakjp/css-color/-/css-color-6.0.5.tgz#f4edcf3295e5fdee655fce3bcd11ce09411089d8"
+"@asamuzakjp/css-color@^7.0.0":
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/@asamuzakjp/css-color/-/css-color-7.1.2.tgz#940f4936061633c33b78aa5703c7dfd6e0ae0b86"
   dependencies:
-    "@csstools/css-calc" "^3.2.1"
-    "@csstools/css-color-parser" "^4.1.9"
-    "@csstools/css-parser-algorithms" "^4.0.0"
-    "@csstools/css-tokenizer" "^4.0.0"
-    lru-cache "^11.5.2"
+    "@csstools/css-calc" "^3.4.1"
+    "@csstools/css-color-parser" "^4.2.4"
+    "@csstools/css-parser-algorithms" "^4.0.1"
+    "@csstools/css-tokenizer" "^4.0.2"
+    lru-cache "^11.5.3"
 
-"@asamuzakjp/dom-selector@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@asamuzakjp/dom-selector/-/dom-selector-8.3.0.tgz#ae1e8d8b524979768e54c6ffe27ff233115a9ef0"
+"@asamuzakjp/dom-selector@^9.2.1":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@asamuzakjp/dom-selector/-/dom-selector-9.2.2.tgz#0a21e22e0ca1646a667055db64d172b9b59fc989"
   dependencies:
-    bidi-js "^1.0.3"
+    bidi-js "^1.1.0"
     css-tree "^3.2.1"
     is-potential-custom-element-name "^1.0.1"
-    lru-cache "^11.5.2"
+    lru-cache "^11.5.3"
 
 "@bramus/specificity@^2.4.2":
   version "2.4.2"
@@ -27,44 +27,40 @@
   dependencies:
     css-tree "^3.0.0"
 
-"@csstools/color-helpers@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@csstools/color-helpers/-/color-helpers-6.1.0.tgz#18903248db1da28285e8458793b038f60d738cf1"
+"@csstools/color-helpers@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@csstools/color-helpers/-/color-helpers-6.1.2.tgz#41d1c66d9e5885a750d6512c786b3c45d5de3034"
 
-"@csstools/css-calc@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@csstools/css-calc/-/css-calc-3.2.1.tgz#b30e061ca9f297ccb2b3b032bfee32fda02b1b27"
+"@csstools/css-calc@^3.4.1", "@csstools/css-calc@^3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@csstools/css-calc/-/css-calc-3.4.2.tgz#2c6ec8688a4e3eee02a1c55a20a0b582e3960677"
 
-"@csstools/css-calc@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@csstools/css-calc/-/css-calc-3.3.0.tgz#33cc4bdbab8edf1b6e3ab8c1eba849c41a324f1a"
-
-"@csstools/css-color-parser@^4.1.9":
-  version "4.1.10"
-  resolved "https://registry.yarnpkg.com/@csstools/css-color-parser/-/css-color-parser-4.1.10.tgz#56f3f5bbed663d7631616a8a8bf34f23b4f9ca77"
+"@csstools/css-color-parser@^4.2.4":
+  version "4.2.5"
+  resolved "https://registry.yarnpkg.com/@csstools/css-color-parser/-/css-color-parser-4.2.5.tgz#b48acc939856fd3d0e4a7e703c853ecb6efea2cd"
   dependencies:
-    "@csstools/color-helpers" "^6.1.0"
-    "@csstools/css-calc" "^3.3.0"
+    "@csstools/color-helpers" "^6.1.2"
+    "@csstools/css-calc" "^3.4.2"
 
-"@csstools/css-parser-algorithms@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@csstools/css-parser-algorithms/-/css-parser-algorithms-4.0.0.tgz#e1c65dc09378b42f26a111fca7f7075fc2c26164"
+"@csstools/css-parser-algorithms@^4.0.1":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@csstools/css-parser-algorithms/-/css-parser-algorithms-4.0.2.tgz#689445621dae9f2114db2bee2190d3b4513a2d3c"
 
-"@csstools/css-syntax-patches-for-csstree@^1.1.7":
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/@csstools/css-syntax-patches-for-csstree/-/css-syntax-patches-for-csstree-1.1.7.tgz#67a65f4b26766c315ddfd2bdb89ac4c53fdd51e7"
+"@csstools/css-syntax-patches-for-csstree@^1.1.13":
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/@csstools/css-syntax-patches-for-csstree/-/css-syntax-patches-for-csstree-1.1.15.tgz#2255da5042c77e6ba3faf1995188404b6fc22361"
 
-"@csstools/css-tokenizer@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@csstools/css-tokenizer/-/css-tokenizer-4.0.0.tgz#798a33950d11226a0ebb6acafa60f5594424967f"
+"@csstools/css-tokenizer@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@csstools/css-tokenizer/-/css-tokenizer-4.0.2.tgz#7c11bbc7e2912a7def676d72ba6e00895aadc0d5"
 
-"@exodus/bytes@^1.11.0", "@exodus/bytes@^1.15.1", "@exodus/bytes@^1.6.0":
+"@exodus/bytes@^1.11.0", "@exodus/bytes@^1.15.1":
   version "1.15.1"
   resolved "https://registry.yarnpkg.com/@exodus/bytes/-/bytes-1.15.1.tgz#b13bc464ca162c17abf0837fb3a11aeab79e45d1"
 
-bidi-js@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/bidi-js/-/bidi-js-1.0.3.tgz#6f8bcf3c877c4d9220ddf49b9bb6930c88f877d2"
+bidi-js@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/bidi-js/-/bidi-js-1.1.0.tgz#c92efafe3fce3b9fdd30ba67bdddf0dd4d424af7"
   dependencies:
     require-from-string "^2.0.2"
 
@@ -90,45 +86,44 @@ entities@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/entities/-/entities-8.0.0.tgz#c1df5fe3602429747fa233d0dd26f142f0ce4743"
 
-html-encoding-sniffer@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/html-encoding-sniffer/-/html-encoding-sniffer-6.0.0.tgz#f8d9390b3b348b50d4f61c16dd2ef5c05980a882"
+html-encoding-sniffer@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/html-encoding-sniffer/-/html-encoding-sniffer-7.0.0.tgz#cf995009e50fa6f90d74906ab5137f8ee9b7c9d8"
   dependencies:
-    "@exodus/bytes" "^1.6.0"
+    "@exodus/bytes" "^1.15.1"
 
 is-potential-custom-element-name@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/is-potential-custom-element-name/-/is-potential-custom-element-name-1.0.1.tgz"
 
-jsdom@^30.0.1:
-  version "30.0.1"
-  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-30.0.1.tgz#1b0751cbd0abce86762c48697583b5e91433f6e4"
+jsdom@^30.1.1:
+  version "30.1.1"
+  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-30.1.1.tgz#cf8b82ce71ac29a0bf1ab219a6d2894bce62dbdb"
   dependencies:
-    "@asamuzakjp/css-color" "^6.0.5"
-    "@asamuzakjp/dom-selector" "^8.3.0"
+    "@asamuzakjp/css-color" "^7.0.0"
+    "@asamuzakjp/dom-selector" "^9.2.1"
     "@bramus/specificity" "^2.4.2"
-    "@csstools/css-syntax-patches-for-csstree" "^1.1.7"
+    "@csstools/css-syntax-patches-for-csstree" "^1.1.13"
     "@exodus/bytes" "^1.15.1"
     css-tree "^3.2.1"
     data-urls "^7.0.0"
     decimal.js "^10.6.0"
-    html-encoding-sniffer "^6.0.0"
+    html-encoding-sniffer "^7.0.0"
     is-potential-custom-element-name "^1.0.1"
     lru-cache "^11.5.2"
     parse5 "^8.0.1"
     saxes "^6.0.0"
-    symbol-tree "^3.2.4"
     tough-cookie "^6.0.2"
-    undici "^8.9.0"
-    w3c-xmlserializer "^5.0.0"
+    undici "^8.10.2"
+    w3c-xmlserializer "^6.0.0"
     webidl-conversions "^8.0.1"
     whatwg-mimetype "^5.0.0"
-    whatwg-url "^17.1.0"
+    whatwg-url "^17.1.1"
     xml-name-validator "^5.0.0"
 
-lru-cache@^11.5.2:
-  version "11.5.2"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.5.2.tgz#00e16665c90c620fba14a3c368732a976493f760"
+lru-cache@^11.5.2, lru-cache@^11.5.3:
+  version "11.5.3"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.5.3.tgz#a7767b4034e35269562d2b9da2b185b5df70c421"
 
 mdn-data@2.27.1:
   version "2.27.1"
@@ -158,10 +153,6 @@ source-map-js@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.1.tgz#1ce5650fddd87abc099eda37dcff024c2667ae46"
 
-symbol-tree@^3.2.4:
-  version "3.2.4"
-  resolved "https://registry.npmjs.org/symbol-tree/-/symbol-tree-3.2.4.tgz"
-
 tldts-core@^7.0.17:
   version "7.0.17"
   resolved "https://registry.yarnpkg.com/tldts-core/-/tldts-core-7.0.17.tgz#dadfee3750dd272ed219d7367beb7cbb2ff29eb8"
@@ -184,13 +175,13 @@ tr46@^6.0.0:
   dependencies:
     punycode "^2.3.1"
 
-undici@^8.9.0:
+undici@^8.10.2:
   version "8.11.2"
   resolved "https://registry.yarnpkg.com/undici/-/undici-8.11.2.tgz#b8f6f6504384ae535c8e46f8403fd8075f011d46"
 
-w3c-xmlserializer@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/w3c-xmlserializer/-/w3c-xmlserializer-5.0.0.tgz#f925ba26855158594d907313cedd1476c5967f6c"
+w3c-xmlserializer@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/w3c-xmlserializer/-/w3c-xmlserializer-6.0.0.tgz#27c0747e0091ada8cdb513c3645362e71fc50d82"
   dependencies:
     xml-name-validator "^5.0.0"
 
@@ -210,9 +201,9 @@ whatwg-url@^16.0.0:
     tr46 "^6.0.0"
     webidl-conversions "^8.0.1"
 
-whatwg-url@^17.1.0:
-  version "17.1.0"
-  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-17.1.0.tgz#693144cd2060d324e73b15a717d1f38ecfb3f02e"
+whatwg-url@^17.1.1:
+  version "17.1.2"
+  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-17.1.2.tgz#6b16cae400ac045d5d672af39e78b1c28e424947"
   dependencies:
     "@exodus/bytes" "^1.15.1"
     tr46 "^6.0.0"
