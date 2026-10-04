@@ -60,13 +60,11 @@ addCommandAlias(
   "preparePR",
   "; scalafmtSbt; reload; scalafmt; Test/scalafmt ; javafmt ; scalafixCheckAll",
 )
-val isPreScala213 = Set[Option[(Long, Long)]](Some((2, 11)), Some((2, 12)))
 val scala2Versions = List(scala213, scala212)
 
 val scala3Versions = List(scala3)
 val allScalaVersions = scala2Versions ++ scala3Versions
 
-def isScala2(v: Option[(Long, Long)]): Boolean = v.exists(_._1 == 2)
 val isScala3Setting = Def
   .setting(isScala3(CrossVersion.partialVersion(scalaVersion.value)))
 
@@ -106,12 +104,6 @@ val sharedSettings = List(
   },
   scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 11)) => List(
-          "-Yrangepos",
-          "-target:jvm-1.8",
-          "-Xexperimental",
-          "-Ywarn-unused-import",
-        )
       case Some((2, _)) => List(
           "-Yrangepos",
           "-release:8",
