@@ -44,10 +44,7 @@ testFrameworks += new TestFramework("munit.Framework")
 
 ```scala
 object test extends ScalaTests with TestModule.Munit {
-  override def ivyDeps =
-    Agg(
-      ivy"org.scalameta::munit::@STABLE_VERSION@"
-    )
+  override def munitVersion: T[String] = "@STABLE_VERSION@"
 }
 ```
 
