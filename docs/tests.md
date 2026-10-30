@@ -212,6 +212,9 @@ To customize what's being displayed, one can define an `implicit` instance of th
   `@@ -aa,bb +cc,dd @@` (default: false)
 - `withObtainedAsStripMargin(Boolean)`: displays the value obtained as
   triple-quoted string with margins (default: false)
+- `withObtainedMaxLength(Int)`: displays the value obtained only if it
+  has at most this many characters, or always if 0; a negative value takes
+  the limit from the settings below (default: -1)
 
 ```scala mdoc
 import munit.FunSuite
@@ -256,6 +259,14 @@ while the default output is more compact:
 +  "a",
    "a"
 ```
+
+If `withObtainedMaxLength` is negative, the limit comes from the system
+property `munit.diff.obtainedMaxLength`, else from the environment variable
+`MUNIT_DIFF_OBTAINED_MAX_LENGTH`, else it is 999. Both settings take the same
+values as `withObtainedMaxLength`, and a negative or unparsable value passes to
+the next one. Scala.js does not read the environment variable. On Scala.js and
+Scala Native, the tests run in their own process, so only the test code can set
+the system property.
 
 ## Run tests in parallel
 
