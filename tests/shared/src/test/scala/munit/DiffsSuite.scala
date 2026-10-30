@@ -204,8 +204,6 @@ class DiffsSuite extends FunSuite {
   test("DiffOptions: obtainedMaxLength=998")(assertNoDiff(
     obtainedReport(obtained999, DiffOptions.withObtainedMaxLength(998)),
     s"""|title
-        |=> Obtained
-        |$obtained999
         |=> Diff (- expected, + obtained)
         |+${"a" * 997}
         | b""".stripMargin,
@@ -214,6 +212,8 @@ class DiffsSuite extends FunSuite {
   test("DiffOptions: obtainedMaxLength=1000")(assertNoDiff(
     obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(1000)),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -222,6 +222,8 @@ class DiffsSuite extends FunSuite {
   test("DiffOptions: obtainedMaxLength=0")(assertNoDiff(
     obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(0)),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -238,6 +240,8 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 1000")(assertNoDiff(
     withMaxLengthProperty("1000")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -264,6 +268,8 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 0")(assertNoDiff(
     withMaxLengthProperty("0")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -280,8 +286,6 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 998")(assertNoDiff(
     withMaxLengthProperty("998")(obtainedReport(obtained999)),
     s"""|title
-        |=> Obtained
-        |$obtained999
         |=> Diff (- expected, + obtained)
         |+${"a" * 997}
         | b""".stripMargin,
@@ -290,6 +294,8 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 1000 with spaces")(assertNoDiff(
     withMaxLengthProperty(" 1000 ")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -322,6 +328,8 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 1000 with tab and newline")(assertNoDiff(
     withMaxLengthProperty("\t1000\n")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -362,6 +370,8 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 1000 with plus")(assertNoDiff(
     withMaxLengthProperty("+1000")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -372,6 +382,8 @@ class DiffsSuite extends FunSuite {
       obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(-5))
     ),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -382,6 +394,8 @@ class DiffsSuite extends FunSuite {
       obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(0))
     ),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -402,6 +416,8 @@ class DiffsSuite extends FunSuite {
       obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(1000))
     ),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -412,6 +428,8 @@ class DiffsSuite extends FunSuite {
       obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(0))
     ),
     s"""|title
+        |=> Obtained
+        |$obtained1000
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -423,8 +441,6 @@ class DiffsSuite extends FunSuite {
     assertEquals(
       new Diff(obtained999, "b", options).createReport("title"),
       s"""|title
-          |${c("=> Obtained", Bold)}
-          |$obtained999
           |${c("=> Diff", Bold)} (${c("- expected", LightRed)}, ${c("+ obtained", LightGreen)})
           |${c("+" + "a" * 997, LightGreen)}
           | b""".stripMargin,
