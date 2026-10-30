@@ -175,4 +175,319 @@ class DiffsSuite extends FunSuite {
     )
   }
 
+  private val obtained999 = "a" * 997 + "\nb"
+  private val obtained1000 = "a" * 998 + "\nb"
+  private def obtainedReport(
+      obtained: String,
+      options: DiffOptions = DiffOptions,
+  ): String = new Diff(obtained, "b", options.withForceAnsi(Some(false)))
+    .createReport("title")
+
+  test("createReport: obtained of 999 characters")(assertNoDiff(
+    obtainedReport(obtained999),
+    s"""|title
+        |=> Obtained
+        |$obtained999
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 997}
+        | b""".stripMargin,
+  ))
+
+  test("createReport: obtained of 1000 characters")(assertNoDiff(
+    obtainedReport(obtained1000),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("DiffOptions: obtainedMaxLength=998")(assertNoDiff(
+    obtainedReport(obtained999, DiffOptions.withObtainedMaxLength(998)),
+    s"""|title
+        |=> Obtained
+        |$obtained999
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 997}
+        | b""".stripMargin,
+  ))
+
+  test("DiffOptions: obtainedMaxLength=1000")(assertNoDiff(
+    obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("DiffOptions: obtainedMaxLength=0")(assertNoDiff(
+    obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(0)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  private def withMaxLengthProperty[A](value: String)(body: => A): A = {
+    val previous = System.setProperty("munit.diff.obtainedMaxLength", value)
+    try body
+    finally
+      if (previous eq null) System.clearProperty("munit.diff.obtainedMaxLength")
+      else System.setProperty("munit.diff.obtainedMaxLength", previous)
+  }
+
+  test("obtainedMaxLength property: 1000")(assertNoDiff(
+    withMaxLengthProperty("1000")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 1000, option: 999")(assertNoDiff(
+    withMaxLengthProperty("1000")(
+      obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(999))
+    ),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: not a number")(assertNoDiff(
+    withMaxLengthProperty("x")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 0")(assertNoDiff(
+    withMaxLengthProperty("0")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: -5")(assertNoDiff(
+    withMaxLengthProperty("-5")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 998")(assertNoDiff(
+    withMaxLengthProperty("998")(obtainedReport(obtained999)),
+    s"""|title
+        |=> Obtained
+        |$obtained999
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 997}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 1000 with spaces")(assertNoDiff(
+    withMaxLengthProperty(" 1000 ")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: too large")(assertNoDiff(
+    withMaxLengthProperty("99999999999")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: empty")(assertNoDiff(
+    withMaxLengthProperty("")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: blank")(assertNoDiff(
+    withMaxLengthProperty("   ")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 1000 with tab and newline")(assertNoDiff(
+    withMaxLengthProperty("\t1000\n")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 1000 with inner space")(assertNoDiff(
+    withMaxLengthProperty("1 000")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: too small")(assertNoDiff(
+    withMaxLengthProperty("-99999999999")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: fraction")(assertNoDiff(
+    withMaxLengthProperty("1.5")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: hexadecimal")(assertNoDiff(
+    withMaxLengthProperty("0x10")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 1000 with plus")(assertNoDiff(
+    withMaxLengthProperty("+1000")(obtainedReport(obtained1000)),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 1000, option: -5")(assertNoDiff(
+    withMaxLengthProperty("1000")(
+      obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(-5))
+    ),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: 5, option: 0")(assertNoDiff(
+    withMaxLengthProperty("5")(
+      obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(0))
+    ),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: x, option: -1")(assertNoDiff(
+    withMaxLengthProperty("x")(
+      obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(-1))
+    ),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: x, option: 1000")(assertNoDiff(
+    withMaxLengthProperty("x")(
+      obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(1000))
+    ),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("obtainedMaxLength property: x, option: 0")(assertNoDiff(
+    withMaxLengthProperty("x")(
+      obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(0))
+    ),
+    s"""|title
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 998}
+        | b""".stripMargin,
+  ))
+
+  test("DiffOptions: obtainedMaxLength=998, ansi=true") {
+    import AnsiColors.{Bold, LightGreen, LightRed, c}
+    val options = DiffOptions.withObtainedMaxLength(998).withForceAnsi(Some(true))
+    assertEquals(
+      new Diff(obtained999, "b", options).createReport("title"),
+      s"""|title
+          |${c("=> Obtained", Bold)}
+          |$obtained999
+          |${c("=> Diff", Bold)} (${c("- expected", LightRed)}, ${c("+ obtained", LightGreen)})
+          |${c("+" + "a" * 997, LightGreen)}
+          | b""".stripMargin,
+    )
+  }
+
+  test("withMaxLengthProperty: property set before") {
+    System.setProperty("munit.diff.obtainedMaxLength", "5")
+    try {
+      withMaxLengthProperty("1000")(())
+      assertEquals(sys.props.get("munit.diff.obtainedMaxLength"), Some("5"))
+    } finally System.clearProperty("munit.diff.obtainedMaxLength")
+  }
+
+  test("createReport: obtained of 999 characters, strip margin") {
+    val q = "\"\"\""
+    assertNoDiff(
+      obtainedReport(obtained999, DiffOptions.withObtainedAsStripMargin(true)),
+      s"""|title
+          |=> Obtained
+          |    $q|${"a" * 997}
+          |       |b
+          |       |$q.stripMargin
+          |=> Diff (- expected, + obtained)
+          |+${"a" * 997}
+          | b""".stripMargin,
+    )
+  }
+
+  test("createReport: obtained of 999 characters in color")(assertNoDiff(
+    obtainedReport(AnsiColors.c("a" * 997, AnsiColors.LightRed) + "\nb"),
+    s"""|title
+        |=> Obtained
+        |$obtained999
+        |=> Diff (- expected, + obtained)
+        |+${"a" * 997}
+        | b""".stripMargin,
+  ))
+
+  test("assertNoDiff: obtained of 1000 characters") {
+    implicit val options: DiffOptions = DiffOptions.withForceAnsi(Some(false))
+    implicit val loc: Location = munit.Location.empty
+    assertNoDiff(
+      intercept[ComparisonFailException](assertNoDiff(obtained1000, "b"))
+        .message,
+      s"""|diff assertion failed
+          |=> Diff (- expected, + obtained)
+          |+${"a" * 998}
+          | b""".stripMargin,
+    )
+  }
+
+  test("assertEquals: obtained of 1000 characters") {
+    implicit val options: DiffOptions = DiffOptions.withForceAnsi(Some(false))
+    implicit val loc: Location = munit.Location.empty
+    assertNoDiff(
+      intercept[ComparisonFailException](assertEquals(obtained1000, "b"))
+        .message,
+      s"""|values are not the same
+          |=> Diff (- expected, + obtained)
+          |+${"a" * 998}
+          | b""".stripMargin,
+    )
+  }
+
 }
