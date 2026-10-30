@@ -268,6 +268,13 @@ the next one. Scala.js does not read the environment variable. On Scala.js and
 Scala Native, the tests run in their own process, so only the test code can set
 the system property.
 
+If the value obtained is longer than the limit, the report shows its length, the
+limit and the system property instead:
+
+```
+=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
+```
+
 ## Run tests in parallel
 
 MUnit does not support running individual test cases in parallel. However, sbt
