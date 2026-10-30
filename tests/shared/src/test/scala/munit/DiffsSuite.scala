@@ -196,6 +196,7 @@ class DiffsSuite extends FunSuite {
   test("createReport: obtained of 1000 characters")(assertNoDiff(
     obtainedReport(obtained1000),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -204,6 +205,7 @@ class DiffsSuite extends FunSuite {
   test("DiffOptions: obtainedMaxLength=998")(assertNoDiff(
     obtainedReport(obtained999, DiffOptions.withObtainedMaxLength(998)),
     s"""|title
+        |=> Obtained not shown: 999 characters, limit 998 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 997}
         | b""".stripMargin,
@@ -252,6 +254,7 @@ class DiffsSuite extends FunSuite {
       obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(999))
     ),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -260,6 +263,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: not a number")(assertNoDiff(
     withMaxLengthProperty("x")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -278,6 +282,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: -5")(assertNoDiff(
     withMaxLengthProperty("-5")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -286,6 +291,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 998")(assertNoDiff(
     withMaxLengthProperty("998")(obtainedReport(obtained999)),
     s"""|title
+        |=> Obtained not shown: 999 characters, limit 998 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 997}
         | b""".stripMargin,
@@ -304,6 +310,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: too large")(assertNoDiff(
     withMaxLengthProperty("99999999999")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -312,6 +319,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: empty")(assertNoDiff(
     withMaxLengthProperty("")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -320,6 +328,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: blank")(assertNoDiff(
     withMaxLengthProperty("   ")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -338,6 +347,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: 1000 with inner space")(assertNoDiff(
     withMaxLengthProperty("1 000")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -346,6 +356,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: too small")(assertNoDiff(
     withMaxLengthProperty("-99999999999")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -354,6 +365,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: fraction")(assertNoDiff(
     withMaxLengthProperty("1.5")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -362,6 +374,7 @@ class DiffsSuite extends FunSuite {
   test("obtainedMaxLength property: hexadecimal")(assertNoDiff(
     withMaxLengthProperty("0x10")(obtainedReport(obtained1000)),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -406,6 +419,7 @@ class DiffsSuite extends FunSuite {
       obtainedReport(obtained1000, DiffOptions.withObtainedMaxLength(-1))
     ),
     s"""|title
+        |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
         |=> Diff (- expected, + obtained)
         |+${"a" * 998}
         | b""".stripMargin,
@@ -441,6 +455,7 @@ class DiffsSuite extends FunSuite {
     assertEquals(
       new Diff(obtained999, "b", options).createReport("title"),
       s"""|title
+          |${c("=> Obtained", Bold)} not shown: 999 characters, limit 998 (munit.diff.obtainedMaxLength, see docs)
           |${c("=> Diff", Bold)} (${c("- expected", LightRed)}, ${c("+ obtained", LightGreen)})
           |${c("+" + "a" * 997, LightGreen)}
           | b""".stripMargin,
@@ -487,6 +502,7 @@ class DiffsSuite extends FunSuite {
       intercept[ComparisonFailException](assertNoDiff(obtained1000, "b"))
         .message,
       s"""|diff assertion failed
+          |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
           |=> Diff (- expected, + obtained)
           |+${"a" * 998}
           | b""".stripMargin,
@@ -500,6 +516,7 @@ class DiffsSuite extends FunSuite {
       intercept[ComparisonFailException](assertEquals(obtained1000, "b"))
         .message,
       s"""|values are not the same
+          |=> Obtained not shown: 1000 characters, limit 999 (munit.diff.obtainedMaxLength, see docs)
           |=> Diff (- expected, + obtained)
           |+${"a" * 998}
           | b""".stripMargin,

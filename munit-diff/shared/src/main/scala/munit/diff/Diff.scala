@@ -26,12 +26,15 @@ class Diff(val obtained: String, val expected: String, val options: DiffOptions)
   ): String = {
     implicit val sb: StringBuilder = new StringBuilder
     if (title.nonEmpty) sb.append(title).append("\n")
-    if (obtainedClean.length <= obtainedMaxLength) {
-      header("Obtained")
+    val maxLength = obtainedMaxLength
+    header("Obtained")
+    if (obtainedClean.length <= maxLength) {
       sb.append("\n")
       sb.append(asStripMargin(obtainedClean, printObtainedAsStripMargin))
       sb.append("\n")
-    }
+    } else sb.append(" not shown: ").append(obtainedClean.length)
+      .append(" characters, limit ").append(maxLength)
+      .append(" (munit.diff.obtainedMaxLength, see docs)\n")
     appendDiffOnlyReport
     sb.toString()
   }
