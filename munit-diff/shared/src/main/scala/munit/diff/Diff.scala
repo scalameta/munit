@@ -26,12 +26,15 @@ class Diff(val obtained: String, val expected: String, val options: DiffOptions)
   ): String = {
     implicit val sb: StringBuilder = new StringBuilder
     if (title.nonEmpty) sb.append(title).append("\n")
-    if (obtainedClean.length < 1000) {
-      header("Obtained")
+    val maxLength = obtainedMaxLength
+    header("Obtained")
+    if (obtainedClean.length <= maxLength) {
       sb.append("\n")
       sb.append(asStripMargin(obtainedClean, printObtainedAsStripMargin))
       sb.append("\n")
-    }
+    } else sb.append(" not shown: ").append(obtainedClean.length)
+      .append(" characters, limit ").append(maxLength)
+      .append(" (munit.diff.obtainedMaxLength, see docs)\n")
     appendDiffOnlyReport
     sb.toString()
   }
@@ -74,6 +77,18 @@ object Diff {
   def unifiedDiff(obtained: String, expected: String)(implicit
       options: DiffOptions
   ): String = apply(obtained, expected).unifiedDiff
+
+  // read the settings on each report, so that a change at run time applies
+  private def obtainedMaxLength(implicit options: DiffOptions): Int = {
+    def parse(s: Option[String]): Option[Int] = s.map(x =>
+      try x.trim.toInt
+      catch { case _: NumberFormatException => -1 }
+    ).filter(_ >= 0)
+    var limit = options.obtainedMaxLength
+    if (limit < 0) limit = parse(sys.props.get("munit.diff.obtainedMaxLength"))
+      .orElse(parse(sys.env.get("MUNIT_DIFF_OBTAINED_MAX_LENGTH"))).getOrElse(-1)
+    if (limit > 0) limit else if (limit == 0) Int.MaxValue else 999
+  }
 
   private def asStripMargin(obtained: String, flag: Boolean): String =
     if (!flag) obtained
