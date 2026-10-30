@@ -6,6 +6,7 @@ class DiffOptions private (
     val showLines: Boolean,
     val obtainedAsStripMargin: Boolean,
     val printer: Option[Printer],
+    val obtainedMaxLength: Int,
 ) {
   private def privateCopy(
       forceAnsi: Option[Boolean] = this.forceAnsi,
@@ -13,12 +14,14 @@ class DiffOptions private (
       showLines: Boolean = this.showLines,
       obtainedAsStripMargin: Boolean = this.obtainedAsStripMargin,
       printer: Option[Printer] = this.printer,
+      obtainedMaxLength: Int = this.obtainedMaxLength,
   ): DiffOptions = new DiffOptions(
     forceAnsi = forceAnsi,
     contextSize = contextSize,
     showLines = showLines,
     obtainedAsStripMargin = obtainedAsStripMargin,
     printer = printer,
+    obtainedMaxLength = obtainedMaxLength,
   )
 
   def withForceAnsi(value: Option[Boolean]): DiffOptions =
@@ -32,6 +35,8 @@ class DiffOptions private (
     privateCopy(obtainedAsStripMargin = value)
   def withPrinter(value: Option[Printer]): DiffOptions =
     privateCopy(printer = value)
+  def withObtainedMaxLength(value: Int): DiffOptions =
+    privateCopy(obtainedMaxLength = value)
 }
 
 object DiffOptions
@@ -41,6 +46,7 @@ object DiffOptions
       showLines = false,
       obtainedAsStripMargin = false,
       printer = None,
+      obtainedMaxLength = -1,
     ) {
   implicit val default: DiffOptions = this
 }
